@@ -1,0 +1,19 @@
+.draggable {
+  cursor: move;
+  border: 1px solid lightgray;
+  padding: 12px;
+  margin: 12px;
+}
+.draggable:hover {
+  border-color: magenta;
+}
+.draggable-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+.device-selected {
+  background-color: lightblue;
+}
+.editor-component {
+  pointer-events: none;
+}
