@@ -1,0 +1,5 @@
+# Wtf is this
+This is here to keep a papertrail of the things I'm doing/have been doing. Hopefully this can bridge any gaps of long periods of time not working on this.
+
+## Jan. 27, 2024
+* Hacked out the "mobile view" — it was buggy, confusing, and will create too much scope creep when trying to finalize an MVP.
