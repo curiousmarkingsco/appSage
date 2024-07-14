@@ -1,9 +1,9 @@
+/* main.js */
 document.addEventListener('DOMContentLoaded', function() {
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function() {
       const gridContainer = document.createElement('div');
-      gridContainer.className = 'grid grid-cols-1 gap-4 border-4 border-magenta-500 p-4';
-      gridContainer.setAttribute('id', 'editableGrid');
+      gridContainer.className = 'grid grid-cols-1 gap-4 border-4 border-magenta-500 p-4 ugc-keep';
 
       const initialColumn = createColumn(gridContainer);
       gridContainer.appendChild(initialColumn);
@@ -53,24 +53,24 @@ function createColumn(gridContainer) {
 
 function createAddColumnButton(gridContainer) {
   const button = document.createElement('button');
-  button.className = 'addColumn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
+  button.className = 'addColumn ugc-discard bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
   button.textContent = '+';
   button.onclick = function() {
-    const currentColumns = gridContainer.querySelectorAll('.col-span-1').length;
-    if (currentColumns < 6) {  // Check if the current number of columns is less than 6
-        const newColumn = createColumn(gridContainer);
-        gridContainer.insertBefore(newColumn, this);
-        updateColumnCount(gridContainer);
-    } else {
-        alert('Maximum of 6 columns allowed.');  // Alert the user if the limit is reached
-    }
+      const currentColumns = gridContainer.querySelectorAll('.col-span-1').length;
+      if (currentColumns < 6) {  // Ensure limit is respected
+          const newColumn = createColumn(gridContainer);
+          gridContainer.insertBefore(newColumn, this);
+          updateColumnCount(gridContainer);
+      } else {
+          alert('Maximum of 6 columns allowed.');
+      }
   };
   return button;
 }
 
 function updateColumnCount(grid) {
   const columns = grid.querySelectorAll('.col-span-1').length;
-  grid.className = `grid grid-cols-${columns} gap-4 border-4 border-magenta-500 p-4`;
+  grid.className = `grid grid-cols-${columns} gap-4 border-4 border-magenta-500 p-4 ugc-keep`;
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Grid Columns: ${columns}</strong></div>`;
   

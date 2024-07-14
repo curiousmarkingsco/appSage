@@ -1,4 +1,4 @@
-<!-- Start: index.html -->
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -23,6 +23,31 @@
       </div>
 
       <script src="./main.js"></script>
+      <script src="./load.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const params = new URLSearchParams(window.location.search);
+          const config = params.get('config');
+          if (config) {
+              const json = localStorage.getItem(config);  // Assuming it's stored in localStorage
+              if (json) {
+                  loadChanges(json);
+              }
+          } else {
+              createNewConfigurationFile();
+          }
+        });
+        
+        function createNewConfigurationFile() {
+          let filename = 'Untitled';
+          let counter = 1;
+          while (localStorage.getItem(filename)) {
+              filename = `Untitled-${counter}`;
+              counter++;
+          }
+          localStorage.setItem(filename, '[]'); // Initialize with an empty array
+          window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
+        }
+      </script>
   </body>
 </html>
-<!-- End: index.html -->
