@@ -1,19 +1,90 @@
-.draggable {
-  cursor: move;
-  border: 1px solid lightgray;
-  padding: 12px;
-  margin: 12px;
+/* Ensures the column layout and visibility rules */
+.column-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 32px 16px;
+  border: 1px solid #ccc;
 }
-.draggable:hover {
-  border-color: magenta;
+
+/* Styles for buttons to be hidden by default */
+.editContent, .removeColumn {
+  display: none;
+  position: absolute;
+  top: 10px;
 }
-.draggable-disabled {
-  opacity: 0.5;
-  cursor: not-allowed !important;
+
+.editContent {
+  right: 70px; /* Adjust positioning as needed */
 }
-.device-selected {
-  background-color: lightblue;
+
+.removeColumn {
+  right: 10px; /* Adjust positioning as needed */
 }
-.editor-component {
-  pointer-events: none;
+
+/* Only show buttons when the column is hovered over */
+.column-content:hover .editContent,
+.column-content:hover .removeColumn {
+  display: block;
 }
+
+.column-content img,
+.column-content video {
+    max-width: 100%;
+    height: auto;
+}
+
+.column-content audio {
+  max-width: 100%;
+  min-height: 32px;
+}
+
+/* Hard maybe below here */
+/* Hard maybe below here */
+/* Hard maybe below here */
+
+
+/* Margin classes */
+.m-small { margin: 0.5rem; }
+.m-medium { margin: 1rem; } /* Assume 1rem is the 'default' size */
+.m-large { margin: 1.5rem; }
+
+/* Padding classes */
+.p-small { padding: 0.5rem; }
+.p-medium { padding: 1rem; }
+.p-large { padding: 1.5rem; }
+
+.pagefont-small a, .pagefont-small button { font-size: 1rem; }
+.pagefont-medium a, .pagefont-medium button { font-size: 1.2rem; } /* Default size */
+.pagefont-large a, .pagefont-large button { font-size: 1.4rem; }
+
+.pagefont-small p { font-size: 0.8rem; }
+.pagefont-medium p { font-size: 1rem; } /* Default size */
+.pagefont-large p { font-size: 1.2rem; }
+
+.pagefont-small h1 { font-size: 2.6rem; }
+.pagefont-medium h1 { font-size: 3rem; } /* Default size */
+.pagefont-large h1 { font-size: 3.4rem; }
+
+.pagefont-small h2 { font-size: 0.8rem; }
+.pagefont-medium h2 { font-size: 1rem; } /* Default size */
+.pagefont-large h2 { font-size: 1.2rem; }
+
+.pagefont-small h3 { font-size: 0.8rem; }
+.pagefont-medium h3 { font-size: 1rem; } /* Default size */
+.pagefont-large h3 { font-size: 1.2rem; }
+
+.pagefont-small h4 { font-size: 0.8rem; }
+.pagefont-medium h4 { font-size: 1rem; } /* Default size */
+.pagefont-large h4 { font-size: 1.2rem; }
+
+.pagefont-small h5 { font-size: 0.8rem; }
+.pagefont-medium h5 { font-size: 1rem; } /* Default size */
+.pagefont-large h5 { font-size: 1.2rem; }
+
+.pagefont-small h6 { font-size: 0.8rem; }
+.pagefont-medium h6 { font-size: 1rem; } /* Default size */
+.pagefont-large h6 { font-size: 1.2rem; }
+
