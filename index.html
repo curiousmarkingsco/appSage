@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <script src="https://cdn.tailwindcss.com"></script>
       <link rel="stylesheet" href="./main.css">
-      <link rel="stylesheet" href="./basic-user.css">
+      <link rel="stylesheet" href="./basic.css">
       <title>pageSage App Designer</title>
   </head>
   <body class="flex">
@@ -29,12 +29,14 @@
           const params = new URLSearchParams(window.location.search);
           const config = params.get('config');
           if (config) {
-              const json = localStorage.getItem(config);  // Assuming it's stored in localStorage
-              if (json) {
-                  loadChanges(json);
-              }
+            const json = localStorage.getItem(config);  // Assuming it's stored in localStorage
+            if (json) {
+                loadChanges(json);
+            }
+            setupAutoSave(config);
           } else {
-              createNewConfigurationFile();
+            let pageId = createNewConfigurationFile();
+            setupAutoSave(pageId);
           }
         });
         
@@ -47,6 +49,7 @@
           }
           localStorage.setItem(filename, '[]'); // Initialize with an empty array
           window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
+          return filename;
         }
       </script>
   </body>

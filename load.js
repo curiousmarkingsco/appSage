@@ -1,4 +1,28 @@
 /* load.js */
+function setupAutoSave(page) {
+  const targetNode = document.getElementById('page');
+
+  const config = {
+      childList: true, // Observes direct children
+      attributes: true, // Observes attributes changes
+      subtree: true, // Observes all descendants
+      characterData: true // Observes text changes
+  };
+
+  const callback = function(mutationsList, observer) {
+      for (const mutation of mutationsList) {
+          if (mutation.type === 'childList' || mutation.type === 'attributes' || mutation.type === 'characterData') {
+              saveChanges(page); // Call save function whenever a change is detected
+              break; // Break after saving once to avoid multiple saves for the same batch of mutations
+          }
+      }
+  };
+
+  const observer = new MutationObserver(callback);
+
+  observer.observe(targetNode, config);
+  console.log('Auto-save setup complete.');
+}
 
 function saveChanges(page) {
   const pageContainer = document.getElementById('page');
@@ -15,7 +39,7 @@ function saveChanges(page) {
 
   const json = JSON.stringify(data);
   localStorage.setItem(page, json);  // Save to localStorage for simplicity
-  alert('Changes saved successfully!');
+  console.log('Changes saved successfully!');
 }
 
 function getCleanInnerHTML(element) {

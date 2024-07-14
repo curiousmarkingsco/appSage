@@ -1,0 +1,45 @@
+/* basic.css */
+/* Opinionated styles to accommodate laymen app creators */
+
+/* Margin classes */
+.m-small { margin: 0.5rem; }
+.m-medium { margin: 1rem; } /* Assume 1rem is the 'default' size */
+.m-large { margin: 1.5rem; }
+
+/* Padding classes */
+.p-small { padding: 0.5rem; }
+.p-medium { padding: 1rem; }
+.p-large { padding: 1.5rem; }
+
+.pagefont-small a, .pagefont-small button { font-size: 1rem; }
+.pagefont-medium a, .pagefont-medium button { font-size: 1.2rem; } /* Default size */
+.pagefont-large a, .pagefont-large button { font-size: 1.4rem; }
+
+.pagefont-small p { font-size: 0.8rem; }
+.pagefont-medium p { font-size: 1rem; } /* Default size */
+.pagefont-large p { font-size: 1.2rem; }
+
+.pagefont-small h1 { font-size: 2.6rem; }
+.pagefont-medium h1 { font-size: 3rem; } /* Default size */
+.pagefont-large h1 { font-size: 3.4rem; }
+
+.pagefont-small h2 { font-size: 2.4rem; }
+.pagefont-medium h2 { font-size: 2.8rem; } /* Default size */
+.pagefont-large h2 { font-size: 3.2rem; }
+
+.pagefont-small h3 { font-size: 2.2rem; }
+.pagefont-medium h3 { font-size: 2.6rem; } /* Default size */
+.pagefont-large h3 { font-size: 3rem; }
+
+.pagefont-small h4 { font-size: 2rem; }
+.pagefont-medium h4 { font-size: 2.4rem; } /* Default size */
+.pagefont-large h4 { font-size: 2.8rem; }
+
+.pagefont-small h5 { font-size: 1.8rem; }
+.pagefont-medium h5 { font-size: 2.2rem; } /* Default size */
+.pagefont-large h5 { font-size: 2.6rem; }
+
+.pagefont-small h6 { font-size: 1.6rem; }
+.pagefont-medium h6 { font-size: 2rem; } /* Default size */
+.pagefont-large h6 { font-size: 2.4rem; }
+
