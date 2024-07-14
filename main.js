@@ -31,10 +31,17 @@ function createColumn(gridContainer) {
   removeColumnButton.className = 'removeColumn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded';
   removeColumnButton.textContent = '🗑️';
   removeColumnButton.addEventListener('click', function() {
-      showConfirmationModal('Are you sure you want to delete this column?', () => {
-          gridContainer.removeChild(column);
-          updateColumnCount(gridContainer);
-      });
+    // Check if the column has content
+    if (columnHasContent(column)) {
+        showConfirmationModal('Are you sure you want to delete this column?', () => {
+            gridContainer.removeChild(column);
+            updateColumnCount(gridContainer);
+        });
+    } else {
+        // If no significant content, remove the column immediately
+        gridContainer.removeChild(column);
+        updateColumnCount(gridContainer);
+    }
   });
 
   // Append buttons to the column
@@ -151,15 +158,15 @@ function updateSidebarForContentType(column) {
 
   // List of content types
   const contentTypes = [
-      { label: '🔠 Heading', action: () => updateSidebarForHeading(column) },
-      { label: '🎥🏞️🎵 Media', action: () => updateSidebarForMedia(column) },
-      { label: '📝 Paragraph', action: () => updateSidebarForParagraph(column) },
-      { label: '🔗 Button', action: () => updateSidebarForButton(column) }
+      { label: '🔠<br> Heading', action: () => updateSidebarForHeading(column) },
+      { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(column) },
+      { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(column) },
+      { label: '🔗<br> Button', action: () => updateSidebarForButton(column) }
   ];
 
   contentTypes.forEach(type => {
       const button = document.createElement('button');
-      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded m-2';
+      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 content-button';
       button.innerHTML = type.label;
       button.onclick = type.action;
       sidebar.appendChild(button);
@@ -380,4 +387,18 @@ function addFontSizeOptions(sidebar, element) {
 
   sidebar.appendChild(fontSizeLabel);
   sidebar.appendChild(fontSizeSelect);
+}
+
+function columnHasContent(column) {
+  // Check if column contains any significant elements
+  // We assume here that only certain tags are considered "content"
+  const contentTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'video', 'audio', 'a']; // Add other tags as needed
+  return Array.from(column.querySelectorAll('*')).some(child => {
+      // Check if the element is one of the content types and not empty
+      return contentTags.includes(child.tagName.toLowerCase()) && (
+          child.textContent.trim() !== '' || // Text content is not empty
+          (child.src && child.src.trim() !== '') || // For media elements with src
+          (child.href && child.href.trim() !== '') // For links
+      );
+  });
 }
