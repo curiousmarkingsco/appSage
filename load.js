@@ -57,19 +57,6 @@ function getCleanInnerHTML(element) {
 function loadChanges(json) {
   const pageContainer = document.getElementById('page');
   pageContainer.innerHTML = ''; // Clear existing content
-  
-  const data = JSON.parse(json);
-  data.forEach(item => {
-      const column = document.createElement(item.tagName);
-      column.className = item.className;
-      column.innerHTML = item.content;
-      pageContainer.appendChild(column);
-  });
-}
-
-function loadChanges(json) {
-  const pageContainer = document.getElementById('page');
-  pageContainer.innerHTML = ''; // Clear existing content
 
   const data = JSON.parse(json);
   data.forEach(item => {
