@@ -50,5 +50,5 @@
 
 #editing-highlight {
   padding: 5px; /* Slight padding to enhance focus */
-  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); /* Optional: adds a glow effect for stronger emphasis */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */
 }
