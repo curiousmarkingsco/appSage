@@ -111,19 +111,34 @@ function updateSidebarForContentType(column) {
 function updateSidebarForForm(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>`;
-  let form = column.querySelector('form')
-  console.log(!form)
+  let form = column.querySelector('form');
+  let submitButton;
+
   if (!form) {
     form = document.createElement('form');
     column.appendChild(form);
 
     // Add submit button
-    const submitButton = document.createElement('button');
-    submitButton.type = 'button';
+    submitButton = document.createElement('button');
+    submitButton.type = 'submit';
     submitButton.textContent = 'Submit';
     submitButton.className = 'mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
     form.appendChild(submitButton);
+  } else {
+    submitButton = form.querySelector('button[type="submit"]');
   }
+
+  const submitLabel = document.createElement('label');
+  submitLabel.textContent = 'Submit Button Text:';
+  submitLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const submitField = document.createElement('input');
+  submitField.type = 'text';
+  submitField.placeholder = 'Change button name';
+  submitField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  submitField.oninput = function () {
+    submitButton.textContent = submitField.value;
+  };
 
   const inputLabel = document.createElement('label');
   inputLabel.textContent = 'Field Label:';
@@ -134,15 +149,31 @@ function updateSidebarForForm(column) {
   inputField.placeholder = 'Enter label...';
   inputField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
 
+  const typeLabel = document.createElement('label');
+  typeLabel.textContent = 'Field Type:';
+  typeLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const typeField = document.createElement('select');
+  typeField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  const inputTypes = ['text', 'url', 'tel', 'password', 'number', 'file', 'email', 'date', 'color', 'checkbox'];
+
+  inputTypes.forEach(type => {
+    const option = document.createElement('option');
+    option.value = type;
+    option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+    typeField.appendChild(option);
+  });
+
   const addButton = document.createElement('button');
   addButton.textContent = 'Add';
   addButton.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 px-4 rounded-r mr-2 mt-2 inline-block';
   addButton.onclick = function () {
     const input = document.createElement('input');
-    input.type = 'text';
+    input.type = typeField.value;
     input.placeholder = inputField.value; // Use label as placeholder
     input.className = 'mt-2 p-2 border border-gray-300 w-full';
-    form.appendChild(input);
+    form.insertBefore(input, submitButton);
+    updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
   };
 
   const sidebarForm = document.createElement('form');
@@ -150,10 +181,78 @@ function updateSidebarForForm(column) {
     e.preventDefault();
   };
 
+  const newFieldGroup = document.createElement('div');
+  newFieldGroup.className = 'group my-4 bg-white/50 p-4'
   sidebar.appendChild(sidebarForm);
-  sidebarForm.appendChild(inputLabel);
-  sidebarForm.appendChild(inputField);
-  sidebarForm.appendChild(addButton);
+  sidebarForm.appendChild(newFieldGroup);
+  sidebarForm.appendChild(submitLabel);
+  sidebarForm.appendChild(submitField);
+  newFieldGroup.appendChild(typeLabel);
+  newFieldGroup.appendChild(typeField);
+  newFieldGroup.appendChild(inputLabel);
+  newFieldGroup.appendChild(inputField);
+  newFieldGroup.appendChild(addButton);
+
+  updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
+}
+
+function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
+  // Remove all existing field editors except the add new field section
+  const existingEditors = sidebarForm.querySelectorAll('.field-editor');
+  existingEditors.forEach(editor => editor.remove());
+
+  // Iterate over form inputs and create corresponding editors in the sidebar form
+  form.querySelectorAll('input, select, textarea').forEach(input => {
+    if (input === submitButton) return;
+
+    const fieldEditor = document.createElement('div');
+    fieldEditor.className = 'field-editor group my-4 bg-white/50 p-4';
+
+    const fieldLabel = document.createElement('label');
+    fieldLabel.textContent = 'Edit Field Label:';
+    fieldLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const fieldInput = document.createElement('input');
+    fieldInput.type = 'text';
+    fieldInput.value = input.placeholder;
+    fieldInput.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    fieldInput.oninput = function () {
+      input.placeholder = fieldInput.value;
+    };
+
+    const fieldTypeLabel = document.createElement('label');
+    fieldTypeLabel.textContent = 'Edit Field Type:';
+    fieldTypeLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const fieldType = document.createElement('select');
+    fieldType.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    inputTypes.forEach(type => {
+      const option = document.createElement('option');
+      option.value = type;
+      option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+      if (type === input.type) option.selected = true;
+      fieldType.appendChild(option);
+    });
+    fieldType.onchange = function () {
+      input.type = fieldType.value;
+    };
+
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'bg-red-500 hover:bg-red-700 text-white font-bold py-1.5 px-4 rounded mt-2 inline-block';
+    deleteButton.onclick = function () {
+      input.remove();
+      fieldEditor.remove();
+    };
+
+    fieldEditor.appendChild(fieldLabel);
+    fieldEditor.appendChild(fieldInput);
+    fieldEditor.appendChild(fieldTypeLabel);
+    fieldEditor.appendChild(fieldType);
+    fieldEditor.appendChild(deleteButton);
+
+    sidebarForm.appendChild(fieldEditor);
+  });
 }
 
 function updateSidebarForList(column) {}
