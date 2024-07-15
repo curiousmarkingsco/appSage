@@ -82,7 +82,7 @@ function addEditingCapabilities(column, grid) {
   const editButton = column.querySelector('.editContent');
   if (editButton) {
     editButton.addEventListener('click', function () {
-      updateSidebarForContentType(column);
+      detectAndLoadContentType(column);
       tabinate('Edit Content');
       document.getElementById('sidebar-dynamic').classList.add('editing');
       highlightEditingElement(column);  // Highlight the column being edited

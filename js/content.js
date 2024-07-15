@@ -1,7 +1,7 @@
 /* content.js */
 
 function detectAndLoadContentType(column) {
-  const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a'];
+  const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul'];
   const found = types.find(type => column.querySelector(type));
   if (found) {
     switch (found) {
@@ -17,7 +17,16 @@ function detectAndLoadContentType(column) {
       case 'a':
         updateSidebarForButton(column);
         break;
+      case 'form':
+        updateSidebarForForm(column);
+        break;
+      case 'ul':
+        updateSidebarForList(column);
+        break;
     }
+  } else {
+    // If no specific type is found, proceed with showing options to add new content
+    updateSidebarForContentType(column);  // Redisplay content options as a fallback
   }
 }
 
@@ -79,7 +88,9 @@ function updateSidebarForContentType(column) {
     { label: '🔠<br> Heading', action: () => updateSidebarForHeading(column) },
     { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(column) },
     { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(column) },
-    { label: '🔗<br> Button', action: () => updateSidebarForButton(column) }
+    { label: '🔗<br> Button', action: () => updateSidebarForButton(column) },
+    { label: '📋<br> Form', action: () => updateSidebarForForm(column) },
+    { label: '🗂️<br> List', action: () => updateSidebarForList(column) }
   ];
 
   if (columnHasContent(column)) {
@@ -96,6 +107,51 @@ function updateSidebarForContentType(column) {
     });
   }
 }
+
+function updateSidebarForForm(column) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>`;
+  let form = column.querySelector('form')
+  console.log(!form)
+  if (!form) {
+    form = document.createElement('form');
+    column.appendChild(form);
+
+    // Add submit button
+    const submitButton = document.createElement('button');
+    submitButton.type = 'button';
+    submitButton.textContent = 'Submit';
+    submitButton.className = 'mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
+    form.appendChild(submitButton);
+  }
+
+  // Add field to add input elements
+  const inputLabel = document.createElement('label');
+  inputLabel.textContent = 'Field Label:';
+  inputLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const inputField = document.createElement('input');
+  inputField.type = 'text';
+  inputField.placeholder = 'Enter label...';
+  inputField.className = 'shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+  const addButton = document.createElement('button');
+  addButton.textContent = 'Add Field';
+  addButton.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2';
+  addButton.onclick = function () {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = inputField.value; // Use label as placeholder
+    input.className = 'mt-2 p-2 border border-gray-300 w-full';
+    form.appendChild(input);
+  };
+
+  sidebar.appendChild(inputLabel);
+  sidebar.appendChild(inputField);
+  sidebar.appendChild(addButton);
+}
+
+function updateSidebarForList(column) {}
 
 function updateSidebarForParagraph(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -183,7 +239,6 @@ function replaceWithNewHeading(oldHeading, newTag) {
   oldHeading.parentNode.replaceChild(newHeading, oldHeading);
   return newHeading;
 }
-
 
 function updateSidebarForMedia(column) {
   const sidebar = document.getElementById('sidebar-dynamic');

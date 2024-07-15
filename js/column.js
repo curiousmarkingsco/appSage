@@ -7,8 +7,8 @@ function createColumn(gridContainer) {
   editContentButton.className = 'editContent bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
   editContentButton.textContent = '✏️';
   editContentButton.addEventListener('click', function () {
+    detectAndLoadContentType(column);
     tabinate('Edit Content');
-    updateSidebarForContentType(column);
     highlightEditingElement(column);  // Highlight the column being edited
   });
 
