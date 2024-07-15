@@ -4,11 +4,11 @@
 .column-content {
   position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f0f0f0;
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* background-color: #f0f0f0; */
   padding: 32px 16px;
-  border: 1px solid #ccc;
+  border: 1px solid cyan;
 }
 
 /* Styles for buttons to be hidden by default */
@@ -46,4 +46,10 @@
 .column-content audio {
   max-width: 100%;
   min-height: 32px;
+}
+
+.editing-highlight {
+  border: 2px solid blue; /* Blue border for visibility */
+  padding: 5px; /* Slight padding to enhance focus */
+  box-shadow: 0 0 5px blue; /* Optional: adds a glow effect for stronger emphasis */
 }

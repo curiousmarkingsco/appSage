@@ -1,5 +1,8 @@
 tailwind.config = {
   darkMode: 'class',
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
   theme: {
     extend: {
       colors: {
