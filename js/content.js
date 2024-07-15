@@ -67,8 +67,6 @@ function updateSidebarForHeading(column) {
 
   sidebar.appendChild(textInput);
 
-  // Add margin and padding options
-  addStyleOptions(sidebar, column);
   // Add font size options
   addFontSizeOptions(sidebar, column);
 }
@@ -113,6 +111,7 @@ function updateSidebarForParagraph(column) {
   textInput.oninput = function () {
     if (!p) {
       p = document.createElement('p');
+      column.className = 'pagefont-medium';
       column.appendChild(p);
     }
     p.textContent = this.value;
@@ -120,8 +119,6 @@ function updateSidebarForParagraph(column) {
 
   sidebar.appendChild(textInput);
 
-  // Add margin and padding options
-  addStyleOptions(sidebar, column);
   // Add font size options
   addFontSizeOptions(sidebar, column);
 }
@@ -176,8 +173,6 @@ function updateSidebarForButton(column) {
   sidebar.appendChild(urlInput);
   sidebar.appendChild(checkboxLabel);
 
-  // Add margin and padding options
-  addStyleOptions(sidebar, column);
   // Add font size options
   addFontSizeOptions(sidebar, column);
 }
@@ -234,10 +229,6 @@ function updateSidebarForMedia(column) {
   };
 
   sidebar.appendChild(fileInput);
-
-  // Add margin and padding options
-  let mediaElement = column.querySelector('img, video, audio');
-  addStyleOptions(sidebar, column);
 }
 
 function addFontSizeOptions(sidebar, element) {
@@ -247,18 +238,33 @@ function addFontSizeOptions(sidebar, element) {
 
   const fontSizeSelect = document.createElement('select');
   fontSizeSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+  // Array of possible font sizes
   const sizes = ['small', 'medium', 'large'];
+
+  // Determine if the element has a font size class
+  const existingFontSize = element.className.split(' ').find(cls => cls.startsWith('pagefont-'));
+
   sizes.forEach(size => {
     const option = document.createElement('option');
     option.value = 'pagefont-' + size;
     option.textContent = size.charAt(0).toUpperCase() + size.slice(1);
+
+    // Set the selected attribute if this size is the current font size
+    if ('pagefont-' + size === existingFontSize) {
+      option.selected = true;
+    }
+
     fontSizeSelect.appendChild(option);
   });
 
+  // Update the class of the element on change
   fontSizeSelect.onchange = () => {
+    // Remove any existing font size class and add the selected one
     element.className = element.className.split(' ').filter(cls => !cls.startsWith('pagefont-')).join(' ') + ' ' + fontSizeSelect.value;
   };
 
+  // Append the label and select box to the sidebar
   sidebar.appendChild(fontSizeLabel);
   sidebar.appendChild(fontSizeSelect);
 }

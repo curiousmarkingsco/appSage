@@ -1,4 +1,25 @@
 /* sidebar.js */
+document.addEventListener('DOMContentLoaded', function () {
+  const tabs = document.querySelectorAll('nav[aria-label="Tabs"] a');
+
+  tabs.forEach(tab => {
+      tab.addEventListener('click', function (event) {
+          event.preventDefault();
+          updateActiveTab(tabs, tab); // Add and remove styles as needed
+          const editingElement = document.querySelector('#editing-highlight');
+          loadTabContent(tab.textContent.trim(), editingElement);
+      });
+  });
+});
+
+function tabinate(chosenTab) {
+  const tabs = document.querySelectorAll('nav[aria-label="Tabs"] a');
+  tabs.forEach(tab => {
+    if (tab.textContent == chosenTab) {
+      updateActiveTab(tabs, tab); // Add and remove styles as needed
+    }
+  });
+}
 
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
@@ -25,86 +46,84 @@ function showConfirmationModal(message, onConfirm) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  const tabs = document.querySelectorAll('nav[aria-label="Tabs"] a');
-  const sidebarDynamic = document.getElementById('sidebar-dynamic');
+function loadTabContent(tabName, editingElement) {
+  removeEditingHighlights();
+  const currentlyEditing = document.querySelector('#editing-highlight'); // Find currently highlighted element
+  if (currentlyEditing) {
+    currentlyEditing.id = ''; // Remove highlight from previously edited element
+  }
 
-  tabs.forEach(tab => {
-      tab.addEventListener('click', function (event) {
-          event.preventDefault();
-          updateActiveTab(tabs, tab);
-          const editingElement = document.querySelector('#editing-highlight');
-          loadTabContent(tab.textContent.trim(), editingElement);
-      });
-  });
-
-  function loadTabContent(tabName, editingElement) {
-    removeEditingHighlights();
-    const currentlyEditing = document.querySelector('#editing-highlight'); // Find currently highlighted element
-    console.log(currentlyEditing);
-    if (currentlyEditing) {
-      currentlyEditing.id = ''; // Remove highlight from previously edited element
-    }
-
+  // Delay the following operations to allow DOM changes to settle
+  setTimeout(() => {
+    const sidebarDynamic = document.getElementById('sidebar-dynamic');
     sidebarDynamic.innerHTML = ''; // Clear existing content
+    switch (tabName) {
+        case 'Edit Grid':
+            loadGridSettings(editingElement);
+            break;
+        case 'Edit Column':
+            loadColumnSettings(editingElement);
+            break;
+        case 'Edit Content':
+            loadContentSettings(editingElement);
+            break;
+        default:
+            console.log(tabName);
+            break;
+    }
+  }, 100);
+}
 
-    // Delay the following operations to allow DOM changes to settle
-    setTimeout(() => {
-      sidebarDynamic.innerHTML = ''; // Clear existing content
-      switch (tabName) {
-          case 'Edit Grid':
-              loadGridSettings(editingElement);
-              break;
-          case 'Edit Column':
-              loadColumnSettings(editingElement);
-              break;
-          case 'Edit Content':
-              loadContentSettings(editingElement);
-              break;
-      }
-    }, 100);
-  }
-
-  function loadGridSettings(editingElement) {
+function loadGridSettings(editingElement) {
+  if (editingElement && editingElement.parentElement) {
     highlightEditingElement(editingElement);
-    const gridSettingsHTML = `
-        <p><strong>Grid Width:</strong></p>
-        <button onclick="setGridWidth(document.getElementById('editing-highlight'), 'w-full')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Full Screen</button>
-        <button onclick="setGridWidth(document.getElementById('editing-highlight'), 'max-w-7xl w-full mx-auto')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Fixed Width</button>
-    `;
-    sidebarDynamic.innerHTML = gridSettingsHTML;
+    addGridOptions(editingElement.parentElement);
+  } else {
+    document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>';
   }
+}
 
-  function loadColumnSettings(editingElement) {
+function loadColumnSettings(editingElement) {
+  const sidebarDynamic = document.getElementById('sidebar-dynamic');
+  if (editingElement) {
     highlightEditingElement(editingElement);
+
+    // Initialize selected values based on the classes of the editing element
+    const paddingSelected = ['0', '2', '4', '8'].find(p => editingElement.classList.contains(`p-${p}`)) || '0';
+    const marginSelected = ['0', '2', '4', '8'].find(m => editingElement.classList.contains(`m-${m}`)) || '0';
+
     const columnSettingsHTML = `
         <p><strong>Edit Column Padding & Margin:</strong></p>
-        <select onchange="updateColumnClass(document.getElementById('editing-highlight'), 'p-' + this.value, 'p-')">
-            <option value="0">No Padding</option>
-            <option value="1">Small</option>
-            <option value="2">Medium</option>
-            <option value="4">Large</option>
+        <select id="paddingSelect" onchange="updateColumnClass(document.getElementById('editing-highlight'), 'p-' + this.value, 'p-')">
+            <option value="0" ${paddingSelected === '0' ? 'selected' : ''}>No Padding</option>
+            <option value="2" ${paddingSelected === '2' ? 'selected' : ''}>Small</option>
+            <option value="4" ${paddingSelected === '4' ? 'selected' : ''}>Medium</option>
+            <option value="8" ${paddingSelected === '8' ? 'selected' : ''}>Large</option>
         </select>
-        <select onchange="updateColumnClass(document.getElementById('editing-highlight'), 'm-' + this.value, 'm-')">
-            <option value="0">No Margin</option>
-            <option value="1">Small</option>
-            <option value="2">Medium</option>
-            <option value="4">Large</option>
+        <select id="marginSelect" onchange="updateColumnClass(document.getElementById('editing-highlight'), 'm-' + this.value, 'm-')">
+            <option value="0" ${marginSelected === '0' ? 'selected' : ''}>No Margin</option>
+            <option value="2" ${marginSelected === '2' ? 'selected' : ''}>Small</option>
+            <option value="4" ${marginSelected === '4' ? 'selected' : ''}>Medium</option>
+            <option value="8" ${marginSelected === '8' ? 'selected' : ''}>Large</option>
         </select>
-        <button onclick="removeColumn(editingElement)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Remove Column</button>
     `;
     sidebarDynamic.innerHTML = columnSettingsHTML;
+  } else {
+    document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a column by clicking the Plus (+) button after making a grid.</p>';
   }
+}
 
-  function loadContentSettings(editingElement) {
-    highlightEditingElement(editingElement);
-    if (columnHasContent(editingElement)) {
-      detectAndLoadContentType(editingElement); // Use existing function to load content-specific settings
-    } else {
-      sidebarDynamic.innerHTML = '<p>No content to edit. Add content using the main UI.</p>';
-    }
+function loadContentSettings(editingElement) {
+  highlightEditingElement(editingElement);
+  if (editingElement) {
+    updateSidebarForContentType(editingElement); // Use existing function to load content-specific settings
+  } else {
+    console.log(editingElement)
+    const sidebarDynamic = document.getElementById('sidebar-dynamic')
+    sidebarDynamic.innerHTML = '<p>No content to edit. Add content by making a grid or column.</p>';
   }
-});
+}
+
 
 function updateActiveTab(tabs, activeTab) {
   tabs.forEach(t => {

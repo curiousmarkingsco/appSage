@@ -1,5 +1,7 @@
 /* load.js */
 
+/* For future reference, removing storage: localStorage.removeItem('configId') */
+
 function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
 
@@ -81,6 +83,7 @@ function addEditingCapabilities(column) {
   if (editButton) {
       editButton.addEventListener('click', function() {
           updateSidebarForContentType(column);
+          tabinate('Edit Content');
           document.getElementById('sidebar-dynamic').classList.add('editing');
           highlightEditingElement(column);  // Highlight the column being edited
       });
@@ -91,12 +94,12 @@ function addEditingCapabilities(column) {
       removeButton.addEventListener('click', function() {
           if (columnHasContent(column)) {
               showConfirmationModal('Are you sure you want to delete this column?', () => {
-                  column.parentNode.removeChild(column);
-                  updateColumnCount(column.parentNode);
+                updateColumnCount(column.parentNode);
+                column.parentNode.removeChild(column);
               });
           } else {
-              column.parentNode.removeChild(column);
-              updateColumnCount(column.parentNode);
+            updateColumnCount(column.parentNode);
+            column.parentNode.removeChild(column);
           }
       });
   }

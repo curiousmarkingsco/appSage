@@ -2,13 +2,14 @@
 
 function createColumn(gridContainer) {
   const column = document.createElement('div');
-  column.className = 'col-span-1 column-content';  // Use column-content for CSS
+  column.className = 'col-span-1 column-content p-4 m-4 pagefont-medium';  // Use column-content for CSS
   const editContentButton = document.createElement('button');
   editContentButton.className = 'editContent bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
   editContentButton.textContent = '✏️';
   editContentButton.addEventListener('click', function () {
-      updateSidebarForContentType(column);
-      highlightEditingElement(column);  // Highlight the column being edited
+    tabinate('Edit Content');
+    updateSidebarForContentType(column);
+    highlightEditingElement(column);  // Highlight the column being edited
   });
 
   const removeColumnButton = document.createElement('button');
@@ -18,13 +19,13 @@ function createColumn(gridContainer) {
     // Check if the column has content
     if (columnHasContent(column)) {
       showConfirmationModal('Are you sure you want to delete this column?', () => {
-        gridContainer.removeChild(column);
         updateColumnCount(gridContainer);
+        gridContainer.removeChild(column);
       });
     } else {
       // If no significant content, remove the column immediately
-      gridContainer.removeChild(column);
       updateColumnCount(gridContainer);
+      gridContainer.removeChild(column);
     }
   });
 
@@ -37,7 +38,9 @@ function createColumn(gridContainer) {
 
 function highlightEditingElement(element) {
   removeEditingHighlights(); // Clear existing highlights
-  element.id = 'editing-highlight'; // Highlight the current element
+  if (element) {
+    element.id = 'editing-highlight'; // Highlight the current element
+  }
 }
 
 function createAddColumnButton(gridContainer) {
@@ -64,23 +67,28 @@ function updateColumnClass(element, value, prefix) {
 }
 
 function columnHasContent(column) {
-  // Check if column contains any significant elements
-  // We assume here that only certain tags are considered "content"
-  const contentTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'video', 'audio', 'a']; // Add other tags as needed
-  return Array.from(column.querySelectorAll('*')).some(child => {
-    // Check if the element is one of the content types and not empty
-    return contentTags.includes(child.tagName.toLowerCase()) && (
-      child.textContent.trim() !== '' || // Text content is not empty
-      (child.src && child.src.trim() !== '') || // For media elements with src
-      (child.href && child.href.trim() !== '') // For links
-    );
-  });
+  if (column) {
+    // Check if column contains any significant elements
+    // We assume here that only certain tags are considered "content"
+    const contentTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'video', 'audio', 'a']; // Add other tags as needed
+    return Array.from(column.querySelectorAll('*')).some(child => {
+      // Check if the element is one of the content types and not empty
+      return contentTags.includes(child.tagName.toLowerCase()) && (
+        child.textContent.trim() !== '' || // Text content is not empty
+        (child.src && child.src.trim() !== '') || // For media elements with src
+        (child.href && child.href.trim() !== '') // For links
+      );
+    });
+  } else {
+    sidebarDynamic = document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a column by clicking the Plus (+) button.</p>';
+  }
 }
 
 function addStyleOptions(sidebar, element) {
   const marginSelect = document.createElement('select');
   const paddingSelect = document.createElement('select');
-  ['small', 'medium', 'large'].forEach(size => {
+  ['2', '4', '8'].forEach(size => {
+    console.log(size);
     let marginOption = document.createElement('option');
     marginOption.value = 'm-' + size;
     marginOption.textContent = 'Margin ' + size;

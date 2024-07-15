@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.appendChild(initialColumn);
 
     document.getElementById('page').appendChild(gridContainer);
-    updateSidebar(gridContainer);
+    tabinate('Edit Grid');
+    addGridOptions(gridContainer);
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
-    addWidthOptions(gridContainer); // Adds width options for the grid
   });
 });

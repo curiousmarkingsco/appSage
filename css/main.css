@@ -7,7 +7,6 @@
   /* justify-content: center; */
   /* align-items: center; */
   /* background-color: #f0f0f0; */
-  padding: 32px 16px;
   border: 1px solid cyan;
 }
 
@@ -49,6 +48,5 @@
 }
 
 #editing-highlight {
-  padding: 5px; /* Slight padding to enhance focus */
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */
 }
