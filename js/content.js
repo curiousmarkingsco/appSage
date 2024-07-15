@@ -1,4 +1,4 @@
-
+/* content.js */
 
 function detectAndLoadContentType(column) {
   const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a'];

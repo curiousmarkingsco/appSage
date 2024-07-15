@@ -1,5 +1,4 @@
-
-
+/* column.js */
 
 function createColumn(gridContainer) {
   const column = document.createElement('div');

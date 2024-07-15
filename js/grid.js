@@ -1,4 +1,4 @@
-
+/* grid.js */
 
 function updateColumnCount(grid) {
   const columns = grid.querySelectorAll('.col-span-1').length;

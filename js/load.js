@@ -1,4 +1,5 @@
 /* load.js */
+
 function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
 

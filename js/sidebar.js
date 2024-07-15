@@ -1,3 +1,5 @@
+/* sidebar.js */
+
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center';

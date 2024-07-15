@@ -1,3 +1,5 @@
+/* preview.js */
+
 function loadPreview(pageId) {
   const json = localStorage.getItem(pageId);
   if (json) {
