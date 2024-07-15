@@ -1,0 +1,40 @@
+<!-- load.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <title>Load Page Configuration</title>
+  </head>
+  <body>
+      <h1>Select a Configuration to Load</h1>
+      <select id="fileSelector">
+          <!-- Options will be populated based on keys in localStorage -->
+      </select>
+      <button onclick="loadSelectedFile()">Load</button>
+      <script>
+          document.addEventListener('DOMContentLoaded', function() {
+              const selector = document.getElementById('fileSelector');
+
+              // Retrieve all keys from localStorage
+              for (let i = 0; i < localStorage.length; i++) {
+                  const key = localStorage.key(i);
+                  const value = localStorage.getItem(key);
+
+                  // Check if the value starts with the specific text
+                  if (value.startsWith('[{"tagName')) {
+                      const option = document.createElement('option');
+                      option.value = key;
+                      option.textContent = key;
+                      selector.appendChild(option);
+                  }
+              }
+          });
+
+          function loadSelectedFile() {
+              const selector = document.getElementById('fileSelector');
+              const filename = selector.value;
+              window.location.href = '/?config=' + filename;
+          }
+      </script>
+  </body>
+</html>
