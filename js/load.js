@@ -81,6 +81,8 @@ function addEditingCapabilities(column) {
   if (editButton) {
       editButton.addEventListener('click', function() {
           updateSidebarForContentType(column);
+          document.getElementById('sidebar-dynamic').classList.add('editing');
+          highlightEditingElement(column);  // Highlight the column being edited
       });
   }
 

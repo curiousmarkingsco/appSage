@@ -48,8 +48,7 @@
   min-height: 32px;
 }
 
-.editing-highlight {
-  border: 2px solid blue; /* Blue border for visibility */
+#editing-highlight {
   padding: 5px; /* Slight padding to enhance focus */
-  box-shadow: 0 0 5px blue; /* Optional: adds a glow effect for stronger emphasis */
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.5); /* Optional: adds a glow effect for stronger emphasis */
 }

@@ -30,90 +30,76 @@ document.addEventListener('DOMContentLoaded', function () {
   const sidebarDynamic = document.getElementById('sidebar-dynamic');
 
   tabs.forEach(tab => {
-    tab.addEventListener('click', function (event) {
-      event.preventDefault();
-      updateActiveTab(tabs, tab);
-      loadTabContent(tab.textContent.trim());
-    });
+      tab.addEventListener('click', function (event) {
+          event.preventDefault();
+          updateActiveTab(tabs, tab);
+          const editingElement = document.querySelector('#editing-highlight');
+          loadTabContent(tab.textContent.trim(), editingElement);
+      });
   });
 
-  function loadTabContent(tabName) {
-    const currentlyEditing = sidebarDynamic.querySelector('.editing'); // Check if there's an active editing marker
-    let targetElement;
-
+  function loadTabContent(tabName, editingElement) {
+    removeEditingHighlights();
+    const currentlyEditing = document.querySelector('#editing-highlight'); // Find currently highlighted element
+    console.log(currentlyEditing);
     if (currentlyEditing) {
-      // Retain a reference to the element being edited, found by a specific class or identifier set during editing
-      targetElement = document.querySelector('.' + currentlyEditing.dataset.editingTarget);
-      if (targetElement) {
-        targetElement.classList.remove('editing-highlight'); // Remove highlight from previously edited element
-      }
+      currentlyEditing.id = ''; // Remove highlight from previously edited element
     }
 
     sidebarDynamic.innerHTML = ''; // Clear existing content
 
-    // Add a slight delay to avoid flickering when transitioning between edits
-    switch (tabName) {
-      case 'Edit Grid':
-        loadGridSettings(targetElement || document.querySelector('.ugc-keep'));
-        break;
-      case 'Edit Column':
-        loadColumnSettings(targetElement || document.querySelector('.column-content'));
-        break;
-      case 'Edit Content':
-        loadContentSettings(targetElement || document.querySelector('.column-content'));
-        break;
-    }
-    if (targetElement) {
-      highlightEditingElement(targetElement); // Highlight the new element being edited
-    }
+    // Delay the following operations to allow DOM changes to settle
+    setTimeout(() => {
+      sidebarDynamic.innerHTML = ''; // Clear existing content
+      switch (tabName) {
+          case 'Edit Grid':
+              loadGridSettings(editingElement);
+              break;
+          case 'Edit Column':
+              loadColumnSettings(editingElement);
+              break;
+          case 'Edit Content':
+              loadContentSettings(editingElement);
+              break;
+      }
+    }, 100);
   }
 
-  function highlightEditingElement(element) {
-    element.classList.add('editing-highlight'); // Apply highlighting class
-    sidebarDynamic.dataset.editingTarget = element.classList[0]; // Store the target's class to find it later
-  }
-
-  function removeEditingHighlights() {
-    const allEditingHighlights = document.querySelectorAll('.editing-highlight');
-    allEditingHighlights.forEach(el => el.classList.remove('editing-highlight'));
-    delete sidebarDynamic.dataset.editingTarget;
-  }
-
-  function loadGridSettings() {
-    const grid = document.querySelector('.ugc-keep'); // Assume the first grid is what we want to edit
+  function loadGridSettings(editingElement) {
+    highlightEditingElement(editingElement);
     const gridSettingsHTML = `
         <p><strong>Grid Width:</strong></p>
-        <button onclick="setGridWidth(grid, 'w-full')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Full Screen</button>
-        <button onclick="setGridWidth(grid, 'max-w-7xl w-full mx-auto')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Fixed Width</button>
+        <button onclick="setGridWidth(document.getElementById('editing-highlight'), 'w-full')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Full Screen</button>
+        <button onclick="setGridWidth(document.getElementById('editing-highlight'), 'max-w-7xl w-full mx-auto')" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Fixed Width</button>
     `;
     sidebarDynamic.innerHTML = gridSettingsHTML;
   }
 
-  function loadColumnSettings() {
-    const firstColumn = document.querySelector('.column-content'); // Assume the first column to edit
+  function loadColumnSettings(editingElement) {
+    highlightEditingElement(editingElement);
     const columnSettingsHTML = `
         <p><strong>Edit Column Padding & Margin:</strong></p>
-        <select onchange="updateColumnClass(firstColumn, 'p-' + this.value, 'p-')">
+        <select onchange="updateColumnClass(document.getElementById('editing-highlight'), 'p-' + this.value, 'p-')">
             <option value="0">No Padding</option>
             <option value="1">Small</option>
             <option value="2">Medium</option>
             <option value="4">Large</option>
         </select>
-        <select onchange="updateColumnClass(firstColumn, 'm-' + this.value, 'm-')">
+        <select onchange="updateColumnClass(document.getElementById('editing-highlight'), 'm-' + this.value, 'm-')">
             <option value="0">No Margin</option>
             <option value="1">Small</option>
             <option value="2">Medium</option>
             <option value="4">Large</option>
         </select>
-        <button onclick="removeColumn(firstColumn)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Remove Column</button>
+        <button onclick="removeColumn(editingElement)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Remove Column</button>
     `;
     sidebarDynamic.innerHTML = columnSettingsHTML;
   }
 
-  function loadContentSettings() {
-    const firstColumn = document.querySelector('.column-content'); // Assume the first column for content editing
-    if (columnHasContent(firstColumn)) {
-      detectAndLoadContentType(firstColumn); // Use existing function to load content-specific settings
+  function loadContentSettings(editingElement) {
+    highlightEditingElement(editingElement);
+    if (columnHasContent(editingElement)) {
+      detectAndLoadContentType(editingElement); // Use existing function to load content-specific settings
     } else {
       sidebarDynamic.innerHTML = '<p>No content to edit. Add content using the main UI.</p>';
     }

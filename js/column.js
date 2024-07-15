@@ -7,7 +7,8 @@ function createColumn(gridContainer) {
   editContentButton.className = 'editContent bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
   editContentButton.textContent = '✏️';
   editContentButton.addEventListener('click', function () {
-    updateSidebarForContentType(column);
+      updateSidebarForContentType(column);
+      highlightEditingElement(column);  // Highlight the column being edited
   });
 
   const removeColumnButton = document.createElement('button');
@@ -32,6 +33,11 @@ function createColumn(gridContainer) {
   column.appendChild(removeColumnButton);
 
   return column;
+}
+
+function highlightEditingElement(element) {
+  removeEditingHighlights(); // Clear existing highlights
+  element.id = 'editing-highlight'; // Highlight the current element
 }
 
 function createAddColumnButton(gridContainer) {
@@ -91,4 +97,11 @@ function addStyleOptions(sidebar, element) {
 
   sidebar.appendChild(marginSelect);
   sidebar.appendChild(paddingSelect);
+}
+
+function removeEditingHighlights() {
+  const highlight = document.getElementById('editing-highlight');
+  if (highlight) {
+    highlight.id = '';
+  }
 }
