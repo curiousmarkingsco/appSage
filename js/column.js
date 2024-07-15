@@ -19,13 +19,13 @@ function createColumn(gridContainer) {
     // Check if the column has content
     if (columnHasContent(column)) {
       showConfirmationModal('Are you sure you want to delete this column?', () => {
-        updateColumnCount(gridContainer);
         gridContainer.removeChild(column);
+        updateColumnCount(gridContainer);
       });
     } else {
       // If no significant content, remove the column immediately
-      updateColumnCount(gridContainer);
       gridContainer.removeChild(column);
+      updateColumnCount(gridContainer);
     }
   });
 

@@ -6,19 +6,19 @@ function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
 
   const config = {
-      childList: true, // Observes direct children
-      attributes: true, // Observes attributes changes
-      subtree: true, // Observes all descendants
-      characterData: true // Observes text changes
+    childList: true, // Observes direct children
+    attributes: true, // Observes attributes changes
+    subtree: true, // Observes all descendants
+    characterData: true // Observes text changes
   };
 
-  const callback = function(mutationsList, observer) {
-      for (const mutation of mutationsList) {
-          if (mutation.type === 'childList' || mutation.type === 'attributes' || mutation.type === 'characterData') {
-              saveChanges(page); // Call save function whenever a change is detected
-              break; // Break after saving once to avoid multiple saves for the same batch of mutations
-          }
+  const callback = function (mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList' || mutation.type === 'attributes' || mutation.type === 'characterData') {
+        saveChanges(page); // Call save function whenever a change is detected
+        break; // Break after saving once to avoid multiple saves for the same batch of mutations
       }
+    }
   };
 
   const observer = new MutationObserver(callback);
@@ -63,45 +63,45 @@ function loadChanges(json) {
 
   const data = JSON.parse(json);
   data.forEach(item => {
-      const element = document.createElement(item.tagName);
-      element.className = item.className;
-      element.innerHTML = item.content;
-      pageContainer.appendChild(element);
+    const element = document.createElement(item.tagName);
+    element.className = item.className;
+    element.innerHTML = item.content;
+    pageContainer.appendChild(element);
 
-      // Check if it is a grid container and restore grid capabilities
-      if (element.classList.contains('grid')) {
-          restoreGridCapabilities(element);
-      } else {
-          // Otherwise, it might be a column or other editable element
-          addEditingCapabilities(element);
-      }
+    // Check if it is a grid container and restore grid capabilities
+    if (element.classList.contains('grid')) {
+      restoreGridCapabilities(element);
+    } else {
+      // Otherwise, it might be a column or other editable element
+      addEditingCapabilities(element);
+    }
   });
 }
 
-function addEditingCapabilities(column) {
+function addEditingCapabilities(column, grid) {
   const editButton = column.querySelector('.editContent');
   if (editButton) {
-      editButton.addEventListener('click', function() {
-          updateSidebarForContentType(column);
-          tabinate('Edit Content');
-          document.getElementById('sidebar-dynamic').classList.add('editing');
-          highlightEditingElement(column);  // Highlight the column being edited
-      });
+    editButton.addEventListener('click', function () {
+      updateSidebarForContentType(column);
+      tabinate('Edit Content');
+      document.getElementById('sidebar-dynamic').classList.add('editing');
+      highlightEditingElement(column);  // Highlight the column being edited
+    });
   }
 
   const removeButton = column.querySelector('.removeColumn');
   if (removeButton) {
-      removeButton.addEventListener('click', function() {
-          if (columnHasContent(column)) {
-              showConfirmationModal('Are you sure you want to delete this column?', () => {
-                updateColumnCount(column.parentNode);
-                column.parentNode.removeChild(column);
-              });
-          } else {
-            updateColumnCount(column.parentNode);
-            column.parentNode.removeChild(column);
-          }
-      });
+    removeButton.addEventListener('click', function () {
+      if (columnHasContent(column)) {
+        showConfirmationModal('Are you sure you want to delete this column?', () => {
+          grid.removeChild(column);
+          updateColumnCount(grid);
+        });
+      } else {
+        grid.removeChild(column);
+        updateColumnCount(grid);
+      }
+    });
   }
 }
 
@@ -112,6 +112,6 @@ function restoreGridCapabilities(grid) {
 
   // Restore editing properties for each column within the grid
   Array.from(grid.querySelectorAll('.column-content')).forEach(column => {
-      addEditingCapabilities(column);
+    addEditingCapabilities(column, grid);
   });
 }
