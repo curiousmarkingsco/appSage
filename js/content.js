@@ -125,7 +125,6 @@ function updateSidebarForForm(column) {
     form.appendChild(submitButton);
   }
 
-  // Add field to add input elements
   const inputLabel = document.createElement('label');
   inputLabel.textContent = 'Field Label:';
   inputLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
@@ -133,11 +132,11 @@ function updateSidebarForForm(column) {
   const inputField = document.createElement('input');
   inputField.type = 'text';
   inputField.placeholder = 'Enter label...';
-  inputField.className = 'shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+  inputField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
 
   const addButton = document.createElement('button');
-  addButton.textContent = 'Add Field';
-  addButton.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2';
+  addButton.textContent = 'Add';
+  addButton.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 px-4 rounded-r mr-2 mt-2 inline-block';
   addButton.onclick = function () {
     const input = document.createElement('input');
     input.type = 'text';
@@ -146,9 +145,15 @@ function updateSidebarForForm(column) {
     form.appendChild(input);
   };
 
-  sidebar.appendChild(inputLabel);
-  sidebar.appendChild(inputField);
-  sidebar.appendChild(addButton);
+  const sidebarForm = document.createElement('form');
+  sidebarForm.onsubmit = function (e) {
+    e.preventDefault();
+  };
+
+  sidebar.appendChild(sidebarForm);
+  sidebarForm.appendChild(inputLabel);
+  sidebarForm.appendChild(inputField);
+  sidebarForm.appendChild(addButton);
 }
 
 function updateSidebarForList(column) {}
