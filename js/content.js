@@ -2,7 +2,7 @@
 
 function addContentContainer(column) {
   const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container pagefont-medium column-content'; // A new class specifically for content
+  contentContainer.className = 'content-container column-content text-base'; // A new class specifically for content
   column.prepend(contentContainer);
 
   column.appendChild(addEditContentButton(contentContainer));
@@ -359,7 +359,7 @@ function updateSidebarForParagraph(contentContainer) {
   textInput.oninput = function () {
     if (!p) {
       p = document.createElement('p');
-      contentContainer.className = 'pagefont-medium text-alt';
+      contentContainer.className = 'text-base';
       contentContainer.appendChild(p);
     }
     p.textContent = this.value;
@@ -487,18 +487,18 @@ function addFontSizeOptions(sidebar, element) {
   fontSizeSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
 
   // Array of possible font sizes
-  const sizes = ['small', 'medium', 'large'];
+  const sizes = [['sm', 'Small'], ['md', 'Medium'], ['lg', 'Large'], ['xl', ' Extra Large (XL)'], ['2xl', '2 XL'], ['3xl', '3 XL'], ['4xl', '4 XL'], ['5xl', '5 XL'], ['6xl', '6 XL'], ['7xl', '7 XL']];
 
   // Determine if the element has a font size class
-  const existingFontSize = element.className.split(' ').find(cls => cls.startsWith('pagefont-'));
+  const existingFontSize = element.className.split(' ').find(cls => cls.startsWith('text-'));
 
   sizes.forEach(size => {
     const option = document.createElement('option');
-    option.value = 'pagefont-' + size;
-    option.textContent = size.charAt(0).toUpperCase() + size.slice(1);
+    option.value = 'text-' + size[0];
+    option.textContent = size[1];
 
     // Set the selected attribute if this size is the current font size
-    if ('pagefont-' + size === existingFontSize) {
+    if ('text-' + size === existingFontSize) {
       option.selected = true;
     }
 
@@ -508,7 +508,13 @@ function addFontSizeOptions(sidebar, element) {
   // Update the class of the element on change
   fontSizeSelect.onchange = () => {
     // Remove any existing font size class and add the selected one
-    element.className = element.className.split(' ').filter(cls => !cls.startsWith('pagefont-')).join(' ') + ' ' + fontSizeSelect.value;
+    const sizeClasses = new Set(sizes.map(size => 'text-' + size[0]));
+    Array.from(element.children).forEach(child => {
+      child.className = child.className
+          .split(' ')
+          .filter(cls => !sizeClasses.has(cls)) // Remove only the classes in sizeClasses
+          .join(' ') + ' ' + fontSizeSelect.value;
+    });
   };
 
   // Append the label and select box to the sidebar
