@@ -114,7 +114,7 @@ function updateSidebarForContentType(containerContainer, append) {
 
     const contentTypes = [
       { label: '🔠<br> Heading', action: () => updateSidebarForHeading(containerContainer) },
-      { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(containerContainer) },
+      { label: '🎵 📷 🎥<br> Media', action: () => updateSidebarForMedia(containerContainer) },
       { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
       { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
       { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) },
