@@ -1,7 +1,7 @@
 /* main.css */
 
 /* Ensures the column layout and visibility rules */
-.column-content {
+.column-content, .pagecolumn {
   position: relative;
   display: flex;
   /* justify-content: center; */
@@ -10,12 +10,16 @@
   border: 1px solid cyan;
 }
 
+.pagecolumn {
+  min-height: 82px;
+}
+
 /* Styles for buttons to be hidden by default */
-.editContent, .removeColumn {
+/* .editContent, .removeColumn {
   display: none;
   position: absolute;
   top: 10px;
-}
+} */
 
 .editContent {
   right: 70px; /* Adjust positioning as needed */

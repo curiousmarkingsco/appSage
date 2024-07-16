@@ -1,36 +1,58 @@
 /* content.js */
 
-function detectAndLoadContentType(column) {
+function addContentContainer(column) {
+  console.log(column);
+  const contentContainer = document.createElement('div');
+  contentContainer.className = 'content-container pagefont-medium column-content'; // A new class specifically for content
+  column.prepend(contentContainer);
+
+  // Append the edit content button here, rather than in the column element
+  const editContentButton = document.createElement('button');
+  editContentButton.className = 'editContent z-50 hidden group-hover:block absolute left-32 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  editContentButton.textContent = '✏️';
+  editContentButton.addEventListener('click', function () {
+    detectAndLoadContentType(contentContainer);
+    tabinate('Edit Content');
+    highlightEditingElement(contentContainer);
+  });
+
+  column.appendChild(editContentButton);
+  column.appendChild(contentContainer);
+  return contentContainer;
+}
+
+function detectAndLoadContentType(contentContainer) {
   const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul'];
-  const found = types.find(type => column.querySelector(type));
+  const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
     switch (found) {
       case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6':
-        updateSidebarForHeading(column);
+        updateSidebarForHeading(contentContainer);
         break;
       case 'p':
-        updateSidebarForParagraph(column);
+        updateSidebarForParagraph(contentContainer);
         break;
       case 'img': case 'video': case 'audio':
-        updateSidebarForMedia(column);
+        updateSidebarForMedia(contentContainer);
         break;
       case 'a':
-        updateSidebarForButton(column);
+        updateSidebarForButton(contentContainer);
         break;
       case 'form':
-        updateSidebarForForm(column);
+        updateSidebarForForm(contentContainer);
         break;
       case 'ul':
-        updateSidebarForList(column);
+        updateSidebarForList(contentContainer);
         break;
     }
   } else {
     // If no specific type is found, proceed with showing options to add new content
-    updateSidebarForContentType(column);  // Redisplay content options as a fallback
+    updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
   }
+  highlightEditingElement(contentContainer);
 }
 
-function updateSidebarForHeading(column) {
+function updateSidebarForHeading(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Choose Heading Type:</strong></div>`;
 
@@ -51,24 +73,24 @@ function updateSidebarForHeading(column) {
   textInput.className = 'mt-2 p-2 border border-gray-300 w-full';
 
   // Pre-fill if existing heading
-  const existingHeading = column.querySelector('h1, h2, h3, h4, h5, h6');
+  const existingHeading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
   if (existingHeading) {
     select.value = existingHeading.tagName.toLowerCase();
     textInput.value = existingHeading.textContent;
   }
 
   textInput.addEventListener('input', function () {
-    let heading = column.querySelector('h1, h2, h3, h4, h5, h6');
+    let heading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
     if (!heading) {
       heading = document.createElement(select.value);
-      column.appendChild(heading);
+      contentContainer.appendChild(heading);
     }
     heading.tagName !== select.value && (heading = replaceWithNewHeading(heading, select.value));
     heading.textContent = this.value;
   });
 
   select.addEventListener('change', function () {
-    const heading = column.querySelector('h1, h2, h3, h4, h5, h6');
+    const heading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
     if (heading) {
       replaceWithNewHeading(heading, this.value);
     }
@@ -77,25 +99,26 @@ function updateSidebarForHeading(column) {
   sidebar.appendChild(textInput);
 
   // Add font size options
-  addFontSizeOptions(sidebar, column);
+  addFontSizeOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForContentType(column) {
+function updateSidebarForContentType(element) {
+  const containerContainer = element.querySelector('.content-container')
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Select Content Type:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
 
   const contentTypes = [
-    { label: '🔠<br> Heading', action: () => updateSidebarForHeading(column) },
-    { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(column) },
-    { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(column) },
-    { label: '🔗<br> Button', action: () => updateSidebarForButton(column) },
-    { label: '📋<br> Form', action: () => updateSidebarForForm(column) },
-    { label: '🗂️<br> List', action: () => updateSidebarForList(column) }
+    { label: '🔠<br> Heading', action: () => updateSidebarForHeading(containerContainer) },
+    { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(containerContainer) },
+    { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
+    { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
+    { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) },
+    { label: '🗂️<br> List', action: () => updateSidebarForList(containerContainer) }
   ];
 
-  if (columnHasContent(column)) {
+  if (columnHasContent(containerContainer)) {
     // If content exists, directly load the editing interface for the existing content type
-    detectAndLoadContentType(column);
+    detectAndLoadContentType(containerContainer);
   } else {
     // No content exists, show options to add new content
     contentTypes.forEach(type => {
@@ -108,15 +131,15 @@ function updateSidebarForContentType(column) {
   }
 }
 
-function updateSidebarForForm(column) {
+function updateSidebarForForm(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>`;
-  let form = column.querySelector('form');
+  let form = contentContainer.querySelector('form');
   let submitButton;
 
   if (!form) {
     form = document.createElement('form');
-    column.appendChild(form);
+    contentContainer.appendChild(form);
 
     // Add submit button
     submitButton = document.createElement('button');
@@ -255,24 +278,24 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   });
 }
 
-function updateSidebarForList(column) {}
+function updateSidebarForList(contentContainer) {}
 
-function updateSidebarForParagraph(column) {
+function updateSidebarForParagraph(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = '<div><strong>Edit Paragraph Text:</strong></div>';
 
   const textInput = document.createElement('textarea');
   textInput.className = 'mt-2 p-2 border border-gray-300 w-full';
   textInput.rows = 4;
-  let p = column.querySelector('p');
+  let p = contentContainer.querySelector('p');
   if (p) {
     textInput.value = p.textContent;
   }
   textInput.oninput = function () {
     if (!p) {
       p = document.createElement('p');
-      column.className = 'pagefont-medium';
-      column.appendChild(p);
+      contentContainer.className = 'pagefont-medium text-alt';
+      contentContainer.appendChild(p);
     }
     p.textContent = this.value;
   };
@@ -280,10 +303,10 @@ function updateSidebarForParagraph(column) {
   sidebar.appendChild(textInput);
 
   // Add font size options
-  addFontSizeOptions(sidebar, column);
+  addFontSizeOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForButton(column) {
+function updateSidebarForButton(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = '<div><strong>Configure Button:</strong></div>';
 
@@ -305,7 +328,7 @@ function updateSidebarForButton(column) {
   checkbox.type = 'checkbox';
   checkbox.className = 'ml-2';
 
-  let button = column.querySelector('a');
+  let button = contentContainer.querySelector('a');
   if (button) {
     textInput.value = button.textContent;
     urlInput.value = button.href;
@@ -317,8 +340,8 @@ function updateSidebarForButton(column) {
   const buttonUpdate = function () {
     if (!button) {
       button = document.createElement('a');
-      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
-      column.appendChild(button);
+      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold py-2 px-4 rounded';
+      contentContainer.appendChild(button);
     }
     button.textContent = textInput.value;
     button.href = urlInput.value;
@@ -334,7 +357,7 @@ function updateSidebarForButton(column) {
   sidebar.appendChild(checkboxLabel);
 
   // Add font size options
-  addFontSizeOptions(sidebar, column);
+  addFontSizeOptions(sidebar, contentContainer);
 }
 
 function replaceWithNewHeading(oldHeading, newTag) {
@@ -344,7 +367,7 @@ function replaceWithNewHeading(oldHeading, newTag) {
   return newHeading;
 }
 
-function updateSidebarForMedia(column) {
+function updateSidebarForMedia(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Add/Edit Media:</strong></div>`;
 
@@ -357,7 +380,7 @@ function updateSidebarForMedia(column) {
     if (file) {
       const reader = new FileReader();
       reader.onload = function (e) {
-        let mediaElement = column.querySelector('img, video, audio');
+        let mediaElement = contentContainer.querySelector('img, video, audio');
         const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
 
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
@@ -377,7 +400,7 @@ function updateSidebarForMedia(column) {
             mediaElement = document.createElement('audio');
             mediaElement.controls = true; // Add controls for audio playback
           }
-          column.appendChild(mediaElement);
+          contentContainer.appendChild(mediaElement);
         }
 
         // Update source of the existing/new media element

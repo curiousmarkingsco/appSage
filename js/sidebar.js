@@ -115,6 +115,13 @@ function loadColumnSettings(editingElement) {
 
 function loadContentSettings(editingElement) {
   highlightEditingElement(editingElement);
+  const contentContainer = editingElement.querySelector('.content-container');
+  if (!contentContainer) {
+    addContentContainer(editingElement);
+    console.log('made a container');
+  } else {
+    console.log('didn\'t make a container');
+  }
   if (editingElement) {
     updateSidebarForContentType(editingElement); // Use existing function to load content-specific settings
   } else {

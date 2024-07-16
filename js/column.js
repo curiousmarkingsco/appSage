@@ -2,37 +2,37 @@
 
 function createColumn(gridContainer) {
   const column = document.createElement('div');
-  column.className = 'col-span-1 column-content p-4 m-4 pagefont-medium';  // Use column-content for CSS
-  const editContentButton = document.createElement('button');
-  editContentButton.className = 'editContent bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded';
-  editContentButton.textContent = '✏️';
-  editContentButton.addEventListener('click', function () {
-    detectAndLoadContentType(column);
-    tabinate('Edit Content');
-    highlightEditingElement(column);  // Highlight the column being edited
-  });
+  column.className = 'col-span-1 p-4 m-4 pagecolumn group';
 
+  // Adding only the relevant buttons for column manipulation
   const removeColumnButton = document.createElement('button');
-  removeColumnButton.className = 'removeColumn bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded';
+  removeColumnButton.className = 'removeColumn hidden z-50 absolute left-2 bg-red-500 group-hover:block hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
   removeColumnButton.textContent = '🗑️';
-  removeColumnButton.addEventListener('click', function () {
-    // Check if the column has content
+  removeColumnButton.addEventListener('click', function() {
     if (columnHasContent(column)) {
       showConfirmationModal('Are you sure you want to delete this column?', () => {
         gridContainer.removeChild(column);
         updateColumnCount(gridContainer);
       });
     } else {
-      // If no significant content, remove the column immediately
       gridContainer.removeChild(column);
       updateColumnCount(gridContainer);
     }
   });
 
-  // Append buttons to the column
-  column.appendChild(editContentButton);
-  column.appendChild(removeColumnButton);
+  const sidebar = document.getElementById('sidebar-dynamic');
+  const editColumnButton = document.createElement('button');
+  editColumnButton.className = 'editColumn ugc-discard hidden z-50 absolute left-16 group-hover:block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  editColumnButton.textContent = '🏛️';
+  editColumnButton.addEventListener('click', function () {
+    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
+    tabinate('Edit Column');
+    highlightEditingElement(column);
+    addStyleOptions(sidebar, column);
+  });
 
+  column.appendChild(editColumnButton);
+  column.appendChild(removeColumnButton);
   return column;
 }
 
@@ -88,7 +88,6 @@ function addStyleOptions(sidebar, element) {
   const marginSelect = document.createElement('select');
   const paddingSelect = document.createElement('select');
   ['2', '4', '8'].forEach(size => {
-    console.log(size);
     let marginOption = document.createElement('option');
     marginOption.value = 'm-' + size;
     marginOption.textContent = 'Margin ' + size;

@@ -1,28 +1,22 @@
 /* load.js */
 
-/* For future reference, removing storage: localStorage.removeItem('configId') */
-
 function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
-
   const config = {
-    childList: true, // Observes direct children
-    attributes: true, // Observes attributes changes
-    subtree: true, // Observes all descendants
-    characterData: true // Observes text changes
+    childList: true,
+    attributes: true,
+    subtree: true,
+    characterData: true
   };
-
-  const callback = function (mutationsList, observer) {
+  const callback = function(mutationsList, observer) {
     for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' || mutation.type === 'attributes' || mutation.type === 'characterData') {
-        saveChanges(page); // Call save function whenever a change is detected
-        break; // Break after saving once to avoid multiple saves for the same batch of mutations
+      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
+        saveChanges(page);
+        break;
       }
     }
   };
-
   const observer = new MutationObserver(callback);
-
   observer.observe(targetNode, config);
   console.log('Auto-save setup complete.');
 }
@@ -30,37 +24,26 @@ function setupAutoSave(page) {
 function saveChanges(page) {
   const pageContainer = document.getElementById('page');
   const elements = pageContainer.querySelectorAll('.ugc-keep');
-
-  const data = Array.from(elements).map(element => {
-    return {
-      tagName: element.tagName,
-      className: element.className,
-      // Filter out 'ugc-discard' elements before saving innerHTML
-      content: getCleanInnerHTML(element)
-    };
-  });
-
+  const data = Array.from(elements).map(element => ({
+    tagName: element.tagName,
+    className: element.className,
+    content: getCleanInnerHTML(element)
+  }));
   const json = JSON.stringify(data);
-  localStorage.setItem(page, json);  // Save to localStorage for simplicity
+  localStorage.setItem(page, json);
   console.log('Changes saved successfully!');
 }
 
 function getCleanInnerHTML(element) {
-  // Clone the element to not affect the original DOM
   const clone = element.cloneNode(true);
-
-  // Remove all elements within the clone that have the 'ugc-discard' class
   const discardElements = clone.querySelectorAll('.ugc-discard');
   discardElements.forEach(el => el.parentNode.removeChild(el));
-
-  // Return the cleaned innerHTML
   return clone.innerHTML;
 }
 
 function loadChanges(json) {
   const pageContainer = document.getElementById('page');
-  pageContainer.innerHTML = ''; // Clear existing content
-
+  pageContainer.innerHTML = '';
   const data = JSON.parse(json);
   data.forEach(item => {
     const element = document.createElement(item.tagName);
@@ -68,30 +51,38 @@ function loadChanges(json) {
     element.innerHTML = item.content;
     pageContainer.appendChild(element);
 
-    // Check if it is a grid container and restore grid capabilities
     if (element.classList.contains('grid')) {
       restoreGridCapabilities(element);
+    } else if (element.classList.contains('content-container')) {
+      restoreContentCapabilities(element);
     } else {
-      // Otherwise, it might be a column or other editable element
-      addEditingCapabilities(element);
+      restoreColumnCapabilities(element, pageContainer);
     }
   });
 }
 
-function addEditingCapabilities(column, grid) {
+function restoreGridCapabilities(grid) {
+  const addColumnButton = createAddColumnButton(grid);
+  grid.appendChild(addColumnButton);
+  Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
+    restoreColumnCapabilities(column, grid);
+  });
+}
+
+function restoreColumnCapabilities(column, grid) {
   const editButton = column.querySelector('.editContent');
+  const sidebar = document.getElementById('sidebar-dynamic');
   if (editButton) {
-    editButton.addEventListener('click', function () {
-      detectAndLoadContentType(column);
-      tabinate('Edit Content');
-      document.getElementById('sidebar-dynamic').classList.add('editing');
-      highlightEditingElement(column);  // Highlight the column being edited
+    editButton.addEventListener('click', function() {
+      sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
+      tabinate('Edit Column');
+      highlightEditingElement(column);
+      addStyleOptions(sidebar, column);
     });
   }
-
   const removeButton = column.querySelector('.removeColumn');
   if (removeButton) {
-    removeButton.addEventListener('click', function () {
+    removeButton.addEventListener('click', function() {
       if (columnHasContent(column)) {
         showConfirmationModal('Are you sure you want to delete this column?', () => {
           grid.removeChild(column);
@@ -105,13 +96,14 @@ function addEditingCapabilities(column, grid) {
   }
 }
 
-function restoreGridCapabilities(grid) {
-  // Assuming you have functionality to add columns dynamically and edit grid properties
-  const addColumnButton = createAddColumnButton(grid); // Ensures the 'add column' button is restored
-  grid.appendChild(addColumnButton);
-
-  // Restore editing properties for each column within the grid
-  Array.from(grid.querySelectorAll('.column-content')).forEach(column => {
-    addEditingCapabilities(column, grid);
-  });
+function restoreContentCapabilities(contentContainer) {
+  console.log(contentContainer);
+  const editButton = contentContainer.querySelector('.editContent');
+  if (editButton) {
+    editButton.addEventListener('click', function() {
+      detectAndLoadContentType(contentContainer);
+      tabinate('Edit Content');
+      highlightEditingElement(contentContainer);
+    });
+  }
 }
