@@ -44,7 +44,6 @@ function createEditColumnButton(column) {
   button.textContent = '🏛️';
   button.addEventListener('click', function () {
     sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
-    tabinate('Edit Column');
     highlightEditingElement(column);
     addStyleOptions(sidebar, column);
   });
@@ -63,11 +62,20 @@ function createAddColumnButton(gridContainer) {
       updateColumnCount(gridContainer);
       addContentContainer(newColumn);
       loadColumnSettings(newColumn);
-      tabinate('Edit Column');
       highlightEditingElement(newColumn);
     } else {
       alert('Maximum of 6 columns allowed.');
     }
+  };
+  return button;
+}
+
+function createEditGridButton(gridContainer) {
+  const button = document.createElement('button');
+  button.className = 'editGrid ugc-discard bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
+  button.textContent = '✏️';
+  button.onclick = function () {
+
   };
   return button;
 }

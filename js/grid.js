@@ -2,7 +2,7 @@
 
 function updateColumnCount(grid) {
   const columns = grid.querySelectorAll('.col-span-1').length;
-  grid.className = `w-full grid grid-cols-${columns} gap-4 p-4 ugc-keep`;
+  grid.className = `w-full pagegrid grid grid-cols-${columns} gap-4 p-4 ugc-keep`;
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Grid: ${columns} Columns</strong></div>`;
   addGridOptions(grid);
@@ -31,6 +31,7 @@ function addGridOptions(grid) {
   if (grid) {
     sidebar.appendChild(widthOptionsContainer);
     addRemoveGridButton(grid, sidebar);
+    highlightEditingElement(grid);
   }
 }
 

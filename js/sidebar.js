@@ -1,25 +1,4 @@
 /* sidebar.js */
-document.addEventListener('DOMContentLoaded', function () {
-  const tabs = document.querySelectorAll('nav[aria-label="Tabs"] a');
-
-  tabs.forEach(tab => {
-      tab.addEventListener('click', function (event) {
-          event.preventDefault();
-          updateActiveTab(tabs, tab); // Add and remove styles as needed
-          const editingElement = document.querySelector('#editing-highlight');
-          loadTabContent(tab.textContent.trim(), editingElement);
-      });
-  });
-});
-
-function tabinate(chosenTab) {
-  const tabs = document.querySelectorAll('nav[aria-label="Tabs"] a');
-  tabs.forEach(tab => {
-    if (tab.textContent == chosenTab) {
-      updateActiveTab(tabs, tab); // Add and remove styles as needed
-    }
-  });
-}
 
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
@@ -46,37 +25,8 @@ function showConfirmationModal(message, onConfirm) {
   });
 }
 
-function loadTabContent(tabName, editingElement) {
-  removeEditingHighlights();
-  const currentlyEditing = document.querySelector('#editing-highlight'); // Find currently highlighted element
-  if (currentlyEditing) {
-    currentlyEditing.id = ''; // Remove highlight from previously edited element
-  }
-
-  // Delay the following operations to allow DOM changes to settle
-  setTimeout(() => {
-    const sidebarDynamic = document.getElementById('sidebar-dynamic');
-    sidebarDynamic.innerHTML = ''; // Clear existing content
-    switch (tabName) {
-        case 'Edit Grid':
-            loadGridSettings(editingElement);
-            break;
-        case 'Edit Column':
-            loadColumnSettings(editingElement);
-            break;
-        case 'Edit Content':
-            loadContentSettings(editingElement);
-            break;
-        default:
-            console.log(tabName);
-            break;
-    }
-  }, 100);
-}
-
 function loadGridSettings(editingElement) {
   if (editingElement && editingElement.parentElement) {
-    highlightEditingElement(editingElement.parentElement);
     addGridOptions(editingElement.parentElement);
   } else {
     document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>';
@@ -86,8 +36,6 @@ function loadGridSettings(editingElement) {
 function loadColumnSettings(editingElement) {
   const sidebarDynamic = document.getElementById('sidebar-dynamic');
   if (editingElement) {
-    highlightEditingElement(editingElement);
-
     // Initialize selected values based on the classes of the editing element
     const paddingSelected = ['0', '2', '4', '8'].find(p => editingElement.classList.contains(`p-${p}`)) || '0';
     const marginSelected = ['0', '2', '4', '8'].find(m => editingElement.classList.contains(`m-${m}`)) || '0';
@@ -108,40 +56,27 @@ function loadColumnSettings(editingElement) {
         </select>
     `;
     sidebarDynamic.innerHTML = columnSettingsHTML;
+    highlightEditingElement(editingElement);
   } else {
     document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a column by clicking the Plus (+) button after making a grid.</p>';
   }
 }
 
 function loadContentSettings(editingElement) {
-  highlightEditingElement(editingElement);
   let contentContainer;
   if (editingElement) {
     contentContainer = editingElement.querySelector('.content-container');
     if (contentContainer) {
       updateSidebarForContentType(contentContainer);
+      highlightEditingElement(contentContainer);
     } else {
       addContentContainer(editingElement);
       contentContainer = editingElement.querySelector('.content-container');
       updateSidebarForContentType(contentContainer);
+      highlightEditingElement(contentContainer);
     }
   } else {
     const sidebarDynamic = document.getElementById('sidebar-dynamic')
     sidebarDynamic.innerHTML = '<p>No content to edit. Add content by making a grid or column.</p>';
   }
-}
-
-
-function updateActiveTab(tabs, activeTab) {
-  tabs.forEach(t => {
-    t.classList.remove('border-blue-500', 'text-blue-600');
-    t.classList.add('border-transparent', 'text-gray-500', 'hover:border-gray-300', 'hover:text-gray-700');
-  });
-  activeTab.classList.add('border-blue-500', 'text-blue-600');
-  activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:border-gray-300', 'hover:text-gray-700');
-}
-
-function clearEditingContext() {
-  removeEditingHighlights();
-  sidebarDynamic.innerHTML = '';
 }

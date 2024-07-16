@@ -2,7 +2,7 @@
 
 function addContentContainer(column) {
   const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container column-content text-base'; // A new class specifically for content
+  contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
   column.prepend(contentContainer);
 
   column.appendChild(addEditContentButton(contentContainer));
@@ -16,7 +16,6 @@ function addEditContentButton(contentContainer) {
   button.textContent = '✏️';
   button.addEventListener('click', function () {
     detectAndLoadContentType(contentContainer);
-    tabinate('Edit Content');
     highlightEditingElement(contentContainer);
   });
   return button;

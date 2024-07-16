@@ -5,12 +5,8 @@
 /*                                                     */
 
 /* Ensures the column layout and visibility rules */
-.column-content, .pagecolumn, .grid {
+.pagecontent, .pagecolumn, .pagegrid {
   position: relative;
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-  /* background-color: #f0f0f0; */
   border: 1px solid cyan;
 }
 
