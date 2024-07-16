@@ -76,7 +76,7 @@ function loadTabContent(tabName, editingElement) {
 
 function loadGridSettings(editingElement) {
   if (editingElement && editingElement.parentElement) {
-    highlightEditingElement(editingElement);
+    highlightEditingElement(editingElement.parentElement);
     addGridOptions(editingElement.parentElement);
   } else {
     document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>';

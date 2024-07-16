@@ -1,7 +1,7 @@
 /* main.css */
 
 /* Ensures the column layout and visibility rules */
-.column-content, .pagecolumn {
+.column-content, .pagecolumn, .grid {
   position: relative;
   display: flex;
   /* justify-content: center; */

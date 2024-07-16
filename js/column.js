@@ -5,9 +5,10 @@ function createColumn(gridContainer) {
   column.className = 'col-span-1 p-4 m-4 pagecolumn group';
 
   // Adding only the relevant buttons for column manipulation
-
-  column.appendChild(createEditColumnButton(column));
-  column.appendChild(createRemoveColumnButton(column));
+  const removeButton = createRemoveColumnButton(column, gridContainer);
+  const editButton = createEditColumnButton(column);
+  column.appendChild(editButton);
+  column.appendChild(removeButton);
   return column;
 }
 
@@ -18,9 +19,9 @@ function highlightEditingElement(element) {
   }
 }
 
-function createRemoveColumnButton(column) {
+function createRemoveColumnButton(column, gridContainer) {
   const button = document.createElement('button');
-  button.className = 'removeColumn ugc-discard hidden z-50 absolute left-2 bg-red-500 group-hover:block hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  button.className = 'removeColumn ugc-discard hidden z-50 absolute left-0 bg-red-500 group-hover:block hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
   button.textContent = '🗑️';
   button.addEventListener('click', function() {
     if (columnHasContent(column)) {
@@ -39,7 +40,7 @@ function createRemoveColumnButton(column) {
 function createEditColumnButton(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   const button = document.createElement('button');
-  button.className = 'editColumn ugc-discard hidden z-50 absolute left-16 group-hover:block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  button.className = 'editColumn ugc-discard hidden z-50 absolute left-14 group-hover:block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
   button.textContent = '🏛️';
   button.addEventListener('click', function () {
     sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
@@ -60,6 +61,7 @@ function createAddColumnButton(gridContainer) {
       const newColumn = createColumn(gridContainer);
       gridContainer.insertBefore(newColumn, this);
       updateColumnCount(gridContainer);
+      addContentContainer(newColumn);
     } else {
       alert('Maximum of 6 columns allowed.');
     }
@@ -86,8 +88,6 @@ function columnHasContent(column) {
         (child.href && child.href.trim() !== '') // For links
       );
     });
-  } else {
-    sidebarDynamic = document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a column by clicking the Plus (+) button.</p>';
   }
 }
 

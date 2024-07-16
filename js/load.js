@@ -53,10 +53,6 @@ function loadChanges(json) {
 
     if (element.classList.contains('grid')) {
       restoreGridCapabilities(element);
-    } else if (element.classList.contains('content-container')) {
-      restoreContentCapabilities(element);
-    } else {
-      restoreColumnCapabilities(element, pageContainer);
     }
   });
 }
@@ -66,6 +62,7 @@ function restoreGridCapabilities(grid) {
   grid.appendChild(addColumnButton);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     restoreColumnCapabilities(column, grid);
+    restoreContentCapabilities(column);
   });
 }
 
@@ -77,39 +74,19 @@ function restoreColumnCapabilities(column, grid) {
   }
   const sidebar = document.getElementById('sidebar-dynamic');
   column.appendChild(editButton);
-  editButton.addEventListener('click', function() {
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
-    tabinate('Edit Column');
-    highlightEditingElement(column);
-    addStyleOptions(sidebar, column);
-  });
   let removeButton;
   removeButton = column.querySelector('.removeColumn');
   if (!removeButton) {
-    removeButton = createRemoveColumnButton(column);
+    removeButton = createRemoveColumnButton(column, grid);
   }
   column.appendChild(removeButton);
-  removeButton.addEventListener('click', function() {
-    if (columnHasContent(column)) {
-      showConfirmationModal('Are you sure you want to delete this column?', () => {
-        grid.removeChild(column);
-        updateColumnCount(grid);
-      });
-    } else {
-      grid.removeChild(column);
-      updateColumnCount(grid);
-    }
-  });
 }
 
 function restoreContentCapabilities(contentContainer) {
-  console.log(contentContainer);
-  const editButton = contentContainer.querySelector('.editContent');
-  if (editButton) {
-    editButton.addEventListener('click', function() {
-      detectAndLoadContentType(contentContainer);
-      tabinate('Edit Content');
-      highlightEditingElement(contentContainer);
-    });
+  let editButton;
+  editButton = contentContainer.querySelector('.editContent');
+  if (!editButton) {
+    editButton = addEditContentButton(contentContainer);
   }
+  contentContainer.appendChild(editButton);
 }

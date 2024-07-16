@@ -5,19 +5,21 @@ function addContentContainer(column) {
   contentContainer.className = 'content-container pagefont-medium column-content'; // A new class specifically for content
   column.prepend(contentContainer);
 
-  // Append the edit content button here, rather than in the column element
-  const editContentButton = document.createElement('button');
-  editContentButton.className = 'editContent z-50 hidden group-hover:block absolute left-32 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
-  editContentButton.textContent = '✏️';
-  editContentButton.addEventListener('click', function () {
+  column.appendChild(addEditContentButton(contentContainer));
+  column.appendChild(contentContainer);
+  return contentContainer;
+}
+
+function addEditContentButton(contentContainer) {
+  const button = document.createElement('button');
+  button.className = 'editContent ugc-discard z-50 hidden group-hover:block absolute left-28 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  button.textContent = '✏️';
+  button.addEventListener('click', function () {
     detectAndLoadContentType(contentContainer);
     tabinate('Edit Content');
     highlightEditingElement(contentContainer);
   });
-
-  column.appendChild(editContentButton);
-  column.appendChild(contentContainer);
-  return contentContainer;
+  return button;
 }
 
 function detectAndLoadContentType(contentContainer) {
@@ -44,6 +46,7 @@ function detectAndLoadContentType(contentContainer) {
         updateSidebarForList(contentContainer);
         break;
     }
+    updateSidebarForContentType(contentContainer, true)
   } else {
     // If no specific type is found, proceed with showing options to add new content
     updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
@@ -101,31 +104,36 @@ function updateSidebarForHeading(contentContainer) {
   addFontSizeOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForContentType(containerContainer) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
-
-  const contentTypes = [
-    { label: '🔠<br> Heading', action: () => updateSidebarForHeading(containerContainer) },
-    { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(containerContainer) },
-    { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
-    { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
-    { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) },
-    { label: '🗂️<br> List', action: () => updateSidebarForList(containerContainer) }
-  ];
-
-  if (columnHasContent(containerContainer)) {
-    // If content exists, directly load the editing interface for the existing content type
-    detectAndLoadContentType(containerContainer);
+function updateSidebarForContentType(containerContainer, append) {
+  if (append) { //boolean
+    // ??
+    // Need to somehow make this work with multiple pieces of content
   } else {
-    // No content exists, show options to add new content
-    contentTypes.forEach(type => {
-      const button = document.createElement('button');
-      button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 content-button';
-      button.innerHTML = type.label;
-      button.onclick = type.action;
-      sidebar.appendChild(button);
-    });
+    const sidebar = document.getElementById('sidebar-dynamic');
+    sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
+
+    const contentTypes = [
+      { label: '🔠<br> Heading', action: () => updateSidebarForHeading(containerContainer) },
+      { label: '🎥🏞️🎵<br> Media', action: () => updateSidebarForMedia(containerContainer) },
+      { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
+      { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
+      { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) },
+      { label: '🗂️<br> List', action: () => updateSidebarForList(containerContainer) }
+    ];
+
+    if (columnHasContent(containerContainer)) {
+      // If content exists, directly load the editing interface for the existing content type
+      detectAndLoadContentType(containerContainer);
+    } else {
+      // No content exists, show options to add new content
+      contentTypes.forEach(type => {
+        const button = document.createElement('button');
+        button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 content-button';
+        button.innerHTML = type.label;
+        button.onclick = type.action;
+        sidebar.appendChild(button);
+      });
+    }
   }
 }
 
