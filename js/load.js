@@ -70,30 +70,36 @@ function restoreGridCapabilities(grid) {
 }
 
 function restoreColumnCapabilities(column, grid) {
-  const editButton = column.querySelector('.editContent');
-  const sidebar = document.getElementById('sidebar-dynamic');
-  if (editButton) {
-    editButton.addEventListener('click', function() {
-      sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
-      tabinate('Edit Column');
-      highlightEditingElement(column);
-      addStyleOptions(sidebar, column);
-    });
+  let editButton;
+  editButton = column.querySelector('.editContent');
+  if (!editButton) {
+    editButton = createEditColumnButton(column);
   }
-  const removeButton = column.querySelector('.removeColumn');
-  if (removeButton) {
-    removeButton.addEventListener('click', function() {
-      if (columnHasContent(column)) {
-        showConfirmationModal('Are you sure you want to delete this column?', () => {
-          grid.removeChild(column);
-          updateColumnCount(grid);
-        });
-      } else {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  column.appendChild(editButton);
+  editButton.addEventListener('click', function() {
+    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
+    tabinate('Edit Column');
+    highlightEditingElement(column);
+    addStyleOptions(sidebar, column);
+  });
+  let removeButton;
+  removeButton = column.querySelector('.removeColumn');
+  if (!removeButton) {
+    removeButton = createRemoveColumnButton(column);
+  }
+  column.appendChild(removeButton);
+  removeButton.addEventListener('click', function() {
+    if (columnHasContent(column)) {
+      showConfirmationModal('Are you sure you want to delete this column?', () => {
         grid.removeChild(column);
         updateColumnCount(grid);
-      }
-    });
-  }
+      });
+    } else {
+      grid.removeChild(column);
+      updateColumnCount(grid);
+    }
+  });
 }
 
 function restoreContentCapabilities(contentContainer) {

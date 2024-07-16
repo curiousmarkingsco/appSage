@@ -5,10 +5,24 @@ function createColumn(gridContainer) {
   column.className = 'col-span-1 p-4 m-4 pagecolumn group';
 
   // Adding only the relevant buttons for column manipulation
-  const removeColumnButton = document.createElement('button');
-  removeColumnButton.className = 'removeColumn hidden z-50 absolute left-2 bg-red-500 group-hover:block hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
-  removeColumnButton.textContent = '🗑️';
-  removeColumnButton.addEventListener('click', function() {
+
+  column.appendChild(createEditColumnButton(column));
+  column.appendChild(createRemoveColumnButton(column));
+  return column;
+}
+
+function highlightEditingElement(element) {
+  removeEditingHighlights(); // Clear existing highlights
+  if (element) {
+    element.id = 'editing-highlight'; // Highlight the current element
+  }
+}
+
+function createRemoveColumnButton(column) {
+  const button = document.createElement('button');
+  button.className = 'removeColumn ugc-discard hidden z-50 absolute left-2 bg-red-500 group-hover:block hover:bg-red-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  button.textContent = '🗑️';
+  button.addEventListener('click', function() {
     if (columnHasContent(column)) {
       showConfirmationModal('Are you sure you want to delete this column?', () => {
         gridContainer.removeChild(column);
@@ -19,28 +33,21 @@ function createColumn(gridContainer) {
       updateColumnCount(gridContainer);
     }
   });
+  return button;
+}
 
+function createEditColumnButton(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  const editColumnButton = document.createElement('button');
-  editColumnButton.className = 'editColumn ugc-discard hidden z-50 absolute left-16 group-hover:block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
-  editColumnButton.textContent = '🏛️';
-  editColumnButton.addEventListener('click', function () {
+  const button = document.createElement('button');
+  button.className = 'editColumn ugc-discard hidden z-50 absolute left-16 group-hover:block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded h-12 w-12';
+  button.textContent = '🏛️';
+  button.addEventListener('click', function () {
     sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
     tabinate('Edit Column');
     highlightEditingElement(column);
     addStyleOptions(sidebar, column);
   });
-
-  column.appendChild(editColumnButton);
-  column.appendChild(removeColumnButton);
-  return column;
-}
-
-function highlightEditingElement(element) {
-  removeEditingHighlights(); // Clear existing highlights
-  if (element) {
-    element.id = 'editing-highlight'; // Highlight the current element
-  }
+  return button;
 }
 
 function createAddColumnButton(gridContainer) {

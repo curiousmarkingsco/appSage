@@ -115,17 +115,17 @@ function loadColumnSettings(editingElement) {
 
 function loadContentSettings(editingElement) {
   highlightEditingElement(editingElement);
-  const contentContainer = editingElement.querySelector('.content-container');
-  if (!contentContainer) {
-    addContentContainer(editingElement);
-    console.log('made a container');
-  } else {
-    console.log('didn\'t make a container');
-  }
+  let contentContainer;
   if (editingElement) {
-    updateSidebarForContentType(editingElement); // Use existing function to load content-specific settings
+    contentContainer = editingElement.querySelector('.content-container');
+    if (contentContainer) {
+      updateSidebarForContentType(contentContainer);
+    } else {
+      addContentContainer(editingElement);
+      contentContainer = editingElement.querySelector('.content-container');
+      updateSidebarForContentType(contentContainer);
+    }
   } else {
-    console.log(editingElement)
     const sidebarDynamic = document.getElementById('sidebar-dynamic')
     sidebarDynamic.innerHTML = '<p>No content to edit. Add content by making a grid or column.</p>';
   }

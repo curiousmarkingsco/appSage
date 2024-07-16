@@ -1,7 +1,6 @@
 /* content.js */
 
 function addContentContainer(column) {
-  console.log(column);
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagefont-medium column-content'; // A new class specifically for content
   column.prepend(contentContainer);
@@ -102,8 +101,7 @@ function updateSidebarForHeading(contentContainer) {
   addFontSizeOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForContentType(element) {
-  const containerContainer = element.querySelector('.content-container')
+function updateSidebarForContentType(containerContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
 
