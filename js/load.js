@@ -3,18 +3,18 @@
 function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
   const config = {
-      childList: true,
-      attributes: true,
-      subtree: true,
-      characterData: true
+    childList: true,
+    attributes: true,
+    subtree: true,
+    characterData: true
   };
   const callback = function (mutationsList, observer) {
-      for (const mutation of mutationsList) {
-          if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
-              saveChanges(page);
-              break;
-          }
+    for (const mutation of mutationsList) {
+      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
+        saveChanges(page);
+        break;
       }
+    }
   };
   const observer = new MutationObserver(callback);
   observer.observe(targetNode, config);
@@ -25,9 +25,9 @@ function saveChanges(page) {
   const pageContainer = document.getElementById('page');
   const elements = pageContainer.querySelectorAll('.ugc-keep');
   const data = Array.from(elements).map(element => ({
-      tagName: element.tagName,
-      className: element.className,
-      content: getCleanInnerHTML(element)
+    tagName: element.tagName,
+    className: element.className,
+    content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
   savePage(page, json);
@@ -46,14 +46,14 @@ function loadChanges(json) {
   pageContainer.innerHTML = '';
   const data = JSON.parse(json);
   data.forEach(item => {
-      const element = document.createElement(item.tagName);
-      element.className = item.className;
-      element.innerHTML = item.content;
-      pageContainer.appendChild(element);
+    const element = document.createElement(item.tagName);
+    element.className = item.className;
+    element.innerHTML = item.content;
+    pageContainer.appendChild(element);
 
-      if (element.classList.contains('grid')) {
-          restoreGridCapabilities(element);
-      }
+    if (element.classList.contains('grid')) {
+      restoreGridCapabilities(element);
+    }
   });
 }
 
@@ -66,7 +66,7 @@ function loadPage(pageId) {
 function savePage(pageId, data) {
   const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
   if (!tailwindvpb.pages) {
-      tailwindvpb.pages = {};
+    tailwindvpb.pages = {};
   }
   tailwindvpb.pages[pageId] = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));

@@ -157,6 +157,34 @@ function updateSidebarForForm(contentContainer) {
     submitButton = form.querySelector('button[type="submit"]');
   }
 
+  // Add UI for setting the form action
+  const actionLabel = document.createElement('label');
+  actionLabel.textContent = 'Form Action URL:';
+  actionLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const actionField = document.createElement('input');
+  actionField.type = 'url';
+  actionField.placeholder = 'Enter form action URL';
+  actionField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  actionField.value = form.action;
+  actionField.oninput = function () {
+      form.action = actionField.value;
+  };
+
+  // Add UI for setting the form ID
+  const formIdLabel = document.createElement('label');
+  formIdLabel.textContent = 'Form ID:';
+  formIdLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const formIdField = document.createElement('input');
+  formIdField.type = 'text';
+  formIdField.placeholder = 'Enter form ID';
+  formIdField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  formIdField.value = form.id;
+  formIdField.oninput = function () {
+      form.id = formIdField.value;
+  };
+
   const submitLabel = document.createElement('label');
   submitLabel.textContent = 'Submit Button Text:';
   submitLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
@@ -213,15 +241,18 @@ function updateSidebarForForm(contentContainer) {
   const newFieldGroup = document.createElement('div');
   newFieldGroup.className = 'group my-4 bg-white/50 p-4'
   sidebar.appendChild(sidebarForm);
-  sidebarForm.appendChild(newFieldGroup);
+  sidebarForm.appendChild(formIdLabel);
+  sidebarForm.appendChild(formIdField);
+  sidebarForm.appendChild(actionLabel);
+  sidebarForm.appendChild(actionField);
   sidebarForm.appendChild(submitLabel);
   sidebarForm.appendChild(submitField);
+  sidebarForm.appendChild(newFieldGroup);
   newFieldGroup.appendChild(typeLabel);
   newFieldGroup.appendChild(typeField);
   newFieldGroup.appendChild(inputLabel);
   newFieldGroup.appendChild(inputField);
   newFieldGroup.appendChild(addButton);
-
   updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
 }
 
@@ -236,6 +267,30 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
 
     const fieldEditor = document.createElement('div');
     fieldEditor.className = 'field-editor group my-4 bg-white/50 p-4';
+
+    const idLabel = document.createElement('label');
+    idLabel.textContent = 'Input ID:';
+    idLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const idField = document.createElement('input');
+    idField.type = 'text';
+    idField.value = input.id;
+    idField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    idField.oninput = function () {
+        input.id = idField.value;
+    };
+
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'Input Name:';
+    nameLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const nameField = document.createElement('input');
+    nameField.type = 'text';
+    nameField.value = input.name;
+    nameField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    nameField.oninput = function () {
+        input.name = nameField.value;
+    };
 
     const fieldLabel = document.createElement('label');
     fieldLabel.textContent = 'Edit Field Label:';
@@ -278,6 +333,10 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     fieldEditor.appendChild(fieldInput);
     fieldEditor.appendChild(fieldTypeLabel);
     fieldEditor.appendChild(fieldType);
+    fieldEditor.appendChild(idLabel);
+    fieldEditor.appendChild(idField);
+    fieldEditor.appendChild(nameLabel);
+    fieldEditor.appendChild(nameField);
     fieldEditor.appendChild(deleteButton);
 
     sidebarForm.appendChild(fieldEditor);
