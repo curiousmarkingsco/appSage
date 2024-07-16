@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.className = 'w-full grid grid-cols-1 gap-4 p-4 ugc-keep';
 
     const initialColumn = createColumn(gridContainer);
+    addContentContainer(initialColumn);
     gridContainer.appendChild(initialColumn);
 
     document.getElementById('page').appendChild(gridContainer);

@@ -66,33 +66,34 @@
   <script src="./js/load.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const params = new URLSearchParams(window.location.search);
-      const config = params.get('config');
-      if (config) {
-        const json = localStorage.getItem(config);  // Assuming it's stored in localStorage
-        if (json) {
-          loadChanges(json);
+        const params = new URLSearchParams(window.location.search);
+        const config = params.get('config');
+        if (config) {
+            const json = loadPage(config);
+            if (json) {
+                loadChanges(json);
+            }
+            setupAutoSave(config);
+        } else {
+            let pageId = createNewConfigurationFile();
+            setupAutoSave(pageId);
         }
-        setupAutoSave(config);
-      } else {
-        let pageId = createNewConfigurationFile();
-        setupAutoSave(pageId);
-      }
 
-      // Remove lingering highlights from unexpected window close
-      removeEditingHighlights();
+        // Remove lingering highlights from unexpected window close
+        removeEditingHighlights();
     });
 
     function createNewConfigurationFile() {
-      let filename = 'Untitled';
-      let counter = 1;
-      while (localStorage.getItem(filename)) {
-        filename = `Untitled-${counter}`;
-        counter++;
-      }
-      localStorage.setItem(filename, '[]'); // Initialize with an empty array
-      window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
-      return filename;
+        let filename = 'Untitled';
+        let counter = 1;
+        while (loadPage(filename)) {
+            filename = `Untitled-${counter}`;
+            counter++;
+        }
+
+        savePage(filename, '[]'); // Initialize with an empty array
+        window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
+        return filename;
     }
   </script>
 </body>

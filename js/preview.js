@@ -1,7 +1,7 @@
 /* preview.js */
 
 function loadPreview(pageId) {
-  const json = localStorage.getItem(pageId);
+  const json = loadPage(pageId);
   if (json) {
       const pageContainer = document.getElementById('page');
       pageContainer.innerHTML = ''; // Clear existing content
