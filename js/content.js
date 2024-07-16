@@ -117,8 +117,7 @@ function updateSidebarForContentType(containerContainer, append) {
       { label: '🎵 📷 🎥<br> Media', action: () => updateSidebarForMedia(containerContainer) },
       { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
       { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
-      { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) },
-      { label: '🗂️<br> List', action: () => updateSidebarForList(containerContainer) }
+      { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) }
     ];
 
     if (columnHasContent(containerContainer)) {
