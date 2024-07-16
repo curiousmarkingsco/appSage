@@ -1,4 +1,8 @@
-/* main.css */
+/*                                                     */
+/* main.css                                            */
+/* These styles only exist on the builder (edit) page. */
+/*                                                     */
+/*                                                     */
 
 /* Ensures the column layout and visibility rules */
 .column-content, .pagecolumn, .grid {
@@ -10,47 +14,12 @@
   border: 1px solid cyan;
 }
 
+/* Give some space for the buttons to live */
 .pagecolumn {
   min-height: 82px;
 }
 
-/* Styles for buttons to be hidden by default */
-/* .editContent, .removeColumn {
-  display: none;
-  position: absolute;
-  top: 10px;
-} */
-
-.editContent {
-  right: 70px; /* Adjust positioning as needed */
-}
-
-.removeColumn {
-  right: 10px; /* Adjust positioning as needed */
-}
-
-.content-button {
-  height: 100px;
-  width: 100px;
-}
-
-/* Only show buttons when the column is hovered over */
-.column-content:hover .editContent,
-.column-content:hover .removeColumn {
-  display: block;
-}
-
-.column-content img,
-.column-content video {
-    max-width: 100%;
-    height: auto;
-}
-
-.column-content audio {
-  max-width: 100%;
-  min-height: 32px;
-}
-
+/* Visual indicator of the element being currently edited */
 #editing-highlight {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */
 }

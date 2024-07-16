@@ -128,7 +128,7 @@ function updateSidebarForContentType(containerContainer, append) {
       // No content exists, show options to add new content
       contentTypes.forEach(type => {
         const button = document.createElement('button');
-        button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 content-button';
+        button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 h-24 w-24';
         button.innerHTML = type.label;
         button.onclick = type.action;
         sidebar.appendChild(button);
