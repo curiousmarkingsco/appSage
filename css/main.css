@@ -1,4 +1,4 @@
-/*                                                     */
+                                                   
 /* main.css                                            */
 /* These styles only exist on the builder (edit) page. */
 /*                                                     */
@@ -7,7 +7,7 @@
 /* Ensures the column layout and visibility rules */
 .column-content, .pagecolumn, .grid {
   position: relative;
-  display: flex;
+  /* display: flex; */
   /* justify-content: center; */
   /* align-items: center; */
   /* background-color: #f0f0f0; */

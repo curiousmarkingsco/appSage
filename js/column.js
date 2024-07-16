@@ -62,6 +62,9 @@ function createAddColumnButton(gridContainer) {
       gridContainer.insertBefore(newColumn, this);
       updateColumnCount(gridContainer);
       addContentContainer(newColumn);
+      loadColumnSettings(newColumn);
+      tabinate('Edit Column');
+      highlightEditingElement(newColumn);
     } else {
       alert('Maximum of 6 columns allowed.');
     }

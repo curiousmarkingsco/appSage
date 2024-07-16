@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('page').appendChild(gridContainer);
     tabinate('Edit Grid');
     addGridOptions(gridContainer);
+    highlightEditingElement(gridContainer);
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);

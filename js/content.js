@@ -101,7 +101,7 @@ function updateSidebarForHeading(contentContainer) {
   sidebar.appendChild(textInput);
 
   // Add font size options
-  addFontSizeOptions(sidebar, contentContainer);
+  addTextOptions(sidebar, contentContainer);
 }
 
 function updateSidebarForContentType(containerContainer, append) {
@@ -367,7 +367,7 @@ function updateSidebarForParagraph(contentContainer) {
   sidebar.appendChild(textInput);
 
   // Add font size options
-  addFontSizeOptions(sidebar, contentContainer);
+  addTextOptions(sidebar, contentContainer);
 }
 
 function updateSidebarForButton(contentContainer) {
@@ -421,7 +421,7 @@ function updateSidebarForButton(contentContainer) {
   sidebar.appendChild(checkboxLabel);
 
   // Add font size options
-  addFontSizeOptions(sidebar, contentContainer);
+  addTextOptions(sidebar, contentContainer);
 }
 
 function replaceWithNewHeading(oldHeading, newTag) {
@@ -477,7 +477,12 @@ function updateSidebarForMedia(contentContainer) {
   sidebar.appendChild(fileInput);
 }
 
-function addFontSizeOptions(sidebar, element) {
+function addTextOptions(sidebar, element) {
+  const optionsLabel = document.createElement('label');
+  optionsLabel.textContent = 'Text Options:';
+  optionsLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+  sidebar.appendChild(optionsLabel);
+
   const fontSizeLabel = document.createElement('label');
   fontSizeLabel.textContent = 'Font Size:';
   fontSizeLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
@@ -485,38 +490,69 @@ function addFontSizeOptions(sidebar, element) {
   const fontSizeSelect = document.createElement('select');
   fontSizeSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
 
-  // Array of possible font sizes
-  const sizes = [['sm', 'Small'], ['md', 'Medium'], ['lg', 'Large'], ['xl', ' Extra Large (XL)'], ['2xl', '2 XL'], ['3xl', '3 XL'], ['4xl', '4 XL'], ['5xl', '5 XL'], ['6xl', '6 XL'], ['7xl', '7 XL']];
+  // Array of possible font sizes including base
+  const sizes = [['base', 'Base'], ['sm', 'Small'], ['md', 'Medium'], ['lg', 'Large'], ['xl', 'Extra Large (XL)'], ['2xl', '2 XL'], ['3xl', '3 XL'], ['4xl', '4 XL'], ['5xl', '5 XL'], ['6xl', '6 XL'], ['7xl', '7 XL']];
 
   // Determine if the element has a font size class
-  const existingFontSize = element.className.split(' ').find(cls => cls.startsWith('text-'));
+  const existingFontSize = element.className.split(' ').find(cls => cls.startsWith('text-') && sizes.some(size => cls.includes(size[0]))) || 'text-base';
 
   sizes.forEach(size => {
     const option = document.createElement('option');
     option.value = 'text-' + size[0];
     option.textContent = size[1];
-
-    // Set the selected attribute if this size is the current font size
-    if ('text-' + size === existingFontSize) {
-      option.selected = true;
-    }
-
+    option.selected = 'text-' + size[0] === existingFontSize;
     fontSizeSelect.appendChild(option);
   });
 
-  // Update the class of the element on change
   fontSizeSelect.onchange = () => {
-    // Remove any existing font size class and add the selected one
-    const sizeClasses = new Set(sizes.map(size => 'text-' + size[0]));
-    Array.from(element.children).forEach(child => {
-      child.className = child.className
-          .split(' ')
-          .filter(cls => !sizeClasses.has(cls)) // Remove only the classes in sizeClasses
-          .join(' ') + ' ' + fontSizeSelect.value;
-    });
+    updateElementClass(element, fontSizeSelect.value, 'size');
   };
 
-  // Append the label and select box to the sidebar
   sidebar.appendChild(fontSizeLabel);
   sidebar.appendChild(fontSizeSelect);
+
+  // Text alignment
+  const textAlignLabel = document.createElement('label');
+  textAlignLabel.textContent = 'Text Alignment:';
+  textAlignLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+  const textAlignSelect = document.createElement('select');
+  textAlignSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+  const alignments = ['left', 'center', 'right', 'justify', 'end', 'start'];
+
+  const existingTextAlign = element.className.split(' ').find(cls => cls.startsWith('text-') && alignments.includes(cls.substring(5))) || 'text-left';
+
+  alignments.forEach(alignment => {
+    const option = document.createElement('option');
+    option.value = 'text-' + alignment;
+    option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
+    option.selected = 'text-' + alignment === existingTextAlign;
+    textAlignSelect.appendChild(option);
+  });
+
+  textAlignSelect.onchange = () => {
+    updateElementClass(element, textAlignSelect.value, 'align');
+  };
+
+  sidebar.appendChild(textAlignLabel);
+  sidebar.appendChild(textAlignSelect);
+}
+
+// Helper function to update element class for sizes or alignment
+function updateElementClass(element, newValue, type) {
+  const prefix = 'text-';
+  let classesToRemove = [];
+  if (type === 'size') {
+    classesToRemove = ['base', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'].map(size => prefix + size);
+  } else if (type === 'align') {
+    classesToRemove = ['left', 'center', 'right', 'justify', 'end', 'start'].map(align => prefix + align);
+  }
+  Array.from(element.children).forEach(child => {
+    child.className = child.className
+      .split(' ')
+      .filter(cls => !classesToRemove.includes(cls))
+      .concat(newValue)
+      .join(' ');
+  });
 }
