@@ -77,7 +77,9 @@ function restoreGridCapabilities(grid) {
   grid.appendChild(addColumnButton);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     restoreColumnCapabilities(column, grid);
-    restoreContentCapabilities(column);
+    Array.from(column.querySelectorAll('.pagecontent')).forEach(content => {
+      restoreContentCapabilities(content);
+    });
   });
 }
 
@@ -96,6 +98,13 @@ function restoreColumnCapabilities(column, grid) {
   }
   column.appendChild(editButton);
 
+  let addButton;
+  addButton = column.querySelector('.addContent');
+  if (!addButton) {
+    addButton = createAddContentButton(column);
+  }
+  column.appendChild(addButton);
+
   let removeButton;
   removeButton = column.querySelector('.removeColumn');
   if (!removeButton) {
@@ -108,16 +117,9 @@ function restoreContentCapabilities(contentContainer) {
   let editButton;
   editButton = contentContainer.querySelector('.editContent');
   if (!editButton) {
-    editButton = addEditContentButton(contentContainer);
+    editButton = createEditContentButton(contentContainer);
   }
   contentContainer.appendChild(editButton);
-
-  let addButton;
-  addButton = contentContainer.querySelector('.addContent');
-  if (!addButton) {
-    addButton = createAddContentButton(contentContainer);
-  }
-  contentContainer.appendChild(addButton);
 }
 
 
