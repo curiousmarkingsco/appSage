@@ -457,7 +457,19 @@ function replaceWithNewHeading(oldHeading, newTag) {
   return newHeading;
 }
 
-function updateSidebarForMedia(contentContainer) {
+function updateSidebarForMedia(contentContainer, newContent) {
+  if (newContent) {
+    newContainer = addContentContainer(contentContainer, false)
+    if (contentContainer.classList.contains('pagecolumn')) {
+      // if it's a column, append our new content container
+      contentContainer.appendChild(newContainer);
+    } else {
+      // if it's not a column (presumably another content container),
+      // get the parent (the column) and then append our new content container
+      contentContainer.parentElement.appendChild(newContainer);
+    }
+    contentContainer = newContainer;
+  }
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Add/Edit Media:</strong></div>`;
 
