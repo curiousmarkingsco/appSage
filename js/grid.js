@@ -2,8 +2,9 @@
 
 function updateColumnCount(grid) {
   const columns = grid.querySelectorAll('.col-span-1').length;
-  grid.className = `w-full pagegrid grid grid-cols-${columns} gap-4 p-4 ugc-keep`;
-  const sidebar = document.getElementById('sidebar-dynamic');
+  const classList = grid.className.split(' ').filter(cls => !/\bgrid-cols-\d+\b/.test(cls));
+  classList.push(`grid-cols-${columns}`);
+  grid.className = classList.join(' ');
   addGridOptions(grid);
 }
 
