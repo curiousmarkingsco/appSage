@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.className = 'w-full pagegrid grid grid-cols-1 gap-4 p-4 ugc-keep';
 
     const initialColumn = createColumn(gridContainer);
-    addContentContainer(initialColumn, true);
     gridContainer.appendChild(initialColumn);
+
+    const addContentButton = createAddContentButton(initialColumn, true);
+    initialColumn.appendChild(addContentButton);
 
     document.getElementById('page').appendChild(gridContainer);
     addGridOptions(gridContainer);

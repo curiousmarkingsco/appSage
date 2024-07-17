@@ -101,7 +101,7 @@ function restoreColumnCapabilities(column, grid) {
   let addButton;
   addButton = column.querySelector('.addContent');
   if (!addButton) {
-    addButton = createAddContentButton(column);
+    addButton = createAddContentButton(column, true);
   }
   column.appendChild(addButton);
 

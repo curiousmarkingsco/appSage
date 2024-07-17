@@ -64,7 +64,7 @@ function detectAndLoadContentType(contentContainer) {
 
 function updateSidebarForHeading(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Choose Heading Type:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Edit Heading:</strong></div>`;
 
   const select = document.createElement('select');
   const options = ['Title (h1)', 'Heading One (h2)', 'Heading Two (h3)', 'Heading Three (h4)', 'Heading Four (h5)', 'Heading Five (h6)'];
@@ -122,14 +122,15 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   sidebar.appendChild(textInput);
+
+  // Add font size options
+  addTextOptions(sidebar, contentContainer);
+
   addEditableTextColor(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
-
-  // Add font size options
-  addTextOptions(sidebar, contentContainer);
 }
 
 function updateSidebarForContentType(contentContainer) {
@@ -545,11 +546,6 @@ function updateSidebarForMedia(contentContainer, newContent) {
 }
 
 function addTextOptions(sidebar, element) {
-  const optionsLabel = document.createElement('label');
-  optionsLabel.textContent = 'Text Options:';
-  optionsLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
-  sidebar.appendChild(optionsLabel);
-
   const fontSizeLabel = document.createElement('label');
   fontSizeLabel.textContent = 'Font Size:';
   fontSizeLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
