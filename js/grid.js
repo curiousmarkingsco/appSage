@@ -1,13 +1,5 @@
 /* grid.js */
 
-function updateColumnCount(grid) {
-  const columns = grid.querySelectorAll('.col-span-1').length;
-  const classList = grid.className.split(' ').filter(cls => !/\bgrid-cols-\d+\b/.test(cls));
-  classList.push(`grid-cols-${columns}`);
-  grid.className = classList.join(' ');
-  addGridOptions(grid);
-}
-
 function addGridOptions(grid) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Grid: ${grid.querySelectorAll('.col-span-1').length}</strong></div>`;
@@ -24,13 +16,14 @@ function addGridOptions(grid) {
   fixedWidthOption.textContent = 'Fixed Width';
   fixedWidthOption.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded';
   fixedWidthOption.onclick = () => setGridWidth(grid, 'max-w-7xl mx-auto w-full', 'Fixed');
-  
+
   widthOptionsContainer.appendChild(fullWidthOption);
   widthOptionsContainer.appendChild(fixedWidthOption);
 
   if (grid) {
     sidebar.appendChild(widthOptionsContainer);
     addRemoveGridButton(grid, sidebar);
+    addEditableRowsAndColumns(sidebar, grid);
     highlightEditingElement(grid);
 
     addEditableBackgroundColor(sidebar, grid);
@@ -77,4 +70,68 @@ function createVerticalMoveGridButton(grid, direction) {
     moveVertical(grid, direction);
   });
   return button;
+}
+
+function addEditableRowsAndColumns(sidebar, grid) {
+  const breakpoints = ['', 'sm', 'md', 'lg', 'xl', '2xl'];
+  const maxGridLines = 12; // Assuming the grid can have up to 12 columns/rows
+
+  breakpoints.forEach(bp => {
+    // Create dropdowns for columns
+    const columnLabel = document.createElement('label');
+    columnLabel.textContent = `${bp.toUpperCase()}: Number of Columns`;
+    columnLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const columnSelect = document.createElement('select');
+    columnSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+    // Create dropdowns for rows
+    const rowLabel = document.createElement('label');
+    rowLabel.textContent = `${bp.toUpperCase()}: Number of Rows`;
+    rowLabel.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+    const rowSelect = document.createElement('select');
+    rowSelect.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+    for (let i = 1; i <= maxGridLines; i++) {
+      // Options for columns
+      const columnOption = document.createElement('option');
+      columnOption.value = `${bp === '' ? bp : bp + ':'}grid-cols-${i}`;
+      columnOption.textContent = `${i} Column${i > 1 ? 's' : ''}`;
+      if (grid.className.includes(`${bp === '' ? bp : bp + ':'}grid-cols-${i}`)) {
+        columnOption.selected = true;
+      }
+      columnSelect.appendChild(columnOption);
+
+      // Options for rows
+      const rowOption = document.createElement('option');
+      rowOption.value = `${bp === '' ? bp : bp + ':'}grid-rows-${i}`;
+      rowOption.textContent = `${i} Row${i > 1 ? 's' : ''}`;
+      if (grid.className.includes(`${bp === '' ? bp : bp + ':'}grid-rows-${i}`)) {
+        rowOption.selected = true;
+      }
+      rowSelect.appendChild(rowOption);
+    }
+
+    columnSelect.onchange = () => {
+      // Remove old class and add new one
+      updateGridClass(grid, columnSelect.value, 'cols', bp);
+    };
+
+    rowSelect.onchange = () => {
+      // Remove old class and add new one
+      updateGridClass(grid, rowSelect.value, 'rows', bp);
+    };
+
+    // Append to sidebar
+    sidebar.appendChild(columnLabel);
+    sidebar.appendChild(columnSelect);
+    sidebar.appendChild(rowLabel);
+    sidebar.appendChild(rowSelect);
+  });
+}
+
+function updateGridClass(grid, newValue, type, breakpoint) {
+  const classRegex = new RegExp(`\\b${breakpoint === '' ? breakpoint : breakpoint + ':'}${type === 'cols' ? 'grid-cols' : 'grid-rows'}-\\d+\\b`, 'g');
+  grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
 }
