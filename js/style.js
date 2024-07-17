@@ -74,7 +74,8 @@ function addEditableBorders(sidebar, element) {
     const select = document.createElement('select');
     select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
     options[prop].forEach(option => {
-      const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : ''));
+      // Update to handle 'style' properly with 'border-' prefix
+      const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : (prop === 'style' ? 'border-' : '')));
       const optionElement = document.createElement('option');
       optionElement.value = valuePrefix + option;
       optionElement.textContent = option.toUpperCase();
@@ -84,7 +85,7 @@ function addEditableBorders(sidebar, element) {
 
     select.onchange = () => {
       options[prop].forEach(option => {
-        const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : ''));
+        const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : (prop === 'style' ? 'border-' : '')));
         element.classList.remove(valuePrefix + option);
       });
       element.classList.add(select.value);
@@ -94,6 +95,7 @@ function addEditableBorders(sidebar, element) {
     sidebar.appendChild(select);
   });
 }
+
 
 function addEditableBackgroundImage(sidebar, element) {
   const label = document.createElement('label');
