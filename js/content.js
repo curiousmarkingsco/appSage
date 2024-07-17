@@ -25,6 +25,22 @@ function createRemoveContentButton(column, contentContainer) {
   return button;
 }
 
+function createVerticalMoveContentButton(contentContainer, direction) {
+  const button = document.createElement('button');
+  button.className = 'moveContent ugc-discard bg-yellow-500 hover:bg-yellow-700 text-white font-bold p-2 rounded h-12 w-16';
+  if (direction == 'up') {
+    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M246.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3 192 320c0 17.7 14.3 32 32 32s32-14.3 32-32l0-210.7 73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-64z"/></svg>';
+    button.innerHTML += ' <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>';
+  } else {
+    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>';
+    button.innerHTML += ' <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M246.6 502.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 402.7 192 192c0-17.7 14.3-32 32-32s32 14.3 32 32l0 210.7 73.4-73.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-128 128zM64 160c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 96C0 43 43 0 96 0L352 0c53 0 96 43 96 96l0 64c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-64c0-17.7-14.3-32-32-32L96 64C78.3 64 64 78.3 64 96l0 64z"/></svg>';
+  }
+  button.addEventListener('click', function () {
+    moveContentVertical(contentContainer, direction);
+  });
+  return button;
+}
+
 function createEditContentButton(contentContainer) {
   const button = document.createElement('button');
   button.className = 'editContent ugc-discard z-50 hidden group-hover:block absolute top-0 left-28 bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded h-12 w-12';
@@ -48,6 +64,9 @@ function createAddContentButton(contentContainer) {
 }
 
 function detectAndLoadContentType(contentContainer) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  const oldMoveButtons = document.getElementById('moveContentButtons');
+  if (oldMoveButtons) { oldMoveButtons.remove }
   const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul'];
   const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
@@ -73,6 +92,13 @@ function detectAndLoadContentType(contentContainer) {
     updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
   }
   highlightEditingElement(contentContainer);
+
+  const moveButtons = document.createElement('div');
+  moveButtons.className = 'flex justify-between my-2';
+  moveButtons.id = 'moveContentButtons';
+  sidebar.prepend(moveButtons);
+  moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
+  moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 }
 
 function updateSidebarForHeading(contentContainer, newContent) {
@@ -648,4 +674,17 @@ function updateElementClass(element, newValue, type) {
       .concat(newValue)
       .join(' ');
   });
+}
+
+function moveContentVertical(element, direction) {
+  const parent = element.parentNode;
+  if (direction === 'up') {
+      if (element.previousElementSibling) {
+          parent.insertBefore(element, element.previousElementSibling);
+      }
+  } else if (direction === 'down') {
+      if (element.nextElementSibling) {
+          parent.insertBefore(element.nextElementSibling, element);
+      }
+  }
 }
