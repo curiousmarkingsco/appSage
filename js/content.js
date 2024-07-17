@@ -151,7 +151,19 @@ function showNewContentMenu(contentTypes, sidebar) {
   });
 }
 
-function updateSidebarForForm(contentContainer) {
+function updateSidebarForForm(contentContainer, newContent) {
+  if (newContent) {
+    newContainer = addContentContainer(contentContainer, false)
+    if (contentContainer.classList.contains('pagecolumn')) {
+      // if it's a column, append our new content container
+      contentContainer.appendChild(newContainer);
+    } else {
+      // if it's not a column (presumably another content container),
+      // get the parent (the column) and then append our new content container
+      contentContainer.parentElement.appendChild(newContainer);
+    }
+    contentContainer = newContainer;
+  }
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>`;
   let form = contentContainer.querySelector('form');
@@ -396,7 +408,19 @@ function updateSidebarForParagraph(contentContainer, newContent) {
   addTextOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForButton(contentContainer) {
+function updateSidebarForButton(contentContainer, newContent) {
+  if (newContent) {
+    newContainer = addContentContainer(contentContainer, false)
+    if (contentContainer.classList.contains('pagecolumn')) {
+      // if it's a column, append our new content container
+      contentContainer.appendChild(newContainer);
+    } else {
+      // if it's not a column (presumably another content container),
+      // get the parent (the column) and then append our new content container
+      contentContainer.parentElement.appendChild(newContainer);
+    }
+    contentContainer = newContainer;
+  }
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = '<div><strong>Configure Button:</strong></div>';
 
