@@ -21,7 +21,7 @@ function loadPreview(pageId) {
 }
 
 function hideEditingTools() {
-  const editingTools = document.querySelectorAll('.editContent, .removeColumn, .addColumn');
+  const editingTools = document.querySelectorAll('.addContent, .editContent, .removeColumn, .addColumn');
   editingTools.forEach(tool => {
       tool.style.display = 'none';
   });

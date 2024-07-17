@@ -1,11 +1,13 @@
 /* content.js */
 
-function addContentContainer(column) {
+function addContentContainer(column, addButton) {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
-  column.prepend(contentContainer);
 
   column.appendChild(addEditContentButton(contentContainer));
+  if (addButton) {
+    column.appendChild(createAddContentButton(contentContainer));
+  }
   column.appendChild(contentContainer);
   return contentContainer;
 }
@@ -16,6 +18,17 @@ function addEditContentButton(contentContainer) {
   button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>';
   button.addEventListener('click', function () {
     detectAndLoadContentType(contentContainer);
+    highlightEditingElement(contentContainer);
+  });
+  return button;
+}
+
+function createAddContentButton(contentContainer) {
+  const button = document.createElement('button');
+  button.className = 'addContent ugc-discard z-50 hidden group-hover:block absolute left-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded h-12 w-24';
+  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
+  button.addEventListener('click', function () {
+    updateSidebarForContentType(contentContainer);
     highlightEditingElement(contentContainer);
   });
   return button;
@@ -45,7 +58,6 @@ function detectAndLoadContentType(contentContainer) {
         updateSidebarForList(contentContainer);
         break;
     }
-    updateSidebarForContentType(contentContainer, true)
   } else {
     // If no specific type is found, proceed with showing options to add new content
     updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
@@ -53,7 +65,7 @@ function detectAndLoadContentType(contentContainer) {
   highlightEditingElement(contentContainer);
 }
 
-function updateSidebarForHeading(contentContainer) {
+function updateSidebarForHeading(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Choose Heading Type:</strong></div>`;
 
@@ -80,6 +92,20 @@ function updateSidebarForHeading(contentContainer) {
     textInput.value = existingHeading.textContent;
   }
 
+  if (newContent) {
+    newContainer = addContentContainer(contentContainer, false)
+    if (contentContainer.classList.contains('pagecolumn')) {
+      // if it's a column, append our new content container
+      contentContainer.appendChild(newContainer);
+    } else {
+      // if it's not a column (presumably another content container),
+      // get the parent (the column) and then append our new content container
+      contentContainer.parentElement.appendChild(newContainer);
+    }
+    heading = document.createElement(select.value);
+    newContainer.appendChild(heading);
+  }
+
   textInput.addEventListener('input', function () {
     let heading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
     if (!heading) {
@@ -103,36 +129,28 @@ function updateSidebarForHeading(contentContainer) {
   addTextOptions(sidebar, contentContainer);
 }
 
-function updateSidebarForContentType(containerContainer, append) {
-  if (append) { //boolean
-    // ??
-    // Need to somehow make this work with multiple pieces of content
-  } else {
-    const sidebar = document.getElementById('sidebar-dynamic');
-    sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
+function updateSidebarForContentType(contentContainer) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
 
-    const contentTypes = [
-      { label: '🔠<br> Heading', action: () => updateSidebarForHeading(containerContainer) },
-      { label: '🎵 📷 🎥<br> Media', action: () => updateSidebarForMedia(containerContainer) },
-      { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(containerContainer) },
-      { label: '🔗<br> Button', action: () => updateSidebarForButton(containerContainer) },
-      { label: '📋<br> Form', action: () => updateSidebarForForm(containerContainer) }
-    ];
+  const contentTypes = [
+    { label: '🔠<br> Heading', action: () => updateSidebarForHeading(contentContainer, true) },
+    { label: '🎵 📷 🎥<br> Media', action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(contentContainer, true) },
+    { label: '🔗<br> Button', action: () => updateSidebarForButton(contentContainer, true) },
+    { label: '📋<br> Form', action: () => updateSidebarForForm(contentContainer, true) }
+  ];
+  showNewContentMenu(contentTypes, sidebar);
+}
 
-    if (columnHasContent(containerContainer)) {
-      // If content exists, directly load the editing interface for the existing content type
-      detectAndLoadContentType(containerContainer);
-    } else {
-      // No content exists, show options to add new content
-      contentTypes.forEach(type => {
-        const button = document.createElement('button');
-        button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 h-24 w-24';
-        button.innerHTML = type.label;
-        button.onclick = type.action;
-        sidebar.appendChild(button);
-      });
-    }
-  }
+function showNewContentMenu(contentTypes, sidebar) {
+  contentTypes.forEach(type => {
+    const button = document.createElement('button');
+    button.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded m-2 h-24 w-24';
+    button.innerHTML = type.label;
+    button.onclick = type.action;
+    sidebar.appendChild(button);
+  });
 }
 
 function updateSidebarForForm(contentContainer) {
@@ -166,7 +184,7 @@ function updateSidebarForForm(contentContainer) {
   actionField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
   actionField.value = form.action;
   actionField.oninput = function () {
-      form.action = actionField.value;
+    form.action = actionField.value;
   };
 
   // Add UI for setting the form ID
@@ -180,7 +198,7 @@ function updateSidebarForForm(contentContainer) {
   formIdField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
   formIdField.value = form.id;
   formIdField.oninput = function () {
-      form.id = formIdField.value;
+    form.id = formIdField.value;
   };
 
   const submitLabel = document.createElement('label');
@@ -275,7 +293,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     idField.value = input.id;
     idField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
     idField.oninput = function () {
-        input.id = idField.value;
+      input.id = idField.value;
     };
 
     const nameLabel = document.createElement('label');
@@ -287,7 +305,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     nameField.value = input.name;
     nameField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
     nameField.oninput = function () {
-        input.name = nameField.value;
+      input.name = nameField.value;
     };
 
     const fieldLabel = document.createElement('label');
@@ -341,7 +359,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   });
 }
 
-function updateSidebarForList(contentContainer) {}
+function updateSidebarForList(contentContainer) { }
 
 function updateSidebarForParagraph(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');

@@ -111,4 +111,13 @@ function restoreContentCapabilities(contentContainer) {
     editButton = addEditContentButton(contentContainer);
   }
   contentContainer.appendChild(editButton);
+
+  let addButton;
+  addButton = contentContainer.querySelector('.addContent');
+  if (!addButton) {
+    addButton = createAddContentButton(contentContainer);
+  }
+  contentContainer.appendChild(addButton);
 }
+
+
