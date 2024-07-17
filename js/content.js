@@ -54,9 +54,6 @@ function detectAndLoadContentType(contentContainer) {
       case 'form':
         updateSidebarForForm(contentContainer);
         break;
-      case 'ul':
-        updateSidebarForList(contentContainer);
-        break;
     }
   } else {
     // If no specific type is found, proceed with showing options to add new content
@@ -360,15 +357,26 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   });
 }
 
-function updateSidebarForList(contentContainer) { }
-
-function updateSidebarForParagraph(contentContainer) {
+function updateSidebarForParagraph(contentContainer, newContent) {
+  if (newContent) {
+    newContainer = addContentContainer(contentContainer, false)
+    if (contentContainer.classList.contains('pagecolumn')) {
+      // if it's a column, append our new content container
+      contentContainer.appendChild(newContainer);
+    } else {
+      // if it's not a column (presumably another content container),
+      // get the parent (the column) and then append our new content container
+      contentContainer.parentElement.appendChild(newContainer);
+    }
+    contentContainer = newContainer;
+  }
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = '<div><strong>Edit Paragraph Text:</strong></div>';
 
   const textInput = document.createElement('textarea');
   textInput.className = 'mt-2 p-2 border border-gray-300 w-full';
   textInput.rows = 4;
+
   let p = contentContainer.querySelector('p');
   if (p) {
     textInput.value = p.textContent;
@@ -376,7 +384,7 @@ function updateSidebarForParagraph(contentContainer) {
   textInput.oninput = function () {
     if (!p) {
       p = document.createElement('p');
-      contentContainer.className = 'text-base';
+      contentContainer.classList.add('text-base');
       contentContainer.appendChild(p);
     }
     p.textContent = this.value;
