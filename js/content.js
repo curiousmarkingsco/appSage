@@ -122,6 +122,11 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   sidebar.appendChild(textInput);
+  addEditableTextColor(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
+  addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableMarginAndPadding(sidebar, contentContainer);
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
