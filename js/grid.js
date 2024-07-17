@@ -31,6 +31,11 @@ function addGridOptions(grid) {
     sidebar.appendChild(widthOptionsContainer);
     addRemoveGridButton(grid, sidebar);
     highlightEditingElement(grid);
+
+    addEditableBackgroundColor(sidebar, grid);
+    addEditableBorders(sidebar, grid);
+    addEditableBackgroundImage(sidebar, grid);
+    addEditableMarginAndPadding(sidebar, grid);
   }
 }
 

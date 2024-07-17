@@ -78,7 +78,7 @@ function restoreGridCapabilities(grid) {
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     restoreColumnCapabilities(column, grid);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(content => {
-      restoreContentCapabilities(content);
+      restoreContentCapabilities(column, content);
     });
   });
 }
@@ -101,7 +101,7 @@ function restoreColumnCapabilities(column, grid) {
   let addButton;
   addButton = column.querySelector('.addContent');
   if (!addButton) {
-    addButton = createAddContentButton(column, true);
+    addButton = createAddContentButton(column);
   }
   column.appendChild(addButton);
 
@@ -113,13 +113,18 @@ function restoreColumnCapabilities(column, grid) {
   column.appendChild(removeButton);
 }
 
-function restoreContentCapabilities(contentContainer) {
+function restoreContentCapabilities(column, contentContainer) {
   let editButton;
   editButton = contentContainer.querySelector('.editContent');
   if (!editButton) {
     editButton = createEditContentButton(contentContainer);
   }
   contentContainer.appendChild(editButton);
+
+  let removeButton;
+  removeButton = contentContainer.querySelector('.removeContent');
+  if (!removeButton) {
+    removeButton = createRemoveContentButton(column, contentContainer);
+  }
+  contentContainer.appendChild(removeButton);
 }
-
-
