@@ -412,6 +412,12 @@ function updateSidebarForParagraph(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
+
+  addEditableTextColor(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
+  addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
 function updateSidebarForButton(contentContainer, newContent) {
@@ -478,6 +484,12 @@ function updateSidebarForButton(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
+
+  addEditableTextColor(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
+  addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
 function replaceWithNewHeading(oldHeading, newTag) {
