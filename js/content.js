@@ -676,7 +676,7 @@ function updateElementClass(element, newValue, type) {
   });
 }
 
-function moveContentVertical(element, direction) {
+function moveVertical(element, direction) {
   const parent = element.parentNode;
   if (direction === 'up') {
       if (element.previousElementSibling) {
