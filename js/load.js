@@ -82,13 +82,20 @@ function restoreGridCapabilities(grid) {
 }
 
 function restoreColumnCapabilities(column, grid) {
+  let gridButton;
+  gridButton = column.querySelector('.editGrid');
+  if (!gridButton) {
+    gridButton = createEditGridButton(grid);
+  }
+  column.appendChild(gridButton);
+
   let editButton;
-  editButton = column.querySelector('.editContent');
+  editButton = column.querySelector('.editColumn');
   if (!editButton) {
     editButton = createEditColumnButton(column);
   }
-  const sidebar = document.getElementById('sidebar-dynamic');
   column.appendChild(editButton);
+
   let removeButton;
   removeButton = column.querySelector('.removeColumn');
   if (!removeButton) {

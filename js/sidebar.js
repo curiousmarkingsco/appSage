@@ -7,8 +7,8 @@ function showConfirmationModal(message, onConfirm) {
       <div class="bg-white p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-black">${message}</p>
           <div class="flex justify-between mt-4">
-              <button id="confirmDelete" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-              <button id="cancelDelete" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+              <button id="confirmDelete" class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded">Delete</button>
+              <button id="cancelDelete" class="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
@@ -23,14 +23,6 @@ function showConfirmationModal(message, onConfirm) {
   document.getElementById('cancelDelete').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
-}
-
-function loadGridSettings(editingElement) {
-  if (editingElement && editingElement.parentElement) {
-    addGridOptions(editingElement.parentElement);
-  } else {
-    document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>';
-  }
 }
 
 function loadColumnSettings(editingElement) {
@@ -59,24 +51,5 @@ function loadColumnSettings(editingElement) {
     highlightEditingElement(editingElement);
   } else {
     document.getElementById('sidebar-dynamic').innerHTML = '<p>Nothing to edit. Add a column by clicking the Plus (+) button after making a grid.</p>';
-  }
-}
-
-function loadContentSettings(editingElement) {
-  let contentContainer;
-  if (editingElement) {
-    contentContainer = editingElement.querySelector('.content-container');
-    if (contentContainer) {
-      updateSidebarForContentType(contentContainer);
-      highlightEditingElement(contentContainer);
-    } else {
-      addContentContainer(editingElement);
-      contentContainer = editingElement.querySelector('.content-container');
-      updateSidebarForContentType(contentContainer);
-      highlightEditingElement(contentContainer);
-    }
-  } else {
-    const sidebarDynamic = document.getElementById('sidebar-dynamic')
-    sidebarDynamic.innerHTML = '<p>No content to edit. Add content by making a grid or column.</p>';
   }
 }
