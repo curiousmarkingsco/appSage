@@ -12,6 +12,7 @@ function setupAutoSave(page) {
     for (const mutation of mutationsList) {
       if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
         saveChanges(page);
+        savePageSettingsChanges(page);
         break;
       }
     }
@@ -23,11 +24,12 @@ function setupAutoSave(page) {
 
 function saveChanges(page) {
   const pageContainer = document.getElementById('page');
-  const elements = pageContainer.querySelectorAll('.ugc-keep');
+  // Query only elements with 'ugc-keep' that are meant to be saved
+  const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
   const data = Array.from(elements).map(element => ({
-    tagName: element.tagName,
-    className: element.className,
-    content: getCleanInnerHTML(element)
+      tagName: element.tagName,
+      className: element.className.replace(/bg-\[url\(.*?\)\]/g, '').replace(/\s+/g, ' ').trim(),
+      content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
   savePage(page, json);
@@ -73,7 +75,11 @@ function loadChanges(json) {
 // Utility functions for managing localStorage with a 'tailwindvpb' object
 function loadPage(pageId) {
   const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
-  return tailwindvpb.pages ? tailwindvpb.pages[pageId] : null;
+  if (tailwindvpb.pages && tailwindvpb.pages[pageId] && tailwindvpb.pages[pageId].page_data) {
+    return tailwindvpb.pages[pageId].page_data;
+  } else {
+    return null;
+  }  
 }
 
 function savePage(pageId, data) {
@@ -81,7 +87,10 @@ function savePage(pageId, data) {
   if (!tailwindvpb.pages) {
     tailwindvpb.pages = {};
   }
-  tailwindvpb.pages[pageId] = data;
+  if (!tailwindvpb.pages[pageId]) {
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}};
+  }
+  tailwindvpb.pages[pageId].page_data = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
 }
 
@@ -140,4 +149,29 @@ function restoreContentCapabilities(column, contentContainer) {
     removeButton = createRemoveContentButton(column, contentContainer);
   }
   contentContainer.appendChild(removeButton);
+}
+
+function savePageSettingsChanges(pageId) {
+  const page = document.getElementById('page');
+  const settings = {
+    id: page.id,
+    className: page.className.replace(/bg-\[url\(.*?\)\]/g, '').replace(/\s+/g, ' ').trim(),
+    metaTags: ''
+  }
+  console.log(settings);
+  const json = JSON.stringify(settings);
+  savePageSettings(pageId, json);
+}
+
+function savePageSettings(pageId, data) {
+  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+  if (!tailwindvpb.pages) {
+    tailwindvpb.pages = {};
+  }
+  if (!tailwindvpb.pages[pageId]) {
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}};
+  }
+  console.log(data);
+  tailwindvpb.pages[pageId].settings = data;
+  localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
 }
