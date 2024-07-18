@@ -27,9 +27,9 @@ function saveChanges(page) {
   // Query only elements with 'ugc-keep' that are meant to be saved
   const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
   const data = Array.from(elements).map(element => ({
-      tagName: element.tagName,
-      className: element.className.replace(/bg-\[url\(.*?\)\]/g, '').replace(/\s+/g, ' ').trim(),
-      content: getCleanInnerHTML(element)
+    tagName: element.tagName,
+    className: element.className,
+    content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
   savePage(page, json);
@@ -79,7 +79,7 @@ function loadPage(pageId) {
     return tailwindvpb.pages[pageId].page_data;
   } else {
     return null;
-  }  
+  }
 }
 
 function savePage(pageId, data) {
@@ -88,7 +88,7 @@ function savePage(pageId, data) {
     tailwindvpb.pages = {};
   }
   if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}};
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {} };
   }
   tailwindvpb.pages[pageId].page_data = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
@@ -155,10 +155,9 @@ function savePageSettingsChanges(pageId) {
   const page = document.getElementById('page');
   const settings = {
     id: page.id,
-    className: page.className.replace(/bg-\[url\(.*?\)\]/g, '').replace(/\s+/g, ' ').trim(),
+    className: page.className,
     metaTags: ''
   }
-  console.log(settings);
   const json = JSON.stringify(settings);
   savePageSettings(pageId, json);
 }
@@ -169,9 +168,44 @@ function savePageSettings(pageId, data) {
     tailwindvpb.pages = {};
   }
   if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}};
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {} };
   }
-  console.log(data);
   tailwindvpb.pages[pageId].settings = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+}
+
+function loadPageSettings(config, view = false){
+  // Load the tailwindvpb object from localStorage
+  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+  
+  // Check if the page and settings exist
+  if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].settings) {
+    const settings = JSON.parse(tailwindvpb.pages[config].settings);
+    
+    // Find the element by config and set the className if it exists
+    const element = document.getElementById(settings.id);
+    if (element && settings.className) {
+      element.className = settings.className;
+    }
+    
+    // Append metaTags to the head if they exist
+    if (settings.metaTags) {
+      const head = document.getElementsByTagName('head')[0];
+      const div = document.createElement('div');
+      div.innerHTML = settings.metaTags;
+      
+      // Append each meta tag found in the div to the head
+      Array.from(div.childNodes).forEach(tag => {
+        if (tag.nodeType === Node.ELEMENT_NODE) { // Ensure it is an element
+          head.appendChild(tag);
+        }
+      });
+    }
+    if (element && view) {
+      element.classList.remove('w-3/4', 'ml-[25%]');
+      element.classList.add ('w-full');
+    }
+  } else {
+    console.log('Settings for the specified page do not exist.');
+  }
 }

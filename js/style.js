@@ -192,7 +192,6 @@ function updateBackgroundImageClass(element, imageUrl) {
   }
 }
 
-
 function addEditableMarginAndPadding(sidebar, element) {
   const props = ['Margin', 'Padding'];
   const sides = ['t', 'b', 'l', 'r'];
@@ -215,8 +214,6 @@ function addEditableMarginAndPadding(sidebar, element) {
       });
 
       select.onchange = () => {
-        console.log('something happened ig');
-        console.log(element);
         values.forEach(value => {
           element.classList.remove(`${prop[0].toLowerCase()}${side}-${value}`);
         });

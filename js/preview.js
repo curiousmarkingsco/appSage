@@ -15,6 +15,7 @@ function loadPreview(pageId) {
       });
 
       hideEditingTools();
+      loadPageSettings(pageId, true);
   } else {
       console.error('No saved data found for pageId:', pageId);
   }
