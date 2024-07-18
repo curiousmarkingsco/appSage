@@ -678,13 +678,17 @@ function updateElementClass(element, newValue, type) {
 
 function moveVertical(element, direction) {
   const parent = element.parentNode;
-  if (direction === 'up') {
-      if (element.previousElementSibling) {
-          parent.insertBefore(element, element.previousElementSibling);
-      }
-  } else if (direction === 'down') {
-      if (element.nextElementSibling) {
-          parent.insertBefore(element.nextElementSibling, element);
+  let targetSibling = getNextValidSibling(element, direction);
+
+  if (direction === 'up' && targetSibling) {
+      parent.insertBefore(element, targetSibling);
+  } else if (direction === 'down' && targetSibling) {
+      // For moving down, we need to insert before the next element of the targetSibling
+      const nextToTarget = targetSibling.nextElementSibling;
+      if (nextToTarget) {
+          parent.insertBefore(element, nextToTarget);
+      } else {
+          parent.appendChild(element);  // If there's no next sibling, append to the end of the parent
       }
   }
 }

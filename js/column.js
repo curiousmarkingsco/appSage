@@ -141,18 +141,15 @@ function removeEditingHighlights() {
 
 function moveColumnHorizontal(column, direction) {
   const parent = column.parentNode;
-  if (direction === 'left') {
-    if (column.previousElementSibling) {
-      parent.insertBefore(column, column.previousElementSibling);
-    }
-  } else if (direction === 'right') {
-    if (column.nextElementSibling) {
-      parent.insertBefore(column.nextElementSibling, column);
-    }
+  let targetSibling = getNextValidSibling(column, direction);
+
+  if (direction === 'left' && targetSibling) {
+      parent.insertBefore(column, targetSibling);
+  } else if (direction === 'right' && targetSibling) {
+      parent.insertBefore(targetSibling, column);
   }
 }
 
-// proof of concept, change later
 function moveColumnVertical(grid, column, direction) {
   // Assume a 12-column grid system and media queries that adapt at specific breakpoints
   const columnsPerRow = window.innerWidth > 768 ? 4 : 2; // Example: 4 columns per row on desktop, 2 on mobile
@@ -173,4 +170,12 @@ function moveColumnVertical(grid, column, direction) {
       }
     }
   }
+}
+
+function getNextValidSibling(element, direction) {
+  let sibling = (direction === 'left' || direction === 'up') ? element.previousElementSibling : element.nextElementSibling;
+  while (sibling && sibling.classList.contains('ugc-discard')) {
+      sibling = (direction === 'left' || direction === 'up') ? sibling.previousElementSibling : sibling.nextElementSibling;
+  }
+  return sibling;
 }
