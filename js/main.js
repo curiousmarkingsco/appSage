@@ -1,6 +1,10 @@
 /* main.js */
 
 document.addEventListener('DOMContentLoaded', function () {
+  const editPageButton = document.getElementById('editPageSettings');
+  editPageButton.addEventListener('click', function () {
+    addPageOptions();
+  });
 
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
@@ -34,3 +38,13 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.appendChild(addColumnButton);
   });
 });
+
+function addPageOptions(page) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit Page Styles &amp; Metadata</strong></div>`;
+
+  if (page) {
+    addEditableBackgroundColor(sidebar, page);
+    addEditableBackgroundImage(sidebar, page);
+  }
+}

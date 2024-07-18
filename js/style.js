@@ -97,23 +97,101 @@ function addEditableBorders(sidebar, element) {
 }
 
 
-function addEditableBackgroundImage(sidebar, element) {
-  const label = document.createElement('label');
-  label.textContent = 'Background Image URL:';
-  label.className = 'block text-gray-700 text-sm font-bold mb-2';
+function updateBackgroundImageClass(element, imageUrl) {
+  // Handling the removal of an existing bg-[url(...)] class
+  const currentClasses = Array.from(element.classList);
+  const bgImageUrlPattern = /bg-\[url\(.*?\)\]/;  // Regex to match dynamic bg-[url(...)] classes
+  currentClasses.forEach(cls => {
+      if (bgImageUrlPattern.test(cls)) {
+          element.classList.remove(cls);
+      }
+  });
 
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.placeholder = 'Enter image URL';
-  input.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-
-  input.onchange = () => {
-    element.style.backgroundImage = `url('${input.value}')`;
-  };
-
-  sidebar.appendChild(label);
-  sidebar.appendChild(input);
+  // Add the new background image class using TailwindCSS utility
+  const newClass = `bg-[url('${imageUrl}')]`;
+  element.classList.add(newClass);
 }
+
+function updateTailwindClass(element, value, prefix, possibleValues) {
+  possibleValues.forEach(val => {
+      element.classList.remove(`${prefix}-${val}`);
+  });
+  element.classList.add(`${prefix}-${value}`);
+}
+
+function addEditableBackgroundImage(sidebar, element) {
+// Setup for URL input
+const urlLabel = createLabel('Background Image URL:', 'block text-gray-700 text-sm font-bold mb-2');
+const urlInput = createInput('text', 'Enter image URL', 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline');
+urlInput.onchange = () => {
+  if (urlInput.value.trim() !== '') {
+    updateBackgroundImageClass(element, urlInput.value.trim());
+  }
+};
+sidebar.appendChild(urlLabel);
+sidebar.appendChild(urlInput);
+
+// Setup for background repeat
+const repeatSelect = createSelect(['repeat', 'repeat-x', 'repeat-y', 'no-repeat'], 'Background Repeat:', element, 'bg', ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']);
+
+// Setup for background size
+const sizeSelect = createSelect(['auto', 'cover', 'contain'], 'Background Size:', element, 'bg', ['auto', 'cover', 'contain']);
+
+// Setup for background position
+const positionSelect = createSelect(['left-top', 'left', 'left-bottom', 'right-top', 'right', 'right-bottom', 'top', 'center', 'bottom'], 'Background Position:', element, 'bg', ['left-top', 'left', 'left-bottom', 'right-top', 'right', 'right-bottom', 'top', 'center', 'bottom']);
+
+// Append controls for repeat, size, and position to the sidebar
+sidebar.appendChild(repeatSelect.label);
+sidebar.appendChild(repeatSelect.select);
+sidebar.appendChild(sizeSelect.label);
+sidebar.appendChild(sizeSelect.select);
+sidebar.appendChild(positionSelect.label);
+sidebar.appendChild(positionSelect.select);
+}
+
+function createLabel(text, className) {
+  const label = document.createElement('label');
+  label.textContent = text;
+  label.className = className;
+  return label;
+}
+
+function createInput(type, placeholder, className) {
+  const input = document.createElement('input');
+  input.type = type;
+  input.placeholder = placeholder;
+  input.className = className;
+  return input;
+}
+
+function createSelect(options, labelText, element, prefix, possibleValues) {
+  const label = createLabel(labelText, 'block text-gray-700 text-sm font-bold mb-2');
+  const select = document.createElement('select');
+  select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+  options.forEach(option => {
+      const opt = document.createElement('option');
+      opt.value = option;
+      opt.textContent = option;
+      select.appendChild(opt);
+  });
+  select.onchange = () => {
+      updateTailwindClass(element, select.value, prefix, possibleValues);
+  };
+  return { label, select };
+}
+
+
+function updateBackgroundImageClass(element, imageUrl) {
+  // Handle removal of existing bg-[url(...)] classes
+  const regex = /\bbg-\[url\(.*?\)\]/g;
+  element.className = element.className.replace(regex, '').trim();
+
+  // Add new background image class if imageUrl is not empty
+  if (imageUrl) {
+      element.classList.add(`bg-[url('${imageUrl}')]`);
+  }
+}
+
 
 function addEditableMarginAndPadding(sidebar, element) {
   const props = ['Margin', 'Padding'];
@@ -149,4 +227,19 @@ function addEditableMarginAndPadding(sidebar, element) {
       sidebar.appendChild(select);
     });
   });
+}
+
+function updateBackgroundImageClass(element, imageUrl) {
+  // Remove any existing background image classes
+  const currentClasses = Array.from(element.classList);
+  const bgImageUrlPattern = /bg-\[url\(.*?\)\]/;  // Regex to match dynamic bg-[url(...)] classes
+  currentClasses.forEach(cls => {
+    if (bgImageUrlPattern.test(cls)) {
+      element.classList.remove(cls);
+    }
+  });
+
+  // Add new background image class
+  const newClass = `bg-[url('${imageUrl}')]`;
+  element.classList.add(newClass);
 }
