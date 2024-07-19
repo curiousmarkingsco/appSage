@@ -1,29 +1,55 @@
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-      <link rel="stylesheet" href="../tw_files/output.css">
-      <title>pageSage App Designer</title>
-  </head>
-  <body class="flex">
-      <div id="page" class="w-full">
-          <!-- The user's page content goes here -->
-      </div>
 
-      <script src="../js/load.js"></script>
-      <script src="../js/preview.js"></script>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-          const urlParams = new URLSearchParams(window.location.search);
-          const previewPageId = urlParams.get('preview');
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>pageSage App Designer</title>
+</head>
 
-          if (previewPageId) {
-            loadPreview(previewPageId);
-          }
-        });
-      </script>
-  </body>
+<body class="flex">
+  <div id="page" class="w-full">
+    <!-- The user's page content goes here -->
+  </div>
+
+  <script src="../js/load.js"></script>
+  <script src="../js/preview.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const previewPageId = urlParams.get('preview');
+
+      if (previewPageId) {
+        loadPreview(previewPageId);
+      }
+    });
+  </script>
+  <!-- Save stuff to remote server -->
+  <script>
+    // document.addEventListener('DOMContentLoaded', function () {
+    //   setTimeout(() => {  // Set a timeout to ensure TailwindCSS has loaded and injected the styles
+    //     const styles = document.querySelectorAll('style');
+    //     let tailwindStyles = '';
+
+    //     for (let style of styles) {
+    //       if (style.innerHTML.includes("/*! tailwindcss v")) {
+    //         tailwindStyles = style.innerHTML;
+    //         break;
+    //       }
+    //     }
+
+    //     if (tailwindStyles) {
+    //       console.log('Found TailwindCSS styles, sending to server...');
+    //       // Assuming you have the URL and page_id available
+    //       saveDataToServer('https://vi3gv9u3.ghiu3498g/api/savecss', 'your_page_id', tailwindStyles);
+    //     } else {
+    //       console.log('No TailwindCSS styles found.');
+    //     }
+    //   }, 1000);
+    // });
+  </script>
+</body>
+
 </html>

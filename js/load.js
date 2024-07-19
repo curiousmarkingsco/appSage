@@ -174,38 +174,38 @@ function savePageSettings(pageId, data) {
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
 }
 
-function loadPageSettings(config, view = false){
-  // Load the tailwindvpb object from localStorage
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+// function loadPageSettings(config, view = false){
+//   // Load the tailwindvpb object from localStorage
+//   const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
   
-  // Check if the page and settings exist
-  if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].settings) {
-    const settings = JSON.parse(tailwindvpb.pages[config].settings);
+//   // Check if the page and settings exist
+//   if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].settings) {
+//     const settings = JSON.parse(tailwindvpb.pages[config].settings);
     
-    // Find the element by config and set the className if it exists
-    const element = document.getElementById(settings.id);
-    if (element && settings.className) {
-      element.className = settings.className;
-    }
+//     // Find the element by config and set the className if it exists
+//     const element = document.getElementById(settings.id);
+//     if (element && settings.className) {
+//       element.className = settings.className;
+//     }
     
-    // Append metaTags to the head if they exist
-    if (settings.metaTags) {
-      const head = document.getElementsByTagName('head')[0];
-      const div = document.createElement('div');
-      div.innerHTML = settings.metaTags;
+//     // Append metaTags to the head if they exist
+//     if (settings.metaTags) {
+//       const head = document.getElementsByTagName('head')[0];
+//       const div = document.createElement('div');
+//       div.innerHTML = settings.metaTags;
       
-      // Append each meta tag found in the div to the head
-      Array.from(div.childNodes).forEach(tag => {
-        if (tag.nodeType === Node.ELEMENT_NODE) { // Ensure it is an element
-          head.appendChild(tag);
-        }
-      });
-    }
-    if (element && view) {
-      element.classList.remove('w-3/4', 'ml-[25%]');
-      element.classList.add ('w-full');
-    }
-  } else {
-    console.log('Settings for the specified page do not exist.');
-  }
-}
+//       // Append each meta tag found in the div to the head
+//       Array.from(div.childNodes).forEach(tag => {
+//         if (tag.nodeType === Node.ELEMENT_NODE) { // Ensure it is an element
+//           head.appendChild(tag);
+//         }
+//       });
+//     }
+//     if (element && view) {
+//       element.classList.remove('w-3/4', 'ml-[25%]');
+//       element.classList.add ('w-full', 'min-h-screen');
+//     }
+//   } else {
+//     console.log('Settings for the specified page do not exist.');
+//   }
+// }
