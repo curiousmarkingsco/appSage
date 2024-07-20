@@ -6,5 +6,7 @@ This is here to keep a papertrail of the things I'm doing/have been doing. Hopef
 
 ## July 14, 2024
 * Begin restructuring to click-based design, drag and drop is too unintutive without thousands of hours of fine tweaking.
-* Replace everything previous with a click-based contemporary (outside of maybe a couple of things)
+* Replace everything previous with a click-based contemporary (outside of maybe a couple of things).
 
+## July 20th
+* Ready to make passable page that can be used in a live site.

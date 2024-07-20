@@ -1,4 +1,4 @@
-<!-- index.html -->
+<!-- preview.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,28 +28,10 @@
   </script>
   <!-- Save stuff to remote server -->
   <script>
-    // document.addEventListener('DOMContentLoaded', function () {
-    //   setTimeout(() => {  // Set a timeout to ensure TailwindCSS has loaded and injected the styles
-    //     const styles = document.querySelectorAll('style');
-    //     let tailwindStyles = '';
-
-    //     for (let style of styles) {
-    //       if (style.innerHTML.includes("/*! tailwindcss v")) {
-    //         tailwindStyles = style.innerHTML;
-    //         break;
-    //       }
-    //     }
-
-    //     if (tailwindStyles) {
-    //       console.log('Found TailwindCSS styles, sending to server...');
-    //       // Assuming you have the URL and page_id available
-    //       saveDataToServer('https://vi3gv9u3.ghiu3498g/api/savecss', 'your_page_id', tailwindStyles);
-    //     } else {
-    //       console.log('No TailwindCSS styles found.');
-    //     }
-    //   }, 1000);
-    // });
+    document.addEventListener('DOMContentLoaded', function () {
+      setTimeout(() => {  // Set a timeout to ensure TailwindCSS has loaded and injected the styles
+      }, 1000);
+    });
   </script>
 </body>
-
 </html>
