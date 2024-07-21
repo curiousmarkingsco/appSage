@@ -61,7 +61,8 @@ function createEditColumnButton(column) {
   button.className = 'editColumn ugc-discard hidden z-50 absolute left-14 group-hover:block bg-green-500 hover:bg-green-700 top-2 text-white font-bold p-2 rounded h-12 w-12';
   button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white" class="h-5 w-5 mx-auto"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l512 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM192 96l0 320L64 416 64 96l128 0zm64 0l128 0 0 320-128 0 0-320zm320 0l0 320-128 0 0-320 128 0z"/></svg>';
   button.addEventListener('click', function () {
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>`;
+    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateMobileTabs()}`;
+    activateTabs();
     highlightEditingElement(column);
 
     const moveButtons = document.createElement('div');

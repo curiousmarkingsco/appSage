@@ -202,7 +202,7 @@ function loadPageSettings(config, view = false){
       });
     }
     if (element && view) {
-      element.classList.remove('w-3/4', 'ml-[25%]');
+      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72');
       element.classList.add ('w-full', 'min-h-screen');
     }
   } else {

@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', function () {
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Page Styles &amp; Metadata</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Edit Page Styles &amp; Metadata</strong></div>${generateMobileTabs()}`;
+  activateTabs();
 
   if (page) {
     addEditableBackgroundColor(sidebar, page);

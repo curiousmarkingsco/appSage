@@ -1,31 +1,17 @@
 /* style.js */
 
 function addEditableTextColor(sidebar, element) {
-  const label = document.createElement('label');
-  label.textContent = 'Text Color:';
-  label.className = 'block text-gray-700 text-sm font-bold mb-2';
-
-  const select = document.createElement('select');
-  select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-
   const colors = ['black', 'white', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
-  colors.forEach(color => {
-    const option = document.createElement('option');
-    option.value = `text-${color}`;
-    option.textContent = color.replace('-', ' ').toUpperCase();
-    option.selected = element.classList.contains(`text-${color}`);
-    select.appendChild(option);
-  });
+  const labelPrefix = 'Text Color';
+  const cssClassBase = 'text';
+  const optionCount = colors.length;
 
-  select.onchange = () => {
-    colors.forEach(color => {
-      element.classList.remove(`text-${color}`);
-    });
-    element.classList.add(select.value);
+  const getCurrentTextColor = (grid, bp, index) => {
+      const color = colors[index - 1]; // Adjust index since it starts at 1 in our UI but array is 0-based
+      return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
   };
 
-  sidebar.appendChild(label);
-  sidebar.appendChild(select);
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, optionCount, cssClassBase, getCurrentTextColor);
 }
 
 function addEditableBackgroundColor(sidebar, element) {

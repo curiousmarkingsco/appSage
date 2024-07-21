@@ -30,8 +30,8 @@ function flattenJSONToHTML(jsonString, parentInfo) {
   try {
     const jsonArray = JSON.parse(jsonString);
     let parentClassName = JSON.parse(parentInfo).className || '';
-    parentClassName = parentClassName.replace('w-3/4', 'w-full');
-    parentClassName = parentClassName.replace('ml-[25%]', 'min-h-screen');
+    parentClassName = parentClassName.replace('w-[calc(100%-18rem)]', 'w-full');
+    parentClassName = parentClassName.replace('ml-72', 'min-h-screen');
 
     const content = jsonArray.map(obj => {
       if (obj.tagName === "DIV" && obj.className && obj.content) {

@@ -103,7 +103,8 @@ function detectAndLoadContentType(contentContainer) {
 
 function updateSidebarForHeading(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Heading:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Edit Heading:</strong></div>${generateMobileTabs()}`;
+  activateTabs();
 
   const select = document.createElement('select');
   const options = ['Title (h1)', 'Heading One (h2)', 'Heading Two (h3)', 'Heading Three (h4)', 'Heading Four (h5)', 'Heading Five (h6)'];
@@ -174,7 +175,8 @@ function updateSidebarForHeading(contentContainer, newContent) {
 
 function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateMobileTabs()}`;
+  activateTabs();
 
   const contentTypes = [
     { label: '🔠<br> Heading', action: () => updateSidebarForHeading(contentContainer, true) },
@@ -210,7 +212,8 @@ function updateSidebarForForm(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>${generateMobileTabs()}`;
+  activateTabs();
   let form = contentContainer.querySelector('form');
   let submitButton;
 
@@ -428,7 +431,7 @@ function updateSidebarForParagraph(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '<div><strong>Edit Paragraph Text:</strong></div>';
+  sidebar.innerHTML = '<div><strong>Edit Paragraph Text:</strong></div>${generateMobileTabs()}';
 
   const textInput = document.createElement('textarea');
   textInput.className = 'mt-2 p-2 border border-gray-300 w-full';
@@ -473,7 +476,7 @@ function updateSidebarForButton(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '<div><strong>Configure Button:</strong></div>';
+  sidebar.innerHTML = '<div><strong>Configure Button:</strong></div>${generateMobileTabs()}';
 
   const textInput = document.createElement('input');
   textInput.type = 'text';
@@ -552,7 +555,8 @@ function updateSidebarForMedia(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add/Edit Media:</strong></div>`;
+  sidebar.innerHTML = `<div><strong>Add/Edit Media:</strong></div>${generateMobileTabs()}`;
+  activateTabs();
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
