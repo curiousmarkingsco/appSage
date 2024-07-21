@@ -75,6 +75,7 @@ function createEditColumnButton(column) {
     addEditableBackgroundColor(sidebar, column);
     addEditableBorders(sidebar, column);
     addEditableBackgroundImage(sidebar, column);
+    addEditableBackgroundFeatures(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
   });
   return button;
@@ -104,6 +105,7 @@ function createAddColumnButton(gridContainer) {
     addEditableBackgroundColor(sidebar, newColumn);
     addEditableBorders(sidebar, newColumn);
     addEditableBackgroundImage(sidebar, newColumn);
+    addEditableBackgroundFeatures(sidebar, newColumn);
     addEditableMarginAndPadding(sidebar, newColumn);
 
     highlightEditingElement(newColumn);

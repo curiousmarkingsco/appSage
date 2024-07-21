@@ -1,6 +1,6 @@
 /* responsive.js */
 
-function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentValueCallback, options) {
+function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentValueCallback, options, isInputType = false) {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
   breakpoints.forEach(bp => {
@@ -8,29 +8,41 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getC
     label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
     label.className = 'block text-gray-700 text-sm font-bold mb-2';
 
-    const select = document.createElement('select');
-    select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+    let control;
+    if (isInputType) {
+      control = document.createElement('input');
+      control.type = 'text';
+      control.value = getCurrentValueCallback(grid, bp) || '';
+      control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
 
-    options.forEach((option, index) => {
-      const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
-      const optionElement = document.createElement('option');
-      optionElement.value = value;
-      optionElement.textContent = `${option} ${cssClassBase.replace('-', ' ')}${option > 1 ? 's' : ''}`;
-      optionElement.selected = getCurrentValueCallback(grid, bp, option);
-      select.appendChild(optionElement);
-    });
+      control.onchange = () => {
+        const newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-[url('${control.value}')]`;
+        updateGridClass(grid, newValue, cssClassBase, bp);
+      };
+    } else {
+      control = document.createElement('select');
+      control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
 
-    select.onchange = () => {
-      options.forEach(opt => {
-        const classToRemove = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
-        grid.classList.remove(classToRemove);
+      options.forEach(option => {
+        const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+        const optionElement = document.createElement('option');
+        optionElement.value = value;
+        optionElement.textContent = `${option} (${cssClassBase})`;
+        optionElement.selected = getCurrentValueCallback(grid, bp, option);
+        control.appendChild(optionElement);
       });
-      grid.classList.add(select.value);
-    };
 
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`) || sidebar;
+      control.onchange = () => {
+        options.forEach(opt => {
+          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        });
+        grid.classList.add(control.value);
+      };
+    }
+
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     container.appendChild(label);
-    container.appendChild(select);
+    container.appendChild(control);
   });
 }
 

@@ -30,6 +30,7 @@ function addGridOptions(grid) {
     addEditableBackgroundColor(sidebar, grid);
     addEditableBorders(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
+    addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
   }
 }

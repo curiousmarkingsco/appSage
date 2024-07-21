@@ -48,5 +48,6 @@ function addPageOptions() {
   if (page) {
     addEditableBackgroundColor(sidebar, page);
     addEditableBackgroundImage(sidebar, page);
+    addEditableBackgroundFeatures(sidebar, page);
   }
 }

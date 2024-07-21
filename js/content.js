@@ -170,6 +170,7 @@ function updateSidebarForHeading(contentContainer, newContent) {
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
@@ -459,6 +460,7 @@ function updateSidebarForParagraph(contentContainer, newContent) {
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
@@ -531,6 +533,7 @@ function updateSidebarForButton(contentContainer, newContent) {
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
@@ -602,6 +605,7 @@ function updateSidebarForMedia(contentContainer, newContent) {
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
 }
 

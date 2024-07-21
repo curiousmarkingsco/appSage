@@ -6,8 +6,8 @@ function addEditableTextColor(sidebar, element) {
   const cssClassBase = 'text';
 
   const getCurrentTextColor = (grid, bp, index) => {
-      const color = colors[index]; // Use index directly for 0-based array
-      return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
+    const color = colors[index]; // Use index directly for 0-based array
+    return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
   };
 
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentTextColor, colors);
@@ -19,8 +19,8 @@ function addEditableBackgroundColor(sidebar, element) {
   const cssClassBase = 'bg';
 
   const getCurrentBackgroundColor = (element, bp, index) => {
-      const color = colors[index]; // Use index directly for 0-based array
-      return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}bg-${color}`);
+    const color = colors[index]; // Use index directly for 0-based array
+    return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}bg-${color}`);
   };
 
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentBackgroundColor, colors);
@@ -47,146 +47,73 @@ function addEditableBorders(sidebar, element) {
   });
 }
 
-function updateBackgroundImageClass(element, imageUrl) {
-  // Handling the removal of an existing bg-[url(...)] class
-  const currentClasses = Array.from(element.classList);
-  const bgImageUrlPattern = /bg-\[url\(.*?\)\]/;  // Regex to match dynamic bg-[url(...)] classes
-  currentClasses.forEach(cls => {
-      if (bgImageUrlPattern.test(cls)) {
-          element.classList.remove(cls);
-      }
-  });
-
-  // Add the new background image class using TailwindCSS utility
-  const newClass = `bg-[url('${imageUrl}')]`;
-  element.classList.add(newClass);
-}
-
-function updateTailwindClass(element, value, prefix, possibleValues) {
-  possibleValues.forEach(val => {
-      element.classList.remove(`${prefix}-${val}`);
-  });
-  element.classList.add(`${prefix}-${value}`);
-}
-
-function addEditableBackgroundImage(sidebar, element) {
-// Setup for URL input
-const urlLabel = createLabel('Background Image URL:', 'block text-gray-700 text-sm font-bold mb-2');
-const urlInput = createInput('text', 'Enter image URL', 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline');
-urlInput.onchange = () => {
-  if (urlInput.value.trim() !== '') {
-    updateBackgroundImageClass(element, urlInput.value.trim());
-  }
-};
-sidebar.appendChild(urlLabel);
-sidebar.appendChild(urlInput);
-
-// Setup for background repeat
-const repeatSelect = createSelect(['repeat', 'repeat-x', 'repeat-y', 'no-repeat'], 'Background Repeat:', element, 'bg', ['repeat', 'repeat-x', 'repeat-y', 'no-repeat']);
-
-// Setup for background size
-const sizeSelect = createSelect(['auto', 'cover', 'contain'], 'Background Size:', element, 'bg', ['auto', 'cover', 'contain']);
-
-// Setup for background position
-const positionSelect = createSelect(['left-top', 'left', 'left-bottom', 'right-top', 'right', 'right-bottom', 'top', 'center', 'bottom'], 'Background Position:', element, 'bg', ['left-top', 'left', 'left-bottom', 'right-top', 'right', 'right-bottom', 'top', 'center', 'bottom']);
-
-// Append controls for repeat, size, and position to the sidebar
-sidebar.appendChild(repeatSelect.label);
-sidebar.appendChild(repeatSelect.select);
-sidebar.appendChild(sizeSelect.label);
-sidebar.appendChild(sizeSelect.select);
-sidebar.appendChild(positionSelect.label);
-sidebar.appendChild(positionSelect.select);
-}
-
-function createLabel(text, className) {
-  const label = document.createElement('label');
-  label.textContent = text;
-  label.className = className;
-  return label;
-}
-
-function createInput(type, placeholder, className) {
-  const input = document.createElement('input');
-  input.type = type;
-  input.placeholder = placeholder;
-  input.className = className;
-  return input;
-}
-
-function createSelect(options, labelText, element, prefix, possibleValues) {
-  const label = createLabel(labelText, 'block text-gray-700 text-sm font-bold mb-2');
-  const select = document.createElement('select');
-  select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-  options.forEach(option => {
-      const opt = document.createElement('option');
-      opt.value = option;
-      opt.textContent = option;
-      select.appendChild(opt);
-  });
-  select.onchange = () => {
-      updateTailwindClass(element, select.value, prefix, possibleValues);
-  };
-  return { label, select };
-}
-
-
-function updateBackgroundImageClass(element, imageUrl) {
-  // Handle removal of existing bg-[url(...)] classes
-  const regex = /\bbg-\[url\(.*?\)\]/g;
-  element.className = element.className.replace(regex, '').trim();
-
-  // Add new background image class if imageUrl is not empty
-  if (imageUrl) {
-      element.classList.add(`bg-[url('${imageUrl}')]`);
-  }
-}
-
 function addEditableMarginAndPadding(sidebar, element) {
   const props = ['Margin', 'Padding'];
   const sides = ['t', 'b', 'l', 'r'];
+  const values = ['0', '1', '2', '4', '8', '16'];
+
   props.forEach(prop => {
     sides.forEach(side => {
-      const label = document.createElement('label');
-      label.textContent = `${prop} (${side.toUpperCase()}):`;
-      label.className = 'block text-gray-700 text-sm font-bold mb-2';
+      const labelPrefix = `${prop} (${side.toUpperCase()})`;
+      const cssClassBase = `${prop[0].toLowerCase()}${side}`;
 
-      const select = document.createElement('select');
-      select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-
-      const values = ['0', '1', '2', '4', '8', '16'];
-      values.forEach(value => {
-        const option = document.createElement('option');
-        option.value = `${prop[0].toLowerCase()}${side}-${value}`;
-        option.textContent = value;
-        option.selected = element.classList.contains(`${prop[0].toLowerCase()}${side}-${value}`);
-        select.appendChild(option);
-      });
-
-      select.onchange = () => {
-        values.forEach(value => {
-          element.classList.remove(`${prop[0].toLowerCase()}${side}-${value}`);
-        });
-        element.classList.add(select.value);
+      const getCurrentValue = (element, bp, value) => {
+        return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${value}`);
       };
 
-      sidebar.appendChild(label);
-      sidebar.appendChild(select);
+      addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentValue, values);
     });
   });
 }
 
-function updateBackgroundImageClass(element, imageUrl) {
-  // Remove any existing background image classes
-  const currentClasses = Array.from(element.classList);
-  const bgImageUrlPattern = /bg-\[url\(.*?\)\]/;  // Regex to match dynamic bg-[url(...)] classes
-  currentClasses.forEach(cls => {
-    if (bgImageUrlPattern.test(cls)) {
-      element.classList.remove(cls);
-    }
-  });
+function addEditableBackgroundImage(sidebar, grid) {
+  const labelPrefix = 'Background Image URL';
+  const cssClassBase = 'bg';
 
-  // Add new background image class
-  const newClass = `bg-[url('${imageUrl}')]`;
-  element.classList.add(newClass);
+  const getCurrentBackgroundImageUrl = (grid, bp) => {
+    // Extracting background image URL from class
+    const regex = new RegExp(`\\b${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-\$begin:math:display$url\\\\('([^']+)\\'\\\\)\\$end:math:display$\\b`, 'g');
+    const match = regex.exec(grid.className);
+    return match ? match[1] : '';
+  };
+
+  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBackgroundImageUrl, null, true);
+}
+
+function addEditableBackgroundFeatures(sidebar, grid) {
+  const bgSizeOptions = ['auto', 'cover', 'contain'];
+  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];
+  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
+
+  // Function to update background image size
+  function addBackgroundSizeOptions() {
+    const labelPrefix = 'Background Size';
+    const cssClassBase = 'bg';
+    const getCurrentBgSize = (grid, bp) => bgSizeOptions.find(size => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${size}`));
+
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgSize, bgSizeOptions);
+  }
+
+  // Function to update background position
+  function addBackgroundPositionOptions() {
+    const labelPrefix = 'Background Position';
+    const cssClassBase = 'bg';
+    const getCurrentBgPosition = (grid, bp) => bgPositionOptions.find(position => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${position}`));
+
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgPosition, bgPositionOptions);
+  }
+
+  // Function to update background repeat
+  function addBackgroundRepeatOptions() {
+    const labelPrefix = 'Background Repeat';
+    const cssClassBase = 'bg';
+    const getCurrentBgRepeat = (grid, bp) => bgRepeatOptions.find(repeat => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${repeat}`));
+
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgRepeat, bgRepeatOptions);
+  }
+
+  // Calling all functions to add options
+  addBackgroundSizeOptions();
+  addBackgroundPositionOptions();
+  addBackgroundRepeatOptions();
 }
