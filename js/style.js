@@ -14,31 +14,16 @@ function addEditableTextColor(sidebar, element) {
 }
 
 function addEditableBackgroundColor(sidebar, element) {
-  const label = document.createElement('label');
-  label.textContent = 'Background Color:';
-  label.className = 'block text-gray-700 text-sm font-bold mb-2';
+  const colors = ['gray-100', 'red-100', 'blue-100', 'green-100', 'yellow-100', 'purple-100'];
+  const labelPrefix = 'Background Color';
+  const cssClassBase = 'bg';
 
-  const select = document.createElement('select');
-  select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-
-  const colors = ['white', 'gray-100', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
-  colors.forEach(color => {
-    const option = document.createElement('option');
-    option.value = `bg-${color}`;
-    option.textContent = color.replace('-', ' ').toUpperCase();
-    option.selected = element.classList.contains(`bg-${color}`);
-    select.appendChild(option);
-  });
-
-  select.onchange = () => {
-    colors.forEach(color => {
-      element.classList.remove(`bg-${color}`);
-    });
-    element.classList.add(select.value);
+  const getCurrentBackgroundColor = (element, bp, index) => {
+      const color = colors[index]; // Use index directly for 0-based array
+      return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}bg-${color}`);
   };
 
-  sidebar.appendChild(label);
-  sidebar.appendChild(select);
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentBackgroundColor, colors);
 }
 
 function addEditableBorders(sidebar, element) {
@@ -52,35 +37,15 @@ function addEditableBorders(sidebar, element) {
   };
 
   properties.forEach((prop, index) => {
-    const label = document.createElement('label');
-    label.textContent = labels[index] + ':';
-    label.className = 'block text-gray-700 text-sm font-bold mb-2';
-
-    const select = document.createElement('select');
-    select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-    options[prop].forEach(option => {
-      // Update to handle 'style' properly with 'border-' prefix
+    const cssClassBase = prop === 'color' ? 'border' : (prop === 'width' ? 'border' : (prop === 'radius' ? 'rounded' : (prop === 'style' ? 'border' : '')));
+    const getCurrentBorderValue = (grid, bp, option) => {
       const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : (prop === 'style' ? 'border-' : '')));
-      const optionElement = document.createElement('option');
-      optionElement.value = valuePrefix + option;
-      optionElement.textContent = option.toUpperCase();
-      optionElement.selected = element.classList.contains(valuePrefix + option);
-      select.appendChild(optionElement);
-    });
-
-    select.onchange = () => {
-      options[prop].forEach(option => {
-        const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : (prop === 'style' ? 'border-' : '')));
-        element.classList.remove(valuePrefix + option);
-      });
-      element.classList.add(select.value);
+      return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${valuePrefix}${option}`);
     };
 
-    sidebar.appendChild(label);
-    sidebar.appendChild(select);
+    addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, getCurrentBorderValue, options[prop]);
   });
 }
-
 
 function updateBackgroundImageClass(element, imageUrl) {
   // Handling the removal of an existing bg-[url(...)] class

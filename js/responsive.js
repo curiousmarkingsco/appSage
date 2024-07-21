@@ -28,7 +28,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getC
       grid.classList.add(select.value);
     };
 
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`) || sidebar;
     container.appendChild(label);
     container.appendChild(select);
   });
