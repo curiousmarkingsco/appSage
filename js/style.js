@@ -4,14 +4,13 @@ function addEditableTextColor(sidebar, element) {
   const colors = ['black', 'white', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
   const labelPrefix = 'Text Color';
   const cssClassBase = 'text';
-  const optionCount = colors.length;
 
   const getCurrentTextColor = (grid, bp, index) => {
-      const color = colors[index - 1]; // Adjust index since it starts at 1 in our UI but array is 0-based
+      const color = colors[index]; // Use index directly for 0-based array
       return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
   };
 
-  addDeviceTargetedOptions(sidebar, element, labelPrefix, optionCount, cssClassBase, getCurrentTextColor);
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentTextColor, colors);
 }
 
 function addEditableBackgroundColor(sidebar, element) {
