@@ -1,6 +1,6 @@
 /* responsive.js */
 
-function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentValueCallback, options, isInputType = false) {
+function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, options, inputType = 'select') {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
   breakpoints.forEach(bp => {
@@ -9,40 +9,97 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getC
     label.className = 'block text-gray-700 text-sm font-bold mb-2';
 
     let control;
-    if (isInputType) {
-      control = document.createElement('input');
-      control.type = 'text';
-      control.value = getCurrentValueCallback(grid, bp) || '';
-      control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
 
-      control.onchange = () => {
-        const newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-[url('${control.value}')]`;
-        updateGridClass(grid, newValue, cssClassBase, bp);
-      };
-    } else {
-      control = document.createElement('select');
-      control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+    // Function to get the current style directly inside this function
+    function getCurrentStyle() {
+      if (options) {
+        return options.find(option => {
+          const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+          return grid.classList.contains(className);
+        }) || '';
+      }
+    }
 
-      options.forEach(option => {
-        const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
-        const optionElement = document.createElement('option');
-        optionElement.value = value;
-        optionElement.textContent = `${option} (${cssClassBase})`;
-        optionElement.selected = getCurrentValueCallback(grid, bp, option);
-        control.appendChild(optionElement);
-      });
+    switch (inputType) {
+      case 'input':
+        control = document.createElement('input');
+        control.type = 'text';
+        control.value = getCurrentStyle();
+        control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+        control.onchange = () => {
+          const newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${control.value}`;
+          updateGridClass(grid, newValue, cssClassBase, bp);
+        };
+        break;
 
-      control.onchange = () => {
-        options.forEach(opt => {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      case 'icon-select':
+        if (!options) {
+          console.error('No options provided for icons input type.');
+          break;
+        }
+        control = document.createElement('div');
+        control.className = 'flex space-x-2';
+        options.forEach(option => {
+          const iconButton = document.createElement('button');
+          iconButton.className = 'p-2 rounded hover:bg-gray-200';
+          iconButton.innerHTML = `<i class="fa fa-${option}" aria-hidden="true"></i>`; // Placeholder for FontAwesome icons
+          iconButton.onclick = () => {
+            options.forEach(opt => {
+              grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+            });
+            grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+          };
+          if (getCurrentStyle() === option) {
+            iconButton.classList.add('bg-blue-500'); // Highlight the active icon
+          }
+          control.appendChild(iconButton);
         });
-        grid.classList.add(control.value);
-      };
+        break;
+
+      case 'toggle':
+        control = document.createElement('input');
+        control.type = 'checkbox';
+        control.className = 'shadow border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline';
+        control.checked = getCurrentStyle() === cssClassBase;
+        control.onchange = () => {
+          const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
+          grid.classList.toggle(className);
+        };
+        break;
+
+      case 'select':
+        if (!options) {
+          console.error('No options provided for select input type.');
+          break;
+        }
+        control = document.createElement('select');
+        control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+        options.forEach(option => {
+          const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+          const optionElement = document.createElement('option');
+          optionElement.value = value;
+          optionElement.textContent = option;
+          optionElement.selected = getCurrentStyle() === option;
+          control.appendChild(optionElement);
+        });
+        control.onchange = () => {
+          options.forEach(opt => {
+            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          });
+          grid.classList.add(control.value);
+        };
+        break;
+
+      default:
+        console.error('Unsupported input type specified.');
+        break;
     }
 
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    container.appendChild(label);
-    container.appendChild(control);
+    if (control) {
+      container.appendChild(label);
+      container.appendChild(control);
+    }
   });
 }
 

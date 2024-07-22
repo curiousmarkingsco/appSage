@@ -78,7 +78,7 @@ function addEditableColumns(sidebar, grid) {
 
   // Now use this function to handle dropdown generation
   const columns = Array.from({ length: 12 }, (_, i) => i + 1); // Creating an array of column numbers from 1 to 12
-  addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', currentColumnCount, columns);
+  addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', columns, 'select');
 }
 
 function addGridAlignmentOptions(sidebar, grid) {

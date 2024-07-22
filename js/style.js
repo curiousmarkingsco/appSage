@@ -10,7 +10,7 @@ function addEditableTextColor(sidebar, element) {
     return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
   };
 
-  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentTextColor, colors);
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
 }
 
 function addEditableBackgroundColor(sidebar, element) {
@@ -23,7 +23,7 @@ function addEditableBackgroundColor(sidebar, element) {
     return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}bg-${color}`);
   };
 
-  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentBackgroundColor, colors);
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
 }
 
 function addEditableBorders(sidebar, element) {
@@ -43,7 +43,7 @@ function addEditableBorders(sidebar, element) {
       return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${valuePrefix}${option}`);
     };
 
-    addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, getCurrentBorderValue, options[prop]);
+    addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, options[prop], 'select');
   });
 }
 
@@ -61,7 +61,7 @@ function addEditableMarginAndPadding(sidebar, element) {
         return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${value}`);
       };
 
-      addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, getCurrentValue, values);
+      addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, values, 'select');
     });
   });
 }
@@ -77,7 +77,7 @@ function addEditableBackgroundImage(sidebar, grid) {
     return match ? match[1] : '';
   };
 
-  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBackgroundImageUrl, null, true);
+  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 }
 
 function addEditableBackgroundFeatures(sidebar, grid) {
@@ -91,7 +91,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
     const getCurrentBgSize = (grid, bp) => bgSizeOptions.find(size => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${size}`));
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgSize, bgSizeOptions);
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'select');
   }
 
   // Function to update background position
@@ -100,7 +100,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
     const getCurrentBgPosition = (grid, bp) => bgPositionOptions.find(position => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${position}`));
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgPosition, bgPositionOptions);
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'select');
   }
 
   // Function to update background repeat
@@ -109,7 +109,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
     const getCurrentBgRepeat = (grid, bp) => bgRepeatOptions.find(repeat => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${repeat}`));
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, getCurrentBgRepeat, bgRepeatOptions);
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgRepeatOptions, 'select');
   }
 
   // Calling all functions to add options
@@ -119,81 +119,13 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 }
 
 function addTextOptions(sidebar, grid) {
-  // Example options arrays, these could be pulled from Tailwind config dynamically in a real setup
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
 
-  // Add font size, weight, and style options
-  addGenericTextOptions(grid, 'Font Size', 'text', textSizeOptions, 'size');
-  addGenericTextOptions(grid, 'Text Alignment', 'text', textAlignOptions, 'alignment');
-  addGenericTextOptions(grid, 'Font Weight', 'font', fontWeightOptions);
-  addGenericTextOptions(grid, 'Font Style', 'italic', fontStyleOptions);
-  addToggleTextOptions(sidebar, grid, 'Italic', 'italic');
-}
-
-function addToggleTextOptions(sidebar, grid, labelPrefix, cssClassBase) {
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-
-  breakpoints.forEach(bp => {
-    const label = document.createElement('label');
-    label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
-    label.className = 'block text-gray-700 text-sm font-bold mb-2';
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.className = 'shadow border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline';
-    checkbox.checked = grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`);
-
-    checkbox.onchange = () => {
-      const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
-      if (checkbox.checked) {
-        grid.classList.add(className);
-      } else {
-        grid.classList.remove(className);
-      }
-    };
-
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    container.appendChild(label);
-    container.appendChild(checkbox);
-  });
-}
-
-function addGenericTextOptions(grid, labelPrefix, cssClassBase, options, propertyType) {
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-
-  breakpoints.forEach(bp => {
-    const label = document.createElement('label');
-    label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
-    label.className = 'block text-gray-700 text-sm font-bold mb-2';
-
-    const select = document.createElement('select');
-    select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-
-    options.forEach(option => {
-      const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
-      const optionElement = document.createElement('option');
-      optionElement.value = value;
-      optionElement.textContent = option;
-      optionElement.selected = grid.className.includes(value);
-      select.appendChild(optionElement);
-    });
-
-    select.onchange = () => {
-      // Remove only the relevant classes based on the property type
-      options.forEach(opt => {
-        const removeClass = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
-        if (grid.classList.contains(removeClass)) {
-          grid.classList.remove(removeClass);
-        }
-      });
-      grid.classList.add(select.value);
-    };
-
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    container.appendChild(label);
-    container.appendChild(select);
-  });
+  addDeviceTargetedOptions(sidebar, grid, 'Font Size', 'text', textSizeOptions, 'select');
+  addDeviceTargetedOptions(sidebar, grid, 'Text Alignment', 'text', textAlignOptions, 'select');
+  addDeviceTargetedOptions(sidebar, grid, 'Font Weight', 'font', fontWeightOptions, 'select');
+  addDeviceTargetedOptions(sidebar, grid, 'Font Style', 'italic', fontStyleOptions, 'toggle');
 }
