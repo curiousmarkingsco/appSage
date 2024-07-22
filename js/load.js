@@ -60,14 +60,6 @@ function loadChanges(json) {
 
   const grid = document.querySelector('#page .grid');
   if (grid) {
-    const pageElement = document.getElementById('page');
-    const gridCount = Array.prototype.slice.call(pageElement.children).length;
-    const buttonBar = document.getElementById('gridButtonsBottombar')
-    if (gridCount > 1) {
-      document.querySelectorAll('.moveGrid').forEach(element => element.remove());
-      buttonBar.prepend(createVerticalMoveGridButton(grid, 'up'));
-      buttonBar.appendChild(createVerticalMoveGridButton(grid, 'down'));
-    }
     addGridOptions(grid);
   }
 }

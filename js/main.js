@@ -16,17 +16,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('page').appendChild(gridContainer);
 
-    const pageElement = document.getElementById('page');
-    const gridCount = Array.prototype.slice.call(pageElement.children).length;
-    const buttonBar = document.getElementById('gridButtonsBottombar')
-    if (gridCount > 1) {
-      document.querySelectorAll('.moveGrid').forEach(element => element.remove());
-      buttonBar.prepend(createVerticalMoveGridButton(gridContainer, 'up'));
-      buttonBar.appendChild(createVerticalMoveGridButton(gridContainer, 'down'));
-    } else {
-      document.querySelectorAll('.moveGrid').forEach(element => element.remove());
-    }
-
     addGridOptions(gridContainer);
     highlightEditingElement(gridContainer);
 
