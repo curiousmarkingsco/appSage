@@ -42,7 +42,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         options.forEach(option => {
           const iconButton = document.createElement('button');
           iconButton.className = 'p-2 rounded hover:bg-gray-200';
-          iconButton.innerHTML = `<i class="fa fa-${option}" aria-hidden="true"></i>`; // Placeholder for FontAwesome icons
+          iconButton.innerHTML = pageEditorIcons[`${cssClassBase}-${option}`];
           iconButton.onclick = () => {
             options.forEach(opt => {
               grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);

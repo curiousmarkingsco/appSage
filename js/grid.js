@@ -70,12 +70,6 @@ function createVerticalMoveGridButton(grid, direction) {
 }
 
 function addEditableColumns(sidebar, grid) {
-  const currentColumnCount = (grid, bp, index) => {
-    // index is 1-based because it's called from addDeviceTargetedOptions iterating over a range
-    const className = `${bp === 'xs' ? '' : bp + ':'}grid-cols-${index}`;
-    return grid.className.includes(className);
-  };
-
   // Now use this function to handle dropdown generation
   const columns = Array.from({ length: 12 }, (_, i) => i + 1); // Creating an array of column numbers from 1 to 12
   addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', columns, 'select');

@@ -5,11 +5,6 @@ function addEditableTextColor(sidebar, element) {
   const labelPrefix = 'Text Color';
   const cssClassBase = 'text';
 
-  const getCurrentTextColor = (grid, bp, index) => {
-    const color = colors[index]; // Use index directly for 0-based array
-    return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}text-${color}`);
-  };
-
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
 }
 
@@ -17,11 +12,6 @@ function addEditableBackgroundColor(sidebar, element) {
   const colors = ['gray-100', 'red-100', 'blue-100', 'green-100', 'yellow-100', 'purple-100'];
   const labelPrefix = 'Background Color';
   const cssClassBase = 'bg';
-
-  const getCurrentBackgroundColor = (element, bp, index) => {
-    const color = colors[index]; // Use index directly for 0-based array
-    return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}bg-${color}`);
-  };
 
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
 }
@@ -38,10 +28,6 @@ function addEditableBorders(sidebar, element) {
 
   properties.forEach((prop, index) => {
     const cssClassBase = prop === 'color' ? 'border' : (prop === 'width' ? 'border' : (prop === 'radius' ? 'rounded' : (prop === 'style' ? 'border' : '')));
-    const getCurrentBorderValue = (grid, bp, option) => {
-      const valuePrefix = prop === 'color' ? 'border-' : (prop === 'width' ? 'border-' : (prop === 'radius' ? 'rounded-' : (prop === 'style' ? 'border-' : '')));
-      return grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${valuePrefix}${option}`);
-    };
 
     addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, options[prop], 'select');
   });
@@ -57,10 +43,6 @@ function addEditableMarginAndPadding(sidebar, element) {
       const labelPrefix = `${prop} (${side.toUpperCase()})`;
       const cssClassBase = `${prop[0].toLowerCase()}${side}`;
 
-      const getCurrentValue = (element, bp, value) => {
-        return element.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${value}`);
-      };
-
       addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, values, 'select');
     });
   });
@@ -69,13 +51,6 @@ function addEditableMarginAndPadding(sidebar, element) {
 function addEditableBackgroundImage(sidebar, grid) {
   const labelPrefix = 'Background Image URL';
   const cssClassBase = 'bg';
-
-  const getCurrentBackgroundImageUrl = (grid, bp) => {
-    // Extracting background image URL from class
-    const regex = new RegExp(`\\b${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-\$begin:math:display$url\\\\('([^']+)\\'\\\\)\\$end:math:display$\\b`, 'g');
-    const match = regex.exec(grid.className);
-    return match ? match[1] : '';
-  };
 
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 }
@@ -89,7 +64,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
   function addBackgroundSizeOptions() {
     const labelPrefix = 'Background Size';
     const cssClassBase = 'bg';
-    const getCurrentBgSize = (grid, bp) => bgSizeOptions.find(size => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${size}`));
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'select');
   }
@@ -98,7 +72,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
   function addBackgroundPositionOptions() {
     const labelPrefix = 'Background Position';
     const cssClassBase = 'bg';
-    const getCurrentBgPosition = (grid, bp) => bgPositionOptions.find(position => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${position}`));
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'select');
   }
@@ -107,7 +80,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
   function addBackgroundRepeatOptions() {
     const labelPrefix = 'Background Repeat';
     const cssClassBase = 'bg';
-    const getCurrentBgRepeat = (grid, bp) => bgRepeatOptions.find(repeat => grid.className.includes(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${repeat}`));
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgRepeatOptions, 'select');
   }
@@ -125,7 +97,7 @@ function addTextOptions(sidebar, grid) {
   const fontStyleOptions = ['italic', 'not-italic'];
 
   addDeviceTargetedOptions(sidebar, grid, 'Font Size', 'text', textSizeOptions, 'select');
-  addDeviceTargetedOptions(sidebar, grid, 'Text Alignment', 'text', textAlignOptions, 'select');
+  addDeviceTargetedOptions(sidebar, grid, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, grid, 'Font Weight', 'font', fontWeightOptions, 'select');
   addDeviceTargetedOptions(sidebar, grid, 'Font Style', 'italic', fontStyleOptions, 'toggle');
 }
