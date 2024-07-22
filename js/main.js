@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
   });
+
+  // Mouse enter event
+  document.body.addEventListener('mouseenter', function(e) {
+    if (e.target.matches('.tooltip-target') && e.target.getAttribute('data-extra-info')) {
+      updateTooltip(e, true);
+    }
+  }, true); // Use capture phase to ensure tooltip updates immediately
+
+  // Mouse leave event
+  document.body.addEventListener('mouseleave', function(e) {
+    if (e.target.matches('.tooltip-target')) {
+      updateTooltip(e, false);
+    }
+  }, true);
 });
 
 function addPageOptions() {
@@ -49,5 +63,43 @@ function addPageOptions() {
     addEditableBackgroundColor(sidebar, page);
     addEditableBackgroundImage(sidebar, page);
     addEditableBackgroundFeatures(sidebar, page);
+  }
+}
+
+function updateTooltip(e, show) {
+  const tooltip = document.getElementById('tooltip');
+  if (show) {
+    const targetRect = e.target.getBoundingClientRect();
+    tooltip.textContent = e.target.getAttribute('data-extra-info') || '';
+    let tooltipX = targetRect.left + (targetRect.width / 2) - (tooltip.offsetWidth / 2);
+    let tooltipY = targetRect.top - tooltip.offsetHeight - 5;
+
+    // Ensure the tooltip does not overflow horizontally
+    const rightOverflow = tooltipX + tooltip.offsetWidth - document.body.clientWidth;
+    if (rightOverflow > 0) {
+      tooltipX -= rightOverflow;  // Adjust to the left if overflowing on the right
+    }
+    if (tooltipX < 0) {
+      tooltipX = 5;  // Keep some space from the left edge if overflowing on the left
+    }
+
+    // Adjust vertically if there is not enough space above the target
+    if (targetRect.top < tooltip.offsetHeight + 10) {
+      tooltipY = targetRect.bottom + 5;
+    }
+
+    // Set tooltip position
+    tooltip.style.left = `${tooltipX}px`;
+    tooltip.style.top = `${tooltipY}px`;
+
+    // Show tooltip
+    tooltip.classList.replace('opacity-0', 'opacity-100');
+    tooltip.classList.remove('invisible');
+    tooltip.classList.add('visible');
+  } else {
+    // Hide tooltip
+    tooltip.classList.replace('opacity-100', 'opacity-0');
+    tooltip.classList.remove('visible');
+    tooltip.classList.add('invisible');
   }
 }
