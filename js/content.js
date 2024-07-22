@@ -1,25 +1,47 @@
 /* content.js */
 
-function addContentContainer(column, addButton) {
+function addContentContainer(column) {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
 
-  if (addButton) {
-    column.appendChild(createAddContentButton(contentContainer));
-  }
-  column.appendChild(contentContainer);
-  contentContainer.appendChild(createEditContentButton(contentContainer));
-  contentContainer.appendChild(createRemoveContentButton(column, contentContainer));
+  contentContainer.addEventListener('click', function (event) {
+    event.stopPropagation();
+    detectAndLoadContentType(contentContainer);
+    highlightEditingElement(contentContainer);
+  });
+
   return contentContainer;
 }
 
-function createRemoveContentButton(column, contentContainer) {
+function enableEditContentOnClick(contentContainer) {
+  contentContainer.addEventListener('click', function (event) {
+    event.stopPropagation();
+    detectAndLoadContentType(contentContainer);
+    highlightEditingElement(contentContainer);
+  });
+}
+
+function createAddContentButton(contentContainer) {
   const button = document.createElement('button');
-  button.className = 'removeContent ugc-discard z-50 hidden group-hover:block absolute top-0 left-44 bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded h-12 w-12';
+  button.setAttribute('data-extra-info', 'Add content to this column');
+  button.className = 'addContent ugc-discard z-50 hidden group-hover:block absolute top-2 left-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded h-12 w-24';
+  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
+  button.addEventListener('click', function (event) {
+    event.stopPropagation();
+    updateSidebarForContentType(contentContainer);
+    highlightEditingElement(contentContainer);
+  });
+  return button;
+}
+
+function createRemoveContentButton(contentContainer) {
+  const button = document.createElement('button');
+  button.className = 'removeContent ugc-discard bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded h-12 w-12';
   button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white" class="h-5 w-5 mx-auto"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L409.6 295.8l42.1-42.1L474.3 231l11.3-11.3-33.9-33.9-62.1-62.1L355.7 89.8l-11.3 11.3-22.6 22.6-57.8 57.8L38.8 5.1zM306.2 214.7l50.5-50.5c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6l-47.8 47.8-25.4-19.9zM195.5 250l-72.9 72.9c-10.4 10.4-18 23.3-22.2 37.4L65 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2l88.3-88.3-77.9-61.4-27.6 27.6c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l24.9-24.9L195.5 250zM224 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9l-78.1 23 23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM426.7 18.7L412.3 33.2 389.7 55.8 378.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L517.3 18.7c-25-25-65.5-25-90.5 0z"/></svg>';
   button.addEventListener('click', function () {
     showConfirmationModal('Are you sure you want to delete this content?', () => {
-      column.removeChild(contentContainer);
+      contentContainer.remove();
+      document.getElementById('sidebar-dynamic').innerHTML = '';
     });
   });
   return button;
@@ -41,32 +63,10 @@ function createVerticalMoveContentButton(contentContainer, direction) {
   return button;
 }
 
-function createEditContentButton(contentContainer) {
-  const button = document.createElement('button');
-  button.className = 'editContent ugc-discard z-50 hidden group-hover:block absolute top-0 left-28 bg-green-500 hover:bg-green-700 text-white font-bold p-2 rounded h-12 w-12';
-  button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 mx-auto"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>';
-  button.addEventListener('click', function () {
-    detectAndLoadContentType(contentContainer);
-    highlightEditingElement(contentContainer);
-  });
-  return button;
-}
-
-function createAddContentButton(contentContainer) {
-  const button = document.createElement('button');
-  button.className = 'addContent ugc-discard z-50 hidden group-hover:block absolute top-2 left-1/2 bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded h-12 w-24';
-  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
-  button.addEventListener('click', function () {
-    updateSidebarForContentType(contentContainer);
-    highlightEditingElement(contentContainer);
-  });
-  return button;
-}
-
 function detectAndLoadContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  const oldMoveButtons = document.getElementById('moveContentButtons');
-  if (oldMoveButtons) { oldMoveButtons.remove }
+  // const oldMoveButtons = document.getElementById('moveContentButtons');
+  // if (oldMoveButtons) { oldMoveButtons.remove }
   const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul'];
   const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
@@ -91,14 +91,16 @@ function detectAndLoadContentType(contentContainer) {
     // If no specific type is found, proceed with showing options to add new content
     updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
   }
-  highlightEditingElement(contentContainer);
 
   const moveButtons = document.createElement('div');
   moveButtons.className = 'flex justify-between my-2';
   moveButtons.id = 'moveContentButtons';
   sidebar.prepend(moveButtons);
   moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
+  moveButtons.appendChild(createRemoveContentButton(contentContainer));
   moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
+
+  highlightEditingElement(contentContainer);
 }
 
 function updateSidebarForHeading(contentContainer, newContent) {
@@ -162,10 +164,7 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   sidebar.appendChild(textInput);
-
-  // Add font size options
   addTextOptions(sidebar, contentContainer);
-
   addEditableTextColor(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
@@ -432,7 +431,7 @@ function updateSidebarForParagraph(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '<div><strong>Edit Paragraph Text:</strong></div>${generateMobileTabs()}';
+  sidebar.innerHTML = `<div><strong>Edit Paragraph Text:</strong></div>${generateMobileTabs()}`;
 
   const textInput = document.createElement('textarea');
   textInput.className = 'mt-2 p-2 border border-gray-300 w-full';
@@ -477,7 +476,7 @@ function updateSidebarForButton(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '<div><strong>Configure Button:</strong></div>${generateMobileTabs()}';
+  sidebar.innerHTML = `<div><strong>Configure Button:</strong></div>${generateMobileTabs()}`;
 
   const textInput = document.createElement('input');
   textInput.type = 'text';

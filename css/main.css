@@ -19,3 +19,15 @@
 #editing-highlight {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */
 }
+
+.pagegrid:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.pagecolumn:hover {
+  background-color: rgba(0, 255, 255, 0.1);
+}
+
+.pagecontent:hover {
+  background-color: rgba(0, 255, 255, 0.25);
+}

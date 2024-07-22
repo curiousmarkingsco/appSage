@@ -97,58 +97,14 @@ function savePage(pageId, data) {
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
+  enableEditGridOnClick(grid);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
-    restoreColumnCapabilities(column, grid);
+    enableEditColumnOnClick(column);
+    column.appendChild(createAddContentButton(column));
     Array.from(column.querySelectorAll('.pagecontent')).forEach(content => {
-      restoreContentCapabilities(column, content);
+      enableEditContentOnClick(content);
     });
   });
-}
-
-function restoreColumnCapabilities(column, grid) {
-  let gridButton;
-  gridButton = column.querySelector('.editGrid');
-  if (!gridButton) {
-    gridButton = createEditGridButton(grid);
-  }
-  column.appendChild(gridButton);
-
-  let editButton;
-  editButton = column.querySelector('.editColumn');
-  if (!editButton) {
-    editButton = createEditColumnButton(column);
-  }
-  column.appendChild(editButton);
-
-  let addButton;
-  addButton = column.querySelector('.addContent');
-  if (!addButton) {
-    addButton = createAddContentButton(column);
-  }
-  column.appendChild(addButton);
-
-  let removeButton;
-  removeButton = column.querySelector('.removeColumn');
-  if (!removeButton) {
-    removeButton = createRemoveColumnButton(column, grid);
-  }
-  column.appendChild(removeButton);
-}
-
-function restoreContentCapabilities(column, contentContainer) {
-  let editButton;
-  editButton = contentContainer.querySelector('.editContent');
-  if (!editButton) {
-    editButton = createEditContentButton(contentContainer);
-  }
-  contentContainer.appendChild(editButton);
-
-  let removeButton;
-  removeButton = contentContainer.querySelector('.removeContent');
-  if (!removeButton) {
-    removeButton = createRemoveContentButton(column, contentContainer);
-  }
-  contentContainer.appendChild(removeButton);
 }
 
 function savePageSettingsChanges(pageId) {

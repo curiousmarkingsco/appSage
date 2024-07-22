@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const initialColumn = createColumn(gridContainer);
     gridContainer.appendChild(initialColumn);
 
-    const addContentButton = createAddContentButton(initialColumn, true);
-    initialColumn.appendChild(addContentButton);
-
     document.getElementById('page').appendChild(gridContainer);
 
     const pageElement = document.getElementById('page');
@@ -36,18 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
+
+    enableEditGridOnClick(gridContainer);
   });
 
   // Mouse enter event
   document.body.addEventListener('mouseenter', function(e) {
-    if (e.target.matches('.tooltip-target') && e.target.getAttribute('data-extra-info')) {
+    if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
       updateTooltip(e, true);
     }
   }, true); // Use capture phase to ensure tooltip updates immediately
 
   // Mouse leave event
   document.body.addEventListener('mouseleave', function(e) {
-    if (e.target.matches('.tooltip-target')) {
+    if (e.target.matches('[data-extra-info]')) {
       updateTooltip(e, false);
     }
   }, true);
