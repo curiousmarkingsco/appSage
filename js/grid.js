@@ -8,6 +8,7 @@ function addGridOptions(grid) {
   if (grid) {
     addRemoveGridButton(grid, sidebar);
     addEditableColumns(sidebar, grid);
+    addGridAlignmentOptions(sidebar, grid)
     highlightEditingElement(grid);
 
     addEditableBackgroundColor(sidebar, grid);
@@ -56,6 +57,7 @@ function createVerticalMoveGridButton(grid, direction) {
   });
   return button;
 }
+
 function addEditableColumns(sidebar, grid) {
   const currentColumnCount = (grid, bp, index) => {
     // index is 1-based because it's called from addDeviceTargetedOptions iterating over a range
@@ -68,3 +70,53 @@ function addEditableColumns(sidebar, grid) {
   addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', currentColumnCount, columns);
 }
 
+function addGridAlignmentOptions(sidebar, grid) {
+  const justifyItemsOptions = ['start', 'end', 'center', 'stretch'];
+  const alignContentOptions = ['start', 'end', 'center', 'stretch', 'space-between', 'space-around', 'space-evenly'];
+  const placeContentOptions = ['start', 'end', 'center', 'stretch', 'space-between', 'space-around', 'space-evenly'];
+  const placeItemsOptions = ['start', 'end', 'center', 'stretch'];
+
+  // Function to add generic grid option editing
+  function addGenericGridOptions(labelPrefix, cssClassBase, options) {
+    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+
+    breakpoints.forEach(bp => {
+      const label = document.createElement('label');
+      label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
+      label.className = 'block text-gray-700 text-sm font-bold mb-2';
+
+      const select = document.createElement('select');
+      select.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+
+      options.forEach(option => {
+        const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+        const optionElement = document.createElement('option');
+        optionElement.value = value;
+        optionElement.textContent = option;
+        optionElement.selected = grid.className.includes(value);
+        select.appendChild(optionElement);
+      });
+
+      select.onchange = () => {
+        // Remove only the relevant classes based on the property type
+        options.forEach(opt => {
+          const removeClass = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+          if (grid.classList.contains(removeClass)) {
+            grid.classList.remove(removeClass);
+          }
+        });
+        grid.classList.add(select.value);
+      };
+
+      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+      container.appendChild(label);
+      container.appendChild(select);
+    });
+  }
+
+  // Add alignment options
+  addGenericGridOptions('Justify Items', 'justify-items', justifyItemsOptions);
+  addGenericGridOptions('Align Content', 'content', alignContentOptions);
+  addGenericGridOptions('Place Content', 'place-content', placeContentOptions);
+  addGenericGridOptions('Place Items', 'place-items', placeItemsOptions);
+}
