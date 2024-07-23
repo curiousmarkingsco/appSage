@@ -1,6 +1,9 @@
 /* main.js */
+var tailwindColors = tailwind.config.theme.colors;
+var colorArray = extractColorNames(tailwindColors);//.push('black', 'white');
 
 document.addEventListener('DOMContentLoaded', function () {
+  // var tailwindColors = tailwind.config.theme.colors;
   const editPageButton = document.getElementById('editPageSettings');
   editPageButton.addEventListener('click', function () {
     addPageOptions();
@@ -90,4 +93,14 @@ function updateTooltip(e, show) {
     tooltip.classList.remove('visible');
     tooltip.classList.add('invisible');
   }
+}
+
+function extractColorNames(colorObject) {
+  let colorArray = [];
+  for (const colorFamily in colorObject) {
+    for (const shade in colorObject[colorFamily]) {
+      colorArray.push(`${colorFamily}-${shade}`);
+    }
+  }
+  return colorArray;
 }

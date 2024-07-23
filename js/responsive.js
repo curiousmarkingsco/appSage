@@ -64,10 +64,10 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
           break;
         }
         control = document.createElement('div');
-        control.className = 'flex space-x-2';
+        control.className = `grid grid-cols-5 gap-x-1 gap-y-2 overflow-y-scroll ${labelPrefix === 'Text Color' ? 'h-40' : ''}`;
         options.forEach(option => {
           const iconButton = document.createElement('button');
-          iconButton.className = 'p-2 rounded hover:bg-slate-200';
+          iconButton.className = 'p-2 rounded';
           let iconTextCandidate1 = `${cssClassBase}-${option}`;
           let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
           const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
@@ -80,14 +80,14 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
           };
           // The string starts with 'text-' and ends with '-50' or '*00' where * is 1-9
           // In other words, it is a Tailwind color class
-          if (/^text-.*-(50|[1-9]00)$/.test(iconTextCandidate1)) {
-            iconTextCandidate1 = iconTextCandidate1.replace('text', 'bg');
-            iconButton.classList.add(iconTextCandidate1);
-            iconButton.classList.add(`hover:${iconTextCandidate1}/50`);
-          } else if (/^text-.*-(50|[1-9]00)$/.test(iconTextCandidate2)) {
-            iconTextCandidate2 = iconTextCandidate2.replace('text', 'bg');
-            iconButton.classList.add(iconTextCandidate2);
-            iconButton.classList.add(`hover:${iconTextCandidate1}/50`);
+          if (/^text-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
+            iconButton.querySelector('svg').classList.add(iconTextCandidate1);
+            iconTextCandidate1 = iconTextCandidate1.replace('text', 'border');
+            iconButton.classList.add('border-[0.175rem]', iconTextCandidate1);
+          } else if (/^text-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate2)) {
+            iconButton.querySelector('svg').classList.add(iconTextCandidate2);
+            iconTextCandidate2 = iconTextCandidate2.replace('text', 'border');
+            iconButton.classList.add('border-[0.175rem]', iconTextCandidate2);
           }
           control.appendChild(iconButton);
         });

@@ -1,7 +1,7 @@
 /* style.js */
 
 function addEditableBackgroundColor(sidebar, element) {
-  const colors = ['gray-100', 'red-100', 'blue-100', 'green-100', 'yellow-100', 'purple-100'];
+  const colors = colorArray;
   const labelPrefix = 'Background Color';
   const cssClassBase = 'bg';
 
@@ -12,7 +12,7 @@ function addEditableBorders(sidebar, element) {
   const labels = ['Border Color', 'Border Width', 'Border Radius', 'Border Style'];
   const properties = ['color', 'width', 'radius', 'style'];
   const options = {
-    color: ['gray-300', 'red-500', 'blue-500', 'green-500'],
+    color: colorArray,
     width: ['1', '2', '4', '8'],
     radius: ['none', 'sm', 'md', 'lg'],
     style: ['solid', 'dashed', 'dotted', 'double']
@@ -83,7 +83,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 }
 
 function addTextOptions(sidebar, element) {
-  const textColorOptions = ['black', 'white', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
+  const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
