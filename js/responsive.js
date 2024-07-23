@@ -11,6 +11,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
       case 'input':
         control = document.createElement('input');
         handleInputType(bp, options, cssClassBase, grid, control);
+        control.classList.add('col-span-5');
         break;
       case 'single-icon-select':
         control = document.createElement('div');
@@ -19,14 +20,17 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
       case 'icon-select':
         control = document.createElement('div');
         handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control);
+        control.classList.add('col-span-5');
         break;
       case 'toggle':
-        control = document.createElement('input');
+        control = document.createElement('div');
         handleToggle(bp, options, grid, cssClassBase, control);
+        control.classList.add('col-span-1');
         break;
       case 'select':
         control = document.createElement('select');
         handleSelect(bp, grid, control, options, cssClassBase);
+        control.classList.add('col-span-5');
         break;
       default:
         console.error('Unsupported input type specified.');
@@ -68,14 +72,14 @@ function handleInputType(bp, options, cssClassBase, grid, control) {
 }
 
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
-  const fontSize = labelPrefix === 'Font Size';
+  const fontSize = (labelPrefix === 'Font Size' ||  labelPrefix === 'Font Weight');
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
-  control.className = `flex relative h-12 ${fontSize ? 'w-36 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
+  control.className = `flex relative h-12 ${fontSize ? 'w-48 col-span-4 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
   const iconTarget = pageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
-  iconButton.className = `absolute top-0.5 ${smallSelect ? 'right-4 ' : 'right-1'} h-11 w-11 px-2 py-1 rounded-sm border-none bg-white pointer-events-none`;
+  iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-1 top-0.5 bg-white h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
   const selectControl = document.createElement('select');
   let extraInfo;
   if (labelPrefix.includes('Padding')){
@@ -84,7 +88,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = 'Create space between the edge of the box and the boxes/content outside of it.'
   }
   selectControl.setAttribute('data-extra-info', extraInfo);
-  selectControl.className = `appearance-none bg-transparent p-2 border-2 border-slate-300 ${smallSelect ? 'pr-10 ' : ''}${labelPrefix === 'Font Size' ? 'pr-24 ' : ''}relative rounded`;
+  selectControl.className = `appearance-none w-full bg-transparent p-2 border-2 border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
@@ -108,10 +112,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     console.error('No options provided for icons input type.');
     return;
   }
-  control.className = `grid grid-cols-5 gap-x-1 gap-y-2 overflow-y-scroll ${labelPrefix === 'Text Color' ? 'h-40' : ''}`;
+  control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${labelPrefix === 'Text Color' ? 'h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = 'p-2 rounded';
+    iconButton.className = `p-2 rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
@@ -136,13 +140,21 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 }
 
 function handleToggle(bp, options, grid, cssClassBase, control) {
-  control.type = 'checkbox';
-  control.className = 'shadow border rounded py-2 px-3 leading-tight focus:outline-none focus:shadow-outline';
-  control.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
-  control.onchange = () => {
+  control.className = 'relative bg-white h-12 w-12 border-2 border-slate-30 rounded'
+  const iconButton = document.createElement('span');
+  iconButton.innerHTML = pageEditorIcons[cssClassBase];
+  iconButton.className = `absolute top-0.5 right-0 h-11 w-11 px-2 py-1 rounded-sm border-none pointer-events-none`;
+
+  const checkbox = document.createElement('input')
+  checkbox.type = 'checkbox';
+  checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
+  checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
+  checkbox.onchange = () => {
     const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
   };
+  control.appendChild(checkbox);
+  control.appendChild(iconButton);
 }
 
 function handleSelect(bp, grid, control, options, cssClassBase) {

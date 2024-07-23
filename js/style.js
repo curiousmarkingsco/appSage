@@ -44,7 +44,7 @@ function addEditablePadding(sidebar, element) {
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const paddingContainer = document.createElement('div');
-    paddingContainer.className = 'grid grid-cols-4'
+    paddingContainer.className = 'grid grid-cols-4 col-span-5'
     const paddingElements = container.querySelectorAll('.Padding');
     paddingElements.forEach(paddingDropdown => {
       paddingContainer.appendChild(paddingDropdown);
@@ -67,7 +67,7 @@ function addEditableMargin(sidebar, element) {
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const marginContainer = document.createElement('div');
-    marginContainer.className = 'grid grid-cols-4'
+    marginContainer.className = 'grid grid-cols-4 col-span-5'
     const marginElements = container.querySelectorAll('.Margin');
     marginElements.forEach(marginDropdown => {
       marginContainer.appendChild(marginDropdown);
@@ -124,10 +124,12 @@ function addTextOptions(sidebar, element) {
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
+  const fontUnderlineOptions = ['underline', 'not-underline'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
+  addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, element, 'Font Style', 'underline', fontUnderlineOptions, 'toggle');
+  addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 }

@@ -45,8 +45,8 @@ function generateMobileTabs() {
   </div>
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
-      <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-1 gap-y-2">
-        <h3 class="text-lg font-bold text-black my-2">Styles for ${size.toUpperCase()} Screens</h3>
+      <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-y-2">
+        <h3 class="text-lg font-bold text-black my-2 col-span-5">Styles for ${size.toUpperCase()} Screens</h3>
       </div>
     `).join('')}
   </div>
