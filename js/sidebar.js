@@ -2,13 +2,13 @@
 
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-white p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-black">${message}</p>
           <div class="flex justify-between mt-4">
-              <button id="confirmDelete" class="bg-red-500 hover:bg-red-700 text-white font-bold p-2 rounded">Delete</button>
-              <button id="cancelDelete" class="bg-blue-500 hover:bg-blue-700 text-white font-bold p-2 rounded">Cancel</button>
+              <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-white font-bold p-2 rounded">Delete</button>
+              <button id="cancelDelete" class="bg-sky-500 hover:bg-sky-700 text-white font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
@@ -36,9 +36,9 @@ function generateMobileTabs() {
   };
 
   return `
-  <div id="mobileTabContainer" class="flex fixed w-72 left-0 justify-stretch bottom-0 bg-gray-400">
+  <div id="mobileTabContainer" class="flex fixed w-72 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-400">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-gray-200 border-transparent '}w-12 h-12 inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-gray-50 border-t border-gray-500">
+      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-slate-200 border-transparent '}w-12 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-50 border-t-4 border-slate-50">
         ${icon[1]}
       </div>
     `).join('')}
@@ -60,11 +60,11 @@ function activateTabs() {
       // Toggle display of associated content or styles when a tab is clicked
       const allTabs = document.querySelectorAll('.responsive-tab');
       allTabs.forEach(t => {
-        t.classList.remove('bg-gray-200');
+        t.classList.remove('bg-slate-200');
         t.classList.remove('border-transparent');
-        t.classList.add('border-gray-500');
+        t.classList.add('border-slate-50');
       });  // Remove highlight from all tabs
-      this.classList.add('bg-gray-200');  // Highlight the clicked tab
+      this.classList.add('bg-slate-200');  // Highlight the clicked tab
       this.classList.add('border-transparent');
 
       // Get the breakpoint from the class, assumes class is first in the list!

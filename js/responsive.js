@@ -6,7 +6,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
   breakpoints.forEach(bp => {
     const label = document.createElement('label');
     label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
-    label.className = 'block text-gray-700 text-sm font-bold mb-2';
+    label.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     let control;
 
@@ -25,13 +25,39 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('input');
         control.type = 'text';
         control.value = getCurrentStyle();
-        control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+        control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
         control.onchange = () => {
           const newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${control.value}`;
           updateGridClass(grid, newValue, cssClassBase, bp);
         };
         break;
 
+      case 'single-icon-select':
+        control = document.createElement('div');
+        control.className = 'flex relative h-12 w-36';
+        const iconTarget = pageEditorIcons[labelPrefix.toLowerCase().replace(' ', '-')];
+        const iconButton = document.createElement('span')
+        iconButton.innerHTML = iconTarget;
+        iconButton.className = 'absolute top-0.5 right-1 h-11 w-12 px-2 py-1 rounded-sm border-none bg-white pointer-events-none'
+        const selectControl = document.createElement('select');
+        selectControl.className = 'appearance-none bg-transparent p-2 border-2 border-slate-300 pr-24 relative rounded'
+        options.forEach(option => {
+          const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+          const optionElement = document.createElement('option');
+          optionElement.value = value;
+          optionElement.textContent = option;
+          optionElement.selected = getCurrentStyle() === value;
+          selectControl.appendChild(optionElement);
+        });
+        selectControl.onchange = () => {
+          options.forEach(opt => {
+            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          });
+          grid.classList.add(selectControl.value);
+        };
+        control.appendChild(selectControl);
+        control.appendChild(iconButton);
+        break;
       case 'icon-select':
         if (!options) {
           console.error('No options provided for icons input type.');
@@ -41,7 +67,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control.className = 'flex space-x-2';
         options.forEach(option => {
           const iconButton = document.createElement('button');
-          iconButton.className = 'p-2 rounded hover:bg-gray-200';
+          iconButton.className = 'p-2 rounded hover:bg-slate-200';
           let iconTextCandidate1 = `${cssClassBase}-${option}`;
           let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
           const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
@@ -84,7 +110,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
           break;
         }
         control = document.createElement('select');
-        control.className = 'shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+        control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
         options.forEach(option => {
           const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
           const optionElement = document.createElement('option');

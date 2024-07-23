@@ -90,7 +90,7 @@ function addTextOptions(sidebar, element) {
   const fontStyleOptions = ['italic', 'not-italic'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'select');
+  addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
