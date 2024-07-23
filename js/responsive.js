@@ -34,10 +34,10 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         console.error('Unsupported input type specified.');
         return;
     }
-
+    
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     if (control) {
-      container.appendChild(label);
+      // container.appendChild(label);
       container.appendChild(control);
     }
   });
@@ -55,7 +55,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 function createLabel(bp, labelPrefix) {
   const label = document.createElement('label');
   label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
-  label.className = 'block text-slate-700 text-sm font-bold mb-2';
+  label.className = 'block hidden text-slate-700 text-sm font-bold mb-2';
   return label;
 }
 
@@ -70,14 +70,23 @@ function handleInputType(bp, options, cssClassBase, grid, control) {
 }
 
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
-  control.className = 'flex relative h-12 w-36';
-  const iconTarget = pageEditorIcons[labelPrefix.toLowerCase().replace(' ', '-')];
+  const fontSize = labelPrefix === 'Font Size';
+  const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
+  const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
+  control.className = `flex relative h-12 ${fontSize ? 'w-36 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
+  const iconTarget = pageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
-  iconButton.className = 'absolute top-0.5 right-1 h-11 w-12 px-2 py-1 rounded-sm border-none bg-white pointer-events-none';
-
+  iconButton.className = `absolute top-0.5 ${smallSelect ? 'right-4 ' : 'right-1'} h-11 w-11 px-2 py-1 rounded-sm border-none bg-white pointer-events-none`;
   const selectControl = document.createElement('select');
-  selectControl.className = 'appearance-none bg-transparent p-2 border-2 border-slate-300 pr-24 relative rounded';
+  let extraInfo;
+  if (labelPrefix.includes('Padding')){
+    extraInfo = 'Create space between the edge of the box and content inside of it.'
+  } else if (labelPrefix.includes('Margin')){
+    extraInfo = 'Create space between the edge of the box and the boxes/content outside of it.'
+  }
+  selectControl.setAttribute('data-extra-info', extraInfo);
+  selectControl.className = `appearance-none bg-transparent p-2 border-2 border-slate-300 ${smallSelect ? 'pr-10 ' : ''}${labelPrefix === 'Font Size' ? 'pr-24 ' : ''}relative rounded`;
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');

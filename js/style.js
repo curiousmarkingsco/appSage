@@ -26,17 +26,53 @@ function addEditableBorders(sidebar, element) {
 }
 
 function addEditableMarginAndPadding(sidebar, element) {
-  const props = ['Margin', 'Padding'];
+  addEditableMargin(sidebar, element);
+  addEditablePadding(sidebar, element);
+}
+
+function addEditablePadding(sidebar, element) {
   const sides = ['t', 'b', 'l', 'r'];
   const values = ['0', '1', '2', '4', '8', '16'];
 
-  props.forEach(prop => {
-    sides.forEach(side => {
-      const labelPrefix = `${prop} (${side.toUpperCase()})`;
-      const cssClassBase = `${prop[0].toLowerCase()}${side}`;
+  sides.forEach(side => {
+    const cssClassBase = `p${side}`;
 
-      addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, values, 'select');
+    addDeviceTargetedOptions(sidebar, element, `Padding (${side})`, cssClassBase, values, 'single-icon-select');
+  });
+
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const paddingContainer = document.createElement('div');
+    paddingContainer.className = 'grid grid-cols-4'
+    const paddingElements = container.querySelectorAll('.Padding');
+    paddingElements.forEach(paddingDropdown => {
+      paddingContainer.appendChild(paddingDropdown);
     });
+    container.appendChild(paddingContainer);
+  });
+}
+
+function addEditableMargin(sidebar, element) {
+  const sides = ['t', 'b', 'l', 'r'];
+  const values = ['0', '1', '2', '4', '8', '16'];
+
+  sides.forEach(side => {
+    const cssClassBase = `m${side}`;
+
+    addDeviceTargetedOptions(sidebar, element, `Margin (${side})`, cssClassBase, values, 'single-icon-select');
+  });
+
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const marginContainer = document.createElement('div');
+    marginContainer.className = 'grid grid-cols-4'
+    const marginElements = container.querySelectorAll('.Margin');
+    marginElements.forEach(marginDropdown => {
+      marginContainer.appendChild(marginDropdown);
+    });
+    container.appendChild(marginContainer);
   });
 }
 
