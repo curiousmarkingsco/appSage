@@ -59,9 +59,11 @@ function addPageOptions() {
 
 function updateTooltip(e, show) {
   const tooltip = document.getElementById('tooltip');
+  const extraClasses = e.target.getAttribute('data-extra-info-class') || '';
+
   if (show) {
     const targetRect = e.target.getBoundingClientRect();
-    tooltip.textContent = e.target.getAttribute('data-extra-info') || '';
+    tooltip.innerHTML = e.target.getAttribute('data-extra-info') || '';
     let tooltipX = targetRect.left + (targetRect.width / 2) - (tooltip.offsetWidth / 2);
     let tooltipY = targetRect.top - tooltip.offsetHeight - 5;
 
@@ -83,15 +85,17 @@ function updateTooltip(e, show) {
     tooltip.style.left = `${tooltipX}px`;
     tooltip.style.top = `${tooltipY}px`;
 
-    // Show tooltip
+    // Show tooltip with extra classes
     tooltip.classList.replace('opacity-0', 'opacity-100');
     tooltip.classList.remove('invisible');
     tooltip.classList.add('visible');
+    if (extraClasses !== '') extraClasses.split(' ').forEach(cls => tooltip.classList.add(cls));
   } else {
-    // Hide tooltip
+    // Hide tooltip and remove extra classes
     tooltip.classList.replace('opacity-100', 'opacity-0');
     tooltip.classList.remove('visible');
     tooltip.classList.add('invisible');
+    if (extraClasses !== '') extraClasses.split(' ').forEach(cls => tooltip.classList.remove(cls));
   }
 }
 

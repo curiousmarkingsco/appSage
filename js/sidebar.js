@@ -36,7 +36,7 @@ function generateMobileTabs() {
   };
 
   return `
-  <div id="mobileTabContainer" class="flex fixed w-72 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-400">
+  <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-400">
     ${Object.entries(icons).map(([size, icon]) => `
       <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-slate-200 border-transparent '}w-12 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-50 border-t-4 border-slate-50">
         ${icon[1]}
