@@ -27,7 +27,7 @@ function showConfirmationModal(message, onConfirm) {
 
 function generateMobileTabs() {
   const icons = {
-      'xs': ['Smartwatch & larger', '<svg fill="white" class="h-3 w-3 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zm136 80l0 86.1 41 41c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-48-48c-4.5-4.5-7-10.6-7-17l0-96c0-13.3 10.7-24 24-24s24 10.7 24 24zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
+      'xs': ['Smartwatch & larger', '<svg fill="black" class="h-3 w-3 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zm136 80l0 86.1 41 41c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-48-48c-4.5-4.5-7-10.6-7-17l0-96c0-13.3 10.7-24 24-24s24 10.7 24 24zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
       'sm': ['Mobile & larger', '<svg fill="black" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>'],
       'md': ['Tall tablet & larger', '<svg fill="black" class="h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
       'lg': ['Wide tablet & larger', '<svg fill="black" class="h-5 w-5 mx-auto rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
@@ -36,9 +36,9 @@ function generateMobileTabs() {
   };
 
   return `
-  <div id="mobileTabContainer" class="flex gap-1 fixed w-72 left-0 bottom-0 bg-gray-300 p-1.5">
+  <div id="mobileTabContainer" class="flex fixed w-72 left-0 justify-stretch bottom-0 bg-gray-400">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-green-500 '}w-12 h-12 rounded inline-block responsive-tab cursor-pointer flex items-center justify-center p-2 hover:bg-gray-400">
+      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-gray-200 border-transparent '}w-12 h-12 inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-gray-50 border-t border-gray-500">
         ${icon[1]}
       </div>
     `).join('')}
@@ -60,11 +60,12 @@ function activateTabs() {
       // Toggle display of associated content or styles when a tab is clicked
       const allTabs = document.querySelectorAll('.responsive-tab');
       allTabs.forEach(t => {
-        t.classList.remove('bg-green-500');
-        t.querySelector('svg').setAttribute('fill', 'black');
+        t.classList.remove('bg-gray-200');
+        t.classList.remove('border-transparent');
+        t.classList.add('border-gray-500');
       });  // Remove highlight from all tabs
-      this.classList.add('bg-green-500');  // Highlight the clicked tab
-      this.querySelector('svg').setAttribute('fill', 'white');
+      this.classList.add('bg-gray-200');  // Highlight the clicked tab
+      this.classList.add('border-transparent');
 
       // Get the breakpoint from the class, assumes class is first in the list!
       const bp = this.classList[0].replace('tab-', '');

@@ -1,13 +1,5 @@
 /* style.js */
 
-function addEditableTextColor(sidebar, element) {
-  const colors = ['black', 'white', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
-  const labelPrefix = 'Text Color';
-  const cssClassBase = 'text';
-
-  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
-}
-
 function addEditableBackgroundColor(sidebar, element) {
   const colors = ['gray-100', 'red-100', 'blue-100', 'green-100', 'yellow-100', 'purple-100'];
   const labelPrefix = 'Background Color';
@@ -90,14 +82,16 @@ function addEditableBackgroundFeatures(sidebar, grid) {
   addBackgroundRepeatOptions();
 }
 
-function addTextOptions(sidebar, grid) {
+function addTextOptions(sidebar, element) {
+  const textColorOptions = ['black', 'white', 'red-500', 'blue-500', 'green-500', 'yellow-500'];
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
 
-  addDeviceTargetedOptions(sidebar, grid, 'Font Size', 'text', textSizeOptions, 'select');
-  addDeviceTargetedOptions(sidebar, grid, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Font Weight', 'font', fontWeightOptions, 'select');
-  addDeviceTargetedOptions(sidebar, grid, 'Font Style', 'italic', fontStyleOptions, 'toggle');
+  addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
+  addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'select');
+  addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
+  addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'select');
+  addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
 }
