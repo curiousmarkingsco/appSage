@@ -110,8 +110,10 @@ function detectAndLoadContentType(contentContainer) {
 
 function updateSidebarForHeading(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Heading:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = generateMobileTabs();
   activateTabs();
+  const sidebarTitle = document.createElement('div')
+  sidebarTitle.innerHTML = `<div><strong>Edit Heading:</strong></div>`;
 
   const select = document.createElement('select');
   const options = ['Title (h1)', 'Heading One (h2)', 'Heading Two (h3)', 'Heading Three (h4)', 'Heading Four (h5)', 'Heading Five (h6)'];
@@ -121,7 +123,6 @@ function updateSidebarForHeading(contentContainer, newContent) {
     optionElement.textContent = opt;
     select.appendChild(optionElement);
   });
-  sidebar.appendChild(select);
 
   const textInput = document.createElement('input');
   textInput.type = 'text';
@@ -168,13 +169,15 @@ function updateSidebarForHeading(contentContainer, newContent) {
     }
   });
 
-  sidebar.appendChild(textInput);
   addTextOptions(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
+  sidebar.prepend(select);
+  sidebar.prepend(textInput);
+  sidebar.prepend(sidebarTitle);
 }
 
 function updateSidebarForContentType(contentContainer) {

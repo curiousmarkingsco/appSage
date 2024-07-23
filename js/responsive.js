@@ -1,7 +1,5 @@
 /* responsive.js */
 
-/* responsive.js */
-
 function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, options, inputType = 'select') {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
@@ -37,7 +35,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
     
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     if (control) {
-      // container.appendChild(label);
+      container.appendChild(label);
       container.appendChild(control);
     }
   });
