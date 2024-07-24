@@ -40,7 +40,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('select');
         container.appendChild(label);
         container.appendChild(control);
-        handleSelect(bp, grid, control, options, cssClassBase);
+        handleSelect(bp, grid, control, labelPrefix, options, cssClassBase);
         control.classList.add('col-span-5');
         break;
       default:
@@ -60,15 +60,16 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 }
 
 function createLabel(bp, labelPrefix) {
-  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
-  let keepLabel = labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false
-  console.log(keepLabel)
+  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color'));
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false);
   if (collapseLabels && keepLabel === false) {
     const label = document.createElement('label');
     label.className = 'hidden';
     return label
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
+    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel
+    keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel
     const label = document.createElement('label');
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
@@ -137,12 +138,13 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     return;
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
-  const bgIcon = (labelPrefix === 'Background Size' || labelPrefix === 'Background Position');
+  const bgIcon = (labelPrefix === 'Background Position');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
-    toggleButton.className = 'col-span-5 w-full bg-[#ffffff] text-left shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
-    toggleButton.innerHTML = `<svg class="h-5 w-5 inline mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 9.4C53.9-3.1 74.1-3.1 86.6 9.4L168 90.7l53.1-53.1c28.1-28.1 73.7-28.1 101.8 0L474.3 189.1c28.1 28.1 28.1 73.7 0 101.8L283.9 481.4c-37.5 37.5-98.3 37.5-135.8 0L30.6 363.9c-37.5-37.5-37.5-98.3 0-135.8L122.7 136 41.4 54.6c-12.5-12.5-12.5-32.8 0-45.3zm176 221.3L168 181.3 75.9 273.4c-4.2 4.2-7 9.3-8.4 14.6l319.2 0 42.3-42.3c3.1-3.1 3.1-8.2 0-11.3L277.7 82.9c-3.1-3.1-8.2-3.1-11.3 0L213.3 136l49.4 49.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0zM512 512c-35.3 0-64-28.7-64-64c0-25.2 32.6-79.6 51.2-108.7c6-9.4 19.5-9.4 25.5 0C543.4 368.4 576 422.8 576 448c0 35.3-28.7 64-64 64z"/></svg> ${labelPrefix}`;
+    toggleButton.className = `${labelPrefix === 'Border Color' ? 'col-span-1' : 'col-span-5'} w-full bg-[#ffffff] text-left shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline`;
+    toggleButton.innerHTML = `<svg class="h-5 w-5 inline mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 9.4C53.9-3.1 74.1-3.1 86.6 9.4L168 90.7l53.1-53.1c28.1-28.1 73.7-28.1 101.8 0L474.3 189.1c28.1 28.1 28.1 73.7 0 101.8L283.9 481.4c-37.5 37.5-98.3 37.5-135.8 0L30.6 363.9c-37.5-37.5-37.5-98.3 0-135.8L122.7 136 41.4 54.6c-12.5-12.5-12.5-32.8 0-45.3zm176 221.3L168 181.3 75.9 273.4c-4.2 4.2-7 9.3-8.4 14.6l319.2 0 42.3-42.3c3.1-3.1 3.1-8.2 0-11.3L277.7 82.9c-3.1-3.1-8.2-3.1-11.3 0L213.3 136l49.4 49.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0zM512 512c-35.3 0-64-28.7-64-64c0-25.2 32.6-79.6 51.2-108.7c6-9.4 19.5-9.4 25.5 0C543.4 368.4 576 422.8 576 448c0 35.3-28.7 64-64 64z"/></svg>${labelPrefix === 'Border Color' ? '' : ' ' + labelPrefix}`;
+    toggleButton.setAttribute('data-extra-info', 'Please remember to make colors contrast well for people with vision impairments.');
     toggleButton.addEventListener('click', function () {
       if (control.classList.contains('hidden')) {
         control.classList.remove('hidden');
@@ -164,12 +166,12 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else if (labelPrefix === 'Border Style') {
       if (option === 'none') iconButton.setAttribute('data-extra-info', 'Remove border styles from this element');
       if (option !== 'none') iconButton.setAttribute('data-extra-info', `Change the border style to be a ${option} line`);
+    } else if (labelPrefix === 'Background Size') {
+      iconButton.setAttribute('data-extra-info', `Make your background image ${option === 'cover' ? 'cover the entire box; cropping will occur' : 'stay contained inside the box, empty space may become seen'}`);
+    } else if (swatchboard) {
+      iconButton.setAttribute('data-extra-info', `TailwindCSS class name: ${cssClassBase}-${option}`);
     } else if (bgIcon) {
-      if (labelPrefix === 'Background Size') {
-        iconButton.setAttribute('data-extra-info', `Make your background image ${option === 'cover' ? 'cover the entire box; cropping will occur' : 'stay contained inside the box, empty space may become seen'}`)
-      } else {
-        iconButton.setAttribute('data-extra-info', `Position your background image to the ${option} of the box it's inside`);
-      }
+      iconButton.setAttribute('data-extra-info', `Position your background image to the ${option} of the box it's inside`);
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
@@ -219,12 +221,15 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   control.appendChild(iconButton);
 }
 
-function handleSelect(bp, grid, control, options, cssClassBase) {
+function handleSelect(bp, grid, control, labelPrefix, options, cssClassBase) {
   if (!options) {
     console.error('No options provided for select input type.');
     return;
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  if (labelPrefix === 'Background Repeat') {
+    control.setAttribute('data-extra-info', 'Efficiently create image patterns. If you don\'t want a pattern, choose no-repeat.');
+  }
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');

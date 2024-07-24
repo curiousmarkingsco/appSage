@@ -9,14 +9,14 @@ function addEditableBackgroundColor(sidebar, element) {
 }
 
 function addEditableBorders(sidebar, element) {
-  const labels = ['Border Color', 'Border Width', 'Border Radius', 'Border Style'];
-  const properties = ['color', 'width', 'radius', 'style'];
+  const labels = ['Border Width', 'Border Radius', 'Border Color', 'Border Style'];
+  const properties = ['width', 'radius', 'color', 'style'];
   const options = {
     color: colorArray,
     width: ['1', '2', '4', '8'],
     radius: ['none', 'sm', 'md', 'lg'],
     style: ['solid', 'dashed', 'dotted', 'double', 'none'],
-    input_type: ['icon-select', 'single-icon-select', 'single-icon-select', 'icon-select']
+    input_type: ['single-icon-select', 'single-icon-select', 'icon-select', 'icon-select']
   };
 
   properties.forEach((prop, index) => {

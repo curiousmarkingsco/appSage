@@ -23,8 +23,8 @@ function enableEditColumnOnClick(column) {
     moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
     moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
 
-    addEditableBackgroundColor(sidebar, column);
     addEditableBorders(sidebar, column);
+    addEditableBackgroundColor(sidebar, column);
     addEditableBackgroundImage(sidebar, column);
     addEditableBackgroundFeatures(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
@@ -83,8 +83,8 @@ function createAddColumnButton(gridContainer) {
     gridContainer.insertBefore(newColumn, this);
     newColumn.appendChild(createAddContentButton(newColumn));
 
-    addEditableBackgroundColor(sidebar, newColumn);
     addEditableBorders(sidebar, newColumn);
+    addEditableBackgroundColor(sidebar, newColumn);
     addEditableBackgroundImage(sidebar, newColumn);
     addEditableBackgroundFeatures(sidebar, newColumn);
     addEditableMarginAndPadding(sidebar, newColumn);

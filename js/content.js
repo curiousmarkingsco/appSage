@@ -171,8 +171,8 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   addTextOptions(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
@@ -439,10 +439,12 @@ function updateSidebarForParagraph(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Paragraph Text:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateMobileTabs()}`;
+  const label = document.createElement('div')
+  label.innerHTML = '<strong>Edit Paragraph Text:</strong>';
 
   const textInput = document.createElement('textarea');
-  textInput.className = 'mt-2 p-2 border border-slate-300 w-full';
+  textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   textInput.rows = 4;
 
   let p = contentContainer.querySelector('p');
@@ -458,15 +460,15 @@ function updateSidebarForParagraph(contentContainer, newContent) {
     p.textContent = this.value;
   };
 
-  sidebar.appendChild(textInput);
-
   // Add font size options
   addTextOptions(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
+  sidebar.prepend(textInput);
+  sidebar.prepend(label);
 }
 
 function updateSidebarForButton(contentContainer, newContent) {
@@ -533,8 +535,8 @@ function updateSidebarForButton(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
@@ -605,8 +607,8 @@ function updateSidebarForMedia(contentContainer, newContent) {
 
   sidebar.appendChild(fileInput);
 
-  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);

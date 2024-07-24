@@ -20,8 +20,8 @@ function addGridOptions(grid) {
     addGridAlignmentOptions(sidebar, grid)
     highlightEditingElement(grid);
 
-    addEditableBackgroundColor(sidebar, grid);
     addEditableBorders(sidebar, grid);
+    addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
