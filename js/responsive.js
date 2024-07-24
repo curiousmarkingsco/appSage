@@ -124,6 +124,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
   const bgIcon = (labelPrefix === 'Background Size' || labelPrefix === 'Background Position');
+  // const alignIcon = (labelPrefix.includes('Items') || labelPrefix.includes('Content'));
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
@@ -140,7 +141,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton bg-slate-200 ${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
