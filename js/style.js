@@ -5,7 +5,7 @@ function addEditableBackgroundColor(sidebar, element) {
   const labelPrefix = 'Background Color';
   const cssClassBase = 'bg';
 
-  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'select');
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'icon-select');
 }
 
 function addEditableBorders(sidebar, element) {
@@ -15,13 +15,14 @@ function addEditableBorders(sidebar, element) {
     color: colorArray,
     width: ['1', '2', '4', '8'],
     radius: ['none', 'sm', 'md', 'lg'],
-    style: ['solid', 'dashed', 'dotted', 'double']
+    style: ['solid', 'dashed', 'dotted', 'double', 'none'],
+    input_type: ['icon-select', 'single-icon-select', 'single-icon-select', 'icon-select']
   };
 
   properties.forEach((prop, index) => {
     const cssClassBase = prop === 'color' ? 'border' : (prop === 'width' ? 'border' : (prop === 'radius' ? 'rounded' : (prop === 'style' ? 'border' : '')));
 
-    addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, options[prop], 'select');
+    addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, options[prop], options.input_type[index]);
   });
 }
 

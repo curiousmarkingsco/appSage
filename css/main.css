@@ -7,7 +7,7 @@
 /* Ensures the column layout and visibility rules */
 .pagecontent, .pagecolumn, .pagegrid {
   position: relative;
-  border: 1px solid cyan;
+  border: 1px solid rgba(0, 255, 255, 0);
 }
 
 /* Give some space for the buttons to live */
@@ -21,13 +21,17 @@
 }
 
 .pagegrid:hover {
+  border: 1px solid cyan;
   background-color: rgba(0, 255, 255, 0.1);
 }
 
 .pagecolumn:hover {
+  border: 1px solid cyan;
   background-color: rgba(0, 255, 255, 0.15);
+  padding-bottom: 4rem;
 }
 
 .pagecontent:hover {
+  border: 1px solid cyan;
   background-color: rgba(0, 255, 255, 0.2);
 }

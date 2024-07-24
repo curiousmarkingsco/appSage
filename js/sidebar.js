@@ -4,7 +4,7 @@ function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
-      <div class="bg-white p-4 rounded-lg max-w-sm mx-auto">
+      <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-black">${message}</p>
           <div class="flex justify-between mt-4">
               <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-white font-bold p-2 rounded">Delete</button>
