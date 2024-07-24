@@ -85,7 +85,7 @@ function addEditableBackgroundImage(sidebar, grid) {
 }
 
 function addEditableBackgroundFeatures(sidebar, grid) {
-  const bgSizeOptions = ['auto', 'cover', 'contain'];
+  const bgSizeOptions = ['cover', 'contain'];
   const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];
   const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
 
@@ -94,7 +94,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const labelPrefix = 'Background Size';
     const cssClassBase = 'bg';
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'select');
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'icon-select');
   }
 
   // Function to update background position
@@ -102,7 +102,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const labelPrefix = 'Background Position';
     const cssClassBase = 'bg';
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'select');
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'icon-select');
   }
 
   // Function to update background repeat

@@ -122,13 +122,14 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     console.error('No options provided for icons input type.');
     return;
   }
-  const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color')
+  const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
+  const bgIcon = (labelPrefix === 'Background Size' || labelPrefix === 'Background Position');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
     toggleButton.className = 'col-span-5 w-full bg-[#ffffff] text-left shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
     toggleButton.innerHTML = `<svg class="h-5 w-5 inline mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 9.4C53.9-3.1 74.1-3.1 86.6 9.4L168 90.7l53.1-53.1c28.1-28.1 73.7-28.1 101.8 0L474.3 189.1c28.1 28.1 28.1 73.7 0 101.8L283.9 481.4c-37.5 37.5-98.3 37.5-135.8 0L30.6 363.9c-37.5-37.5-37.5-98.3 0-135.8L122.7 136 41.4 54.6c-12.5-12.5-12.5-32.8 0-45.3zm176 221.3L168 181.3 75.9 273.4c-4.2 4.2-7 9.3-8.4 14.6l319.2 0 42.3-42.3c3.1-3.1 3.1-8.2 0-11.3L277.7 82.9c-3.1-3.1-8.2-3.1-11.3 0L213.3 136l49.4 49.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0zM512 512c-35.3 0-64-28.7-64-64c0-25.2 32.6-79.6 51.2-108.7c6-9.4 19.5-9.4 25.5 0C543.4 368.4 576 422.8 576 448c0 35.3-28.7 64-64 64z"/></svg> ${labelPrefix}`;
-    toggleButton.addEventListener('click', function() {
+    toggleButton.addEventListener('click', function () {
       if (control.classList.contains('hidden')) {
         control.classList.remove('hidden');
       } else {
@@ -139,7 +140,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `p-2 rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
@@ -149,12 +150,20 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else if (labelPrefix === 'Border Style') {
       if (option === 'none') iconButton.setAttribute('data-extra-info', 'Remove border styles from this element');
       if (option !== 'none') iconButton.setAttribute('data-extra-info', `Change the border style to be a ${option} line`);
+    } else if (bgIcon) {
+      if (labelPrefix === 'Background Size') {
+        iconButton.setAttribute('data-extra-info', `Make your background image ${option === 'cover' ? 'cover the entire box; cropping will occur' : 'stay contained inside the box, empty space may become seen'}`)
+      } else {
+        iconButton.setAttribute('data-extra-info', `Position your background image to the ${option} of the box it's inside`);
+      }
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
         grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        control.querySelectorAll('.iconButton').forEach(b => { b.classList.remove('bg-sky-200') });
       });
       grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+      iconButton.classList.add('bg-sky-200');
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
       if (iconTextCandidate1.includes('text')) {
