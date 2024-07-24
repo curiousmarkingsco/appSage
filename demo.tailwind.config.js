@@ -2,6 +2,9 @@ tailwind.config = {
   content: ["./**/*.{html,js}"],
   theme: {
     colors: {
+      black: '#000000',
+      white: '#ffffff',
+      transparent: 'rgba(0,0,0,0)',
       slate: {
         '50': '#F7F9FA',
         '100': '#EDF2F5',

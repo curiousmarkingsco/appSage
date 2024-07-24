@@ -187,11 +187,11 @@ function updateSidebarForContentType(contentContainer) {
   activateTabs();
 
   const contentTypes = [
-    { label: '🔠<br> Heading', action: () => updateSidebarForHeading(contentContainer, true) },
-    { label: '🎵 📷 🎥<br> Media', action: () => updateSidebarForMedia(contentContainer, true) },
-    { label: '📝<br> Paragraph', action: () => updateSidebarForParagraph(contentContainer, true) },
-    { label: '🔗<br> Button', action: () => updateSidebarForButton(contentContainer, true) },
-    { label: '📋<br> Form', action: () => updateSidebarForForm(contentContainer, true) }
+    { label: `<div class="p-6" data-extra-info="Heading Text">${pageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeading(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Paragraph of Text">${pageEditorIcons["paragraph"]}</div>`, action: () => updateSidebarForParagraph(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Button (Link)">${pageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Form (connected to a back-end you/your developer made separately)">${pageEditorIcons["form"]}</div>`, action: () => updateSidebarForForm(contentContainer, true) }
   ];
   showNewContentMenu(contentTypes, sidebar);
 }

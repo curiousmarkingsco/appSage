@@ -36,9 +36,9 @@ function generateMobileTabs() {
   };
 
   return `
-  <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-400">
+  <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-300">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? '' : 'bg-slate-200 border-transparent '}w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-50 border-t-4 border-slate-50">
+      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
         ${icon[1]}
       </div>
     `).join('')}
@@ -60,12 +60,13 @@ function activateTabs() {
       // Toggle display of associated content or styles when a tab is clicked
       const allTabs = document.querySelectorAll('.responsive-tab');
       allTabs.forEach(t => {
-        t.classList.remove('bg-slate-200');
-        t.classList.remove('border-transparent');
-        t.classList.add('border-slate-50');
+        t.classList.remove('bg-slate-50');
+        t.classList.remove('border-slate-50');
+        t.classList.add('border-slate-200');
       });  // Remove highlight from all tabs
-      this.classList.add('bg-slate-200');  // Highlight the clicked tab
-      this.classList.add('border-transparent');
+      this.classList.remove('border-slate-200');
+      this.classList.add('bg-slate-50');  // Highlight the clicked tab
+      this.classList.add('border-slate-50');
 
       // Get the breakpoint from the class, assumes class is first in the list!
       const bp = this.classList[0].replace('tab-', '');
