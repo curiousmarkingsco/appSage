@@ -60,10 +60,24 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 }
 
 function createLabel(bp, labelPrefix) {
-  const label = document.createElement('label');
-  label.textContent = `${bp.toUpperCase()}: ${labelPrefix}`;
-  label.className = 'block hidden text-slate-700 text-sm font-bold mb-2';
-  return label;
+  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
+  let keepLabel = labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false
+  console.log(keepLabel)
+  if (collapseLabels && keepLabel === false) {
+    const label = document.createElement('label');
+    label.className = 'hidden';
+    return label
+  } else {
+    keepLabel = labelPrefix.replace(' (t)', '');
+    const label = document.createElement('label');
+    const mobileIcon = document.createElement('span')
+    mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
+    mobileIcon.innerHTML = `${pageEditorIcons['responsive'][bp]}`;
+    label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
+    label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
+    label.prepend(mobileIcon);
+    return label;
+  }
 }
 
 function handleInputType(bp, options, cssClassBase, grid, control) {
@@ -124,7 +138,6 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
   const bgIcon = (labelPrefix === 'Background Size' || labelPrefix === 'Background Position');
-  // const alignIcon = (labelPrefix.includes('Items') || labelPrefix.includes('Content'));
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
@@ -141,10 +154,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton bg-slate-200 ${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : 'bg-slate-200 hover:bg-slate-300 '}${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
-    const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2];
+    const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2] || pageEditorIcons[option];
     iconButton.innerHTML = iconTarget;
     if (labelPrefix == 'Text Alignment') {
       iconButton.setAttribute('data-extra-info', `${option === 'justify' ? 'Make text expand across the entire box. If you\'re not a professional designer, this option is a bad idea' : 'Align text to the ' + option}`)
@@ -163,8 +176,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => { b.classList.remove('bg-sky-200') });
       });
-      grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
-      iconButton.classList.add('bg-sky-200');
+      if (option !== 'reset') {
+        grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+        iconButton.classList.add('bg-sky-200');
+      }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
       if (iconTextCandidate1.includes('text')) {

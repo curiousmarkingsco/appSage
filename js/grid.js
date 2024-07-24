@@ -36,7 +36,7 @@ function addRemoveGridButton(grid, sidebar) {
   button.onclick = function () {
     showConfirmationModal('Are you sure you want to delete this entire grid?', () => {
       grid.parentNode.removeChild(grid);
-      sidebar.innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>${generateMobileTabs()}';
+      sidebar.innerHTML = '<p>Nothing to edit. Add a grid by clicking the Plus (+) button.</p>';
     });
   };
   return button;
@@ -76,10 +76,10 @@ function addEditableColumns(sidebar, grid) {
 }
 
 function addGridAlignmentOptions(sidebar, grid) {
-  const justifyItemsOptions = ['start', 'end', 'center', 'stretch'];
-  const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly'];
-  const placeContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly'];
-  const placeItemsOptions = ['start', 'end', 'center', 'stretch'];
+  const justifyItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
+  const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
+  const placeContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
+  const placeItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
 
   // Add alignment options
   addDeviceTargetedOptions(sidebar, grid, 'Justify Items', 'justify-items', justifyItemsOptions, 'icon-select');
