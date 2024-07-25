@@ -7,6 +7,13 @@ function addContentContainer() {
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
     detectAndLoadContentType(contentContainer);
+    // Editing options for all types of content
+    addEditableBorders(sidebar, contentContainer);
+    addEditableBackgroundColor(sidebar, contentContainer);
+    addEditableBackgroundImage(sidebar, contentContainer);
+    addEditableBackgroundFeatures(sidebar, contentContainer);
+    addEditableMarginAndPadding(sidebar, contentContainer);
+    addElementDimensionOptions(sidebar, contentContainer);
     highlightEditingElement(contentContainer);
   });
 
@@ -17,6 +24,13 @@ function enableEditContentOnClick(contentContainer) {
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
     detectAndLoadContentType(contentContainer);
+    // Editing options for all types of content
+    addEditableBorders(sidebar, contentContainer);
+    addEditableBackgroundColor(sidebar, contentContainer);
+    addEditableBackgroundImage(sidebar, contentContainer);
+    addEditableBackgroundFeatures(sidebar, contentContainer);
+    addEditableMarginAndPadding(sidebar, contentContainer);
+    addElementDimensionOptions(sidebar, contentContainer);
     highlightEditingElement(contentContainer);
   });
 }
@@ -171,11 +185,6 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   addTextOptions(sidebar, contentContainer);
-  addEditableBorders(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
-  addEditableBackgroundImage(sidebar, contentContainer);
-  addEditableBackgroundFeatures(sidebar, contentContainer);
-  addEditableMarginAndPadding(sidebar, contentContainer);
   sidebar.prepend(select);
   sidebar.prepend(textInput);
   sidebar.prepend(sidebarTitle);
@@ -462,11 +471,6 @@ function updateSidebarForParagraph(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
-  addEditableBorders(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
-  addEditableBackgroundImage(sidebar, contentContainer);
-  addEditableBackgroundFeatures(sidebar, contentContainer);
-  addEditableMarginAndPadding(sidebar, contentContainer);
   sidebar.prepend(textInput);
   sidebar.prepend(label);
 }
@@ -535,11 +539,6 @@ function updateSidebarForButton(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
-  addEditableBorders(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
-  addEditableBackgroundImage(sidebar, contentContainer);
-  addEditableBackgroundFeatures(sidebar, contentContainer);
-  addEditableMarginAndPadding(sidebar, contentContainer);
 }
 
 function replaceWithNewHeading(oldHeading, newTag) {
@@ -635,11 +634,6 @@ function updateSidebarForMedia(contentContainer, newContent) {
   const fieldTitle = document.createElement('div');
   fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
 
-  addEditableBorders(sidebar, contentContainer);
-  addEditableBackgroundColor(sidebar, contentContainer);
-  addEditableBackgroundImage(sidebar, contentContainer);
-  addEditableBackgroundFeatures(sidebar, contentContainer);
-  addEditableMarginAndPadding(sidebar, contentContainer);
   sidebar.prepend(fileInput);
   sidebar.prepend(urlInput);
   sidebar.prepend(createLabelAllDevices());

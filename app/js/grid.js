@@ -17,7 +17,8 @@ function addGridOptions(grid) {
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
 
     addEditableColumns(sidebar, grid);
-    addGridAlignmentOptions(sidebar, grid)
+    addGridAlignmentOptions(sidebar, grid);
+    addElementDimensionOptions(sidebar, grid);
     highlightEditingElement(grid);
 
     addEditableBorders(sidebar, grid);
@@ -78,13 +79,11 @@ function addEditableColumns(sidebar, grid) {
 function addGridAlignmentOptions(sidebar, grid) {
   const justifyItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
   const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const placeContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
   const placeItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
 
   // Add alignment options
   addDeviceTargetedOptions(sidebar, grid, 'Justify Items', 'justify-items', justifyItemsOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, grid, 'Align Content', 'content', alignContentOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Place Content', 'place-content', placeContentOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, grid, 'Place Items', 'place-items', placeItemsOptions, 'icon-select');
 }
 
@@ -94,4 +93,15 @@ function enableEditGridOnClick(grid) {
     addGridOptions(grid);
     highlightEditingElement(grid);
   });
+}
+
+function addElementDimensionOptions(sidebar, grid){
+  const lengthOptions = ['full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
+  addDeviceTargetedOptions(sidebar, grid, 'Minimum Height', 'min-h', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Height', 'h', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Maximum Height', 'max-h', lengthOptions, 'single-icon-select');
+
+  addDeviceTargetedOptions(sidebar, grid, 'Minimum Width', 'min-w', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Width', 'w', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Maximum Width', 'max-w', lengthOptions, 'single-icon-select');
 }

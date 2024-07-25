@@ -27,6 +27,7 @@ function enableEditColumnOnClick(column) {
     addEditableBackgroundColor(sidebar, column);
     addEditableBackgroundImage(sidebar, column);
     addEditableBackgroundFeatures(sidebar, column);
+    addElementDimensionOptions(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
   });
 }
