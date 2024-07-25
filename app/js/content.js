@@ -563,55 +563,87 @@ function updateSidebarForMedia(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add/Edit Media:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
 
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
-  fileInput.className = 'mt-2 p-2 border border-slate-300 w-full';
+  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   fileInput.onchange = function (event) {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        let mediaElement = contentContainer.querySelector('img, video, audio');
-        const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
+    generateMediaSrc(event, contentContainer, false);
+  }
 
-        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          // Remove old element if type does not match
-          mediaElement.parentNode.removeChild(mediaElement);
-          mediaElement = null;
+  const urlInput = document.createElement('input');
+  const mediaCandidate = contentContainer.querySelector('img, video, audio');
+  urlInput.type = 'text';
+  urlInput.setAttribute('placeholder', 'Media URL');
+  urlInput.value = mediaCandidate ? mediaCandidate.src : '';
+  urlInput.className = 'shadow border w-full rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+
+  urlInput.onchange = async () => {
+    let mediaElement = contentContainer.querySelector('img, video, audio');
+    const url = urlInput.value;
+
+    // Function to determine media type from Content-Type header
+    async function getMediaType(url) {
+      try {
+        const response = await fetch(url, { method: 'HEAD' });
+        const contentType = response.headers.get('Content-Type');
+
+        if (contentType.startsWith('image/')) {
+          return 'img';
+        } else if (contentType.startsWith('audio/')) {
+          return 'audio';
+        } else if (contentType.startsWith('video/')) {
+          return 'video';
         }
+      } catch (error) {
+        console.error('Error fetching the media URL:', error);
+      }
+      return null;
+    }
 
-        if (!mediaElement) {
-          // Create new element if none exists or wrong type was removed
-          if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-          } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            mediaElement.controls = true; // Add controls for video playback
-          } else if (mediaType === 'audio') {
-            mediaElement = document.createElement('audio');
-            mediaElement.controls = true; // Add controls for audio playback
-          }
-          contentContainer.appendChild(mediaElement);
-        }
+    const mediaType = await getMediaType(url);
 
-        // Update source of the existing/new media element
-        mediaElement.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    if (!mediaElement && mediaType) {
+      let newMediaElement;
+
+      if (mediaType === 'img') {
+        newMediaElement = document.createElement('img');
+      } else if (mediaType === 'audio') {
+        newMediaElement = document.createElement('audio');
+        newMediaElement.setAttribute('controls', 'controls');
+      } else if (mediaType === 'video') {
+        newMediaElement = document.createElement('video');
+        newMediaElement.setAttribute('controls', 'controls');
+      }
+
+      if (newMediaElement) {
+        contentContainer.appendChild(newMediaElement);
+        mediaElement = newMediaElement;
+      }
+    }
+
+    if (mediaElement) {
+      mediaElement.setAttribute('src', url);
     }
   };
 
-  sidebar.appendChild(fileInput);
+  contentContainer.appendChild(urlInput);
+
+  const fieldTitle = document.createElement('div');
+  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
 
   addEditableBorders(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
+  sidebar.prepend(fileInput);
+  sidebar.prepend(urlInput);
+  sidebar.prepend(createLabelAllDevices());
+  sidebar.prepend(fieldTitle);
 }
 
 // Helper function to update element class for sizes or alignment
@@ -637,14 +669,81 @@ function moveVertical(element, direction) {
   let targetSibling = getNextValidSibling(element, direction);
 
   if (direction === 'up' && targetSibling) {
-      parent.insertBefore(element, targetSibling);
+    parent.insertBefore(element, targetSibling);
   } else if (direction === 'down' && targetSibling) {
-      // For moving down, we need to insert before the next element of the targetSibling
-      const nextToTarget = targetSibling.nextElementSibling;
-      if (nextToTarget) {
-          parent.insertBefore(element, nextToTarget);
+    // For moving down, we need to insert before the next element of the targetSibling
+    const nextToTarget = targetSibling.nextElementSibling;
+    if (nextToTarget) {
+      parent.insertBefore(element, nextToTarget);
+    } else {
+      parent.appendChild(element);  // If there's no next sibling, append to the end of the parent
+    }
+  }
+}
+
+function createLabelAllDevices() {
+  const label = document.createElement('span');
+  label.className = 'inline-block col-span-5 text-slate-700 text-xs uppercase mt-2';
+  label.textContent = 'All Devices';
+  const breakpoints = ['2xl', 'xl', 'lg', 'md', 'sm', 'xs'];
+  breakpoints.forEach(bp => {
+    const responsiveIcon = document.createElement('span');
+    responsiveIcon.className = 'h-3 w-3 mr-2 inline-block';
+    responsiveIcon.innerHTML = `${pageEditorIcons['responsive'][bp]}`;
+    label.prepend(responsiveIcon);
+  });
+  return label;
+}
+
+function generateMediaSrc(event, contentContainer, url){
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      let mediaElement = contentContainer.querySelector('img, video, audio');
+      const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
+
+      if (!url){
+        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
+          // Remove old element if type does not match
+          mediaElement.parentNode.removeChild(mediaElement);
+          mediaElement = null;
+        }
+
+        if (!mediaElement) {
+          // Create new element if none exists or wrong type was removed
+          if (mediaType === 'image') {
+            mediaElement = document.createElement('img');
+          } else if (mediaType === 'video') {
+            mediaElement = document.createElement('video');
+            mediaElement.controls = true; // Add controls for video playback
+          } else if (mediaType === 'audio') {
+            mediaElement = document.createElement('audio');
+            mediaElement.controls = true; // Add controls for audio playback
+          }
+          contentContainer.appendChild(mediaElement);
+        }
+
+        // Update source of the existing/new media element
+        mediaElement.src = e.target.result;
       } else {
-          parent.appendChild(element);  // If there's no next sibling, append to the end of the parent
+        // For now, maybe the blob gets put into a localStorage object?
+        // Then there is a function that pulls from there with an
+        // arbitrary value. Either way, the image has to get put in
+        // as an inline style, just the way it is...
+        const params = new URLSearchParams(window.location.search);
+        const config = params.get('config');
+        // Let's take the page name and add a randomgen string
+        const generatedId = config + Array.from({length: 12}, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
+        contentContainer.classList.add(`bg-local-${generatedId}`);
+        // Store the object under the generated id
+        const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb'));
+        tailwindvpb.pages[config].blobs[generatedId] = e.target.result;
+        localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+        // TailwindCSS doesn't appear to like entire image blobs LOL
+        contentContainer.style.backgroundImage = `url(${e.target.result})`;
       }
+    };
+    reader.readAsDataURL(file);
   }
 }

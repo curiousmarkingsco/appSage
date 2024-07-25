@@ -1,5 +1,14 @@
 /* responsive.js */
 
+var plainEnglish = {
+  "xs": 'Extra Small',
+  "sm": 'Small-Sized',
+  "md": 'Medium-Sized',
+  "lg": 'Large',
+  "xl": 'Extra Large',
+  "2xl": 'Extra, Extra Large'
+}
+
 function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, options, inputType = 'select') {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
@@ -13,7 +22,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('input');
         container.appendChild(label);
         container.appendChild(control);
-        handleInputType(bp, options, cssClassBase, grid, control);
+        handleInputType(bp, labelPrefix, options, cssClassBase, grid, control);
         control.classList.add('col-span-5');
         break;
       case 'single-icon-select':
@@ -81,14 +90,22 @@ function createLabel(bp, labelPrefix) {
   }
 }
 
-function handleInputType(bp, options, cssClassBase, grid, control) {
-  control.type = 'text';
-  control.value = getCurrentStyle(bp, options, cssClassBase, grid);
-  control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
-  control.onchange = () => {
-    // assumes 'bg' is URL
-    const newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
-    updateGridClass(grid, newValue, cssClassBase, bp);
+function handleInputType(bp, labelPrefix, options, cssClassBase, grid, control) {
+  const isFile = labelPrefix.includes('File');
+  control.type = isFile ? 'file' : 'text';
+  if (isFile) control.setAttribute('accept', 'image/*');
+  if (!isFile) control.value = getCurrentStyle(bp, options, cssClassBase, grid);
+  control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  let newValue;
+  control.onchange = (event) => {
+    if (labelPrefix === 'Background Image URL') {
+      // assumes 'bg' is URL
+      newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
+      updateGridClass(grid, newValue, cssClassBase, bp);
+    } else if (labelPrefix === 'Background Image File'){
+      grid.style.backgroundImage = '';
+      generateMediaSrc(event, grid, true);
+    }
   };
 }
 

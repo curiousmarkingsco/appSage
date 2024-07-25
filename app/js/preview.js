@@ -16,6 +16,7 @@ function loadPreview(pageId) {
 
       hideEditingTools();
       loadPageSettings(pageId, true);
+      loadPageBlobs(pageId);
   } else {
       console.error('No saved data found for pageId:', pageId);
   }

@@ -84,6 +84,13 @@ function addEditableBackgroundImage(sidebar, grid) {
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 }
 
+function addEditableBackgroundImage(sidebar, grid) {
+  const labelPrefix = 'Background Image File';
+  const cssClassBase = 'bg';
+
+  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
+}
+
 function addEditableBackgroundFeatures(sidebar, grid) {
   const bgSizeOptions = ['cover', 'contain'];
   const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];

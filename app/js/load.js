@@ -80,7 +80,7 @@ function savePage(pageId, data) {
     tailwindvpb.pages = {};
   }
   if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {} };
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   tailwindvpb.pages[pageId].page_data = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
@@ -116,10 +116,25 @@ function savePageSettings(pageId, data) {
     tailwindvpb.pages = {};
   }
   if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {} };
+    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   tailwindvpb.pages[pageId].settings = data;
   localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+}
+
+function loadPageBlobs(config) {
+  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+  const page = document.getElementById('page');
+
+  if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].blobs) {
+    const blobs = tailwindvpb.pages[config].blobs;
+    if (blobs) {
+      Object.keys(blobs).forEach(key => {
+        const element = page.querySelector(`.bg-local-${key}`);
+        if (element) element.style.backgroundImage = `url(${blobs[key]})`;
+      });
+    }
+  }
 }
 
 function loadPageSettings(config, view = false){
