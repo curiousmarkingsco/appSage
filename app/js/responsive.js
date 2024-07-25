@@ -110,7 +110,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = 'Create space between the edge of the box and the boxes/content outside of it.'
   } else {
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase()
-    extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}`
+    extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`
   }
   selectControl.setAttribute('data-extra-info', extraInfo);
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border-2 border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
@@ -203,8 +203,13 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 
 function handleToggle(bp, options, grid, cssClassBase, control) {
   control.className = 'relative bg-slate-50 h-12 w-12 border-2 border-slate-30 rounded'
-  control.setAttribute('data-extra-info', `${cssClassBase.charAt(0).toUpperCase() + cssClassBase.slice(1).toLowerCase()}${cssClassBase === 'italic' ? 'ize' : ''} your text`);
-  control.setAttribute('data-extra-info-class', cssClassBase);
+  if (cssClassBase === 'italic') {
+    control.setAttribute('data-extra-info', 'Italicize your text');
+    control.setAttribute('data-extra-info-class', 'italic');
+  } else if (cssClassBase === 'underline') {
+    control.setAttribute('data-extra-info', 'Underline your text');
+    control.setAttribute('data-extra-info-class', 'underline');
+  }
   const iconButton = document.createElement('span');
   iconButton.innerHTML = pageEditorIcons[cssClassBase];
   iconButton.className = `absolute top-0.5 right-0 h-11 w-11 px-2 py-1 rounded-sm border-none pointer-events-none`;

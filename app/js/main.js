@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const initialColumn = createColumn(gridContainer);
     gridContainer.appendChild(initialColumn);
+    initialColumn.appendChild(createAddContentButton(initialColumn));
 
     document.getElementById('page').appendChild(gridContainer);
 
