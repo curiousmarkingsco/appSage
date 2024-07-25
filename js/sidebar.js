@@ -5,10 +5,10 @@ function showConfirmationModal(message, onConfirm) {
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
-          <p class="text-black">${message}</p>
+          <p class="text-slate-900">${message}</p>
           <div class="flex justify-between mt-4">
-              <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-white font-bold p-2 rounded">Delete</button>
-              <button id="cancelDelete" class="bg-sky-500 hover:bg-sky-700 text-white font-bold p-2 rounded">Cancel</button>
+              <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-slate-50 font-bold p-2 rounded">Delete</button>
+              <button id="cancelDelete" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
@@ -46,7 +46,7 @@ function generateMobileTabs() {
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
       <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-y-2">
-        <h3 class="text-lg font-bold text-black my-2 col-span-5">Styles for ${size.toUpperCase()} Screens</h3>
+        <h3 class="text-lg font-bold text-slate-900 my-2 col-span-5">Styles for ${size.toUpperCase()} Screens</h3>
       </div>
     `).join('')}
   </div>

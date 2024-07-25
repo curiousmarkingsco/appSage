@@ -101,7 +101,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const iconTarget = pageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
-  iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-1 top-0.5 bg-white h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
+  iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-1 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
   const selectControl = document.createElement('select');
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
@@ -113,7 +113,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}`
   }
   selectControl.setAttribute('data-extra-info', extraInfo);
-  selectControl.className = `appearance-none w-full bg-transparent p-2 border-2 border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
+  selectControl.className = `appearance-none w-full bg-slate-50 p-2 border-2 border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
@@ -202,7 +202,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 }
 
 function handleToggle(bp, options, grid, cssClassBase, control) {
-  control.className = 'relative bg-white h-12 w-12 border-2 border-slate-30 rounded'
+  control.className = 'relative bg-slate-50 h-12 w-12 border-2 border-slate-30 rounded'
   control.setAttribute('data-extra-info', `${cssClassBase.charAt(0).toUpperCase() + cssClassBase.slice(1).toLowerCase()}${cssClassBase === 'italic' ? 'ize' : ''} your text`);
   control.setAttribute('data-extra-info-class', cssClassBase);
   const iconButton = document.createElement('span');
