@@ -143,7 +143,12 @@ function loadPageSettings(config, view = false){
   
   // Check if the page and settings exist
   if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].settings) {
-    const settings = JSON.parse(tailwindvpb.pages[config].settings);
+    let settings;
+    try {
+      settings = JSON.parse(tailwindvpb.pages[config].settings);
+    } catch {
+      settings = tailwindvpb.pages[config].settings;
+    }
     
     // Find the element by config and set the className if it exists
     const element = document.getElementById(settings.id);

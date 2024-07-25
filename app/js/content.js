@@ -229,14 +229,16 @@ function updateSidebarForForm(contentContainer, newContent) {
     contentContainer = newContainer;
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Form:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = '';
+  const sidebarTitle = document.createElement('div');
+  sidebarTitle.innerHTML = `<strong>Edit Form:</strong></div>${generateMobileTabs()}`;
   activateTabs();
   let form = contentContainer.querySelector('form');
   let submitButton;
 
   if (!form) {
     form = document.createElement('form');
-    contentContainer.appendChild(form);
+    contentContainer.prepend(form);
 
     // Add submit button
     submitButton = document.createElement('button');
@@ -256,7 +258,7 @@ function updateSidebarForForm(contentContainer, newContent) {
   const actionField = document.createElement('input');
   actionField.type = 'url';
   actionField.placeholder = 'Enter form action URL';
-  actionField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  actionField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   actionField.value = form.action;
   actionField.oninput = function () {
     form.action = actionField.value;
@@ -270,7 +272,7 @@ function updateSidebarForForm(contentContainer, newContent) {
   const formIdField = document.createElement('input');
   formIdField.type = 'text';
   formIdField.placeholder = 'Enter form ID';
-  formIdField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  formIdField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   formIdField.value = form.id;
   formIdField.oninput = function () {
     form.id = formIdField.value;
@@ -283,7 +285,7 @@ function updateSidebarForForm(contentContainer, newContent) {
   const submitField = document.createElement('input');
   submitField.type = 'text';
   submitField.placeholder = 'Change button name';
-  submitField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  submitField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   submitField.oninput = function () {
     submitButton.textContent = submitField.value;
   };
@@ -295,14 +297,14 @@ function updateSidebarForForm(contentContainer, newContent) {
   const inputField = document.createElement('input');
   inputField.type = 'text';
   inputField.placeholder = 'Enter label...';
-  inputField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  inputField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
   const typeLabel = document.createElement('label');
   typeLabel.textContent = 'Field Type:';
   typeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const typeField = document.createElement('select');
-  typeField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+  typeField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const inputTypes = ['text', 'url', 'tel', 'password', 'number', 'file', 'email', 'date', 'color', 'checkbox'];
 
   inputTypes.forEach(type => {
@@ -314,7 +316,7 @@ function updateSidebarForForm(contentContainer, newContent) {
 
   const addButton = document.createElement('button');
   addButton.textContent = 'Add';
-  addButton.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold py-1.5 px-4 rounded-r mr-2 mt-2 inline-block';
+  addButton.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold py-1.5 px-4 rounded mr-2 mt-2 inline-block';
   addButton.onclick = function () {
     const input = document.createElement('input');
     input.type = typeField.value;
@@ -330,15 +332,16 @@ function updateSidebarForForm(contentContainer, newContent) {
   };
 
   const newFieldGroup = document.createElement('div');
-  newFieldGroup.className = 'group my-4 bg-slate-50/50 p-4'
-  sidebar.appendChild(sidebarForm);
-  sidebarForm.appendChild(formIdLabel);
-  sidebarForm.appendChild(formIdField);
-  sidebarForm.appendChild(actionLabel);
-  sidebarForm.appendChild(actionField);
-  sidebarForm.appendChild(submitLabel);
-  sidebarForm.appendChild(submitField);
-  sidebarForm.appendChild(newFieldGroup);
+  newFieldGroup.className = 'group my-4 bg-slate-50'
+  sidebar.prepend(sidebarTitle);
+  sidebar.prepend(sidebarForm);
+  sidebarForm.prepend(newFieldGroup);
+  sidebarForm.prepend(formIdField);
+  sidebarForm.prepend(formIdLabel);
+  sidebarForm.prepend(actionField);
+  sidebarForm.prepend(actionLabel);
+  sidebarForm.prepend(submitField);
+  sidebarForm.prepend(submitLabel);
   newFieldGroup.appendChild(typeLabel);
   newFieldGroup.appendChild(typeField);
   newFieldGroup.appendChild(inputLabel);
@@ -357,7 +360,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     if (input === submitButton) return;
 
     const fieldEditor = document.createElement('div');
-    fieldEditor.className = 'field-editor group my-4 bg-slate-50/50 p-4';
+    fieldEditor.className = 'field-editor group my-4 bg-slate-50';
 
     const idLabel = document.createElement('label');
     idLabel.textContent = 'Input ID:';
@@ -366,7 +369,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     const idField = document.createElement('input');
     idField.type = 'text';
     idField.value = input.id;
-    idField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    idField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
     idField.oninput = function () {
       input.id = idField.value;
     };
@@ -378,7 +381,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     const nameField = document.createElement('input');
     nameField.type = 'text';
     nameField.value = input.name;
-    nameField.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    nameField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
     nameField.oninput = function () {
       input.name = nameField.value;
     };
@@ -390,7 +393,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     const fieldInput = document.createElement('input');
     fieldInput.type = 'text';
     fieldInput.value = input.placeholder;
-    fieldInput.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    fieldInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
     fieldInput.oninput = function () {
       input.placeholder = fieldInput.value;
     };
@@ -400,7 +403,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     fieldTypeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     const fieldType = document.createElement('select');
-    fieldType.className = 'shadow appearance-none border rounded-l py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline inline-block w-48';
+    fieldType.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
     inputTypes.forEach(type => {
       const option = document.createElement('option');
       option.value = type;
