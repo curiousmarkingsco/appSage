@@ -1,6 +1,2 @@
 scratch.*
 .DS_Store
-cached_assets/*
-tw_files/*
-tailwind.config.js
-tailwindcss

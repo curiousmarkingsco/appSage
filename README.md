@@ -9,32 +9,3 @@ Tailwind Visual Page Builder is intended to bring all the optimization and devel
 
 ## More documentation to come
 This prototype is far too minimal to be usable by anyone (including me). I'm just getting this in another place for redundant storage.
-
-## Installation
-
-### Compilation of TailwindCSS
-
-Per the [official documentation](https://tailwindcss.com/blog/standalone-cli)
-
-For MacOS, Initial Setup:
-```sh
-curl -sLO https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-macos-arm64
-chmod +x tailwindcss-macos-arm64
-mv tailwindcss-macos-arm64 tailwindcss
-
-mkdir ./tw_files
-touch ./tw_files/input.css
-touch ./tw_files/output.css
-```
-
-And then:
-```sh
-# Create a tailwind.config.js file
-./tailwindcss init
-
-# Start a watcher
-./tailwindcss -i ./tw_files/input.css -o ./tw_files/output.css --watch
-
-# Compile and minify your CSS for production
-./tailwindcss -i ./tw_files/input.css -o ./tw_files/output.css --minify
-```

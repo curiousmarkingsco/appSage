@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="./js/tailwind.config.js"></script>
+  <title>Load Page Configuration</title>
+</head>
+
+<body class="bg-slate-50 p-16">
+  <h1 class="text-6xl text-slate-900">Select a Configuration to Load</h1>
+  <div class="grid grid-cols-3 gap-4 mt-8" id="pageList"></div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const container = document.getElementById('pageList');
+      const pages = JSON.parse(localStorage['tailwindvpb']).pages;
+      Object.keys(pages).forEach(key => {
+        const value = pages[key];
+        const pageTitleContainer = document.createElement('h2');
+        pageTitleContainer.className = 'text-4xl text-slate-500 p-2'
+        const pageTitle = document.createElement('a');
+        pageTitle.textContent = key;
+        pageTitle.setAttribute('href', `/edit?config=${key}`);
+        pageTitle.setAttribute('target', '_blank')
+        pageTitleContainer.appendChild(pageTitle);
+        container.appendChild(pageTitleContainer);
+        // console.log(`Page ID: ${key}`);
+        // console.log(`Page Data: ${value.page_data}`);
+        // console.log(`Page Settings: ${value.settings}`);
+      });
+    });
+  </script>
+</body>
+
+</html>
