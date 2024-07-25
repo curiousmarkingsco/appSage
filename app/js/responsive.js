@@ -69,14 +69,15 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 }
 
 function createLabel(bp, labelPrefix) {
-  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color'));
-  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false);
+  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false);
   if (collapseLabels && keepLabel === false) {
     const label = document.createElement('label');
     label.className = 'hidden';
     return label
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
+    keepLabel = labelPrefix.replace('Minimum ', '');
     keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel
     keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel
     const label = document.createElement('label');
