@@ -117,7 +117,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const labelPrefix = 'Background Repeat';
     const cssClassBase = 'bg';
 
-    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgRepeatOptions, 'select');
+    addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgRepeatOptions, 'icon-select');
   }
 
   // Calling all functions to add options

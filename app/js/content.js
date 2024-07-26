@@ -139,7 +139,10 @@ function updateSidebarForHeading(contentContainer, newContent) {
     select.appendChild(optionElement);
   });
 
+  const textInputLabel = document.createElement('label');
+  textInputLabel.setAttribute('for', 'textInput');
   const textInput = document.createElement('input');
+  textInput.setAttribute('name', 'textInput');
   textInput.type = 'text';
   textInput.maxLength = 144;
   textInput.placeholder = 'Enter heading text here...';
@@ -187,6 +190,7 @@ function updateSidebarForHeading(contentContainer, newContent) {
   addTextOptions(sidebar, contentContainer);
   sidebar.prepend(select);
   sidebar.prepend(textInput);
+  sidebar.prepend(textInputLabel);
   sidebar.prepend(sidebarTitle);
 }
 

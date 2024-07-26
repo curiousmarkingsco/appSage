@@ -175,7 +175,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : 'bg-slate-200 hover:bg-slate-300 '}${bgIcon ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : 'bg-slate-200 hover:bg-slate-300 '}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2] || pageEditorIcons[option];
@@ -187,12 +187,12 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       if (option !== 'none') iconButton.setAttribute('data-extra-info', `Change the border style to be a ${option} line`);
     } else if (labelPrefix === 'Background Size') {
       iconButton.setAttribute('data-extra-info', `Make your background image ${option === 'cover' ? 'cover the entire box; cropping will occur' : 'stay contained inside the box, empty space may become seen'}`);
-    } else if (labelPrefix.includes(' Items') || labelPrefix.includes(' Content')){
-      handleAlignmentTooltips(`${cssClassBase}-${option}`, iconButton);
     } else if (swatchboard) {
       iconButton.setAttribute('data-extra-info', `TailwindCSS class name: ${cssClassBase}-${option}`);
     } else if (bgIcon) {
       iconButton.setAttribute('data-extra-info', `Position your background image to the ${option} of the box it's inside`);
+    } else {
+      handleTooltips(`${cssClassBase}-${option}`, iconButton);
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
@@ -277,7 +277,7 @@ function updateGridClass(element, newValue, classType, breakpoint) {
   element.className = element.className.replace(classRegex, '').trim() + ` ${newValue}`;
 }
 
-function handleAlignmentTooltips(cssClassToEvaluate, control){
+function handleTooltips(cssClassToEvaluate, control){
   if (cssClassToEvaluate === 'justify-items-start') {
     control.setAttribute('data-extra-info', "Put columns in columns in the grid to the left-most side of the column's maximum span");
   } else if (cssClassToEvaluate === 'justify-items-end'){
@@ -314,6 +314,14 @@ function handleAlignmentTooltips(cssClassToEvaluate, control){
     control.setAttribute('data-extra-info', "Stretch content to the full dimensions of your columns");
   } else if (cssClassToEvaluate === 'place-items-reset'){
     control.setAttribute('data-extra-info', "Reset items placement alignment");
+  } else if (cssClassToEvaluate === 'bg-no-repeat'){
+    control.setAttribute('data-extra-info', "Do not repeat the background, this option pairs well with 'contain' or 'cover' background sizing");
+  } else if (cssClassToEvaluate === 'bg-repeat'){
+    control.setAttribute('data-extra-info', "Repeat images to make a background pattern");
+  } else if (cssClassToEvaluate === 'bg-repeat-x'){
+    control.setAttribute('data-extra-info', "Repeat images to make a pattern horizontally");
+  } else if (cssClassToEvaluate === 'bg-repeat-y'){
+    control.setAttribute('data-extra-info', "Repeat images to make a pattern vertically");
   } else {
     control.setAttribute('data-extra-info', "This tooltip is missing, tell the dev to fix it!");
   }
