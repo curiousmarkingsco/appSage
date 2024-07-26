@@ -200,11 +200,11 @@ function updateSidebarForContentType(contentContainer) {
   activateTabs();
 
   const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Heading Text">${pageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeading(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Paragraph of Text">${pageEditorIcons["paragraph"]}</div>`, action: () => updateSidebarForParagraph(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Button (Link)">${pageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Form (connected to a back-end you/your developer made separately)">${pageEditorIcons["form"]}</div>`, action: () => updateSidebarForForm(contentContainer, true) }
+    { label: `<div class="p-6" data-extra-info="Heading Text">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeading(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Paragraph of Text">${pageSageEditorIcons["paragraph"]}</div>`, action: () => updateSidebarForParagraph(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Button (Link)">${pageSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Form (connected to a back-end you/your developer made separately)">${pageSageEditorIcons["form"]}</div>`, action: () => updateSidebarForForm(contentContainer, true) }
   ];
   showNewContentMenu(contentTypes, sidebar);
 }
@@ -710,7 +710,7 @@ function createLabelAllDevices() {
   breakpoints.forEach(bp => {
     const responsiveIcon = document.createElement('span');
     responsiveIcon.className = 'h-3 w-3 mr-2 inline-block';
-    responsiveIcon.innerHTML = `${pageEditorIcons['responsive'][bp]}`;
+    responsiveIcon.innerHTML = `${pageSageEditorIcons['responsive'][bp]}`;
     label.prepend(responsiveIcon);
   });
   return label;

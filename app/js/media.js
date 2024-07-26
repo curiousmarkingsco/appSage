@@ -4,10 +4,10 @@
 
 Examples:
 
-   pageEditorPlaceholderMedia['photo_square']
+   pageSagePlaceholderMedia['photo_square']
 => './placeholder_media/square.jpg'
 
-   pageEditorPlaceholderMedia['video']
+   pageSagePlaceholderMedia['video']
 => './placeholder_media/video.mp4'
 
    randomImage()
@@ -19,7 +19,7 @@ Examples:
 */
 
 // Global variable — These paths are relative to the HTML page loading them, not this file.
-var pageEditorPlaceholderMedia = {
+var pageSagePlaceholderMedia = {
   "audio": './placeholder_media/audio.mp3',
   "photo_landscape": './placeholder_media/landscape.jpg',
   "photo_portrait": './placeholder_media/portrait.jpg',
@@ -30,11 +30,11 @@ var pageEditorPlaceholderMedia = {
 function randomImage() {
   const options = ['photo_landscape', 'photo_square', 'photo_portrait'];
   const result = options[(Math.floor(Math.random() * 100) + 1) % 3];
-  return pageEditorPlaceholderMedia[result];
+  return pageSagePlaceholderMedia[result];
 }
 
 function randomMedia() {
   const options = ['audio', 'video', 'photo_landscape', 'photo_square', 'photo_portrait'];
   const result = options[(Math.floor(Math.random() * 100) + 1) % 5];
-  return pageEditorPlaceholderMedia[result];
+  return pageSagePlaceholderMedia[result];
 }

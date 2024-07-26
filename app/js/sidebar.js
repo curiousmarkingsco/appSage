@@ -46,7 +46,7 @@ function generateMobileTabs() {
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
       <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-y-2">
-        <h3 class="relative text-lg font-bold text-slate-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-slate-700 text-xs w-7 h-7 p-1 rounded-md border border-slate-500">${pageEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglish[size]} Styles</span></h3>
+        <h3 class="relative text-lg font-bold text-slate-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-slate-700 text-xs w-7 h-7 p-1 rounded-md border border-slate-500">${pageSageEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglish[size]} Styles</span></h3>
       </div>
     `).join('')}
   </div>

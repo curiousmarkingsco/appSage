@@ -19,9 +19,27 @@
   <title>Load Page Configuration</title>
 </head>
 
-<body class="bg-slate-50 p-16">
-  <h1 class="text-6xl text-slate-900">Select a Configuration to Load</h1>
-  <div class="grid grid-cols-3 gap-4 mt-8" id="pageList"></div>
+<body class="bg-slate-50">
+  <div class="w-full min-w-full max-w-full pagegrid grid pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep grid-cols-3 max-h-16 h-16 min-h-16 bg-slate-100 justify-items-center">
+    <div class="col-span-1 pagecolumn group justify-start flex mt-1" id="">
+      <div class="content-container pagecontent text-base w-12 h-12" id=""><img src="./assets/logo_icon.svg">
+      </div>
+      <div class="content-container pagecontent text-base w-36 h-8 ml-2 mt-2 pt-1" id=""><img src="./assets/logo_wordmark.svg">
+      </div>
+    </div>
+    <div class="col-span-1 pagecolumn group"></div>
+    <div class="col-span-1 pagecolumn group" id="">
+      <div
+        class="content-container pagecontent text-base text-slate-50 rounded-md border-1 border-sky-600 mr-4 pt-2 pb-2 mt-2 min-w-52 max-w-36 text-center bg-slate-600"
+        id="editing-highlight"><a
+          class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" href="/edit"
+          target="_blank">New Page</a></div>
+    </div>
+  </div>
+  <div class="w-full mx-16 mt-8">
+    <h1 class="mx-auto text-6xl text-slate-900">Select a Configuration to Load</h1>
+    <div class="grid grid-cols-3 gap-4 mt-8" id="pageList"></div>
+  </div>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const container = document.getElementById('pageList');

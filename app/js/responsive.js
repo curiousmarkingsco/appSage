@@ -83,7 +83,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     const label = document.createElement('label');
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
-    mobileIcon.innerHTML = `${pageEditorIcons['responsive'][bp]}`;
+    mobileIcon.innerHTML = `${pageSageEditorIcons['responsive'][bp]}`;
     label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
     label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
     label.setAttribute('for', forAttr);
@@ -117,7 +117,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
-  const iconTarget = pageEditorIcons[iconTargetName];
+  const iconTarget = pageSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-1 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
@@ -178,7 +178,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : 'bg-slate-200 hover:bg-slate-300 '}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
-    const iconTarget = pageEditorIcons[iconTextCandidate1] || pageEditorIcons[iconTextCandidate2] || pageEditorIcons[option];
+    const iconTarget = pageSageEditorIcons[iconTextCandidate1] || pageSageEditorIcons[iconTextCandidate2] || pageSageEditorIcons[option];
     iconButton.innerHTML = iconTarget;
     if (labelPrefix == 'Text Alignment') {
       iconButton.setAttribute('data-extra-info', `${option === 'justify' ? 'Make text expand across the entire box. If you\'re not a professional designer, this option is a bad idea' : 'Align text to the ' + option}`)
@@ -198,10 +198,13 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       options.forEach(opt => {
         grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => { b.classList.remove('bg-sky-200') });
+        if (cssClassBase === 'justify') grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}flex`);
       });
       if (option !== 'reset') {
         grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         iconButton.classList.add('bg-sky-200');
+        // column justification requires flex to work as expected
+        if (cssClassBase === 'justify') grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
@@ -232,7 +235,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
     control.setAttribute('data-extra-info-class', 'underline');
   }
   const iconButton = document.createElement('span');
-  iconButton.innerHTML = pageEditorIcons[cssClassBase];
+  iconButton.innerHTML = pageSageEditorIcons[cssClassBase];
   iconButton.className = `absolute top-0.5 right-0 h-11 w-11 px-2 py-1 rounded-sm border-none pointer-events-none`;
 
   const checkbox = document.createElement('input')

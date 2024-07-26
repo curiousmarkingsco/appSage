@@ -79,11 +79,13 @@ function addEditableColumns(sidebar, grid) {
 function addGridAlignmentOptions(sidebar, grid) {
   const justifyItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
   const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
+  // const placeContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
   const placeItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
 
   // Add alignment options
   addDeviceTargetedOptions(sidebar, grid, 'Justify Items', 'justify-items', justifyItemsOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, grid, 'Align Content', 'content', alignContentOptions, 'icon-select');
+  // addDeviceTargetedOptions(sidebar, grid, 'Place Content', 'place-content', placeContentOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, grid, 'Place Items', 'place-items', placeItemsOptions, 'icon-select');
 }
 
