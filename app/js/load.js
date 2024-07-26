@@ -64,26 +64,26 @@ function loadChanges(json) {
   }
 }
 
-// Utility functions for managing localStorage with a 'tailwindvpb' object
+// Utility functions for managing localStorage with a 'pageSageStorage' object
 function loadPage(pageId) {
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
-  if (tailwindvpb.pages && tailwindvpb.pages[pageId] && tailwindvpb.pages[pageId].page_data) {
-    return tailwindvpb.pages[pageId].page_data;
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
+  if (pageSageStorage.pages && pageSageStorage.pages[pageId] && pageSageStorage.pages[pageId].page_data) {
+    return pageSageStorage.pages[pageId].page_data;
   } else {
     return null;
   }
 }
 
 function savePage(pageId, data) {
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
-  if (!tailwindvpb.pages) {
-    tailwindvpb.pages = {};
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
+  if (!pageSageStorage.pages) {
+    pageSageStorage.pages = {};
   }
-  if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+  if (!pageSageStorage.pages[pageId]) {
+    pageSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
-  tailwindvpb.pages[pageId].page_data = data;
-  localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+  pageSageStorage.pages[pageId].page_data = data;
+  localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
 }
 
 function restoreGridCapabilities(grid) {
@@ -111,23 +111,23 @@ function savePageSettingsChanges(pageId) {
 }
 
 function savePageSettings(pageId, data) {
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
-  if (!tailwindvpb.pages) {
-    tailwindvpb.pages = {};
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
+  if (!pageSageStorage.pages) {
+    pageSageStorage.pages = {};
   }
-  if (!tailwindvpb.pages[pageId]) {
-    tailwindvpb.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+  if (!pageSageStorage.pages[pageId]) {
+    pageSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
-  tailwindvpb.pages[pageId].settings = data;
-  localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+  pageSageStorage.pages[pageId].settings = data;
+  localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
 }
 
 function loadPageBlobs(config) {
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   const page = document.getElementById('page');
 
-  if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].blobs) {
-    const blobs = tailwindvpb.pages[config].blobs;
+  if (pageSageStorage.pages && pageSageStorage.pages[config] && pageSageStorage.pages[config].blobs) {
+    const blobs = pageSageStorage.pages[config].blobs;
     if (blobs) {
       Object.keys(blobs).forEach(key => {
         const element = page.querySelector(`.bg-local-${key}`);
@@ -138,16 +138,16 @@ function loadPageBlobs(config) {
 }
 
 function loadPageSettings(config, view = false){
-  // Load the tailwindvpb object from localStorage
-  const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb') || '{}');
+  // Load the pageSageStorage object from localStorage
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   
   // Check if the page and settings exist
-  if (tailwindvpb.pages && tailwindvpb.pages[config] && tailwindvpb.pages[config].settings) {
+  if (pageSageStorage.pages && pageSageStorage.pages[config] && pageSageStorage.pages[config].settings) {
     let settings;
     try {
-      settings = JSON.parse(tailwindvpb.pages[config].settings);
+      settings = JSON.parse(pageSageStorage.pages[config].settings);
     } catch {
-      settings = tailwindvpb.pages[config].settings;
+      settings = pageSageStorage.pages[config].settings;
     }
     
     // Find the element by config and set the className if it exists

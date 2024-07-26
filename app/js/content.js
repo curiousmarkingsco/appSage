@@ -758,9 +758,9 @@ function generateMediaSrc(event, contentContainer, url){
         const generatedId = config + Array.from({length: 12}, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
         contentContainer.classList.add(`bg-local-${generatedId}`);
         // Store the object under the generated id
-        const tailwindvpb = JSON.parse(localStorage.getItem('tailwindvpb'));
-        tailwindvpb.pages[config].blobs[generatedId] = e.target.result;
-        localStorage.setItem('tailwindvpb', JSON.stringify(tailwindvpb));
+        const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
+        pageSageStorage.pages[config].blobs[generatedId] = e.target.result;
+        localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
         // TailwindCSS doesn't appear to like entire image blobs LOL
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
       }

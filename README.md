@@ -1,11 +1,13 @@
-# TailwindVPB (Visual Page Builder)
+# page**Sage**
 
-Tailwind Visual Page Builder is intended to bring all the optimization and developer happiness benefits of Tailwind and supercharge them into pages that can be edited by non-coders, such as as:
+## What is page**Sage** and what does it do?
+pageSage uses vanilla JavaScript to provide designers, developers, and ideally your grandma a way to quickly and easily make a webpage without having to write code. It is intended to be the front-end arm of [macroSage](https://macrosage.io/). If you have ever used Elementor, Divi, or Webflow, you will feel right at home with this application.
 
-* Micromanager clients - You: "That's a great idea, would you like some refresher training so you can add that yourself?"
-* Superclients - You: "I know you're hands on and we are so happy to finally empower you to have more control over your site!"
-* Rapid prototypers - You: "I'd rather just spin this up super quick and get it live before I lose interest or realize this was just a meme project."
-* Designers - You: "I'll do CSS if I absolutely have to, but I'd rather make a website like I do in Figma."
+## What does page**Sage** *not* do?
+As free and open source software, pageSage is currently a front-end only application. If you are a developer, it is up to you to decide how to modify pageSage in order to integrate with your back-end.
 
-## More documentation to come
-This prototype is far too minimal to be usable by anyone (including me). I'm just getting this in another place for redundant storage.
+## Who made page**Sage** and why?
+pageSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our goal to make the software industry more competitive. We aim to do this by providing (for free, whenever possible) tools to make great software value propositions without the traditional barriers that people typicall face. In particular:
+1. Make building a page faster (reduce time barriers)
+2. Make page building accessible to laymens (reduce skill barriers)
+3. Make page building easy and fun (reduce emotional barriers)

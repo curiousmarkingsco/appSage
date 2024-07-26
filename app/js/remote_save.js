@@ -2,7 +2,7 @@
 
 // TODO: Add field on settings page for remote storage URL
 function saveDataToServer(url, page_id, css_content = null) {
-  const html_content = JSON.parse(localStorage.getItem('tailwindvpb')).pages[page_id];
+  const html_content = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id];
   const fullPath = url + (page_id ? ('/' + page_id) : '');
   fetch(fullPath, {
     method: 'POST',
@@ -19,8 +19,8 @@ function saveDataToServer(url, page_id, css_content = null) {
 function copyPageHTML(element) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem('tailwindvpb')).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem('tailwindvpb')).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
