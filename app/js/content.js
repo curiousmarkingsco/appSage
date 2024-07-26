@@ -252,10 +252,12 @@ function updateSidebarForForm(contentContainer, newContent) {
 
   // Add UI for setting the form action
   const actionLabel = document.createElement('label');
+  actionLabel.setAttribute('for', 'actionField');
   actionLabel.textContent = 'Form Action URL:';
   actionLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const actionField = document.createElement('input');
+  actionField.setAttribute('name', 'actionField');
   actionField.type = 'url';
   actionField.placeholder = 'Enter form action URL';
   actionField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -266,10 +268,12 @@ function updateSidebarForForm(contentContainer, newContent) {
 
   // Add UI for setting the form ID
   const formIdLabel = document.createElement('label');
+  formIdLabel.setAttribute('for', 'formIdField');
   formIdLabel.textContent = 'Form ID:';
   formIdLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const formIdField = document.createElement('input');
+  formIdField.setAttribute('name', 'formIdField');
   formIdField.type = 'text';
   formIdField.placeholder = 'Enter form ID';
   formIdField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -279,10 +283,12 @@ function updateSidebarForForm(contentContainer, newContent) {
   };
 
   const submitLabel = document.createElement('label');
+  submitLabel.setAttribute('for', 'submitField');
   submitLabel.textContent = 'Submit Button Text:';
   submitLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const submitField = document.createElement('input');
+  submitField.setAttribute('name', 'submitField');
   submitField.type = 'text';
   submitField.placeholder = 'Change button name';
   submitField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -291,19 +297,23 @@ function updateSidebarForForm(contentContainer, newContent) {
   };
 
   const inputLabel = document.createElement('label');
+  inputLabel.setAttribute('for', 'inputField');
   inputLabel.textContent = 'Field Label:';
   inputLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const inputField = document.createElement('input');
+  inputField.setAttribute('name', 'inputField');
   inputField.type = 'text';
   inputField.placeholder = 'Enter label...';
   inputField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
   const typeLabel = document.createElement('label');
+  typeLabel.setAttribute('for', 'typeField');
   typeLabel.textContent = 'Field Type:';
   typeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
   const typeField = document.createElement('select');
+  typeField.setAttribute('name', 'typeField');
   typeField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const inputTypes = ['text', 'url', 'tel', 'password', 'number', 'file', 'email', 'date', 'color', 'checkbox'];
 
@@ -363,10 +373,12 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     fieldEditor.className = 'field-editor group my-4 bg-slate-50';
 
     const idLabel = document.createElement('label');
+    idLabel.setAttribute('for', 'idField');
     idLabel.textContent = 'Input ID:';
     idLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     const idField = document.createElement('input');
+    idField.setAttribute('name', 'idField');
     idField.type = 'text';
     idField.value = input.id;
     idField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -375,10 +387,12 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     };
 
     const nameLabel = document.createElement('label');
+    nameLabel.setAttribute('for', 'nameField');
     nameLabel.textContent = 'Input Name:';
     nameLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     const nameField = document.createElement('input');
+    nameField.setAttribute('name', 'nameField');
     nameField.type = 'text';
     nameField.value = input.name;
     nameField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -387,10 +401,12 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     };
 
     const fieldLabel = document.createElement('label');
+    fieldLabel.setAttribute('for', 'fieldInput');
     fieldLabel.textContent = 'Edit Field Label:';
     fieldLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     const fieldInput = document.createElement('input');
+    fieldInput.setAttribute('name', 'fieldInput');
     fieldInput.type = 'text';
     fieldInput.value = input.placeholder;
     fieldInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -399,10 +415,12 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     };
 
     const fieldTypeLabel = document.createElement('label');
+    fieldTypeLabel.setAttribute('for', 'fieldType');
     fieldTypeLabel.textContent = 'Edit Field Type:';
     fieldTypeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
 
     const fieldType = document.createElement('select');
+    fieldType.setAttribute('name', 'fieldType');
     fieldType.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
     inputTypes.forEach(type => {
       const option = document.createElement('option');
@@ -505,10 +523,12 @@ function updateSidebarForButton(contentContainer, newContent) {
   urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
 
   const checkboxLabel = document.createElement('label');
+  checkboxLabel.setAttribute('for', 'checkbox');
   checkboxLabel.textContent = ' Open in new tab';
   checkboxLabel.className = 'inline-flex items-center mt-2';
 
   const checkbox = document.createElement('input');
+  checkbox.setAttribute('name', 'checkbox');
   checkbox.type = 'checkbox';
   checkbox.className = 'ml-2';
 

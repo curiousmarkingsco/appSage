@@ -13,7 +13,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
   breakpoints.forEach(bp => {
-    const label = createLabel(bp, labelPrefix);
+    const label = createLabel(bp, labelPrefix, `${bp}-${labelPrefix.replace(' ', '-')}-${cssClassBase}`);
     let control;
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
 
@@ -68,7 +68,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
   }
 }
 
-function createLabel(bp, labelPrefix) {
+function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false);
   if (collapseLabels && keepLabel === false) {
@@ -86,6 +86,7 @@ function createLabel(bp, labelPrefix) {
     mobileIcon.innerHTML = `${pageEditorIcons['responsive'][bp]}`;
     label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
     label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
+    label.setAttribute('for', forAttr);
     label.prepend(mobileIcon);
     return label;
   }
