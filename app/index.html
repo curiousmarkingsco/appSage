@@ -25,18 +25,22 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const container = document.getElementById('pageList');
-      const pages = JSON.parse(localStorage['pageSageStorage']).pages;
-      Object.keys(pages).forEach(key => {
-        const value = pages[key];
-        const pageTitleContainer = document.createElement('h2');
-        pageTitleContainer.className = 'text-4xl text-slate-500 p-2'
-        const pageTitle = document.createElement('a');
-        pageTitle.textContent = key;
-        pageTitle.setAttribute('href', `/edit?config=${key}`);
-        pageTitle.setAttribute('target', '_blank')
-        pageTitleContainer.appendChild(pageTitle);
-        container.appendChild(pageTitleContainer);
-      });
+      try {
+        const pages = JSON.parse(localStorage['pageSageStorage']).pages;
+        Object.keys(pages).forEach(key => {
+          const value = pages[key];
+          const pageTitleContainer = document.createElement('h2');
+          pageTitleContainer.className = 'text-4xl text-slate-500 p-2'
+          const pageTitle = document.createElement('a');
+          pageTitle.textContent = key;
+          pageTitle.setAttribute('href', `/edit?config=${key}`);
+          pageTitle.setAttribute('target', '_blank')
+          pageTitleContainer.appendChild(pageTitle);
+          container.appendChild(pageTitleContainer);
+        });
+      } catch {
+        document.getElementById('pageList').innerHTML = '<div class="text-center col-span-3"><h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2><a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="/edit">Start building a page</a>'
+      }
     });
   </script>
 </body>
