@@ -194,11 +194,11 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else {
       handleTooltips(`${cssClassBase}-${option}`, iconButton);
     }
-    if (String(grid.classList).includes(iconTextCandidate1) && !swatchboard) {
+    if ((grid.classList).contains(iconTextCandidate1) && !swatchboard) {
       // Candidate1 means it is not a color icon, so we add a highlight to it.
       iconButton.classList.add('bg-sky-200');
     }
-    if (String(grid.classList).includes(iconTextCandidate1) && swatchboard) {
+    if ((grid.classList).contains(iconTextCandidate1) && swatchboard) {
       iconButton.classList.add('border-sky-300');
     }
     iconButton.onclick = () => {
