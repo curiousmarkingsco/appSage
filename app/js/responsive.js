@@ -138,7 +138,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
-    optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === value;
+    optionElement.selected = String(grid.classList).includes(value);
     selectControl.appendChild(optionElement);
   });
   selectControl.onchange = () => {
