@@ -175,7 +175,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : 'bg-slate-200 hover:bg-slate-300 '}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = pageSageEditorIcons[iconTextCandidate1] || pageSageEditorIcons[iconTextCandidate2] || pageSageEditorIcons[option];
@@ -193,6 +193,13 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       iconButton.setAttribute('data-extra-info', `Position your background image to the ${option} of the box it's inside`);
     } else {
       handleTooltips(`${cssClassBase}-${option}`, iconButton);
+    }
+    if (String(grid.classList).includes(iconTextCandidate1)) {
+      // Candidate1 means it is not a color icon, so we add a highlight to it.
+      iconButton.classList.add('bg-sky-200');
+    }
+    if (String(grid.classList).includes(iconTextCandidate1) && swatchboard) {
+      iconButton.classList.add('border-sky-300');
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
