@@ -52,8 +52,10 @@ function addPageOptions() {
   activateTabs();
 
   if (page) {
+    addEditableMetadata(sidebar, page);
     addEditableBackgroundColor(sidebar, page);
     addEditableBackgroundImage(sidebar, page);
+    addEditableBackgroundImageURL(sidebar, page);
     addEditableBackgroundFeatures(sidebar, page);
   }
 }

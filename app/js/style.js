@@ -77,7 +77,7 @@ function addEditableMargin(sidebar, element) {
   });
 }
 
-function addEditableBackgroundImage(sidebar, grid) {
+function addEditableBackgroundImageURL(sidebar, grid) {
   const labelPrefix = 'Background Image URL';
   const cssClassBase = 'bg';
 
@@ -140,6 +140,16 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'underline', fontUnderlineOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
+}
+
+function addEditableMetadata(sidebar, element) {
+  /* defaults:
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  */
+  const inputOptions = []
+  addDeviceTargetedOptions(sidebar, element, 'metadata', '', [], 'multiple-input')
 }
 
 // TODO: Add these to sidebar once 'Advanced' settings is implemented

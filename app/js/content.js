@@ -11,6 +11,7 @@ function addContentContainer() {
     addEditableBorders(sidebar, contentContainer);
     addEditableBackgroundColor(sidebar, contentContainer);
     addEditableBackgroundImage(sidebar, contentContainer);
+    addEditableBackgroundImageURL(sidebar, contentContainer);
     addEditableBackgroundFeatures(sidebar, contentContainer);
     addEditableMarginAndPadding(sidebar, contentContainer);
     addElementDimensionOptions(sidebar, contentContainer);
@@ -28,6 +29,7 @@ function enableEditContentOnClick(contentContainer) {
     addEditableBorders(sidebar, contentContainer);
     addEditableBackgroundColor(sidebar, contentContainer);
     addEditableBackgroundImage(sidebar, contentContainer);
+    addEditableBackgroundImageURL(sidebar, contentContainer);
     addEditableBackgroundFeatures(sidebar, contentContainer);
     addEditableMarginAndPadding(sidebar, contentContainer);
     addElementDimensionOptions(sidebar, contentContainer);

@@ -24,6 +24,7 @@ function addGridOptions(grid) {
     addEditableBorders(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
+    addEditableBackgroundImageURL(sidebar, grid);
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
   }

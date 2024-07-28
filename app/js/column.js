@@ -27,6 +27,7 @@ function enableEditColumnOnClick(column) {
     addEditableBorders(sidebar, column);
     addEditableBackgroundColor(sidebar, column);
     addEditableBackgroundImage(sidebar, column);
+    addEditableBackgroundImageURL(sidebar, column);
     addEditableBackgroundFeatures(sidebar, column);
     addElementDimensionOptions(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
@@ -89,6 +90,7 @@ function createAddColumnButton(gridContainer) {
     addEditableBorders(sidebar, newColumn);
     addEditableBackgroundColor(sidebar, newColumn);
     addEditableBackgroundImage(sidebar, newColumn);
+    addEditableBackgroundImageURL(sidebar, newColumn);
     addEditableBackgroundFeatures(sidebar, newColumn);
     addEditableMarginAndPadding(sidebar, newColumn);
 
