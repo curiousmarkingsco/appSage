@@ -141,3 +141,19 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'underline', fontUnderlineOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 }
+
+// TODO: Add these to sidebar once 'Advanced' settings is implemented
+// This particular HTML function should most likely be a dedicated content.js content feature
+function addManualHtmlElement(sidebar, element){
+  addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+}
+
+// TODO: Add these to sidebar once 'Advanced' settings is implemented
+function addManualClassEditor(sidebar, element){
+  addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+}
+
+// TODO: Add these to sidebar once 'Advanced' settings is implemented
+function addManualCssEditor(sidebar, element){
+  addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+}

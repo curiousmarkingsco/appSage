@@ -25,6 +25,13 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         handleInputType(bp, labelPrefix, options, cssClassBase, grid, control);
         control.classList.add('col-span-5');
         break;
+      case 'textarea':
+        control = document.createElement('textarea');
+        container.appendChild(label);
+        container.appendChild(control);
+        handleTextareaType(labelPrefix, grid, control);
+        control.classList.add('col-span-5');
+        break;
       case 'single-icon-select':
         control = document.createElement('div');
         container.appendChild(label);
@@ -57,6 +64,19 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         return;
     }
   });
+}
+
+function applyStyles(element, controlValue) {
+  if (element) {
+    const styles = controlValue.split(';');
+    styles.forEach(style => {
+      const [property, value] = style.split(':');
+      if (property && value) {
+        const camelCaseProperty = property.trim().replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
+        element.style[camelCaseProperty] = value.trim();
+      }
+    });
+  }
 }
 
 function getCurrentStyle(bp, options, cssClassBase, grid) {
@@ -104,9 +124,26 @@ function handleInputType(bp, labelPrefix, options, cssClassBase, grid, control) 
       // assumes 'bg' is URL
       newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       updateGridClass(grid, newValue, cssClassBase, bp);
-    } else if (labelPrefix === 'Background Image File'){
+    } else if (labelPrefix === 'Background Image File') {
       grid.style.backgroundImage = '';
       generateMediaSrc(event, grid, true);
+    }
+  };
+}
+
+function handleTextareaType(labelPrefix, grid, control) {
+  control.type = 'text';
+  control.value = (grid.classList);
+  control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  control.onchange = () => {
+    if (labelPrefix == 'class') grid.className = control.value;
+    if (labelPrefix == 'html'){
+      const newHtmlElement = document.createElement('div');
+      newHtmlElement.innerHTML = control.value;
+      control.innerHTML = newHtmlElement;
+    }
+    if (labelPrefix == 'css') {
+      applyStyles(grid, control.value);
     }
   };
 }
@@ -291,50 +328,50 @@ function updateGridClass(element, newValue, classType, breakpoint) {
   element.className = element.className.replace(classRegex, '').trim() + ` ${newValue}`;
 }
 
-function handleTooltips(cssClassToEvaluate, control){
+function handleTooltips(cssClassToEvaluate, control) {
   if (cssClassToEvaluate === 'justify-items-start') {
     control.setAttribute('data-extra-info', "Put columns in columns in the grid to the left-most side of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-end'){
+  } else if (cssClassToEvaluate === 'justify-items-end') {
     control.setAttribute('data-extra-info', "Put columns in columns in the grid to the right-most side of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-center'){
+  } else if (cssClassToEvaluate === 'justify-items-center') {
     control.setAttribute('data-extra-info', "Put columns in columns in the grid to the horizontal middle of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-stretch'){
+  } else if (cssClassToEvaluate === 'justify-items-stretch') {
     control.setAttribute('data-extra-info', "Stretch the columns across the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-reset'){
+  } else if (cssClassToEvaluate === 'justify-items-reset') {
     control.setAttribute('data-extra-info', "Reset justification of items to default");
-  } else if (cssClassToEvaluate === 'content-start'){
+  } else if (cssClassToEvaluate === 'content-start') {
     control.setAttribute('data-extra-info', "Align columns to the top left of the grid. Choosing this option may not be obvious unless you also choose 'Place Items Start'");
-  } else if (cssClassToEvaluate === 'content-end'){
+  } else if (cssClassToEvaluate === 'content-end') {
     control.setAttribute('data-extra-info', "Align columns to the bottom right of the grid. Choosing this option may not be obvious unless you also choose 'Place Items End'");
-  } else if (cssClassToEvaluate === 'content-center'){
+  } else if (cssClassToEvaluate === 'content-center') {
     control.setAttribute('data-extra-info', "Align columns to the center of the grid.");
-  } else if (cssClassToEvaluate === 'content-stretch'){
+  } else if (cssClassToEvaluate === 'content-stretch') {
     control.setAttribute('data-extra-info', "Stretch columns to fill the height of the grid");
-  } else if (cssClassToEvaluate === 'content-between'){
+  } else if (cssClassToEvaluate === 'content-between') {
     control.setAttribute('data-extra-info', "Align columns evenly from the very top and very bottom of the grid");
-  } else if (cssClassToEvaluate === 'content-around'){
+  } else if (cssClassToEvaluate === 'content-around') {
     control.setAttribute('data-extra-info', "Align columns evenly within the height of the grid");
-  } else if (cssClassToEvaluate === 'content-evenly'){
+  } else if (cssClassToEvaluate === 'content-evenly') {
     control.setAttribute('data-extra-info', "Align columns evenly between the columns and the space around the columns");
-  } else if (cssClassToEvaluate === 'content-reset'){
+  } else if (cssClassToEvaluate === 'content-reset') {
     control.setAttribute('data-extra-info', "Reset column vertical alignment");
-  } else if (cssClassToEvaluate === 'place-items-start'){
+  } else if (cssClassToEvaluate === 'place-items-start') {
     control.setAttribute('data-extra-info', "Place content within your columns to the columns to the top left of the columns");
-  } else if (cssClassToEvaluate === 'place-items-end'){
+  } else if (cssClassToEvaluate === 'place-items-end') {
     control.setAttribute('data-extra-info', "Place content within your columns to the columns to the bottom right of the columns");
-  } else if (cssClassToEvaluate === 'place-items-center'){
+  } else if (cssClassToEvaluate === 'place-items-center') {
     control.setAttribute('data-extra-info', "Place content within your columns to the columns to the center of the columns");
-  } else if (cssClassToEvaluate === 'place-items-stretch'){
+  } else if (cssClassToEvaluate === 'place-items-stretch') {
     control.setAttribute('data-extra-info', "Stretch content to the full dimensions of your columns");
-  } else if (cssClassToEvaluate === 'place-items-reset'){
+  } else if (cssClassToEvaluate === 'place-items-reset') {
     control.setAttribute('data-extra-info', "Reset items placement alignment");
-  } else if (cssClassToEvaluate === 'bg-no-repeat'){
+  } else if (cssClassToEvaluate === 'bg-no-repeat') {
     control.setAttribute('data-extra-info', "Do not repeat the background, this option pairs well with 'contain' or 'cover' background sizing");
-  } else if (cssClassToEvaluate === 'bg-repeat'){
+  } else if (cssClassToEvaluate === 'bg-repeat') {
     control.setAttribute('data-extra-info', "Repeat images to make a background pattern");
-  } else if (cssClassToEvaluate === 'bg-repeat-x'){
+  } else if (cssClassToEvaluate === 'bg-repeat-x') {
     control.setAttribute('data-extra-info', "Repeat images to make a pattern horizontally");
-  } else if (cssClassToEvaluate === 'bg-repeat-y'){
+  } else if (cssClassToEvaluate === 'bg-repeat-y') {
     control.setAttribute('data-extra-info', "Repeat images to make a pattern vertically");
   } else {
     control.setAttribute('data-extra-info', "This tooltip is missing, tell the dev to fix it!");

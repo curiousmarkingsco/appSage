@@ -11,3 +11,6 @@ pageSage is built by [Curious Markings Co.](https://curiousmarkings.com) with ou
 1. Make building a page faster (reduce time barriers)
 2. Make page building accessible to laymens (reduce skill barriers)
 3. Make page building easy and fun (reduce emotional barriers)
+
+## Coming soon
+Search this repository for the text "TODO:"
