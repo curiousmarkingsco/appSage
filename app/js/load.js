@@ -137,6 +137,28 @@ function loadPageBlobs(config) {
   }
 }
 
+function loadPageMetadata(page_id, element) {
+  const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const settings = JSON.parse(storedData.pages[page_id].settings);
+  if (settings) {
+    const metaTags = settings.metaTags;
+    if (metaTags) {
+      if (element) {
+        return metaTags;
+      } else {
+        const element = document.querySelector('head');
+
+        metaTags.forEach(tag => {
+          const metaTag = document.createElement('meta');
+          metaTag.setAttribute(tag.type, tag.name);
+          metaTag.setAttribute('content', tag.content);
+          element.appendChild(metaTag);
+        });
+      }
+    }
+  }
+}
+
 function loadPageSettings(config, view = false){
   // Load the pageSageStorage object from localStorage
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');

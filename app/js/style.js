@@ -153,42 +153,59 @@ function addEditableMetadata(container) {
     <meta property="og:title" content="Untitled | Built w/ pageSage">
   */
 
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  const metaDataPairsContainer = document.createElement('div');
+  metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
+  metaDataPairsContainer.className = 'my-2 col-span-5 border border-slate-200 overflow-y-scroll p-2 max-h-48'
+  container.appendChild(metaDataPairsContainer);
+  const metaTags = loadPageMetadata(config, metaDataPairsContainer);
+  console.log(metaTags);
+
+  metaTags.forEach(tag => {
+    addMetadataPair(tag.type, tag.name, tag.content);
+  });
   // Add initial empty metadata pair
-  function addMetadataPair() {
+  function addMetadataPair(meta_type, meta_name, meta_content) {
     const pair = document.createElement('div');
-    pair.className = 'metadata-pair';
+    pair.className = 'metadata-pair mt-2'
 
     const select = document.createElement('select');
-    select.className = 'meta-type';
+    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
     const optionName = document.createElement('option');
     optionName.value = 'name';
+    optionName.selected = 'name' === meta_type;
     optionName.text = 'Name';
     const optionProperty = document.createElement('option');
     optionProperty.value = 'property';
+    optionName.selected = 'property' === meta_type;
     optionProperty.text = 'Property';
     select.appendChild(optionName);
     select.appendChild(optionProperty);
 
     const nameInput = document.createElement('input');
+    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
     nameInput.type = 'text';
-    nameInput.className = 'meta-name';
+    nameInput.value = meta_name || '';
     nameInput.placeholder = 'Name/Property';
 
     const contentInput = document.createElement('input');
+    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
     contentInput.type = 'text';
-    contentInput.className = 'meta-content';
+    contentInput.value = meta_content || '';
     contentInput.placeholder = 'Content';
 
     pair.appendChild(select);
     pair.appendChild(nameInput);
     pair.appendChild(contentInput);
-    container.appendChild(pair);
+    metaDataPairsContainer.appendChild(pair);
   }
 
   addMetadataPair();
 
   const addButton = document.createElement('button');
-  addButton.textContent = 'Add Metadata';
+  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
+  addButton.className = 'col-span-2 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-28 mt-2';
   addButton.id = 'add-metadata-button';
   container.appendChild(addButton);
 
@@ -196,31 +213,28 @@ function addEditableMetadata(container) {
     addMetadataPair();
   });
 
-  const saveButton = document.createElement('button');
-  saveButton.textContent = 'Save Metadata';
-  saveButton.id = 'save-metadata-button';
-  container.appendChild(saveButton);
-
-  saveButton.addEventListener('click', function () {
-    const params = new URLSearchParams(window.location.search);
-    const config = params.get('config');
-    const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
-    const settings = JSON.parse(storedData.pages[config].settings);
-    const metaTags = [];
-
-    document.querySelectorAll('.metadata-pair').forEach(pair => {
-      const type = pair.querySelector('.meta-type').value;
-      const name = pair.querySelector('.meta-name').value;
-      const content = pair.querySelector('.meta-content').value;
-      if (name && content) {
-        metaTags.push({ type, name, content });
-      }
+  document.querySelectorAll('.metadata').forEach(input => {
+    input.addEventListener('change', function () {
+      const params = new URLSearchParams(window.location.search);
+      const config = params.get('config');
+      const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+      const settings = JSON.parse(storedData.pages[config].settings);
+      const metaTags = [];
+  
+      document.querySelectorAll('.metadata-pair').forEach(pair => {
+        const type = pair.querySelector('.meta-type').value;
+        const name = pair.querySelector('.meta-name').value;
+        const content = pair.querySelector('.meta-content').value;
+        if (name && content) {
+          metaTags.push({ type, name, content });
+        }
+      });
+  
+      settings.metaTags = metaTags;
+      storedData.pages[config].settings = JSON.stringify(settings);
+      localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
+      console.log('Metadata saved successfully!');
     });
-
-    settings.metaTags = metaTags;
-    storedData.pages[config].settings = JSON.stringify(settings);
-    localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
-    alert('Metadata saved successfully!');
   });
 }
 

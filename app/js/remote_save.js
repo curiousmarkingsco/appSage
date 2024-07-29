@@ -26,25 +26,18 @@ function copyPageHTML(element) {
   copyText(textToCopy, element);
 }
 
-function copyMetadata(copyButton) {
+function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
   const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
-  const element = document.querySelector('head');
 
-  // Add the metadata to <head>?
   metaTags.forEach(tag => {
-    // const metaTag = document.createElement('meta');
-    // metaTag.setAttribute(tag.type, tag.name);
-    // metaTag.setAttribute('content', tag.content);
-    // element.appendChild(metaTag);
     metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
   });
 
-  // Copy the meta tags string to the clipboard
   copyText(metaTagsString, element);
 }
 
