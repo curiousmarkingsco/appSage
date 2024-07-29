@@ -142,7 +142,63 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 }
 
-function addEditableMetadata(container) {
+function addEditablePageTitle(container, placement) {
+  const params = new URLSearchParams(window.location.search);
+  const currentTitle = params.get('config');
+  const titleLabel = document.createElement('label');
+  titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
+  titleLabel.setAttribute('for', 'page-title');
+  titleLabel.textContent = 'Page Title'
+  const titleInput = document.createElement('input');
+  titleInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  titleInput.setAttribute('name', 'page-title');
+  titleInput.type = 'text';
+  titleInput.value = currentTitle;
+  titleInput.placeholder = 'Page Title';
+
+  titleInput.addEventListener('change', function () {
+    newTitle = titleInput.value;
+    changeLocalStoragePageTitle(newTitle);
+  });
+  if (placement === 'prepend') {
+    container.prepend(titleInput);
+    container.prepend(titleLabel);
+  } else {
+    container.appendChild(titleLabel);
+    container.appendChild(titleInput);
+  }
+}
+
+function changeLocalStoragePageTitle(newTitle) {
+  const params = new URLSearchParams(window.location.search);
+  const currentTitle = params.get('config');
+  
+  // Retrieve the pages object from localStorage
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
+  
+  // Check if the currentTitle exists in the pages object
+  if (pageSageStorage.pages[currentTitle]) {
+    // Clone the data from the current title
+    const pageData = pageSageStorage.pages[currentTitle];
+    
+    // Assign the data to the new title
+    pageSageStorage.pages[newTitle] = pageData;
+    
+    // Delete the current title entry
+    delete pageSageStorage.pages[currentTitle];
+    
+    // Save the updated pages object back to localStorage
+    localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
+    
+    // Update the URL parameters
+    params.set('config', newTitle);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+  } else {
+    console.error(`Page with title "${currentTitle}" does not exist.`);
+  }
+}
+
+function addEditableMetadata(container, placement) {
   /* 
   defaults:
     <meta charset="UTF-8">
@@ -152,19 +208,32 @@ function addEditableMetadata(container) {
     <meta name="description" content="This page was built using pageSage">
     <meta property="og:title" content="Untitled | Built w/ pageSage">
   */
+  const metaDataContainer = document.createElement('div');
+  if (placement === 'prepend') {
+    container.prepend(metaDataContainer);
+  } else {
+    container.appendChild(metaDataContainer);
+  }
 
   const params = new URLSearchParams(window.location.search);
-  const config = params.get('config');
+  const page_id = params.get('config');
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border border-slate-200 overflow-y-scroll p-2 max-h-48'
-  container.appendChild(metaDataPairsContainer);
-  const metaTags = loadPageMetadata(config, metaDataPairsContainer);
-  console.log(metaTags);
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
+  metaDataContainer.appendChild(metaDataPairsContainer);
 
-  metaTags.forEach(tag => {
-    addMetadataPair(tag.type, tag.name, tag.content);
-  });
+  const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const settings = storedData.pages[page_id].settings;
+  if (settings) {
+    const metaTags = JSON.parse(settings).metaTags;
+
+    if (metaTags) {
+      metaTags.forEach(tag => {
+        addMetadataPair(tag.type, tag.name, tag.content);
+      });
+    }
+  }
+
   // Add initial empty metadata pair
   function addMetadataPair(meta_type, meta_name, meta_content) {
     const pair = document.createElement('div');
@@ -204,10 +273,10 @@ function addEditableMetadata(container) {
   addMetadataPair();
 
   const addButton = document.createElement('button');
-  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
+  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline mb-1"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
   addButton.className = 'col-span-2 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-28 mt-2';
   addButton.id = 'add-metadata-button';
-  container.appendChild(addButton);
+  metaDataContainer.appendChild(addButton);
 
   addButton.addEventListener('click', function () {
     addMetadataPair();
@@ -216,9 +285,9 @@ function addEditableMetadata(container) {
   document.querySelectorAll('.metadata').forEach(input => {
     input.addEventListener('change', function () {
       const params = new URLSearchParams(window.location.search);
-      const config = params.get('config');
+      const page_id = params.get('config');
       const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
-      const settings = JSON.parse(storedData.pages[config].settings);
+      const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
   
       document.querySelectorAll('.metadata-pair').forEach(pair => {
@@ -231,7 +300,7 @@ function addEditableMetadata(container) {
       });
   
       settings.metaTags = metaTags;
-      storedData.pages[config].settings = JSON.stringify(settings);
+      storedData.pages[page_id].settings = JSON.stringify(settings);
       localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
       console.log('Metadata saved successfully!');
     });

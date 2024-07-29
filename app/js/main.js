@@ -3,7 +3,6 @@ var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);//.push('black', 'white');
 
 document.addEventListener('DOMContentLoaded', function () {
-  // var tailwindColors = tailwind.config.theme.colors;
   const editPageButton = document.getElementById('editPageSettings');
   editPageButton.addEventListener('click', function () {
     addPageOptions();
@@ -48,11 +47,15 @@ document.addEventListener('DOMContentLoaded', function () {
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Page Styles &amp; Metadata</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateMobileTabs()}`; // Clear existing editor
+  const editTitle = document.createElement('div');
+  editTitle.innerHTML = `<strong>Edit Page Styles &amp; Metadata</strong>`
   activateTabs();
 
   if (page) {
-    addEditableMetadata(sidebar);
+    addEditableMetadata(sidebar, 'prepend');
+    addEditablePageTitle(sidebar, 'prepend');
+    sidebar.prepend(editTitle);
     addEditableBackgroundColor(sidebar, page);
     addEditableBackgroundImage(sidebar, page);
     addEditableBackgroundImageURL(sidebar, page);

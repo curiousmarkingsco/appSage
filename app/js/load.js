@@ -139,7 +139,7 @@ function loadPageBlobs(config) {
 
 function loadPageMetadata(page_id, element) {
   const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
-  const settings = JSON.parse(storedData.pages[page_id].settings);
+  const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = settings.metaTags;
     if (metaTags) {
