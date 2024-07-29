@@ -1929,9 +1929,10 @@
         </div>
       </div>
     </div>
-    <div id="pageList" class="w-full gap-8 min-w-full max-w-full pagegrid grid mt-0 mb-0 ugc-keep grid-cols-2 sm:grid-cols-2 md:grid-cols-3 min-h-8 pt-2 pl-4 pr-4 pb-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center ml-8 mr-8">
+    <div id="pageList" class="w-full gap-2 min-w-full max-w-full pagegrid grid mt-0 mb-0 ugc-keep grid-cols-2 sm:grid-cols-2 md:grid-cols-3 min-h-8 pt-2 pl-4 pr-4 pb-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 justify-items-center ml-8 mr-8">
     </div>
   </div>
+  <script src="./js/index.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const container = document.getElementById('pageList');
@@ -1940,8 +1941,8 @@
         Object.keys(pages).forEach(key => {
           // const value = pages[key];
           const column = document.createElement('div');
-          column.className = 'col-span-1 pagecolumn group bg-slate-50 border-2 border-slate-200 bg-repeat bg-center'
-          column.innerHTML = `<div class="content-container pagecontent text-base max-w-64 border-b-2 border-slate-200" id=""><!-- <img src=""> --></div><div class="content-container pagecontent text-slate-700 text-xl m-2" id=""><h2>${key}</h2></div><div class="content-container pagecontent inline-block m-2 text-base border-slate-600 rounded-lg pt-1 pb-1 text-center w-24 pl-0 pr-0 bg-slate-100 border-solid border-2" id=""><a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" href="/edit?config=${key}" target="_blank">Edit</a></div><div class="content-container pagecontent inline-block m-2 text-base font-thin pt-1 pb-1 w-24 bg-slate-100 border-solid border-slate-600 border-2 rounded-lg text-center" id=""><a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" href="/preview?page=${key}" target="_blank">Preview</a></div>`;
+          column.className = 'col-span-1 pagecolumn group bg-slate-50 border-2 border-slate-200 w-full bg-repeat bg-center'
+          column.innerHTML = `<div class="content-container pagecontent text-base border-slate-200" id=""><!-- <img src=""> --></div><div class="content-container pagecontent text-slate-700 text-2xl m-2" id=""><h2>${key}</h2></div><div class="flex justify-around mb-4 mt-2"><a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="/edit?config=${key}" target="_blank">Edit</a><a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="/preview?page=${key}" target="_blank">Preview</a><a class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${key}', this.parentElement.parentElement)" href="javascript:void(0)">Delete</a></div>`;
           container.appendChild(column);
         });
       } catch {
