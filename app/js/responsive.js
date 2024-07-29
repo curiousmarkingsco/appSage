@@ -38,6 +38,14 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         container.appendChild(control);
         handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control);
         break;
+      case 'reset':
+        control = document.createElement('div');
+        label.className = 'hidden';
+        container.appendChild(label);
+        container.appendChild(control);
+        handleReset(bp, grid, options, labelPrefix, cssClassBase, control);
+        control.classList.add('col-span-1');
+        break;
       case 'icon-select':
         control = document.createElement('div');
         container.appendChild(label);
@@ -64,6 +72,20 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         return;
     }
   });
+}
+
+function handleReset(bp, grid, options, labelPrefix, cssClassBase, control){
+  const resetButton = document.createElement('button');
+  resetButton.innerHTML = pageSageEditorIcons['reset'];
+  resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded'
+  control.appendChild(resetButton);
+  resetButton.onclick = () => {
+    options.forEach(opt => {
+      cssClassBase.forEach(cssClass => {
+        grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+      });
+    });
+  };
 }
 
 function applyStyles(element, controlValue) {
@@ -157,7 +179,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const iconTarget = pageSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
-  iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-1 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
+  iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
   const selectControl = document.createElement('select');
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
@@ -169,7 +191,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`
   }
   selectControl.setAttribute('data-extra-info', extraInfo);
-  selectControl.className = `appearance-none w-full bg-slate-50 p-2 border-2 border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
+  selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');

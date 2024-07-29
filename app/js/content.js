@@ -14,7 +14,7 @@ function addContentContainer() {
     addEditableBackgroundImageURL(sidebar, contentContainer);
     addEditableBackgroundFeatures(sidebar, contentContainer);
     addEditableMarginAndPadding(sidebar, contentContainer);
-    addElementDimensionOptions(sidebar, contentContainer);
+    addEditableDimensions(sidebar, contentContainer);
     highlightEditingElement(contentContainer);
   });
 
@@ -32,7 +32,7 @@ function enableEditContentOnClick(contentContainer) {
     addEditableBackgroundImageURL(sidebar, contentContainer);
     addEditableBackgroundFeatures(sidebar, contentContainer);
     addEditableMarginAndPadding(sidebar, contentContainer);
-    addElementDimensionOptions(sidebar, contentContainer);
+    addEditableDimensions(sidebar, contentContainer);
     highlightEditingElement(contentContainer);
   });
 }

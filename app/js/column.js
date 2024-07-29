@@ -29,7 +29,7 @@ function enableEditColumnOnClick(column) {
     addEditableBackgroundImage(sidebar, column);
     addEditableBackgroundImageURL(sidebar, column);
     addEditableBackgroundFeatures(sidebar, column);
-    addElementDimensionOptions(sidebar, column);
+    addEditableDimensions(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
   });
 }
