@@ -31,14 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   // Mouse enter event
-  document.body.addEventListener('mouseenter', function(e) {
+  document.body.addEventListener('mouseenter', function (e) {
     if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
       updateTooltip(e, true);
     }
   }, true); // Use capture phase to ensure tooltip updates immediately
 
   // Mouse leave event
-  document.body.addEventListener('mouseleave', function(e) {
+  document.body.addEventListener('mouseleave', function (e) {
     if (e.target.matches('[data-extra-info]')) {
       updateTooltip(e, false);
     }
@@ -52,7 +52,7 @@ function addPageOptions() {
   activateTabs();
 
   if (page) {
-    addEditableMetadata(sidebar, page);
+    addEditableMetadata(sidebar);
     addEditableBackgroundColor(sidebar, page);
     addEditableBackgroundImage(sidebar, page);
     addEditableBackgroundImageURL(sidebar, page);

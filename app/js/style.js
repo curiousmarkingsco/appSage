@@ -142,28 +142,100 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 }
 
-function addEditableMetadata(sidebar, element) {
-  /* defaults:
+function addEditableMetadata(container) {
+  /* 
+  defaults:
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  automatically generate?:
+    <meta name="description" content="This page was built using pageSage">
+    <meta property="og:title" content="Untitled | Built w/ pageSage">
   */
-  const inputOptions = []
-  addDeviceTargetedOptions(sidebar, element, 'metadata', '', [], 'multiple-input')
+
+  // Add initial empty metadata pair
+  function addMetadataPair() {
+    const pair = document.createElement('div');
+    pair.className = 'metadata-pair';
+
+    const select = document.createElement('select');
+    select.className = 'meta-type';
+    const optionName = document.createElement('option');
+    optionName.value = 'name';
+    optionName.text = 'Name';
+    const optionProperty = document.createElement('option');
+    optionProperty.value = 'property';
+    optionProperty.text = 'Property';
+    select.appendChild(optionName);
+    select.appendChild(optionProperty);
+
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'meta-name';
+    nameInput.placeholder = 'Name/Property';
+
+    const contentInput = document.createElement('input');
+    contentInput.type = 'text';
+    contentInput.className = 'meta-content';
+    contentInput.placeholder = 'Content';
+
+    pair.appendChild(select);
+    pair.appendChild(nameInput);
+    pair.appendChild(contentInput);
+    container.appendChild(pair);
+  }
+
+  addMetadataPair();
+
+  const addButton = document.createElement('button');
+  addButton.textContent = 'Add Metadata';
+  addButton.id = 'add-metadata-button';
+  container.appendChild(addButton);
+
+  addButton.addEventListener('click', function () {
+    addMetadataPair();
+  });
+
+  const saveButton = document.createElement('button');
+  saveButton.textContent = 'Save Metadata';
+  saveButton.id = 'save-metadata-button';
+  container.appendChild(saveButton);
+
+  saveButton.addEventListener('click', function () {
+    const params = new URLSearchParams(window.location.search);
+    const config = params.get('config');
+    const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+    const settings = JSON.parse(storedData.pages[config].settings);
+    const metaTags = [];
+
+    document.querySelectorAll('.metadata-pair').forEach(pair => {
+      const type = pair.querySelector('.meta-type').value;
+      const name = pair.querySelector('.meta-name').value;
+      const content = pair.querySelector('.meta-content').value;
+      if (name && content) {
+        metaTags.push({ type, name, content });
+      }
+    });
+
+    settings.metaTags = metaTags;
+    storedData.pages[config].settings = JSON.stringify(settings);
+    localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
+    alert('Metadata saved successfully!');
+  });
 }
 
 // TODO: Add these to sidebar once 'Advanced' settings is implemented
 // This particular HTML function should most likely be a dedicated content.js content feature
-function addManualHtmlElement(sidebar, element){
+function addManualHtmlElement(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
 }
 
 // TODO: Add these to sidebar once 'Advanced' settings is implemented
-function addManualClassEditor(sidebar, element){
+function addManualClassEditor(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
 }
 
 // TODO: Add these to sidebar once 'Advanced' settings is implemented
-function addManualCssEditor(sidebar, element){
+function addManualCssEditor(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
 }

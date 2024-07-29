@@ -22,7 +22,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('input');
         container.appendChild(label);
         container.appendChild(control);
-        handleInputType(bp, labelPrefix, options, cssClassBase, grid, control);
+        handleInput(bp, labelPrefix, options, cssClassBase, grid, control);
         control.classList.add('col-span-5');
         break;
       case 'textarea':
@@ -56,7 +56,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('select');
         container.appendChild(label);
         container.appendChild(control);
-        handleSelect(bp, grid, control, labelPrefix, options, cssClassBase);
+        handleSelect(bp, grid, control, options, cssClassBase);
         control.classList.add('col-span-5');
         break;
       default:
@@ -112,7 +112,7 @@ function createLabel(bp, labelPrefix, forAttr) {
   }
 }
 
-function handleInputType(bp, labelPrefix, options, cssClassBase, grid, control) {
+function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   const isFile = labelPrefix.includes('File');
   control.type = isFile ? 'file' : 'text';
   if (isFile) control.setAttribute('accept', 'image/*');
@@ -298,15 +298,12 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   control.appendChild(iconButton);
 }
 
-function handleSelect(bp, grid, control, labelPrefix, options, cssClassBase) {
+function handleSelect(bp, grid, control, options, cssClassBase) {
   if (!options) {
     console.error('No options provided for select input type.');
     return;
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
-  if (labelPrefix === 'Background Repeat') {
-    control.setAttribute('data-extra-info', 'Efficiently create image patterns. If you don\'t want a pattern, choose no-repeat.');
-  }
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
