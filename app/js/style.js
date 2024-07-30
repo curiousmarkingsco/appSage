@@ -77,6 +77,29 @@ function addEditableMargin(sidebar, element) {
   });
 }
 
+function addEditableColumnGaps(sidebar, element) {
+  const axis = ['x', 'y', 'all', 'reset'];
+  const values = ['0', '1', '2', '4', '8', '16'];
+
+  axis.forEach(axisOpt => {
+    const cssClassBase = `gap-${axisOpt}`;
+
+    addDeviceTargetedOptions(sidebar, element, `Gap (${axisOpt})`, cssClassBase, values, 'single-icon-select');
+  });
+
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const gapContainer = document.createElement('div');
+    gapContainer.className = 'grid grid-cols-4 col-span-5'
+    const marginElements = container.querySelectorAll('.Gap');
+    marginElements.forEach(marginDropdown => {
+      gapContainer.appendChild(marginDropdown);
+    });
+    container.appendChild(gapContainer);
+  });
+}
+
 function addEditableBackgroundImageURL(sidebar, grid) {
   const labelPrefix = 'Background Image URL';
   const cssClassBase = 'bg';

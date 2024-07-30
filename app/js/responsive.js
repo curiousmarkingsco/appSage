@@ -111,8 +111,8 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 }
 
 function createLabel(bp, labelPrefix, forAttr) {
-  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
-  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false);
+  const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
   if (collapseLabels && keepLabel === false) {
     const label = document.createElement('label');
     label.className = 'hidden';
@@ -120,8 +120,9 @@ function createLabel(bp, labelPrefix, forAttr) {
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
     keepLabel = labelPrefix.replace('Minimum ', '');
-    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel
-    keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel
+    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel;
+    keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel;
+    keepLabel = keepLabel.includes('Gap') ? 'Gaps Between Columns' : keepLabel;
     const label = document.createElement('label');
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
@@ -173,7 +174,7 @@ function handleTextareaType(labelPrefix, grid, control) {
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
   const fontSize = (labelPrefix === 'Font Size' || labelPrefix === 'Font Weight')
   const borderOption = (labelPrefix === 'Border Width' || labelPrefix === 'Border Radius');
-  const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding'));
+  const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
   const iconTarget = pageSageEditorIcons[iconTargetName];

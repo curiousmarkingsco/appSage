@@ -21,6 +21,7 @@ function addGridOptions(grid) {
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
 
+    addEditableColumnGaps(sidebar, grid);
     addEditableBorders(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
