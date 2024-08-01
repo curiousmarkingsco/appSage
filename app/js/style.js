@@ -77,29 +77,6 @@ function addEditableMargin(sidebar, element) {
   });
 }
 
-function addEditableColumnGaps(sidebar, element) {
-  const axis = ['x', 'y', 'all'];
-  const values = ['0', '1', '2', '4', '8', '16'];
-
-  axis.forEach(axisOpt => {
-    const cssClassBase = `gap-${axisOpt}`;
-
-    addDeviceTargetedOptions(sidebar, element, `Gap (${axisOpt})`, cssClassBase, values, 'single-icon-select');
-  });
-
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-  breakpoints.forEach(bp => {
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    const gapContainer = document.createElement('div');
-    gapContainer.className = 'grid grid-cols-4 col-span-5'
-    const marginElements = container.querySelectorAll('.Gap');
-    marginElements.forEach(marginDropdown => {
-      gapContainer.appendChild(marginDropdown);
-    });
-    container.appendChild(gapContainer);
-  });
-}
-
 function addEditableBackgroundImageURL(sidebar, grid) {
   const labelPrefix = 'Background Image URL';
   const cssClassBase = 'bg';
@@ -344,4 +321,49 @@ function addManualClassEditor(sidebar, element) {
 // TODO: Add these to sidebar once 'Advanced' settings is implemented
 function addManualCssEditor(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+}
+
+function addEditableDimensions(sidebar, grid){
+  const lengthOptions = ['full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
+
+  addDeviceTargetedOptions(sidebar, grid, 'Minimum Height', 'min-h', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Height', 'h', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Maximum Height', 'max-h', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Reset', ['min-h', 'h', 'max-h'], lengthOptions, 'reset');
+
+  addDeviceTargetedOptions(sidebar, grid, 'Minimum Width', 'min-w', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Width', 'w', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Maximum Width', 'max-w', lengthOptions, 'single-icon-select');
+  addDeviceTargetedOptions(sidebar, grid, 'Reset', ['min-w', 'w', 'max-w'], lengthOptions, 'reset');
+}
+
+function addEditableColumnGaps(sidebar, element) {
+  const axis = ['x', 'y', 'all'];
+  const lengthOptions = ['0', '1', '2', '4', '8', '16'];
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const gapContainer = document.createElement('div');
+    gapContainer.className = 'grid grid-cols-4 col-span-5';
+
+    axis.forEach(axisOpt => {
+      const cssClassBase = `gap-${axisOpt}`;
+      const label = createLabel(bp, `Gap (${axisOpt})`, `${bp}-${`Gap (${axisOpt})`.replace(' ', '-')}-${cssClassBase}`);
+      control = document.createElement('div');
+      gapContainer.appendChild(label);
+      gapContainer.appendChild(control);
+      handleSingleIconSelect(bp, `Gap (${axisOpt})`, lengthOptions, cssClassBase, element, control);
+    });
+
+    resetElement = document.createElement('div');
+    const label = createLabel(bp, `Reset`, `${bp}-gap-x,gap-y,gap`);
+    label.className = 'hidden';
+    gapContainer.appendChild(label);
+    gapContainer.appendChild(resetElement);
+    handleReset(bp, element, ['gap-x', 'gap-y', 'gap'], lengthOptions, resetElement);
+    resetElement.classList.add('col-span-1');
+
+    container.appendChild(gapContainer);
+  });
 }

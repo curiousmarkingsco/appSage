@@ -43,7 +43,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         label.className = 'hidden';
         container.appendChild(label);
         container.appendChild(control);
-        handleReset(bp, grid, options, labelPrefix, cssClassBase, control);
+        handleReset(bp, grid, options, cssClassBase, control);
         control.classList.add('col-span-1');
         break;
       case 'icon-select':
@@ -74,7 +74,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
   });
 }
 
-function handleReset(bp, grid, options, labelPrefix, cssClassBase, control){
+function handleReset(bp, grid, options, cssClassBase, control){
   const resetButton = document.createElement('button');
   resetButton.innerHTML = pageSageEditorIcons['reset'];
   resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded'
@@ -82,7 +82,11 @@ function handleReset(bp, grid, options, labelPrefix, cssClassBase, control){
   resetButton.onclick = () => {
     options.forEach(opt => {
       cssClassBase.forEach(cssClass => {
-        grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+        if (opt.includes('gap')) {
+          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+        } else {
+          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+        }
       });
     });
   };
