@@ -78,7 +78,7 @@ function addEditableMargin(sidebar, element) {
 }
 
 function addEditableColumnGaps(sidebar, element) {
-  const axis = ['x', 'y', 'all', 'reset'];
+  const axis = ['x', 'y', 'all'];
   const values = ['0', '1', '2', '4', '8', '16'];
 
   axis.forEach(axisOpt => {

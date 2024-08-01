@@ -172,6 +172,7 @@ function handleTextareaType(labelPrefix, grid, control) {
 }
 
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
+  cssClassBase = cssClassBase.includes('-all') ? cssClassBase.replace('-all', '') : cssClassBase;
   const fontSize = (labelPrefix === 'Font Size' || labelPrefix === 'Font Weight')
   const borderOption = (labelPrefix === 'Border Width' || labelPrefix === 'Border Radius');
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
