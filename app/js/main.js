@@ -29,6 +29,11 @@ document.addEventListener('DOMContentLoaded', function () {
     enableEditGridOnClick(gridContainer);
   });
 
+  const addHtmlButton = document.getElementById('addHtml');
+  addHtmlButton.addEventListener('click', function () {
+    showHtmlModal(() => {});
+  });
+
   // Mouse enter event
   document.body.addEventListener('mouseenter', function (e) {
     if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
@@ -113,4 +118,42 @@ function extractColorNames(colorObject) {
     }
   }
   return colorArray;
+}
+
+function showHtmlModal(onConfirm = null) {
+  const modal = document.createElement('div');
+  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.innerHTML = `
+      <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
+          <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
+          <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
+          <div class="flex justify-between mt-4">
+              <button id="confirmHtml" class="bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded">Add HTML</button>
+              <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+          </div>
+      </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  document.getElementById('confirmHtml').addEventListener('click', function () {
+    if (onConfirm) onConfirm();
+    const page = document.getElementById('page');
+    const content = document.getElementById('tailwindHtml');
+    const parentElement = document.createElement('div');
+    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep'
+    const element = document.createElement('div');
+    element.classList = 'pagecolumn col-span-1 ugc-keep'
+    parentElement.appendChild(element);
+    const childElement = document.createElement('div');
+    childElement.classList = 'pagecontent htmlContent ugc-keep'
+    childElement.innerHTML = content.value;
+    element.appendChild(childElement);
+    page.appendChild(parentElement);
+    document.body.removeChild(modal);
+  });
+
+  document.getElementById('cancelHtml').addEventListener('click', function () {
+    document.body.removeChild(modal);
+  });
 }
