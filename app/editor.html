@@ -18,7 +18,7 @@
   <script src="./js/tailwind.js"></script>
   <script src="./js/tailwind.config.js"></script>
   <link rel="stylesheet" href="./css/main.css">
-  <title>pageSage App Designer</title>
+  <title>App Designer | pageSage</title>
 </head>
 
 <body>
@@ -100,6 +100,8 @@
     document.addEventListener('DOMContentLoaded', function () {
       const params = new URLSearchParams(window.location.search);
       const config = params.get('config');
+      document.querySelector('title').textContent = `Editing: ${config} | pageSage`;
+
       if (config) {
         const json = loadPage(config);
         if (json) {

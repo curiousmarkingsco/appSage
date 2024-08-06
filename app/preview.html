@@ -1,38 +1,28 @@
-<!-- preview.html -->
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="./js/tailwind.js"></script>
+    <title></title>
+  </head>
+  <body class="flex">
+    <div id="page" class="w-full">
+      <!-- The designer's page content goes here -->
+    </div>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-  <script src="./js/tailwind.js"></script>
-  <title>pageSage App Designer</title>
-</head>
+    <script src="./js/load.js"></script>
+    <script src="./js/preview.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const previewPageId = urlParams.get('page');
 
-<body class="flex">
-  <div id="page" class="w-full">
-    <!-- The designer's page content goes here -->
-  </div>
-
-  <script src="./js/load.js"></script>
-  <script src="./js/preview.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      const previewPageId = urlParams.get('page');
-
-      if (previewPageId) {
-        loadPreview(previewPageId);
-      }
-    });
-  </script>
-  <!-- Save stuff to remote server -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      setTimeout(() => {  // Set a timeout to ensure TailwindCSS has loaded and injected the styles
-      }, 1000);
-    });
-  </script>
-</body>
+        if (previewPageId) {
+          loadPreview(previewPageId);
+        }
+      });
+    </script>
+  </body>
 </html>

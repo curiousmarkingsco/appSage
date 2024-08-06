@@ -1,4 +1,6 @@
 /* content.js */
+// To Do:
+// - A button for adding placeholder media paths for media elements
 
 function addContentContainer() {
   const contentContainer = document.createElement('div');

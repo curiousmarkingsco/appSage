@@ -6,6 +6,8 @@ function loadPreview(pageId) {
       const pageContainer = document.getElementById('page');
       pageContainer.innerHTML = ''; // Clear existing content
 
+      document.querySelector('title').textContent = pageId;
+
       const data = JSON.parse(json);
       data.forEach(item => {
           const element = document.createElement(item.tagName);
