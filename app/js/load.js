@@ -1,68 +1,11 @@
-/* load.js */
-
-function setupAutoSave(page) {
-  const targetNode = document.getElementById('page');
-  const config = {
-    childList: true,
-    attributes: true,
-    subtree: true,
-    characterData: true
-  };
-  const callback = function (mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
-        saveChanges(page);
-        savePageSettingsChanges(page);
-        break;
-      }
-    }
-  };
-  const observer = new MutationObserver(callback);
-  observer.observe(targetNode, config);
-  console.log('Auto-save setup complete.');
-}
-
-function saveChanges(page) {
-  const pageContainer = document.getElementById('page');
-  // Query only elements with 'ugc-keep' that are meant to be saved
-  const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
-  const data = Array.from(elements).map(element => ({
-    tagName: element.tagName,
-    className: element.className,
-    content: getCleanInnerHTML(element)
-  }));
-  const json = JSON.stringify(data);
-  savePage(page, json);
-  console.log('Changes saved successfully!');
-}
-
-function getCleanInnerHTML(element) {
-  const clone = element.cloneNode(true);
-  const discardElements = clone.querySelectorAll('.ugc-discard');
-  discardElements.forEach(el => el.parentNode.removeChild(el));
-  return clone.innerHTML;
-}
-
-function loadChanges(json) {
-  const pageContainer = document.getElementById('page');
-  pageContainer.innerHTML = '';
-  const data = JSON.parse(json);
-  data.forEach(item => {
-    const element = document.createElement(item.tagName);
-    element.className = item.className;
-    element.innerHTML = item.content;
-    pageContainer.appendChild(element);
-
-    if (element.classList.contains('grid')) {
-      restoreGridCapabilities(element);
-    }
-  });
-
-  const grid = document.querySelector('#page .grid');
-  if (grid) {
-    addGridOptions(grid);
-  }
-}
+/*
+  load.js
+  
+  This file is intended to be the primary location for functions that load
+  saved content from previous edits. This loading is not just for the editor,
+  but the preview page as well. As such, final outputs, particularly for
+  preview, should present as production-ready.
+*/
 
 // Utility functions for managing localStorage with a 'pageSageStorage' object
 function loadPage(pageId) {
@@ -74,54 +17,9 @@ function loadPage(pageId) {
   }
 }
 
-function savePage(pageId, data) {
-  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
-  if (!pageSageStorage.pages) {
-    pageSageStorage.pages = {};
-  }
-  if (!pageSageStorage.pages[pageId]) {
-    pageSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
-  }
-  pageSageStorage.pages[pageId].page_data = data;
-  localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
-}
-
-function restoreGridCapabilities(grid) {
-  const addColumnButton = createAddColumnButton(grid);
-  grid.appendChild(addColumnButton);
-  enableEditGridOnClick(grid);
-  Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
-    enableEditColumnOnClick(column);
-    column.appendChild(createAddContentButton(column));
-    Array.from(column.querySelectorAll('.pagecontent')).forEach(content => {
-      enableEditContentOnClick(content);
-    });
-  });
-}
-
-function savePageSettingsChanges(pageId) {
-  const page = document.getElementById('page');
-  const settings = {
-    id: page.id,
-    className: page.className,
-    metaTags: ''
-  }
-  const json = JSON.stringify(settings);
-  savePageSettings(pageId, json);
-}
-
-function savePageSettings(pageId, data) {
-  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
-  if (!pageSageStorage.pages) {
-    pageSageStorage.pages = {};
-  }
-  if (!pageSageStorage.pages[pageId]) {
-    pageSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
-  }
-  pageSageStorage.pages[pageId].settings = data;
-  localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
-}
-
+// Currently, media added through the file selector is stored as base64 plain
+// text in the document (and consequently, storage). To keep things a bit
+// tidier, these blobs are stored in an object separate from the HTML content.
 function loadPageBlobs(config) {
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   const page = document.getElementById('page');
@@ -137,6 +35,9 @@ function loadPageBlobs(config) {
   }
 }
 
+// Because metadata needs to be added to the <head> tag rather than the
+// expected '#page' div, metadata is stored in a separate object and,
+// consequently, this separate function.
 function loadPageMetadata(page_id, element) {
   const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
   const settings = storedData.pages[page_id].settings;
@@ -159,6 +60,9 @@ function loadPageMetadata(page_id, element) {
   }
 }
 
+// Because page settings need to be added to various locations other than the
+// expected '#page' div, page settings are stored in a separate object and,
+// consequently, this separate function.
 function loadPageSettings(config, view = false){
   // Load the pageSageStorage object from localStorage
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
