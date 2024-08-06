@@ -145,4 +145,3 @@ function moveColumnHorizontal(column, direction) {
     parent.insertBefore(targetSibling, column);
   }
 }
-

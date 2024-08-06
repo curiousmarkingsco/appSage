@@ -1,8 +1,13 @@
-/* grid.js */
+/*
+  editor/grid.js
 
+  This file is intended to be the primary location for anything related to adding, editing, and removing grids.
+*/
+
+// This function populates the sidebar with relevant editing options for grids.
 function addGridOptions(grid) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Grid: ${grid.querySelectorAll('.col-span-1').length}</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateMobileTabs()}`;
   activateTabs();
 
   if (grid) {
@@ -31,6 +36,10 @@ function addGridOptions(grid) {
   }
 }
 
+// This function creates the button for deleting the grid currently being
+// edited. As the tooltip mentions, FOREVER. That's a long time!
+// Currently, this button lives at the topbar nestled between the 'move grid'
+// buttons on its left and right.
 function addRemoveGridButton(grid, sidebar) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this grid forever (that\'s a long time!)')
@@ -45,18 +54,9 @@ function addRemoveGridButton(grid, sidebar) {
   return button;
 }
 
-function setGridWidth(grid, widthClasses, plainEnglish) {
-  document.getElementById('sidebar-dynamic').querySelectorAll('.notice').forEach(notice => { notice.remove() });
-  const notice = document.createElement('p');
-  notice.className = 'my-2 notice';
-  notice.textContent = plainEnglish + ' width set! Depending on device width you are currently using, you may not see any changes.';
-  document.getElementById('sidebar-dynamic').appendChild(notice);
-  // Remove current width classes first
-  grid.classList.remove('w-full', 'max-w-7xl', 'mx-auto');
-  // Add the new width class based on the selection
-  widthClasses.split(' ').forEach(cls => grid.classList.add(cls));
-}
-
+// This function creates the button for moving the element it belongs to upward
+// and downward in the DOM. Currently, these buttons live at the top of the
+// editor sidebar when the grid is/has been selected for editing.
 function createVerticalMoveGridButton(grid, direction) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', `Move this grid ${direction}ward in the document`)
@@ -72,29 +72,12 @@ function createVerticalMoveGridButton(grid, direction) {
   return button;
 }
 
-function addEditableColumns(sidebar, grid) {
-  // Now use this function to handle dropdown generation
-  const columns = Array.from({ length: 12 }, (_, i) => i + 1); // Creating an array of column numbers from 1 to 12
-  addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', columns, 'select');
-}
-
-function addGridAlignmentOptions(sidebar, grid) {
-  const justifyItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
-  const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  // const placeContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const placeItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
-
-  // Add alignment options
-  addDeviceTargetedOptions(sidebar, grid, 'Justify Items', 'justify-items', justifyItemsOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Align Content', 'content', alignContentOptions, 'icon-select');
-  // addDeviceTargetedOptions(sidebar, grid, 'Place Content', 'place-content', placeContentOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Place Items', 'place-items', placeItemsOptions, 'icon-select');
-}
-
+// This function is intended to present the sidebar editing options when a grid
+// is clicked. Only the outer edges of the grid are clickable for this to work
+// due to columns and content overlapping it.
 function enableEditGridOnClick(grid) {
   grid.addEventListener('click', function (event) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
   });
-}
