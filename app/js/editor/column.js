@@ -8,17 +8,19 @@
 
 // This function used to be more complex, but has been simplified over time.
 // It is still here under a "don't fix it if it ain't broke" line of thinking.
+// DATA IN: null
 function createColumn() {
   const column = document.createElement('div');
   column.className = 'col-span-1 pagecolumn group';
 
   return column;
-}
+} // DATA OUT: HTML Element, <div>
 
 // This function makes it so that when you click on a column, the editing options
 // will be revealed in the sidebar to the left of the screen. It does this by
 // first making the label and supporting elements for moving and removing the
 // column, and then adding the editor buttons, dropdowns, etc.
+// DATA IN: HTML Element, <div>
 function enableEditColumnOnClick(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
@@ -44,13 +46,14 @@ function enableEditColumnOnClick(column) {
     addEditableDimensions(sidebar, column);
     addEditableMarginAndPadding(sidebar, column);
   });
-}
+} // DATA OUT: null
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Because it is a column, this sometimes or often
 // means it will be moving left/right, rather than literally 'upward/downward.'
 // Currently, these buttons live at the top of the editor sidebar when the
 // column is/has been selected for editing.
+// DATA IN: ['HTML Element', 'string:left/right']
 function createHorizontalMoveColumnButton(column, direction) {
   const button = document.createElement('button');
   button.className = 'moveColumn ugc-discard bg-amber-500 hover:bg-amber-700 text-slate-50 font-bold p-2 rounded h-12 w-16';
@@ -66,12 +69,13 @@ function createHorizontalMoveColumnButton(column, direction) {
     moveColumnHorizontal(column, direction);
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
 // This function creates the button for deleting the column currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
 // Currently, this button lives at the topbar nestled between the Move Column
 // buttons on its left and right.
+// DATA in: ['HTML Element, <div>', 'HTML Element, <div>']
 function createRemoveColumnButton(column, gridContainer) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this column forever (that\'s a long time!)')
@@ -87,13 +91,14 @@ function createRemoveColumnButton(column, gridContainer) {
     }
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
 // This function creates the button for making a new column. This button exists
 // inside an already existing grid. You are able to see this button when
 // hovering the mouse over said existing grid. Once it makes the new column,
 // it updates the sidebar to reveal all of the editing options someone at some
 // point deemed to be available for columns.
+// DATA In: HTML Element, <div>
 function createAddColumnButton(gridContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   const menuItem = document.createElement('button');
@@ -116,10 +121,11 @@ function createAddColumnButton(gridContainer) {
     highlightEditingElement(newColumn);
   };
   return menuItem;
-}
+} // DATA OUT: HTML Element, <button>
 
 // This function checks if content exists in a column so that the designer
 // is warned when they click the 'delete column' button.
+// DATA IN: HTML Element, <div>
 function columnHasContent(column) {
   if (column) {
     // Check if column contains any significant elements
@@ -134,9 +140,10 @@ function columnHasContent(column) {
       );
     });
   }
-}
+} // DATA OUT: null
 
 // This function is the ...function...al bit of the 'move column' buttons.
+// DATA IN: ['HTML Element, <div>', 'string:left/right']
 function moveColumnHorizontal(column, direction) {
   const parent = column.parentNode;
   let targetSibling = getNextValidSibling(column, direction);
@@ -146,4 +153,4 @@ function moveColumnHorizontal(column, direction) {
   } else if (direction === 'right' && targetSibling) {
     parent.insertBefore(targetSibling, column);
   }
-}
+} // DATA OUT: null
