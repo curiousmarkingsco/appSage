@@ -85,12 +85,12 @@ function detectAndLoadContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   // const oldMoveButtons = document.getElementById('moveContentButtons');
   // if (oldMoveButtons) { oldMoveButtons.remove }
-  const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul'];
+  const types = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul' ,'ol', 'li', 'button', 'form', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
   const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
     switch (found) {
-      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6':
-        updateSidebarForHeading(contentContainer);
+      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': case 'p': case 'a': case 'button': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
+        updateSidebarForTextContent(contentContainer);
         break;
       case 'p':
         updateSidebarForParagraph(contentContainer);
@@ -124,7 +124,7 @@ function detectAndLoadContentType(contentContainer) {
   highlightEditingElement(contentContainer);
 }
 
-function updateSidebarForHeading(contentContainer, newContent) {
+function updateSidebarForTextContent(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = generateMobileTabs();
   activateTabs();
@@ -190,10 +190,6 @@ function updateSidebarForHeading(contentContainer, newContent) {
   });
 
   addTextOptions(sidebar, contentContainer);
-  sidebar.prepend(select);
-  sidebar.prepend(textInput);
-  sidebar.prepend(textInputLabel);
-  sidebar.prepend(sidebarTitle);
 }
 
 function updateSidebarForContentType(contentContainer) {
@@ -202,11 +198,9 @@ function updateSidebarForContentType(contentContainer) {
   activateTabs();
 
   const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Heading Text">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeading(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextContent(contentContainer, true) },
     { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Paragraph of Text">${pageSageEditorIcons["paragraph"]}</div>`, action: () => updateSidebarForParagraph(contentContainer, true) },
     { label: `<div class="p-6" data-extra-info="Button (Link)">${pageSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Form (connected to a back-end you/your developer made separately)">${pageSageEditorIcons["form"]}</div>`, action: () => updateSidebarForForm(contentContainer, true) }
   ];
   showNewContentMenu(contentTypes, sidebar);
 }
@@ -769,4 +763,76 @@ function generateMediaSrc(event, contentContainer, url){
     };
     reader.readAsDataURL(file);
   }
+}
+
+function addEditableHtmlTag(container) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `${generateMobileTabs()}`;
+  activateTabs();
+console.log('abc')
+  const tagDropdown = document.createElement('select');
+  tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  const options = [
+    { label: 'Paragraph', value: 'p' },
+    { label: 'Heading 1', value: 'h1' },
+    { label: 'Heading 2', value: 'h2' },
+    { label: 'Heading 3', value: 'h3' },
+    { label: 'Heading 4', value: 'h4' },
+    { label: 'Heading 5', value: 'h5' },
+    { label: 'Heading 6', value: 'h6' },
+    { label: 'Image', value: 'img' },
+    { label: 'Video', value: 'video' },
+    { label: 'Audio', value: 'audio' },
+    { label: 'Link', value: 'a' },
+    { label: 'Form', value: 'form' },
+    { label: 'Unordered List', value: 'ul' },
+    { label: 'Ordered List', value: 'ol' },
+    { label: 'List Item', value: 'li' },
+    { label: 'Button', value: 'button' }
+  ];
+
+  options.forEach(opt => {
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.label;
+    tagDropdown.appendChild(option);
+  });
+
+  const textInput = document.createElement('textarea');
+  textInput.type = 'text';
+  textInput.placeholder = 'Enter content here...';
+  textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  tagDropdown.addEventListener('change', function () {
+    const selectedTag = tagDropdown.value;
+    let element = container.querySelector(selectedTag);
+
+    if (!element) {
+      element = document.createElement(selectedTag);
+      container.innerHTML = '';
+      container.appendChild(element);
+    }
+
+    element.textContent = textInput.value;
+  });
+
+  textInput.addEventListener('input', function () {
+    const selectedTag = tagDropdown.value;
+    let element = container.querySelector(selectedTag);
+
+    if (element) {
+      element.textContent = textInput.value;
+    } else {
+      element = document.createElement(selectedTag);
+      element.textContent = textInput.value;
+      container.innerHTML = '';
+      container.appendChild(element);
+    }
+  });
+
+  const sidebarTitle = document.createElement('div');
+  sidebarTitle.innerHTML = '<strong>Edit Content:</strong>'
+  sidebar.prepend(textInput);
+  sidebar.prepend(tagDropdown);
+  sidebar.prepend(sidebarTitle);
 }

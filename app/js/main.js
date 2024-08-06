@@ -3,6 +3,18 @@ var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);//.push('black', 'white');
 
 document.addEventListener('DOMContentLoaded', function () {
+  const elementsToWatch = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul', 'ol', 'li', 'button', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
+  const sidebar = document.getElementById('sidebar-dynamic');
+
+  document.body.addEventListener('click', function(event) {
+    event.preventDefault();
+    let element = event.target;
+    if (elementsToWatch.includes(element.tagName.toLowerCase())) {
+      element.classList.add('pagecontent');
+      addTextOptions(sidebar, element);
+    }
+  });
+
   const editPageButton = document.getElementById('editPageSettings');
   editPageButton.addEventListener('click', function () {
     addPageOptions();
@@ -141,15 +153,15 @@ function showHtmlModal(onConfirm = null) {
     const page = document.getElementById('page');
     const content = document.getElementById('tailwindHtml');
     const parentElement = document.createElement('div');
-    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep'
+    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep p-4'
+    page.appendChild(parentElement);
     const element = document.createElement('div');
-    element.classList = 'pagecolumn col-span-1 ugc-keep'
+    element.classList = 'pagecolumn col-span-1 p-4'
     parentElement.appendChild(element);
     const childElement = document.createElement('div');
-    childElement.classList = 'pagecontent htmlContent ugc-keep'
+    childElement.classList = 'content-container pagecontent htmlContent p-4'
     childElement.innerHTML = content.value;
     element.appendChild(childElement);
-    page.appendChild(parentElement);
     document.body.removeChild(modal);
   });
 
