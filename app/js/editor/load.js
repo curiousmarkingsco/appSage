@@ -1,8 +1,10 @@
 /*
+
   load.js
   
   This file is intended to be the primary location for functions that load
   saved content from previous edits. This loading is only for the editor page.
+
 */
 
 // Passed data from local storage, this function iterates through all elements

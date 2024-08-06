@@ -1,7 +1,9 @@
 /*
+
   editor/grid.js
 
   This file is intended to be the primary location for anything related to adding, editing, and removing grids.
+
 */
 
 // This function populates the sidebar with relevant editing options for grids.

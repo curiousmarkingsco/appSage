@@ -1,9 +1,11 @@
 /*
+
   icons.js
   
   These house all the icons needed for the editor. Most icons are from
   FontAwesome, added to this repository in July 2024 under a paid license
-  under the ownership of Ian McKenzie (https://psychosage.io/)
+  under the ownership of Ian McKenzie (https://psychosage.io/contact/)
+
 */
 
 // global variable

@@ -1,7 +1,9 @@
 /*
+
   editor/column.js
 
   This file is intended to be the primary location for anything related to adding, editing, and removing columns.
+
 */
 
 // This function used to be more complex, but has been simplified over time.

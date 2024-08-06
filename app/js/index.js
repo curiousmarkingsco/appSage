@@ -1,8 +1,10 @@
 /*
+
   index.js
 
   This file is primarily for interface elements on index.html, though is also
   used in editor.html.
+
 */
 
 // This function is for confirmation of deleting pages and elements.

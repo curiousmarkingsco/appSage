@@ -1,10 +1,12 @@
 /*
+
   load.js
   
   This file is intended to be the primary location for functions that load
   saved content from previous edits. This loading is not just for the editor,
   but the preview page as well. As such, final outputs, particularly for
   preview, should present as production-ready.
+
 */
 
 // Utility functions for managing localStorage with a 'pageSageStorage' object

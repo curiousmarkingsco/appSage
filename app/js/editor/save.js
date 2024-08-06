@@ -1,8 +1,10 @@
 /*
+
   save.js
 
   This file is intended to be the primary location for functions that save
   content from active/previous edits. This saving happens on the editor page.
+
 */
 
 // Remove editor elements so that localStorage is not cluttered with unneeded
