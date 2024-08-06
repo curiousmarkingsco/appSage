@@ -1,5 +1,11 @@
-/* index.js */
+/*
+  index.js
 
+  This file is primarily for interface elements on index.html, though is also
+  used in editor.html.
+*/
+
+// This function is for confirmation of deleting pages and elements.
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
@@ -25,6 +31,7 @@ function showConfirmationModal(message, onConfirm) {
   });
 }
 
+// This function is for permanently deleting a page from localStorage.
 function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 

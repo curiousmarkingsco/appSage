@@ -81,3 +81,4 @@ function enableEditGridOnClick(grid) {
     addGridOptions(grid);
     highlightEditingElement(grid);
   });
+}
