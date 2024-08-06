@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridContainer = document.createElement('div');
     gridContainer.className = 'w-full min-w-full max-w-full min-h-full h-full max-h-full pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
-    const initialColumn = createColumn(gridContainer);
+    const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
     initialColumn.appendChild(createAddContentButton(initialColumn));
 
@@ -168,4 +168,35 @@ function showHtmlModal(onConfirm = null) {
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
+}
+
+// This function adds a cyan glow around the element being edited to give a visual
+// breadcrumb of what element is currently going to be effected by any changes
+// made from the sidebar.
+function highlightEditingElement(element) {
+  removeEditingHighlights(); // Clear existing highlights
+  if (element) {
+    element.id = 'editing-highlight'; // Highlight the current element
+  }
+}
+
+// This function removes the above visual breadcrumb making way for a new
+// highlight. This function should ideally always be called prior to its
+// antithetical counterpart.
+function removeEditingHighlights() {
+  const highlight = document.getElementById('editing-highlight');
+  if (highlight) {
+    highlight.id = '';
+  }
+}
+
+// This function helps move column/content buttons figure out where to go
+// when moving their element without getting confused by editor-specific
+// elements potentially confusing where to go in the finished product.
+function getNextValidSibling(element, direction) {
+  let sibling = (direction === 'left' || direction === 'up') ? element.previousElementSibling : element.nextElementSibling;
+  while (sibling && sibling.classList.contains('ugc-discard')) {
+    sibling = (direction === 'left' || direction === 'up') ? sibling.previousElementSibling : sibling.nextElementSibling;
+  }
+  return sibling;
 }

@@ -1,12 +1,22 @@
-/* column.js */
+/*
+  editor/column.js
 
-function createColumn(gridContainer) {
+  This file is intended to be the primary location for anything related to adding, editing, and removing columns.
+*/
+
+// This function used to be more complex, but has been simplified over time.
+// It is still here under a "don't fix it if it ain't broke" line of thinking.
+function createColumn() {
   const column = document.createElement('div');
   column.className = 'col-span-1 pagecolumn group';
 
   return column;
 }
 
+// This function makes it so that when you click on a column, the editing options
+// will be revealed in the sidebar to the left of the screen. It does this by
+// first making the label and supporting elements for moving and removing the
+// column, and then adding the editor buttons, dropdowns, etc.
 function enableEditColumnOnClick(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
@@ -34,13 +44,11 @@ function enableEditColumnOnClick(column) {
   });
 }
 
-function highlightEditingElement(element) {
-  removeEditingHighlights(); // Clear existing highlights
-  if (element) {
-    element.id = 'editing-highlight'; // Highlight the current element
-  }
-}
-
+// This function creates the button for moving the element it belongs to upward
+// and downward in the DOM. Because it is a column, this sometimes or often
+// means it will be moving left/right, rather than literally 'upward/downward.'
+// Currently, these buttons live at the top of the editor sidebar when the
+// column is/has been selected for editing.
 function createHorizontalMoveColumnButton(column, direction) {
   const button = document.createElement('button');
   button.className = 'moveColumn ugc-discard bg-amber-500 hover:bg-amber-700 text-slate-50 font-bold p-2 rounded h-12 w-16';
@@ -58,6 +66,10 @@ function createHorizontalMoveColumnButton(column, direction) {
   return button;
 }
 
+// This function creates the button for deleting the column currently being
+// edited. As the tooltip mentions, FOREVER. That's a long time!
+// Currently, this button lives at the topbar nestled between the Move Column
+// buttons on its left and right.
 function createRemoveColumnButton(column, gridContainer) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this column forever (that\'s a long time!)')
@@ -75,6 +87,11 @@ function createRemoveColumnButton(column, gridContainer) {
   return button;
 }
 
+// This function creates the button for making a new column. This button exists
+// inside an already existing grid. You are able to see this button when
+// hovering the mouse over said existing grid. Once it makes the new column,
+// it updates the sidebar to reveal all of the editing options someone at some
+// point deemed to be available for columns.
 function createAddColumnButton(gridContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   const menuItem = document.createElement('button');
@@ -82,7 +99,7 @@ function createAddColumnButton(gridContainer) {
   menuItem.className = 'addColumn w-48 h-12 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded';
   menuItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l512 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM192 96l0 320L64 416 64 96l128 0zm64 0l128 0 0 320-128 0 0-320zm320 0l0 320-128 0 0-320 128 0z"/></svg>`;
   menuItem.onclick = function () {
-    const newColumn = createColumn(gridContainer);
+    const newColumn = createColumn();
     gridContainer.insertBefore(newColumn, this);
     newColumn.appendChild(createAddContentButton(newColumn));
 
@@ -99,12 +116,8 @@ function createAddColumnButton(gridContainer) {
   return menuItem;
 }
 
-function updateColumnClass(element, value, prefix) {
-  const currentClasses = element.className.split(' ').filter(cls => !cls.startsWith(prefix));
-  currentClasses.push(value); // Add the new class
-  element.className = currentClasses.join(' ');
-}
-
+// This function checks if content exists in a column so that the designer
+// is warned when they click the 'delete column' button.
 function columnHasContent(column) {
   if (column) {
     // Check if column contains any significant elements
@@ -121,13 +134,7 @@ function columnHasContent(column) {
   }
 }
 
-function removeEditingHighlights() {
-  const highlight = document.getElementById('editing-highlight');
-  if (highlight) {
-    highlight.id = '';
-  }
-}
-
+// This function is the ...function...al bit of the 'move column' buttons.
 function moveColumnHorizontal(column, direction) {
   const parent = column.parentNode;
   let targetSibling = getNextValidSibling(column, direction);
@@ -139,41 +146,3 @@ function moveColumnHorizontal(column, direction) {
   }
 }
 
-function moveColumnVertical(grid, column, direction) {
-  // Assume a 12-column grid system and media queries that adapt at specific breakpoints
-  const columnsPerRow = window.innerWidth > 768 ? 4 : 2; // Example: 4 columns per row on desktop, 2 on mobile
-  const children = Array.from(grid.children);
-  const currentIndex = children.indexOf(column);
-  const targetIndex = direction === 'up'
-    ? Math.max(currentIndex - columnsPerRow, 0)
-    : Math.min(currentIndex + columnsPerRow, children.length - 1);
-
-  if (currentIndex !== targetIndex) {
-    if (direction === 'up') {
-      grid.insertBefore(column, children[targetIndex]);
-    } else {
-      if (targetIndex === children.length - 1) {
-        grid.appendChild(column); // Move to the end if going down from the last position
-      } else {
-        grid.insertBefore(column, children[targetIndex + 1]); // Insert before the element after the target
-      }
-    }
-  }
-}
-
-function getNextValidSibling(element, direction) {
-  let sibling = (direction === 'left' || direction === 'up') ? element.previousElementSibling : element.nextElementSibling;
-  while (sibling && sibling.classList.contains('ugc-discard')) {
-    sibling = (direction === 'left' || direction === 'up') ? sibling.previousElementSibling : sibling.nextElementSibling;
-  }
-  return sibling;
-}
-
-function addColumnAlignmentOptions(sidebar, column) {
-  const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const placeSelfOptions = ['start', 'end', 'center', 'stretch', 'reset'];
-
-  // Add alignment options
-  addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
-  addDeviceTargetedOptions(sidebar, column, 'Place Self', 'place-self', placeSelfOptions, 'icon-select');
-}

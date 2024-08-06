@@ -14,3 +14,8 @@ pageSage is built by [Curious Markings Co.](https://curiousmarkings.com) with ou
 
 ## Coming soon
 Search this repository for the text "TODO:"
+
+## Style
+
+### JavaScript
+This repository was made by a ruby dev and thus indenting is 2-space. In a perfect world, all lines would be less than 100 characters. For now, this is only enforced with comments.
