@@ -1,4 +1,11 @@
-/* media.js */
+/*
+
+  media.js
+
+  This file is some syntax sugar for adding placeholder media.
+  See `app/placeholder_media/README.md` for more info.
+
+*/
 
 /*
 
@@ -60,14 +67,65 @@ var pageSagePlaceholderMedia = {
   "photo_square_lightmode_svg": './placeholder_media/lightmode_svg/square_placeholder.svg'
 }
 
+// Keep in mind this does not output video or audio. If you want that, see
+// the randomMedia() function.
+// DATA IN: null
 function randomImage() {
-  const options = ['photo_landscape', 'photo_square', 'photo_portrait'];
-  const result = options[(Math.floor(Math.random() * 100) + 1) % 3];
-  return pageSagePlaceholderMedia[result];
-}
+  const darkmodeOptions = placeholderDarkmodeOptions();
+  const lightmodeOptions = placeholderLightmodeOptions();
 
-function randomMedia() {
-  const options = ['audio', 'video', 'photo_landscape', 'photo_square', 'photo_portrait'];
-  const result = options[(Math.floor(Math.random() * 100) + 1) % 5];
+  const options = darkmodeOptions.concat(lightmodeOptions);
+  const result = options[Math.floor(Math.random() * options.length)];
   return pageSagePlaceholderMedia[result];
-}
+} // DATA OUT: String
+
+// For some apps like with user-generated content, they could be posting not
+// just images, but other media. This is a good way for the designer to battle
+// test their layout under these conditions.
+// DATA IN: null
+function randomMedia() {
+  const darkmodeOptions = placeholderDarkmodeOptions();
+  const lightmodeOptions = placeholderLightmodeOptions();
+
+  const options = [
+    'audio',
+    'video',
+    ...darkmodeOptions,
+    ...lightmodeOptions
+  ];
+
+  const result = options[Math.floor(Math.random() * options.length)];
+  return pageSagePlaceholderMedia[result];
+} // DATA OUT: String
+
+// This is to bring brevity to multiple functions needing the same array.
+// DATA IN: null
+function placeholderDarkmodeOptions() {
+  return [
+    'photo_landscape_darkmode_jpg',
+    'photo_square_darkmode_jpg',
+    'photo_portrait_darkmode_jpg',
+    'photo_landscape_darkmode_png',
+    'photo_square_darkmode_png',
+    'photo_portrait_darkmode_png',
+    'photo_landscape_darkmode_svg',
+    'photo_square_darkmode_svg',
+    'photo_portrait_darkmode_svg'
+  ];
+} // DATA OUT: Array
+
+// This is to bring brevity to multiple functions needing the same array.
+// DATA IN: null
+function placeholderLightmodeOptions() {
+  return [
+    'photo_landscape_lightmode_jpg',
+    'photo_square_lightmode_jpg',
+    'photo_portrait_lightmode_jpg',
+    'photo_landscape_lightmode_png',
+    'photo_square_lightmode_png',
+    'photo_portrait_lightmode_png',
+    'photo_landscape_lightmode_svg',
+    'photo_square_lightmode_svg',
+    'photo_portrait_lightmode_svg'
+  ];
+} // DATA OUT: Array
