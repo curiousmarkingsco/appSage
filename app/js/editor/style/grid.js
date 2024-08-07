@@ -9,6 +9,7 @@
 
 // This function gives the grid editor sidebar the ability to use alignment
 // options from TailwindCSS.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addGridAlignmentOptions(sidebar, grid) {
   const justifyItemsOptions = ['start', 'end', 'center', 'stretch', 'reset'];
   const alignContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
@@ -20,10 +21,11 @@ function addGridAlignmentOptions(sidebar, grid) {
   addDeviceTargetedOptions(sidebar, grid, 'Align Content', 'content', alignContentOptions, 'icon-select');
   // Place Items - See: https://tailwindcss.com/docs/place-items
   addDeviceTargetedOptions(sidebar, grid, 'Place Items', 'place-items', placeItemsOptions, 'icon-select');
-}
+} // DATA OUT: null
 
 // This function is for chooding the number of columns (vertical) that exist
 // within the grid.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditableColumns(sidebar, grid) {
   // Arbitrary constraint of 12 columns to reduce laymen designers making
   // things messy.
@@ -31,4 +33,4 @@ function addEditableColumns(sidebar, grid) {
 
   // See: https://tailwindcss.com/docs/grid-template-columns
   addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', columns, 'select');
-}
+} // DATA OUT: null

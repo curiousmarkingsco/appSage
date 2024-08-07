@@ -9,6 +9,7 @@
 
 // Passed data from local storage, this function iterates through all elements
 // and appends them to the page.
+// DATA IN: JSON Object
 function loadChanges(json) {
   const pageContainer = document.getElementById('page');
   pageContainer.innerHTML = '';
@@ -28,9 +29,10 @@ function loadChanges(json) {
   if (grid) {
     addGridOptions(grid);
   }
-}
+} // DATA OUT: null
 
 // This function makes it so that saved elements can be edited once more.
+// DATA IN: HTML Element, <div>
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
@@ -42,4 +44,4 @@ function restoreGridCapabilities(grid) {
       enableEditContentOnClick(content);
     });
   });
-}
+} // DATA OUT: null

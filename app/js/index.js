@@ -8,6 +8,7 @@
 */
 
 // This function is for confirmation of deleting pages and elements.
+// DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
@@ -31,9 +32,10 @@ function showConfirmationModal(message, onConfirm) {
   document.getElementById('cancelDelete').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
-}
+} // DATA OUT: null
 
 // This function is for permanently deleting a page from localStorage.
+// DATA IN: ['String', 'HTML Element, <div>']
 function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
@@ -43,4 +45,4 @@ function deletePage(page_id, element) {
     localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
     element.remove();
   });
-}
+} // DATA OUT: null

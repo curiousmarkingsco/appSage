@@ -9,6 +9,7 @@
 
 // This function gives the column editor sidebar the ability to use alignment
 // options from TailwindCSS.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addColumnAlignmentOptions(sidebar, column) {
   const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
   const placeSelfOptions = ['start', 'end', 'center', 'stretch', 'reset'];
@@ -17,4 +18,4 @@ function addColumnAlignmentOptions(sidebar, column) {
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
   // Place Self - See: https://tailwindcss.com/docs/place-self
   addDeviceTargetedOptions(sidebar, column, 'Place Self', 'place-self', placeSelfOptions, 'icon-select');
-}
+} // DATA OUT: null

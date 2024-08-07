@@ -10,6 +10,7 @@
 */
 
 // Utility functions for managing localStorage with a 'pageSageStorage' object
+// DATA IN: String
 function loadPage(pageId) {
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   if (pageSageStorage.pages && pageSageStorage.pages[pageId] && pageSageStorage.pages[pageId].page_data) {
@@ -17,11 +18,12 @@ function loadPage(pageId) {
   } else {
     return null;
   }
-}
+} // DATA OUT: String || null
 
 // Currently, media added through the file selector is stored as base64 plain
 // text in the document (and consequently, storage). To keep things a bit
 // tidier, these blobs are stored in an object separate from the HTML content.
+// DATA IN: String
 function loadPageBlobs(config) {
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   const page = document.getElementById('page');
@@ -35,11 +37,12 @@ function loadPageBlobs(config) {
       });
     }
   }
-}
+} // DATA OUT: null
 
 // Because metadata needs to be added to the <head> tag rather than the
 // expected '#page' div, metadata is stored in a separate object and,
 // consequently, this separate function.
+// DATA IN: ['String', 'HTML Element, <div>']
 function loadPageMetadata(page_id, element) {
   const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
   const settings = storedData.pages[page_id].settings;
@@ -60,11 +63,12 @@ function loadPageMetadata(page_id, element) {
       }
     }
   }
-}
+} // DATA OUT: String || null
 
 // Because page settings need to be added to various locations other than the
 // expected '#page' div, page settings are stored in a separate object and,
 // consequently, this separate function.
+// DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false){
   // Load the pageSageStorage object from localStorage
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
@@ -104,4 +108,4 @@ function loadPageSettings(config, view = false){
   } else {
     console.log('Settings for the specified page do not exist.');
   }
-}
+} // DATA OUT: null

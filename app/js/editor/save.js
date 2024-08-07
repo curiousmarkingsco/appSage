@@ -9,15 +9,17 @@
 
 // Remove editor elements so that localStorage is not cluttered with unneeded
 // elements making them production-ready for app/js/load.js
+// DATA IN: HTML Element, <div>
 function getCleanInnerHTML(element) {
   const clone = element.cloneNode(true);
   const discardElements = clone.querySelectorAll('.ugc-discard');
   discardElements.forEach(el => el.parentNode.removeChild(el));
   return clone.innerHTML;
-}
+} // DATA OUT: HTML Element, <div>
 
 // This mutation observer ensures that the majority, if not all, changes
 // occuring in #page will be saved to localStorage.
+// DATA IN: String
 function setupAutoSave(page) {
   const targetNode = document.getElementById('page');
   const config = {
@@ -38,10 +40,11 @@ function setupAutoSave(page) {
   const observer = new MutationObserver(callback);
   observer.observe(targetNode, config);
   console.log('Auto-save setup complete.');
-}
+} // DATA OUT: null
 
 // This function saves all active element and style additions/changes/removals
 // during the designer's traditional editor workflow.
+// DATA IN: String
 function saveChanges(page) {
   const pageContainer = document.getElementById('page');
   // Query only elements with 'ugc-keep' that are meant to be saved
@@ -54,11 +57,12 @@ function saveChanges(page) {
   const json = JSON.stringify(data);
   savePage(page, json);
   console.log('Changes saved successfully!');
-}
+} // DATA OUT: null
 
 // This function creates or prepares the necessary localStorage object in order
 // for subsequent content to be stored. If this objects already exists, it
 // proceeds by properly setting existing content to these objects.
+// DATA IN: ['String', 'JSON Object']
 function savePage(pageId, data) {
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   if (!pageSageStorage.pages) {
@@ -69,11 +73,12 @@ function savePage(pageId, data) {
   }
   pageSageStorage.pages[pageId].page_data = data;
   localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
-}
+} // DATA OUT: null
 
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
 // from the dedicated Page Settings sidebar.
+// DATA IN: ['String', 'JSON Object']
 function savePageSettings(pageId, data) {
   const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage') || '{}');
   if (!pageSageStorage.pages) {
@@ -84,11 +89,12 @@ function savePageSettings(pageId, data) {
   }
   pageSageStorage.pages[pageId].settings = data;
   localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
-}
+} // DATA OUT: null
 
 // This function creates or prepares the necessary localStorage object in order
 // for subsequent settings to be stored. If this objects already exists, it
 // proceeds by properly setting existing settings to these objects.
+// DATA IN: String
 function savePageSettingsChanges(pageId) {
   const page = document.getElementById('page');
   const settings = {
@@ -98,4 +104,4 @@ function savePageSettingsChanges(pageId) {
   }
   const json = JSON.stringify(settings);
   savePageSettings(pageId, json);
-}
+} // DATA OUT: null
