@@ -19,5 +19,6 @@ function addColumnAlignmentOptions(sidebar, column) {
   // Justify Content - See: https://tailwindcss.com/docs/justify-content
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
   // Place Self - See: https://tailwindcss.com/docs/place-self
+  // TODO: Add missing icons to js/editor/icons.js
   addDeviceTargetedOptions(sidebar, column, 'Place Self', 'place-self', placeSelfOptions, 'icon-select');
 } // DATA OUT: null

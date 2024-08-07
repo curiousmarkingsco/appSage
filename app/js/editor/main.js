@@ -2,11 +2,18 @@
 
   editor/main.js
 
+  This file is to support the initial setup or re-setup of a page.
+
 */
 
+// global variables, you've been warned!
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 
+// This big chunk does everything necessary for initial page setup which is
+// largely comprised of setting up all the listeners that allow various editing
+// functions that show up in the sidebar.
+// DATA IN: null
 document.addEventListener('DOMContentLoaded', function () {
   const elementsToWatch = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul', 'ol', 'li', 'button', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -64,8 +71,12 @@ document.addEventListener('DOMContentLoaded', function () {
       updateTooltip(e, false);
     }
   }, true);
-});
+}); // DATA OUT: null
 
+// This function is for adding to the sidebar all the options available for
+// styles that impact the entire page, or metadata like page titles, og:image
+// tags, descriptions, etc.
+// DATA IN: null
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -83,8 +94,12 @@ function addPageOptions() {
     addEditableBackgroundImageURL(sidebar, page);
     addEditableBackgroundFeatures(sidebar, page);
   }
-}
+} // DATA OUT: null
 
+// This function makes tooltips show up anywhere you hover over an element that
+// has the `data-extra-info` attribute. This functional is critical for
+// elaborating on WTF something does for the designer making a page.
+// DATA IN: ['HTML Element', 'Boolean']
 function updateTooltip(e, show) {
   const tooltip = document.getElementById('tooltip');
   const extraClasses = e.target.getAttribute('data-extra-info-class') || '';
@@ -125,8 +140,12 @@ function updateTooltip(e, show) {
     tooltip.classList.add('invisible');
     if (extraClasses !== '') extraClasses.split(' ').forEach(cls => tooltip.classList.remove(cls));
   }
-}
+} // DATA OUT: null
 
+// This function is for supporting any editor capabilities that involve color.
+// It gives the designer access to the color palette they labored over and
+// keeps them focused on only those colors.
+// DATA IN: JSON Object
 function extractColorNames(colorObject) {
   let colorArray = [];
   for (const colorFamily in colorObject) {
@@ -135,8 +154,14 @@ function extractColorNames(colorObject) {
     }
   }
   return colorArray;
-}
+} // DATA OUT: Array
 
+// This hulking function brings up a modal for pasting in HTML with Tailwind
+// classes. This is for folks who have/bought existing HTML that uses
+// TailwindCSS.
+// TODO: Validate that the HTML is indeed Tailwind-y before proceeding to litter
+// the page/page editor with the markup.
+// DATA IN: Optional function()
 function showHtmlModal(onConfirm = null) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
@@ -173,35 +198,38 @@ function showHtmlModal(onConfirm = null) {
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
-}
+} // DATA OUT: null
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
 // made from the sidebar.
+// DATA IN: null
 function highlightEditingElement(element) {
   removeEditingHighlights(); // Clear existing highlights
   if (element) {
     element.id = 'editing-highlight'; // Highlight the current element
   }
-}
+} // DATA OUT: null
 
 // This function removes the above visual breadcrumb making way for a new
 // highlight. This function should ideally always be called prior to its
 // antithetical counterpart.
+// DATA IN: null
 function removeEditingHighlights() {
   const highlight = document.getElementById('editing-highlight');
   if (highlight) {
     highlight.id = '';
   }
-}
+} // DATA OUT: null
 
 // This function helps move column/content buttons figure out where to go
 // when moving their element without getting confused by editor-specific
 // elements potentially confusing where to go in the finished product.
+// DATA IN: ['HTML Element, <div>', 'String:up/down']
 function getNextValidSibling(element, direction) {
   let sibling = (direction === 'left' || direction === 'up') ? element.previousElementSibling : element.nextElementSibling;
   while (sibling && sibling.classList.contains('ugc-discard')) {
     sibling = (direction === 'left' || direction === 'up') ? sibling.previousElementSibling : sibling.nextElementSibling;
   }
   return sibling;
-}
+} // DATA OUT: HTML Element, <div>

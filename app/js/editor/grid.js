@@ -61,7 +61,7 @@ function addRemoveGridButton(grid, sidebar) {
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Currently, these buttons live at the top of the
 // editor sidebar when the grid is/has been selected for editing.
-// DATA IN: ['HTML Element, <div>', 'string:up/down']
+// DATA IN: ['HTML Element, <div>', 'String:up/down']
 function createVerticalMoveGridButton(grid, direction) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', `Move this grid ${direction}ward in the document`)

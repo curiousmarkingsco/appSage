@@ -53,7 +53,7 @@ function enableEditColumnOnClick(column) {
 // means it will be moving left/right, rather than literally 'upward/downward.'
 // Currently, these buttons live at the top of the editor sidebar when the
 // column is/has been selected for editing.
-// DATA IN: ['HTML Element', 'string:left/right']
+// DATA IN: ['HTML Element', 'String:left/right']
 function createHorizontalMoveColumnButton(column, direction) {
   const button = document.createElement('button');
   button.className = 'moveColumn ugc-discard bg-amber-500 hover:bg-amber-700 text-slate-50 font-bold p-2 rounded h-12 w-16';
@@ -143,7 +143,7 @@ function columnHasContent(column) {
 } // DATA OUT: null
 
 // This function is the ...function...al bit of the 'move column' buttons.
-// DATA IN: ['HTML Element, <div>', 'string:left/right']
+// DATA IN: ['HTML Element, <div>', 'String:left/right']
 function moveColumnHorizontal(column, direction) {
   const parent = column.parentNode;
   let targetSibling = getNextValidSibling(column, direction);
