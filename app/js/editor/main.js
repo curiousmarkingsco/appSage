@@ -1,6 +1,6 @@
 /*
 
-  main.js
+  editor/main.js
 
 */
 
