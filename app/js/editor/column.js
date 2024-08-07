@@ -75,7 +75,7 @@ function createHorizontalMoveColumnButton(column, direction) {
 // edited. As the tooltip mentions, FOREVER. That's a long time!
 // Currently, this button lives at the topbar nestled between the Move Column
 // buttons on its left and right.
-// DATA in: ['HTML Element, <div>', 'HTML Element, <div>']
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function createRemoveColumnButton(column, gridContainer) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this column forever (that\'s a long time!)')
@@ -98,7 +98,7 @@ function createRemoveColumnButton(column, gridContainer) {
 // hovering the mouse over said existing grid. Once it makes the new column,
 // it updates the sidebar to reveal all of the editing options someone at some
 // point deemed to be available for columns.
-// DATA In: HTML Element, <div>
+// DATA IN: HTML Element, <div>
 function createAddColumnButton(gridContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   const menuItem = document.createElement('button');

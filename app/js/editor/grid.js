@@ -7,6 +7,7 @@
 */
 
 // This function populates the sidebar with relevant editing options for grids.
+// DATA IN: HTML Element, <div>
 function addGridOptions(grid) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateMobileTabs()}`;
@@ -36,12 +37,13 @@ function addGridOptions(grid) {
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
   }
-}
+} // DATA OUT: null
 
 // This function creates the button for deleting the grid currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
 // Currently, this button lives at the topbar nestled between the 'move grid'
 // buttons on its left and right.
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div id="sidebar-dynamic">']
 function addRemoveGridButton(grid, sidebar) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this grid forever (that\'s a long time!)')
@@ -54,11 +56,12 @@ function addRemoveGridButton(grid, sidebar) {
     });
   };
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Currently, these buttons live at the top of the
 // editor sidebar when the grid is/has been selected for editing.
+// DATA IN: ['HTML Element, <div>', 'string:up/down']
 function createVerticalMoveGridButton(grid, direction) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', `Move this grid ${direction}ward in the document`)
@@ -72,15 +75,16 @@ function createVerticalMoveGridButton(grid, direction) {
     moveVertical(grid, direction);
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
 // This function is intended to present the sidebar editing options when a grid
 // is clicked. Only the outer edges of the grid are clickable for this to work
 // due to columns and content overlapping it.
+// DATA IN: HTML Element, <div>
 function enableEditGridOnClick(grid) {
   grid.addEventListener('click', function (event) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
   });
-}
+} // DATA OUT: null
