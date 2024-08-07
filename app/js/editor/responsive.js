@@ -1,4 +1,8 @@
-/* responsive.js */
+/*
+
+  editor/responsive.js
+
+*/
 
 var plainEnglish = {
   "xs": 'Extra Small',

@@ -1,4 +1,8 @@
-/* sidebar.js */
+/*
+
+  editor/sidebar.js
+
+*/
 
 function generateMobileTabs() {
   const icons = {

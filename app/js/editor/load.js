@@ -1,6 +1,6 @@
 /*
 
-  load.js
+  editor/load.js
   
   This file is intended to be the primary location for functions that load
   saved content from previous edits. This loading is only for the editor page.

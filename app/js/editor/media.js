@@ -1,6 +1,6 @@
 /*
 
-  media.js
+  editor/media.js
 
   This file is some syntax sugar for adding placeholder media.
   See `app/placeholder_media/README.md` for more info.

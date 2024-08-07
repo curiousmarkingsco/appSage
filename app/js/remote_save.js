@@ -1,4 +1,9 @@
-/* remote_save.js */
+/*
+
+  remote_save.js
+
+*/
+
 
 // TODO: Add field on settings page for remote storage URL
 function saveDataToServer(url, page_id, css_content = null) {

@@ -1,6 +1,6 @@
 /*
 
-  save.js
+  editor/save.js
 
   This file is intended to be the primary location for functions that save
   content from active/previous edits. This saving happens on the editor page.

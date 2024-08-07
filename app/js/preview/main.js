@@ -1,5 +1,17 @@
-/* preview/main.js */
+/*
 
+  preview/main.js
+
+  This file is intended to clean up any residual content that could pop up from
+  the designer editing the page. And, of course, load the necessary data from
+  localStorage to show the final page design without the sidebar cluttering up
+  their eyes, giving an unadultered view of the page.
+
+*/
+
+// This function does everything described above, though this comment should
+// probably be reviewed and updated if anything is ever added to this file.
+// DATA IN: String
 function loadPreview(pageId) {
   const json = loadPage(pageId);
   if (json) {
@@ -16,18 +28,10 @@ function loadPreview(pageId) {
           pageContainer.appendChild(element);
       });
 
-      hideEditingTools();
       loadPageSettings(pageId, true);
       loadPageBlobs(pageId);
       loadPageMetadata(pageId);
   } else {
       console.error('No saved data found for pageId:', pageId);
   }
-}
-
-function hideEditingTools() {
-  const editingTools = document.querySelectorAll('.addContent, .editContent, .removeColumn, .addColumn');
-  editingTools.forEach(tool => {
-      tool.style.display = 'none';
-  });
-}
+} // DATA OUT: null

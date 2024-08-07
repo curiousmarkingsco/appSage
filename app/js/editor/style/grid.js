@@ -1,10 +1,12 @@
 /*
+
   editor/style/grid.js
 
   This file is intended to be the primary location for anything adding editor
   options to the sidebar in a context primarily for grids & seldom elsewhere.
   All functions here rely on `addDeviceTargetedOptions` which helps segregate
   styles between targeted device sizes.
+
 */
 
 // This function gives the grid editor sidebar the ability to use alignment

@@ -1,4 +1,8 @@
-/* style.js */
+/*
+
+  editor/style.js
+
+*/
 
 function addEditableBackgroundColor(sidebar, element) {
   const colors = colorArray;
