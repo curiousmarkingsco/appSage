@@ -1,4 +1,4 @@
-/* preview.js */
+/* preview/main.js */
 
 function loadPreview(pageId) {
   const json = loadPage(pageId);
