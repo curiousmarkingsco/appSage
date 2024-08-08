@@ -6,10 +6,6 @@
 
 */
 
-// global variables, you've been warned!
-var tailwindColors = tailwind.config.theme.colors;
-var colorArray = extractColorNames(tailwindColors);
-
 // This big chunk does everything necessary for initial page setup which is
 // largely comprised of setting up all the listeners that allow various editing
 // functions that show up in the sidebar.

@@ -2,17 +2,14 @@
 
   editor/responsive.js
 
+  This file is dedicated to spitting out all sidebar editor options to the
+  sidebar for each of the supported breakpoints; xs, sm, md, lg, xl, and 2xl.
+
 */
 
-var plainEnglish = {
-  "xs": 'Extra Small',
-  "sm": 'Small-Sized',
-  "md": 'Medium-Sized',
-  "lg": 'Large',
-  "xl": 'Extra Large',
-  "2xl": 'Extra, Extra Large'
-}
-
+// This function orchestrates which where everything goes based on the input
+// type and spits it out to all the breakpoints provided in the array.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>', 'String || Array:String', 'String || Array:String', 'String || Array:String', 'String']
 function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, options, inputType = 'select') {
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
@@ -76,8 +73,11 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         return;
     }
   });
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting resetting styles for the sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleReset(bp, grid, options, cssClassBase, control){
   const resetButton = document.createElement('button');
   resetButton.innerHTML = pageSageEditorIcons['reset'];
@@ -94,8 +94,11 @@ function handleReset(bp, grid, options, cssClassBase, control){
       });
     });
   };
-}
+} // DATA OUT: null
 
+// This function is intended to facilitate manual CSS styling for the textarea
+// field dedicated for this activity.
+// DATA IN: ['HTML Element, <div>', 'String']
 function applyStyles(element, controlValue) {
   if (element) {
     const styles = controlValue.split(';');
@@ -107,8 +110,11 @@ function applyStyles(element, controlValue) {
       }
     });
   }
-}
+} // DATA OUT: null
 
+// This function attempts to find existing styles so that other functions know
+// what/where to replace new classes, if applicable.
+// DATA IN: ['String:Breakpoint class name', 'Array:String', 'String', 'HTML Element, <div>]
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
@@ -116,8 +122,14 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
       return grid.classList.contains(className);
     }) || '';
   }
-}
+} // DATA OUT: String
 
+// This function is the catch-all for handling labels of the sidebar editor
+// elements. Its primary purpose is to reduce label clutter by narrowing
+// certain groupings of style elements into categories where the label can
+// represent all elements of that category, while the redundant ones remain
+// in the document for accessibility, but invisible to the naked eye.
+// DATA IN: ['String:Breakpoint class name', 'String', 'String']
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
   let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
@@ -141,8 +153,11 @@ function createLabel(bp, labelPrefix, forAttr) {
     label.prepend(mobileIcon);
     return label;
   }
-}
+} // DATA OUT: HTML Element, <label>
 
+// This function messily handles all the nuance thus far encountered from
+// supporting file-based input elements for sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   const isFile = labelPrefix.includes('File');
   control.type = isFile ? 'file' : 'text';
@@ -154,14 +169,18 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
     if (labelPrefix === 'Background Image URL') {
       // assumes 'bg' is URL
       newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
-      updateGridClass(grid, newValue, cssClassBase, bp);
+      const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
+      grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
       grid.style.backgroundImage = '';
       generateMediaSrc(event, grid, true);
     }
   };
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting textarea elements for sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleTextareaType(labelPrefix, grid, control) {
   control.type = 'text';
   control.value = (grid.classList);
@@ -177,8 +196,11 @@ function handleTextareaType(labelPrefix, grid, control) {
       applyStyles(grid, control.value);
     }
   };
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting select elements using icons for each option in sidebar controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
   cssClassBase = cssClassBase.includes('-all') ? cssClassBase.replace('-all', '') : cssClassBase;
   const fontSize = (labelPrefix === 'Font Size' || labelPrefix === 'Font Weight')
@@ -218,8 +240,11 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   };
   control.appendChild(selectControl);
   control.appendChild(iconButton);
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting icon styled select dropdowns for sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control) {
   if (!options) {
     console.error('No options provided for icons input type.');
@@ -303,8 +328,11 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     control.appendChild(iconButton);
   });
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting toggle elements for sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleToggle(bp, options, grid, cssClassBase, control) {
   control.className = 'relative bg-slate-50 h-12 w-12 border-2 border-slate-30 rounded'
   if (cssClassBase === 'italic') {
@@ -328,8 +356,11 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   };
   control.appendChild(checkbox);
   control.appendChild(iconButton);
-}
+} // DATA OUT: null
 
+// This function messily handles all the nuance thus far encountered from
+// supporting select elements for sidebar editor controls.
+// DATA IN: See `addDeviceTargetedOptions`
 function handleSelect(bp, grid, control, options, cssClassBase) {
   if (!options) {
     console.error('No options provided for select input type.');
@@ -350,13 +381,13 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
     });
     grid.classList.add(control.value);
   };
-}
+} // DATA OUT: null
 
-function updateGridClass(element, newValue, classType, breakpoint) {
-  const classRegex = new RegExp(`\\b${breakpoint === 'xs' ? ' ' : breakpoint + ':'}${classType}-\\d+\\b`, 'g');
-  element.className = element.className.replace(classRegex, '').trim() + ` ${newValue}`;
-}
-
+// This function is an all-in-one place for any and all tooltips necessary for
+// the functions in this file.
+// TODO: Make this function a place for ALL tooltips and move it to a file
+//       where global variables live.
+// DATA IN: ['String', 'HTML Element']
 function handleTooltips(cssClassToEvaluate, control) {
   if (cssClassToEvaluate === 'justify-items-start') {
     control.setAttribute('data-extra-info', "Put columns in columns in the grid to the left-most side of the column's maximum span");
@@ -405,4 +436,4 @@ function handleTooltips(cssClassToEvaluate, control) {
   } else {
     control.setAttribute('data-extra-info', "This tooltip is missing, tell the dev to fix it!");
   }
-}
+} // DATA OUT: null
