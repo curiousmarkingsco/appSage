@@ -1,13 +1,26 @@
 /*
 
-editor/content.js
+  editor/content.js
 
-TODO: A button for adding placeholder media paths for media elements
-TODO: For anything using color, a manual colorpicker option in case the
-      designer needs to break out of their theme palette.
+  TODO: A button for adding placeholder media paths for media elements
+  TODO: For anything using color, a manual colorpicker option in case the
+        designer needs to break out of their theme palette.
+  TODO: Currently, if a column has no margins, padding, or content inside of
+        it, it can be extremely hard to click. How do we resolve this?
 
 */
 
+// This function creates a container for individual HTML elements. This is
+// intended to make it easier to comprehend, within the code, movements of
+// elements through the DOM and to be able to do things like add background
+// images while still being able to give the actual element a background color
+// so that legibility is still possible.
+// TODO: The background color example mentioned above isn't actually supported.
+// TODO: Additionally, adding a background color to a button, for example,
+//       creates confusing results since clicking that background doesn't
+//       actually result in clicking the link. This needs to be fixed and
+//       crafted more intentionally for certain elements.
+// DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
@@ -27,8 +40,13 @@ function addContentContainer() {
   });
 
   return contentContainer;
-}
+} // DATA OUT: HTML Element, <div class="pagecontent">
 
+// This function adds a lot of the standard editing options that should be
+// available for all elements. This listens for any clicks on editable content
+// and also adds more important editing options before the standard options,
+// such as the actual text being added, hrefs for links, form fields, etc.
+// DATA IN: HTML Element, <div>
 function enableEditContentOnClick(contentContainer) {
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
@@ -43,8 +61,11 @@ function enableEditContentOnClick(contentContainer) {
     addEditableDimensions(sidebar, contentContainer);
     highlightEditingElement(contentContainer);
   });
-}
+} // DATA OUT: null
 
+// This function creates the button for adding content to the column currently
+// being hovered over by the designer.
+// DATA IN: HTML Element, <div>
 function createAddContentButton(column) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Add content to this column');
@@ -56,8 +77,13 @@ function createAddContentButton(column) {
     highlightEditingElement(column);
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
+// This function creates the button for deleting the content currently being
+// edited. As the tooltip mentions, FOREVER. That's a long time!
+// Currently, this button lives at the topbar nestled between the
+// 'move content' buttons on its left and right.
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div id="sidebar-dynamic">']
 function createRemoveContentButton(contentContainer) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', 'Remove this content forever (that\'s a long time!)')
@@ -70,8 +96,12 @@ function createRemoveContentButton(contentContainer) {
     });
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
+// This function creates the button for moving the element the content belongs
+// to upward and downward in the column. Currently, these buttons live at the
+// top of the editor sidebar when the grid is/has been selected for editing.
+// DATA IN: ['HTML Element, <div>', 'String:up/down']
 function createVerticalMoveContentButton(contentContainer, direction) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', `Move this content ${direction}ward in the column`)
@@ -87,18 +117,22 @@ function createVerticalMoveContentButton(contentContainer, direction) {
     moveVertical(contentContainer, direction);
   });
   return button;
-}
+} // DATA OUT: HTML Element, <button>
 
+// This function figures out what to do after something in the editing view is
+// clicked and either creates or finds the contextually relevant element and
+// updates the sidebar with relevant styling options.
+// DATA IN: HTML Element, <div>
 function detectAndLoadContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   // const oldMoveButtons = document.getElementById('moveContentButtons');
   // if (oldMoveButtons) { oldMoveButtons.remove }
-  const types = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul' ,'ol', 'li', 'button', 'form', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
+  const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'button', 'form']//, 'div', 'ul' ,'ol', 'li', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
   const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
     switch (found) {
-      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': case 'p': case 'a': case 'button': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
-        updateSidebarForTextContent(contentContainer);
+      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': //case 'p': case 'a': case 'button': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
+        updateSidebarForHeader(contentContainer);
         break;
       case 'p':
         updateSidebarForParagraph(contentContainer);
@@ -106,7 +140,7 @@ function detectAndLoadContentType(contentContainer) {
       case 'img': case 'video': case 'audio':
         updateSidebarForMedia(contentContainer);
         break;
-      case 'a':
+      case 'a': case 'button':
         updateSidebarForButton(contentContainer);
         break;
       case 'form':
@@ -130,9 +164,12 @@ function detectAndLoadContentType(contentContainer) {
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 
   highlightEditingElement(contentContainer);
-}
+} // DATA OUT: null
 
-function updateSidebarForTextContent(contentContainer, newContent) {
+// This cobbles together all the needed bits for adding/editing header elements.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
+function updateSidebarForHeader(contentContainer, newContent) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = generateMobileTabs();
   activateTabs();
@@ -198,21 +235,31 @@ function updateSidebarForTextContent(contentContainer, newContent) {
   });
 
   addTextOptions(sidebar, contentContainer);
-}
+} // DATA OUT: null
 
+// This function and the one below it creates various buttons to choose from
+// available elements that can be created.
+// TODO: This function should be used by updateSidebarForTextElements so that the
+//       options are more illustrative than a plaintext dropdown menu.
+// DATA IN: HTML Element, <div>
 function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateMobileTabs()}`;
   activateTabs();
 
   const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextContent(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeader(contentContainer, true) },
     { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
     { label: `<div class="p-6" data-extra-info="Button (Link)">${pageSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
   ];
   showNewContentMenu(contentTypes, sidebar);
-}
+} // DATA OUT: null
 
+// This function and the one above it creates various buttons to choose from
+// available elements that can be created.
+// TODO: This function should be used by updateSidebarForTextElements so that the
+//       options are more illustrative than a plaintext dropdown menu.
+// DATA IN: ['Array', 'HTML Element, <div id="sidebar-dynamic">']
 function showNewContentMenu(contentTypes, sidebar) {
   contentTypes.forEach(type => {
     const button = document.createElement('button');
@@ -221,8 +268,12 @@ function showNewContentMenu(contentTypes, sidebar) {
     button.onclick = type.action;
     sidebar.appendChild(button);
   });
-}
+} // DATA OUT: null
 
+// This cobbles together all the needed bits for adding/editing form fields.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements, or
+//       perhaps empowered by it?
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForForm(contentContainer, newContent) {
   if (newContent) {
     newContainer = addContentContainer(contentContainer, false)
@@ -366,8 +417,12 @@ function updateSidebarForForm(contentContainer, newContent) {
   newFieldGroup.appendChild(inputField);
   newFieldGroup.appendChild(addButton);
   updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
-}
+} // DATA OUT: null
 
+// This cobbles together all the needed bits for adding/editing form fields.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements, or
+//       perhaps empowered by it?
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   // Remove all existing field editors except the add new field section
   const existingEditors = sidebarForm.querySelectorAll('.field-editor');
@@ -461,8 +516,11 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
 
     sidebarForm.appendChild(fieldEditor);
   });
-}
+} // DATA OUT: null
 
+// This cobbles together all the needed bits for adding/editing paragraph elements.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForParagraph(contentContainer, newContent) {
   if (newContent) {
     newContainer = addContentContainer(contentContainer, false)
@@ -502,8 +560,11 @@ function updateSidebarForParagraph(contentContainer, newContent) {
   addTextOptions(sidebar, contentContainer);
   sidebar.prepend(textInput);
   sidebar.prepend(label);
-}
+} // DATA OUT: null
 
+// This cobbles together all the needed bits for adding/editing button elements.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForButton(contentContainer, newContent) {
   if (newContent) {
     newContainer = addContentContainer(contentContainer, false)
@@ -570,15 +631,22 @@ function updateSidebarForButton(contentContainer, newContent) {
 
   // Add font size options
   addTextOptions(sidebar, contentContainer);
-}
+} // DATA OUT: null
 
+// This function is a bit redundant compared to newer implementations, but...
+// Don't fix it if it ain't broke.
+// TODO: This will eventually be obsolete from updateSidebarForTextElements
+// DATA IN: ['HTML Element, <h*>', 'String:h*'] // h* = all available heading tags.
 function replaceWithNewHeading(oldHeading, newTag) {
   const newHeading = document.createElement(newTag);
   newHeading.textContent = oldHeading.textContent;
   oldHeading.parentNode.replaceChild(newHeading, oldHeading);
   return newHeading;
-}
+} // DATA OUT: HTML Element, <h*>
 
+// This cobbles together all the needed bits for adding/editing media files.
+// TODO: This should eventually be wrapped up in updateSidebarForTextElements
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForMedia(contentContainer, newContent) {
   if (newContent) {
     newContainer = addContentContainer(contentContainer, false)
@@ -669,26 +737,11 @@ function updateSidebarForMedia(contentContainer, newContent) {
   sidebar.prepend(urlInput);
   sidebar.prepend(createLabelAllDevices());
   sidebar.prepend(fieldTitle);
-}
+} // DATA OUT: null
 
-// Helper function to update element class for sizes or alignment
-function updateElementClass(element, newValue, type) {
-  const prefix = 'text-';
-  let classesToRemove = [];
-  if (type === 'size') {
-    classesToRemove = ['base', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'].map(size => prefix + size);
-  } else if (type === 'align') {
-    classesToRemove = ['left', 'center', 'right', 'justify', 'end', 'start'].map(align => prefix + align);
-  }
-  Array.from(element.children).forEach(child => {
-    child.className = child.className
-      .split(' ')
-      .filter(cls => !classesToRemove.includes(cls))
-      .concat(newValue)
-      .join(' ');
-  });
-}
-
+// This function is the operational bits of the "Move Grid" and "Move Content"
+// buttons.
+// DATA IN: ['HTML Element, <div>', 'String:up/down']
 function moveVertical(element, direction) {
   const parent = element.parentNode;
   let targetSibling = getNextValidSibling(element, direction);
@@ -704,8 +757,13 @@ function moveVertical(element, direction) {
       parent.appendChild(element);  // If there's no next sibling, append to the end of the parent
     }
   }
-}
+} // DATA OUT: null
 
+// TODO: Find an alternative to storing image blobs in the local storage and
+//  in the copy/pastes that might end up in a database bloating it to oblivion.
+//  To see the offending line, search for this text (less the // part):
+// contentContainer.style.backgroundImage
+// DATA IN: null
 function createLabelAllDevices() {
   const label = document.createElement('span');
   label.className = 'inline-block col-span-5 text-slate-700 text-xs uppercase mt-2';
@@ -718,8 +776,11 @@ function createLabelAllDevices() {
     label.prepend(responsiveIcon);
   });
   return label;
-}
+} // DATA OUT: HTML Element, <span>
 
+// This function helps media tags generate the correct text needed for the
+// value of their `src` attribute.
+// DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, url){
   const file = event.target.files[0];
   if (file) {
@@ -766,18 +827,27 @@ function generateMediaSrc(event, contentContainer, url){
         pageSageStorage.pages[config].blobs[generatedId] = e.target.result;
         localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
         // TailwindCSS doesn't appear to like entire image blobs LOL
+        // This is a workaround. Though, we should figure out a way to not use
+        // any blobs at all and have some kind of remote URL or local folder
+        // that we write to.
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
       }
     };
     reader.readAsDataURL(file);
   }
-}
+} // DATA OUT: null
 
-function addEditableHtmlTag(container) {
+// This function is a half-complete attempt as a catch-all way of editing any
+// and all HTML elements, particularly those that may have been copy/pasted in.
+// TODO: Fix any existing bugs, add support for niche circumstances like forms,
+//       form fields, links/buttons, and other elements that require certain
+//       types of extra attributes.
+// DATA IN: HTML Element, <div>
+function updateSidebarForTextElements(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
-console.log('abc')
+
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
@@ -843,4 +913,4 @@ console.log('abc')
   sidebar.prepend(textInput);
   sidebar.prepend(tagDropdown);
   sidebar.prepend(sidebarTitle);
-}
+} // DATA OUT: null

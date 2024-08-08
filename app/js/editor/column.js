@@ -2,7 +2,11 @@
 
   editor/column.js
 
-  This file is intended to be the primary location for anything related to adding, editing, and removing columns.
+  This file is intended to be the primary location for anything related to
+  adding, editing, and removing columns.
+
+  TODO: Currently, if a column has no margins, padding, or content inside of
+        it, it can be extremely hard to click. How do we resolve this?
 
 */
 

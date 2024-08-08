@@ -138,7 +138,7 @@ function addTextOptions(sidebar, element) {
   const fontStyleOptions = ['italic', 'not-italic'];
   const fontUnderlineOptions = ['underline', 'not-underline'];
 
-  addEditableHtmlTag(element);
+  // updateSidebarForTextElements(element);
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
