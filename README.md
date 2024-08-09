@@ -1,5 +1,40 @@
 # app**Sage**
 
+## Getting started
+
+### 1. Clone the repository
+```sh
+git clone git@github.com:curiousmarkingsco/appSage.git
+cd appSage
+```
+
+### 2. Start the localhost server
+If you don't already have `npm` installed:
+1.	Visit the Node.js website.
+2.	Download the LTS (Long-Term Support) version, which is recommended for most users.
+3.	Run the installer and follow the prompts to complete the installation.
+4.	The installation process includes npm automatically.
+
+Veryify the installation:
+```sh
+node -v
+npm -v
+```
+This should output the versions of Node.js and npm, confirming that they are installed.
+
+Install `http-server`:
+```sh
+npm install -g http-server
+```
+
+Then, get it started up:
+```sh
+http-server app
+```
+
+### 3. Begin page building
+Navigate to: [http://localhost:8080](http://localhost:8080) and make a new page.
+
 ## What is app**Sage** and what does it do?
 appSage uses vanilla JavaScript to provide designers, developers, and ideally your grandma a way to quickly and easily make a webpage without having to write code. It is intended to be the front-end arm of [macroSage](https://macrosage.io/). If you have ever used Elementor, Divi, or Webflow, you will feel right at home with this application.
 
