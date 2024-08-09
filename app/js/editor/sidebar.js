@@ -2,8 +2,15 @@
 
   editor/sidebar.js
 
+  This file is dedicated to housing the functions that exist entirely within
+  the sidebar and don't directly touch anything else.
+
 */
 
+// This function creates the tabs in the bottom-left screen of the editor page.
+// These tabs represent the selected targeted viewport for the designer's
+// editing actions.
+// DATA IN: null
 function generateMobileTabs() {
   const icons = {
       'xs': ['Smartwatch & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
@@ -30,8 +37,15 @@ function generateMobileTabs() {
     `).join('')}
   </div>
   `;
-}
+} // DATA OUT: String (of HTML)
 
+// This function creates listeners for swapping out the sidebar with the
+// editing options relevant to the designer's selected device target:
+// xs, sm, md, lg, xl, 2xl
+// All classes under these tabs are prepended with these letters followed by a
+// colon (:), such as `md:`.
+// With 'xs' there is no prepending as it is the mobile-first default.
+// DATA IN: null
 function activateTabs() {
   // Add event listeners to toggle visibility
   document.querySelectorAll('#mobileTabContainer div').forEach(tab => {
@@ -60,4 +74,4 @@ function activateTabs() {
       });
     });
   });
-}
+} // DATA OUT: null

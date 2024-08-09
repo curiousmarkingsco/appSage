@@ -282,3 +282,184 @@ function resetCopyPageButton(element){
     element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>';
   }, 750)
 } // DATA OUT: null
+
+// This function creates the form input for changing the page's title.
+// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
+function addEditablePageTitle(container, placement) {
+  const params = new URLSearchParams(window.location.search);
+  const currentTitle = params.get('config');
+  const titleLabel = document.createElement('label');
+  titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
+  titleLabel.setAttribute('for', 'page-title');
+  titleLabel.textContent = 'Page Title'
+  const titleInput = document.createElement('input');
+  titleInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  titleInput.setAttribute('name', 'page-title');
+  titleInput.type = 'text';
+  titleInput.value = currentTitle;
+  titleInput.placeholder = 'Page Title';
+
+  titleInput.addEventListener('change', function () {
+    newTitle = titleInput.value;
+    changeLocalStoragePageTitle(newTitle);
+  });
+  if (placement === 'prepend') {
+    container.prepend(titleInput);
+    container.prepend(titleLabel);
+  } else {
+    container.appendChild(titleLabel);
+    container.appendChild(titleInput);
+  }
+} // DATA OUT: null
+
+// This function changes the page's title. Because localStorage data for the
+// page is identified by the page's title, we have to copy the data over to a
+// new object, then delete the old one.
+// TODO: On page creation, generate an alphanumeric ID and store the object
+//       that way instead. We will then need to update how localStorage loads
+//       the page, perhaps by creating a new key-value object in the
+//       localStorage like { page-title: 'thea-lpha-nume-rici-d123-4567'}
+//       That way, we only have to replace that object and no longer risk
+//       losing the entire page data like we potentially could with this
+//       implementation as it exists now.
+// DATA IN: String
+function changeLocalStoragePageTitle(newTitle) {
+  const params = new URLSearchParams(window.location.search);
+  const currentTitle = params.get('config');
+  
+  // Retrieve the pages object from localStorage
+  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
+  
+  // Check if the currentTitle exists in the pages object
+  if (pageSageStorage.pages[currentTitle]) {
+    // Clone the data from the current title
+    const pageData = pageSageStorage.pages[currentTitle];
+    
+    // Assign the data to the new title
+    pageSageStorage.pages[newTitle] = pageData;
+    
+    // Delete the current title entry
+    delete pageSageStorage.pages[currentTitle];
+    
+    // Save the updated pages object back to localStorage
+    localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
+    
+    // Update the URL parameters
+    params.set('config', newTitle);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+  } else {
+    console.error(`Page with title "${currentTitle}" does not exist.`);
+  }
+} // DATA OUT: null
+
+// This function generates the area for creating as many items of metadata as
+// the designer deems necessary.
+// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
+function addEditableMetadata(container, placement) {
+  /* 
+  defaults:
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  automatically generate?:
+    <meta name="description" content="This page was built using pageSage">
+    <meta property="og:title" content="Untitled | Built w/ pageSage">
+  */
+  const metaDataContainer = document.createElement('div');
+  if (placement === 'prepend') {
+    container.prepend(metaDataContainer);
+  } else {
+    container.appendChild(metaDataContainer);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const page_id = params.get('config');
+  const metaDataPairsContainer = document.createElement('div');
+  metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
+  metaDataContainer.appendChild(metaDataPairsContainer);
+
+  const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const settings = storedData.pages[page_id].settings;
+  if (settings) {
+    const metaTags = JSON.parse(settings).metaTags;
+
+    if (metaTags) {
+      metaTags.forEach(tag => {
+        addMetadataPair(tag.type, tag.name, tag.content);
+      });
+    }
+  }
+
+  // Add initial empty metadata pair
+  function addMetadataPair(meta_type, meta_name, meta_content) {
+    const pair = document.createElement('div');
+    pair.className = 'metadata-pair mt-2'
+
+    const select = document.createElement('select');
+    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    const optionName = document.createElement('option');
+    optionName.value = 'name';
+    optionName.selected = 'name' === meta_type;
+    optionName.text = 'Name';
+    const optionProperty = document.createElement('option');
+    optionProperty.value = 'property';
+    optionName.selected = 'property' === meta_type;
+    optionProperty.text = 'Property';
+    select.appendChild(optionName);
+    select.appendChild(optionProperty);
+
+    const nameInput = document.createElement('input');
+    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    nameInput.type = 'text';
+    nameInput.value = meta_name || '';
+    nameInput.placeholder = 'Name/Property';
+
+    const contentInput = document.createElement('input');
+    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    contentInput.type = 'text';
+    contentInput.value = meta_content || '';
+    contentInput.placeholder = 'Content';
+
+    pair.appendChild(select);
+    pair.appendChild(nameInput);
+    pair.appendChild(contentInput);
+    metaDataPairsContainer.appendChild(pair);
+  }
+
+  addMetadataPair();
+
+  const addButton = document.createElement('button');
+  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline mb-1"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
+  addButton.className = 'col-span-2 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-28 mt-2';
+  addButton.id = 'add-metadata-button';
+  metaDataContainer.appendChild(addButton);
+
+  addButton.addEventListener('click', function () {
+    addMetadataPair();
+  });
+
+  document.querySelectorAll('.metadata').forEach(input => {
+    input.addEventListener('change', function () {
+      const params = new URLSearchParams(window.location.search);
+      const page_id = params.get('config');
+      const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+      const settings = JSON.parse(storedData.pages[page_id].settings);
+      const metaTags = [];
+  
+      document.querySelectorAll('.metadata-pair').forEach(pair => {
+        const type = pair.querySelector('.meta-type').value;
+        const name = pair.querySelector('.meta-name').value;
+        const content = pair.querySelector('.meta-content').value;
+        if (name && content) {
+          metaTags.push({ type, name, content });
+        }
+      });
+  
+      settings.metaTags = metaTags;
+      storedData.pages[page_id].settings = JSON.stringify(settings);
+      localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
+      console.log('Metadata saved successfully!');
+    });
+  });
+} // DATA OUT: null
