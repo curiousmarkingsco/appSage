@@ -15,7 +15,5 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 ## Coming soon / please help!
 Search this repository for the text `TODO: `
 
-## Style
-
-### JavaScript
-This repository was made by a ruby dev and thus indenting is 2-space. In a perfect world, all lines would be less than 100 characters. For now, this is only enforced with comments.
+## Contributing
+See: [CONTRIBUTING.md](https://github.com/curiousmarkingsco/appSage/blob/main/CONTRIBUTING.md)
