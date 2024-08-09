@@ -14,7 +14,7 @@
 // to the user's selected remote server. It may or may not be operational.
 // DATA IN: ['String', 'String', 'String:Optional']
 function saveDataToServer(url, page_id, css_content = null) {
-  const html_content = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id];
+  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id];
   const fullPath = url + (page_id ? ('/' + page_id) : '');
   fetch(fullPath, {
     method: 'POST',

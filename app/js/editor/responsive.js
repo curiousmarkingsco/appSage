@@ -80,7 +80,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
 // DATA IN: See `addDeviceTargetedOptions`
 function handleReset(bp, grid, options, cssClassBase, control){
   const resetButton = document.createElement('button');
-  resetButton.innerHTML = pageSageEditorIcons['reset'];
+  resetButton.innerHTML = appSageEditorIcons['reset'];
   resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded'
   control.appendChild(resetButton);
   resetButton.onclick = () => {
@@ -146,7 +146,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     const label = document.createElement('label');
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
-    mobileIcon.innerHTML = `${pageSageEditorIcons['responsive'][bp]}`;
+    mobileIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
     label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
     label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
     label.setAttribute('for', forAttr);
@@ -208,7 +208,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
-  const iconTarget = pageSageEditorIcons[iconTargetName];
+  const iconTarget = appSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
@@ -272,7 +272,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
-    const iconTarget = pageSageEditorIcons[iconTextCandidate1] || pageSageEditorIcons[iconTextCandidate2] || pageSageEditorIcons[option];
+    const iconTarget = appSageEditorIcons[iconTextCandidate1] || appSageEditorIcons[iconTextCandidate2] || appSageEditorIcons[option];
     iconButton.innerHTML = iconTarget;
     if (labelPrefix == 'Text Alignment') {
       iconButton.setAttribute('data-extra-info', `${option === 'justify' ? 'Make text expand across the entire box. If you\'re not a professional designer, this option is a bad idea' : 'Align text to the ' + option}`)
@@ -343,7 +343,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
     control.setAttribute('data-extra-info-class', 'underline');
   }
   const iconButton = document.createElement('span');
-  iconButton.innerHTML = pageSageEditorIcons[cssClassBase];
+  iconButton.innerHTML = appSageEditorIcons[cssClassBase];
   iconButton.className = `absolute top-0.5 right-0 h-11 w-11 px-2 py-1 rounded-sm border-none pointer-events-none`;
 
   const checkbox = document.createElement('input')

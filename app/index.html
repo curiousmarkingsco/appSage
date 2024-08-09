@@ -16,7 +16,7 @@
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <script src="./js/tailwind.js"></script>
     <script src="./js/tailwind.config.js"></script>
-    <title>Dashboard | pageSage</title>
+    <title>Dashboard | appSage</title>
   </head>
 
   <body class="bg-slate-50">
@@ -53,7 +53,7 @@
       document.addEventListener('DOMContentLoaded', function () {
         const container = document.getElementById('pageList');
         try {
-          const pages = JSON.parse(localStorage['pageSageStorage']).pages;
+          const pages = JSON.parse(localStorage['appSageStorage']).pages;
           Object.keys(pages).forEach(key => {
             // const value = pages[key];
             const column = document.createElement('div');

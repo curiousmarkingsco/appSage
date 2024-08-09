@@ -1,6 +1,6 @@
 {
-    "name": "pageSage",
-    "short_name": "pageSage",
+    "name": "appSage",
+    "short_name": "appSage",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

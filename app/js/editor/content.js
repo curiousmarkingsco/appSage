@@ -248,9 +248,9 @@ function updateSidebarForContentType(contentContainer) {
   activateTabs();
 
   const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${pageSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeader(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${pageSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Button (Link)">${pageSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeader(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Button (Link)">${appSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
   ];
   showNewContentMenu(contentTypes, sidebar);
 } // DATA OUT: null
@@ -772,7 +772,7 @@ function createLabelAllDevices() {
   breakpoints.forEach(bp => {
     const responsiveIcon = document.createElement('span');
     responsiveIcon.className = 'h-3 w-3 mr-2 inline-block';
-    responsiveIcon.innerHTML = `${pageSageEditorIcons['responsive'][bp]}`;
+    responsiveIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
     label.prepend(responsiveIcon);
   });
   return label;
@@ -823,9 +823,9 @@ function generateMediaSrc(event, contentContainer, url){
         const generatedId = config + Array.from({length: 12}, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
         contentContainer.classList.add(`bg-local-${generatedId}`);
         // Store the object under the generated id
-        const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
-        pageSageStorage.pages[config].blobs[generatedId] = e.target.result;
-        localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
+        const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
+        appSageStorage.pages[config].blobs[generatedId] = e.target.result;
+        localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
         // TailwindCSS doesn't appear to like entire image blobs LOL
         // This is a workaround. Though, we should figure out a way to not use
         // any blobs at all and have some kind of remote URL or local folder

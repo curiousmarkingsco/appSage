@@ -11,10 +11,10 @@
 
 Examples:
 
-   pageSagePlaceholderMedia['photo_square']
+   appSagePlaceholderMedia['photo_square']
 => './placeholder_media/square.jpg'
 
-   pageSagePlaceholderMedia['video']
+   appSagePlaceholderMedia['video']
 => './placeholder_media/video.mp4'
 
    randomImage()
@@ -26,7 +26,7 @@ Examples:
 */
 
 // Global variable — These paths are relative to the HTML page loading them, not this file.
-var pageSagePlaceholderMedia = {
+var appSagePlaceholderMedia = {
   "audio": './placeholder_media/audio.mp3',
   "video": './placeholder_media/video.mp4',
   "photo_avatar_darkmode_jpg": './placeholder_media/darkmode_jpg/avatar_placeholder.jpg',
@@ -76,7 +76,7 @@ function randomImage() {
 
   const options = darkmodeOptions.concat(lightmodeOptions);
   const result = options[Math.floor(Math.random() * options.length)];
-  return pageSagePlaceholderMedia[result];
+  return appSagePlaceholderMedia[result];
 } // DATA OUT: String
 
 // For some apps like with user-generated content, they could be posting not
@@ -95,7 +95,7 @@ function randomMedia() {
   ];
 
   const result = options[Math.floor(Math.random() * options.length)];
-  return pageSagePlaceholderMedia[result];
+  return appSagePlaceholderMedia[result];
 } // DATA OUT: String
 
 // This is to bring brevity to multiple functions needing the same array.

@@ -40,9 +40,9 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function() {
-    const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
-    delete pageSageStorage.pages[page_id];
-    localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
+    const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
+    delete appSageStorage.pages[page_id];
+    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
     element.remove();
   });
 } // DATA OUT: null

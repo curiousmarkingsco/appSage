@@ -236,8 +236,8 @@ function getNextValidSibling(element, direction) {
 function copyPageHTML(element) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem('pageSageStorage')).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
@@ -249,7 +249,7 @@ function copyPageHTML(element) {
 function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
@@ -328,21 +328,21 @@ function changeLocalStoragePageTitle(newTitle) {
   const currentTitle = params.get('config');
   
   // Retrieve the pages object from localStorage
-  const pageSageStorage = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
   
   // Check if the currentTitle exists in the pages object
-  if (pageSageStorage.pages[currentTitle]) {
+  if (appSageStorage.pages[currentTitle]) {
     // Clone the data from the current title
-    const pageData = pageSageStorage.pages[currentTitle];
+    const pageData = appSageStorage.pages[currentTitle];
     
     // Assign the data to the new title
-    pageSageStorage.pages[newTitle] = pageData;
+    appSageStorage.pages[newTitle] = pageData;
     
     // Delete the current title entry
-    delete pageSageStorage.pages[currentTitle];
+    delete appSageStorage.pages[currentTitle];
     
     // Save the updated pages object back to localStorage
-    localStorage.setItem('pageSageStorage', JSON.stringify(pageSageStorage));
+    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
     
     // Update the URL parameters
     params.set('config', newTitle);
@@ -362,8 +362,8 @@ function addEditableMetadata(container, placement) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   automatically generate?:
-    <meta name="description" content="This page was built using pageSage">
-    <meta property="og:title" content="Untitled | Built w/ pageSage">
+    <meta name="description" content="This page was built using appSage">
+    <meta property="og:title" content="Untitled | Built w/ appSage">
   */
   const metaDataContainer = document.createElement('div');
   if (placement === 'prepend') {
@@ -379,7 +379,7 @@ function addEditableMetadata(container, placement) {
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
   metaDataContainer.appendChild(metaDataPairsContainer);
 
-  const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = JSON.parse(settings).metaTags;
@@ -443,7 +443,7 @@ function addEditableMetadata(container, placement) {
     input.addEventListener('change', function () {
       const params = new URLSearchParams(window.location.search);
       const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem('pageSageStorage'));
+      const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
       const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
   
@@ -458,7 +458,7 @@ function addEditableMetadata(container, placement) {
   
       settings.metaTags = metaTags;
       storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem('pageSageStorage', JSON.stringify(storedData));
+      localStorage.setItem('appSageStorage', JSON.stringify(storedData));
       console.log('Metadata saved successfully!');
     });
   });
