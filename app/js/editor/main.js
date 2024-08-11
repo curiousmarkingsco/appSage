@@ -156,7 +156,8 @@ function extractColorNames(colorObject) {
 // classes. This is for folks who have/bought existing HTML that uses
 // TailwindCSS.
 // TODO: Validate that the HTML is indeed Tailwind-y before proceeding to litter
-// the page/page editor with the markup.
+// the page/page editor with the markup. Or... do we just ignore the fact that
+// it isn't Tailwind-y and let them edit it anyway? In which case, nothing to do here.
 // DATA IN: Optional function()
 function showHtmlModal(onConfirm = null) {
   const modal = document.createElement('div');

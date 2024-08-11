@@ -7,6 +7,7 @@
   want to process the JSON object they receive.
 
   TODO: Add field on settings page for remote storage URL
+  TODO: Add a button somewhere for these functions to actually be accessible
 
 */
 
