@@ -759,10 +759,7 @@ function moveVertical(element, direction) {
   }
 } // DATA OUT: null
 
-// TODO: Find an alternative to storing image blobs in the local storage and
-//  in the copy/pastes that might end up in a database bloating it to oblivion.
-//  To see the offending line, search for this text (less the // part):
-// contentContainer.style.backgroundImage
+// This function makes those all-caps labels with the icon to the left of them.
 // DATA IN: null
 function createLabelAllDevices() {
   const label = document.createElement('span');
@@ -780,6 +777,10 @@ function createLabelAllDevices() {
 
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
+// TODO: Find an alternative to storing image blobs in the local storage and
+//  in the copy/pastes that might end up in a database bloating it to oblivion.
+//  To see the offending line, search for this text (less the // part):
+// contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, url){
   const file = event.target.files[0];
