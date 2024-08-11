@@ -11,10 +11,10 @@
 // functions that show up in the sidebar.
 // DATA IN: null
 document.addEventListener('DOMContentLoaded', function () {
-  const elementsToWatch = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form', 'ul', 'ol', 'li', 'button', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
+  const elementsToWatch = ['div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'form'];//, 'ul', 'ol', 'li', 'button', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
   const sidebar = document.getElementById('sidebar-dynamic');
 
-  document.body.addEventListener('click', function(event) {
+  document.getElementById('page').addEventListener('click', function(event) {
     event.preventDefault();
     let element = event.target;
     if (elementsToWatch.includes(element.tagName.toLowerCase())) {
