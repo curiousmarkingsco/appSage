@@ -53,6 +53,14 @@ function addEditablePadding(sidebar, element) {
     const cssClassBase = side === 'a' ? 'p' : `p${side}`;
 
     addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
+
+    if (side === 'a') {
+      values.forEach(value => {
+        const paddingClass = `p${value}`;
+        element.classList.remove(`pt${value}`, `pb${value}`, `pl${value}`, `pr${value}`);
+        element.classList.add(`pt${value}`, `pb${value}`, `pl${value}`, `pr${value}`);
+      });
+    }
   });
 
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
