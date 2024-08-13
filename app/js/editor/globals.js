@@ -21,6 +21,31 @@ var plainEnglishBreakpointNames = {
   "2xl": 'Extra, Extra Large'
 }
 
+var tooltips = {
+  'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
+  'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
+  'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",
+  'justify-items-stretch': "Stretch the columns across the column's maximum span",
+  'justify-items-reset': "Reset justification of items to default",
+  'content-start': "Align columns to the top left of the grid. Choosing this option may not be obvious unless you also choose 'Place Items Start'",
+  'content-end': "Align columns to the bottom right of the grid. Choosing this option may not be obvious unless you also choose 'Place Items End'",
+  'content-center': "Align columns to the center of the grid.",
+  'content-stretch': "Stretch columns to fill the height of the grid",
+  'content-between': "Align columns evenly from the very top and very bottom of the grid",
+  'content-around': "Align columns evenly within the height of the grid",
+  'content-evenly': "Align columns evenly between the columns and the space around the columns",
+  'content-reset': "Reset column vertical alignment",
+  'place-items-start': "Place content within your columns to the columns to the top left of the columns",
+  'place-items-end': "Place content within your columns to the columns to the bottom right of the columns",
+  'place-items-center': "Place content within your columns to the columns to the center of the columns",
+  'place-items-stretch': "Stretch content to the full dimensions of your columns",
+  'place-items-reset': "Reset items placement alignment",
+  'bg-no-repeat': "Do not repeat the background, this option pairs well with 'contain' or 'cover' background sizing",
+  'bg-repeat': "Repeat images to make a background pattern",
+  'bg-repeat-x': "Repeat images to make a pattern horizontally",
+  'bg-repeat-y': "Repeat images to make a pattern vertically",
+}
+
 // global variable
 var appSageEditorIcons = {
   "responsive": {

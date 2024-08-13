@@ -385,55 +385,8 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
 
 // This function is an all-in-one place for any and all tooltips necessary for
 // the functions in this file.
-// TODO: Make this function a place for ALL tooltips and move it to a file
-//       where global variables live.
 // DATA IN: ['String', 'HTML Element']
-function handleTooltips(cssClassToEvaluate, control) {
-  if (cssClassToEvaluate === 'justify-items-start') {
-    control.setAttribute('data-extra-info', "Put columns in columns in the grid to the left-most side of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-end') {
-    control.setAttribute('data-extra-info', "Put columns in columns in the grid to the right-most side of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-center') {
-    control.setAttribute('data-extra-info', "Put columns in columns in the grid to the horizontal middle of the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-stretch') {
-    control.setAttribute('data-extra-info', "Stretch the columns across the column's maximum span");
-  } else if (cssClassToEvaluate === 'justify-items-reset') {
-    control.setAttribute('data-extra-info', "Reset justification of items to default");
-  } else if (cssClassToEvaluate === 'content-start') {
-    control.setAttribute('data-extra-info', "Align columns to the top left of the grid. Choosing this option may not be obvious unless you also choose 'Place Items Start'");
-  } else if (cssClassToEvaluate === 'content-end') {
-    control.setAttribute('data-extra-info', "Align columns to the bottom right of the grid. Choosing this option may not be obvious unless you also choose 'Place Items End'");
-  } else if (cssClassToEvaluate === 'content-center') {
-    control.setAttribute('data-extra-info', "Align columns to the center of the grid.");
-  } else if (cssClassToEvaluate === 'content-stretch') {
-    control.setAttribute('data-extra-info', "Stretch columns to fill the height of the grid");
-  } else if (cssClassToEvaluate === 'content-between') {
-    control.setAttribute('data-extra-info', "Align columns evenly from the very top and very bottom of the grid");
-  } else if (cssClassToEvaluate === 'content-around') {
-    control.setAttribute('data-extra-info', "Align columns evenly within the height of the grid");
-  } else if (cssClassToEvaluate === 'content-evenly') {
-    control.setAttribute('data-extra-info', "Align columns evenly between the columns and the space around the columns");
-  } else if (cssClassToEvaluate === 'content-reset') {
-    control.setAttribute('data-extra-info', "Reset column vertical alignment");
-  } else if (cssClassToEvaluate === 'place-items-start') {
-    control.setAttribute('data-extra-info', "Place content within your columns to the columns to the top left of the columns");
-  } else if (cssClassToEvaluate === 'place-items-end') {
-    control.setAttribute('data-extra-info', "Place content within your columns to the columns to the bottom right of the columns");
-  } else if (cssClassToEvaluate === 'place-items-center') {
-    control.setAttribute('data-extra-info', "Place content within your columns to the columns to the center of the columns");
-  } else if (cssClassToEvaluate === 'place-items-stretch') {
-    control.setAttribute('data-extra-info', "Stretch content to the full dimensions of your columns");
-  } else if (cssClassToEvaluate === 'place-items-reset') {
-    control.setAttribute('data-extra-info', "Reset items placement alignment");
-  } else if (cssClassToEvaluate === 'bg-no-repeat') {
-    control.setAttribute('data-extra-info', "Do not repeat the background, this option pairs well with 'contain' or 'cover' background sizing");
-  } else if (cssClassToEvaluate === 'bg-repeat') {
-    control.setAttribute('data-extra-info', "Repeat images to make a background pattern");
-  } else if (cssClassToEvaluate === 'bg-repeat-x') {
-    control.setAttribute('data-extra-info', "Repeat images to make a pattern horizontally");
-  } else if (cssClassToEvaluate === 'bg-repeat-y') {
-    control.setAttribute('data-extra-info', "Repeat images to make a pattern vertically");
-  } else {
-    control.setAttribute('data-extra-info', "This tooltip is missing, tell the dev to fix it!");
-  }
+export function handleTooltips(cssClassToEvaluate, control) {
+  const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
+  control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
