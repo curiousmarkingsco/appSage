@@ -386,7 +386,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
 // This function is an all-in-one place for any and all tooltips necessary for
 // the functions in this file.
 // DATA IN: ['String', 'HTML Element']
-export function handleTooltips(cssClassToEvaluate, control) {
+function handleTooltips(cssClassToEvaluate, control) {
   const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
   control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
