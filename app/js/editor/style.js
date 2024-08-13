@@ -44,23 +44,22 @@ function addEditableMarginAndPadding(sidebar, element) {
 } // DATA OUT: null
 
 // This function gives all the necessary bits for editing paddings.
-// TODO: An extra option that changes all side of the padding at once.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditablePadding(sidebar, element) {
-  const sides = ['t', 'b', 'l', 'r'];
+  const sides = ['t', 'b', 'l', 'r', 'a']; // added a for all sides
   const values = ['0', '1', '2', '4', '8', '16'];
 
   sides.forEach(side => {
-    const cssClassBase = `p${side}`;
+    const cssClassBase = side === 'a' ? 'p' : `p${side}`;
 
-    addDeviceTargetedOptions(sidebar, element, `Padding (${side})`, cssClassBase, values, 'single-icon-select');
+    addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const paddingContainer = document.createElement('div');
-    paddingContainer.className = 'grid grid-cols-4 col-span-5'
+    paddingContainer.className = 'grid grid-cols-5 col-span-5'
     const paddingElements = container.querySelectorAll('.Padding');
     paddingElements.forEach(paddingDropdown => {
       paddingContainer.appendChild(paddingDropdown);
@@ -70,23 +69,22 @@ function addEditablePadding(sidebar, element) {
 } // DATA OUT: null
 
 // This function gives all the necessary bits for editing margins.
-// TODO: An extra option that changes all side of the margin at once.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditableMargin(sidebar, element) {
-  const sides = ['t', 'b', 'l', 'r'];
+  const sides = ['t', 'b', 'l', 'r', 'a']; // added a for all sides
   const values = ['0', '1', '2', '4', '8', '16'];
 
   sides.forEach(side => {
-    const cssClassBase = `m${side}`;
+    const cssClassBase = side === 'a' ? 'm' : `m${side}`;
 
-    addDeviceTargetedOptions(sidebar, element, `Margin (${side})`, cssClassBase, values, 'single-icon-select');
+    addDeviceTargetedOptions(sidebar, element, `Margin (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const marginContainer = document.createElement('div');
-    marginContainer.className = 'grid grid-cols-4 col-span-5'
+    marginContainer.className = 'grid grid-cols-5 col-span-5'
     const marginElements = container.querySelectorAll('.Margin');
     marginElements.forEach(marginDropdown => {
       marginContainer.appendChild(marginDropdown);
