@@ -50,9 +50,17 @@ function addEditablePadding(sidebar, element) {
   const values = ['0', '1', '2', '4', '8', '16'];
 
   sides.forEach(side => {
-    const cssClassBase = side === 'a' ? 'p' : `p${side}`;
-    console.log(`Processing side: ${side}, cssClassBase: ${cssClassBase}`);
-
+    let cssClassBase;
+  
+    if (side === 'a') {
+      cssClassBase = 'p';
+      console.log('Removing individual side classes for All:', element.classList.toString());
+      element.classList.remove('pt', 'pb', 'pl', 'pr'); 
+    } else {
+      cssClassBase = `p${side}`;
+    }
+  
+    console.log(`Applying cssClassBase: ${cssClassBase}`);
     addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
