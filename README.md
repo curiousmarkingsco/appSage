@@ -29,7 +29,7 @@ npm install -g http-server
 
 Then, get it started up:
 ```sh
-http-server app
+http-server
 ```
 
 ### 3. Begin page building
