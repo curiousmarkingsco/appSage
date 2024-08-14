@@ -21,6 +21,54 @@ var plainEnglishBreakpointNames = {
   "2xl": 'Extra, Extra Large'
 }
 
+var tooltips = {
+  'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
+  'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
+  'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",
+  'justify-items-stretch': "Stretch the columns across the column's maximum span",
+  'justify-items-reset': "Reset justification of items to default",
+  'content-start': "Align columns to the top left of the grid. Choosing this option may not be obvious unless you also choose 'Place Items Start'",
+  'content-end': "Align columns to the bottom right of the grid. Choosing this option may not be obvious unless you also choose 'Place Items End'",
+  'content-center': "Align columns to the center of the grid.",
+  'content-stretch': "Stretch columns to fill the height of the grid",
+  'content-between': "Align columns evenly from the very top and very bottom of the grid",
+  'content-around': "Align columns evenly within the height of the grid",
+  'content-evenly': "Align columns evenly between the columns and the space around the columns",
+  'content-reset': "Reset column vertical alignment",
+  'place-items-start': "Place content within your columns to the columns to the top left of the columns",
+  'place-items-end': "Place content within your columns to the columns to the bottom right of the columns",
+  'place-items-center': "Place content within your columns to the columns to the center of the columns",
+  'place-items-stretch': "Stretch content to the full dimensions of your columns",
+  'place-items-reset': "Reset items placement alignment",
+  'bg-no-repeat': "Do not repeat the background, this option pairs well with 'contain' or 'cover' background sizing",
+  'bg-repeat': "Repeat images to make a background pattern",
+  'bg-repeat-x': "Repeat images to make a pattern horizontally",
+  'bg-repeat-y': "Repeat images to make a pattern vertically",
+  'move-column': "Move this column to the ",
+  'remove-column': "Remove this column forever (that\'s a long time!)",
+  'add-column': "Add another column to this grid",
+  'add-content': "Add content to this column",
+  'remove-content': "Remove this content forever (that\'s a long time!)",
+  'move-content-up': "Move this content upward in the column",
+  'move-content-down': "Move this content downward in the column",
+  'remove-grid': "Remove this grid forever (that\'s a long time!)",
+  'move-grid-up': "Move this grid upward in the document",
+  'move-grid-down': "Move this grid downward in the document",
+  'color-vision-impairement': "Please remember to make colors contrast well for people with vision impairments.",
+  'text-alignment-justify': "Make text expand across the entire box. If you're not a professional designer, this option is a bad idea",
+  'text-alignment-other': "Align text to the ",
+  'border-style-none': "Remove border styles from this element",
+  'border-style-other': "Change the border style to be a ",
+  'background-size-cover': "Make your background image cover the entire box; cropping will occur",
+  'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'swatchboard': "TailwindCSS class name: ",
+  'bg-icon': "Position your background image to the ",
+  'italicize': "Italicize your text",
+  'underline': "Underline your text",
+  'padding': "Create space between the edge of the box and content inside of it.",
+  'margin': "Create space between the edge of the box and content inside of it."
+}
+
 // global variable
 var appSageEditorIcons = {
   "responsive": {
