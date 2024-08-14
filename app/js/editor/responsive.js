@@ -215,9 +215,9 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const selectControl = document.createElement('select');
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
-    extraInfo = 'Create space between the edge of the box and content inside of it.'
+    extraInfo = tooltips['padding']
   } else if (labelPrefix.includes('Margin')) {
-    extraInfo = 'Create space between the edge of the box and the boxes/content outside of it.'
+    extraInfo = tooltips['margin']
   } else {
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase()
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`

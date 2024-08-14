@@ -64,7 +64,9 @@ var tooltips = {
   'swatchboard': "TailwindCSS class name: ",
   'bg-icon': "Position your background image to the ",
   'italicize': "Italicize your text",
-  'underline': "Underline your text"
+  'underline': "Underline your text",
+  'padding': "Create space between the edge of the box and content inside of it.",
+  'margin': "Create space between the edge of the box and content inside of it."
 }
 
 // global variable
