@@ -203,27 +203,33 @@ function handleTextareaType(labelPrefix, grid, control) {
 // DATA IN: See `addDeviceTargetedOptions`
 function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, control) {
   cssClassBase = cssClassBase.includes('-all') ? cssClassBase.replace('-all', '') : cssClassBase;
-  const fontSize = (labelPrefix === 'Font Size' || labelPrefix === 'Font Weight')
+  const fontSize = (labelPrefix === 'Font Size' || labelPrefix === 'Font Weight');
   const borderOption = (labelPrefix === 'Border Width' || labelPrefix === 'Border Radius');
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
+  
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${smallSelect ? (labelPrefix + ' w-20 ') : ''}`;
+  
   const iconTarget = appSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${smallSelect ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
+  
   const selectControl = document.createElement('select');
+  
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
     extraInfo = tooltips['padding']
   } else if (labelPrefix.includes('Margin')) {
     extraInfo = tooltips['margin']
   } else {
-    const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase()
-    extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`
+    const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
+    extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;
   }
+  
   selectControl.setAttribute('data-extra-info', extraInfo);
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${smallSelect ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
+  
   options.forEach(option => {
     const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
@@ -232,15 +238,28 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     optionElement.selected = String(grid.classList).includes(value);
     selectControl.appendChild(optionElement);
   });
+  
   selectControl.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      const classToRemove = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+      grid.classList.remove(classToRemove);
     });
+
+    // Remove any individual side-specific classes for both margin and padding
+    if (cssClassBase === 'm') {
+      grid.classList.remove('mt-0', 'mb-0', 'ml-0', 'mr-0', 'mt-1', 'mb-1', 'ml-1', 'mr-1', 'mt-2', 'mb-2', 'ml-2', 'mr-2', 'mt-4', 'mb-4', 'ml-4', 'mr-4', 'mt-8', 'mb-8', 'ml-8', 'mr-8', 'mt-16', 'mb-16', 'ml-16', 'mr-16');
+    }
+    
+    if (cssClassBase === 'p') {
+      grid.classList.remove('pt-0', 'pb-0', 'pl-0', 'pr-0', 'pt-1', 'pb-1', 'pl-1', 'pr-1', 'pt-2', 'pb-2', 'pl-2', 'pr-2', 'pt-4', 'pb-4', 'pl-4', 'pr-4', 'pt-8', 'pb-8', 'pl-8', 'pr-8', 'pt-16', 'pb-16', 'pl-16', 'pr-16');
+    }
+
     grid.classList.add(selectControl.value);
   };
+  
   control.appendChild(selectControl);
   control.appendChild(iconButton);
-} // DATA OUT: null
+}// DATA OUT: null
 
 // This function messily handles all the nuance thus far encountered from
 // supporting icon styled select dropdowns for sidebar editor controls.
