@@ -44,6 +44,27 @@ var tooltips = {
   'bg-repeat': "Repeat images to make a background pattern",
   'bg-repeat-x': "Repeat images to make a pattern horizontally",
   'bg-repeat-y': "Repeat images to make a pattern vertically",
+  'move-column': "Move this column to the ",
+  'remove-column': "Remove this column forever (that\'s a long time!)",
+  'add-column': "Add another column to this grid",
+  'add-content': "Add content to this column",
+  'remove-content': "Remove this content forever (that\'s a long time!)",
+  'move-content-up': "Move this content upward in the column",
+  'move-content-down': "Move this content downward in the column",
+  'remove-grid': "Remove this grid forever (that\'s a long time!)",
+  'move-grid-up': "Move this grid upward in the document",
+  'move-grid-down': "Move this grid downward in the document",
+  'color-vision-impairement': "Please remember to make colors contrast well for people with vision impairments.",
+  'text-alignment-justify': "Make text expand across the entire box. If you're not a professional designer, this option is a bad idea",
+  'text-alignment-other': "Align text to the ",
+  'border-style-none': "Remove border styles from this element",
+  'border-style-other': "Change the border style to be a ",
+  'background-size-cover': "Make your background image cover the entire box; cropping will occur",
+  'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'swatchboard': "TailwindCSS class name: ",
+  'bg-icon': "Position your background image to the ",
+  'italicize': "Italicize your text",
+  'underline': "Underline your text"
 }
 
 // global variable
