@@ -127,24 +127,16 @@ function detectAndLoadContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   // const oldMoveButtons = document.getElementById('moveContentButtons');
   // if (oldMoveButtons) { oldMoveButtons.remove }
-  const types = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'button', 'form']//, 'div', 'ul' ,'ol', 'li', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
+  // 'form' MUST be first so that other elements don't get snagged up
+  const types = ['form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'button', 'input', 'textarea'];//, 'div', 'ul' ,'ol', 'li', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
   const found = types.find(type => contentContainer.querySelector(type));
   if (found) {
     switch (found) {
-      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': //case 'p': case 'a': case 'button': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
-        updateSidebarForHeader(contentContainer);
-        break;
-      case 'p':
-        updateSidebarForParagraph(contentContainer);
+      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': case 'button': case 'a': case 'p': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
+        updateSidebarForTextElements(sidebar, contentContainer);
         break;
       case 'img': case 'video': case 'audio':
         updateSidebarForMedia(contentContainer);
-        break;
-      case 'a': case 'button':
-        updateSidebarForButton(contentContainer);
-        break;
-      case 'form':
-        updateSidebarForForm(contentContainer);
         break;
     }
   } else {
@@ -166,77 +158,6 @@ function detectAndLoadContentType(contentContainer) {
   highlightEditingElement(contentContainer);
 } // DATA OUT: null
 
-// This cobbles together all the needed bits for adding/editing header elements.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForHeader(contentContainer, newContent) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = generateMobileTabs();
-  activateTabs();
-  const sidebarTitle = document.createElement('div')
-  sidebarTitle.innerHTML = `<div><strong>Edit Heading:</strong></div>`;
-
-  const select = document.createElement('select');
-  const options = ['Title (h1)', 'Heading One (h2)', 'Heading Two (h3)', 'Heading Three (h4)', 'Heading Four (h5)', 'Heading Five (h6)'];
-  select.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  options.forEach(opt => {
-    const optionElement = document.createElement('option');
-    optionElement.value = opt.substring(opt.indexOf('(') + 1, opt.indexOf(')'));
-    optionElement.textContent = opt;
-    select.appendChild(optionElement);
-  });
-
-  const textInputLabel = document.createElement('label');
-  textInputLabel.setAttribute('for', 'textInput');
-  const textInput = document.createElement('input');
-  textInput.setAttribute('name', 'textInput');
-  textInput.type = 'text';
-  textInput.maxLength = 144;
-  textInput.placeholder = 'Enter heading text here...';
-  textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-
-  if (newContent) {
-    newContainer = addContentContainer(contentContainer, false)
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    heading = document.createElement(select.value);
-    newContainer.appendChild(heading);
-    contentContainer = newContainer;
-  } else {
-    // Pre-fill if existing heading
-    const existingHeading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
-    if (existingHeading) {
-      select.value = existingHeading.tagName.toLowerCase();
-      textInput.value = existingHeading.textContent;
-    }
-  }
-
-  textInput.addEventListener('input', function () {
-    let heading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
-    if (!heading) {
-      heading = document.createElement(select.value);
-      contentContainer.appendChild(heading);
-    }
-    heading.tagName !== select.value && (heading = replaceWithNewHeading(heading, select.value));
-    heading.textContent = this.value;
-  });
-
-  select.addEventListener('change', function () {
-    const heading = contentContainer.querySelector('h1, h2, h3, h4, h5, h6');
-    if (heading) {
-      replaceWithNewHeading(heading, this.value);
-    }
-  });
-
-  addTextOptions(sidebar, contentContainer);
-} // DATA OUT: null
-
 // This function and the one below it creates various buttons to choose from
 // available elements that can be created.
 // TODO: This function should be used by updateSidebarForTextElements so that the
@@ -248,9 +169,8 @@ function updateSidebarForContentType(contentContainer) {
   activateTabs();
 
   const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Text Content including Forms.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForHeader(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Text Content including Form elements.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
     { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
-    { label: `<div class="p-6" data-extra-info="Button (Link)">${appSageEditorIcons["button"]}</div>`, action: () => updateSidebarForButton(contentContainer, true) },
   ];
   showNewContentMenu(contentTypes, sidebar);
 } // DATA OUT: null
@@ -293,6 +213,7 @@ function updateSidebarForForm(contentContainer, newContent) {
   sidebarTitle.innerHTML = `<strong>Edit Form:</strong></div>${generateMobileTabs()}`;
   activateTabs();
   let form = contentContainer.querySelector('form');
+  let buttonContainer;
   let submitButton;
 
   if (!form) {
@@ -300,13 +221,17 @@ function updateSidebarForForm(contentContainer, newContent) {
     contentContainer.prepend(form);
 
     // Add submit button
+    buttonContainer = document.createElement('div');
+    buttonContainer.className = 'content-container pagecontent text-base';
     submitButton = document.createElement('button');
     submitButton.type = 'submit';
     submitButton.textContent = 'Submit';
     submitButton.className = 'mt-4 bg-emerald-500 hover:bg-emerald-700 top-2 text-slate-50 font-bold p-2 rounded';
-    form.appendChild(submitButton);
+    form.appendChild(buttonContainer);
+    buttonContainer.appendChild(submitButton);
   } else {
     submitButton = form.querySelector('button[type="submit"]');
+    buttonContainer = form.querySelector('button[type="submit"]').parentElement;
   }
 
   // Add UI for setting the form action
@@ -391,7 +316,12 @@ function updateSidebarForForm(contentContainer, newContent) {
     input.type = typeField.value;
     input.placeholder = inputField.value; // Use label as placeholder
     input.className = 'mt-2 p-2 border border-slate-300 w-full';
-    form.insertBefore(input, submitButton);
+
+    const inputContainer = document.createElement('div');
+    inputContainer.className = 'content-container pagecontent text-base';
+
+    inputContainer.appendChild(input);
+    form.insertBefore(inputContainer, buttonContainer);
     updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
   };
 
@@ -516,121 +446,6 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
 
     sidebarForm.appendChild(fieldEditor);
   });
-} // DATA OUT: null
-
-// This cobbles together all the needed bits for adding/editing paragraph elements.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForParagraph(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer(contentContainer, false)
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`;
-  const label = document.createElement('div')
-  label.innerHTML = '<strong>Edit Paragraph Text:</strong>';
-
-  const textInput = document.createElement('textarea');
-  textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  textInput.rows = 4;
-
-  let p = contentContainer.querySelector('p');
-  if (p) {
-    textInput.value = p.textContent;
-  }
-  textInput.oninput = function () {
-    if (!p) {
-      p = document.createElement('p');
-      contentContainer.classList.add('text-base');
-      contentContainer.appendChild(p);
-    }
-    p.textContent = this.value;
-  };
-
-  // Add font size options
-  addTextOptions(sidebar, contentContainer);
-  sidebar.prepend(textInput);
-  sidebar.prepend(label);
-} // DATA OUT: null
-
-// This cobbles together all the needed bits for adding/editing button elements.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForButton(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer(contentContainer, false)
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Configure Button:</strong></div>${generateMobileTabs()}`;
-
-  const textInput = document.createElement('input');
-  textInput.type = 'text';
-  textInput.placeholder = 'Button Text';
-  textInput.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-  const urlInput = document.createElement('input');
-  urlInput.type = 'url';
-  urlInput.placeholder = 'Button URL';
-  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-  const checkboxLabel = document.createElement('label');
-  checkboxLabel.setAttribute('for', 'checkbox');
-  checkboxLabel.textContent = ' Open in new tab';
-  checkboxLabel.className = 'inline-flex items-center mt-2';
-
-  const checkbox = document.createElement('input');
-  checkbox.setAttribute('name', 'checkbox');
-  checkbox.type = 'checkbox';
-  checkbox.className = 'ml-2';
-
-  let button = contentContainer.querySelector('a');
-  if (button) {
-    textInput.value = button.textContent;
-    urlInput.value = button.href;
-    checkbox.checked = button.target === '_blank';
-  }
-
-  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
-
-  const buttonUpdate = function () {
-    if (!button) {
-      button = document.createElement('a');
-      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-      contentContainer.appendChild(button);
-    }
-    button.textContent = textInput.value;
-    button.href = urlInput.value;
-    button.target = checkbox.checked ? '_blank' : '';
-  };
-
-  textInput.oninput = buttonUpdate;
-  urlInput.oninput = buttonUpdate;
-  checkbox.onchange = buttonUpdate;
-
-  sidebar.appendChild(textInput);
-  sidebar.appendChild(urlInput);
-  sidebar.appendChild(checkboxLabel);
-
-  // Add font size options
-  addTextOptions(sidebar, contentContainer);
 } // DATA OUT: null
 
 // This function is a bit redundant compared to newer implementations, but...
@@ -844,10 +659,18 @@ function generateMediaSrc(event, contentContainer, url){
 //       form fields, links/buttons, and other elements that require certain
 //       types of extra attributes.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(container) {
-  const sidebar = document.getElementById('sidebar-dynamic');
+function updateSidebarForTextElements(sidebar, container) {
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
+
+  let contentContainer;
+  if (container.classList.contains('pagecolumn')) {
+    contentContainer = document.createElement('div');
+    contentContainer.className = 'content-container pagecontent text-base';
+    container.appendChild(contentContainer);
+  } else {
+    contentContainer = container;
+  }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -859,14 +682,11 @@ function updateSidebarForTextElements(container) {
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
-    { label: 'Image', value: 'img' },
-    { label: 'Video', value: 'video' },
-    { label: 'Audio', value: 'audio' },
-    { label: 'Link', value: 'a' },
+    // { label: 'Unordered List', value: 'ul' },
+    // { label: 'Ordered List', value: 'ol' },
+    // { label: 'List Item', value: 'li' },
     { label: 'Form', value: 'form' },
-    { label: 'Unordered List', value: 'ul' },
-    { label: 'Ordered List', value: 'ol' },
-    { label: 'List Item', value: 'li' },
+    { label: 'Link', value: 'a' },
     { label: 'Button', value: 'button' }
   ];
 
@@ -878,40 +698,97 @@ function updateSidebarForTextElements(container) {
   });
 
   const textInput = document.createElement('textarea');
-  textInput.type = 'text';
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
   tagDropdown.addEventListener('change', function () {
     const selectedTag = tagDropdown.value;
-    let element = container.querySelector(selectedTag);
+    let element = contentContainer.querySelector(selectedTag);
 
     if (!element) {
       element = document.createElement(selectedTag);
-      container.innerHTML = '';
-      container.appendChild(element);
+      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+      contentContainer.appendChild(element);
     }
 
     element.textContent = textInput.value;
+    if (element.tagName === 'FORM') updateSidebarForForm(element, false);
   });
 
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
-    let element = container.querySelector(selectedTag);
+    let element = contentContainer.querySelector(selectedTag);
 
     if (element) {
       element.textContent = textInput.value;
     } else {
       element = document.createElement(selectedTag);
       element.textContent = textInput.value;
-      container.innerHTML = '';
-      container.appendChild(element);
+      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+      contentContainer.appendChild(element);
     }
   });
 
-  const sidebarTitle = document.createElement('div');
-  sidebarTitle.innerHTML = '<strong>Edit Content:</strong>'
-  sidebar.prepend(textInput);
+  const targetElement = contentContainer.firstChild;
+
+  if (targetElement) {
+    textInput.value = targetElement.textContent;
+    tagDropdown.value = targetElement.tagName.toLowerCase();
+
+    if (targetElement.tagName == 'A' || targetElement.tagName == 'BUTTON') {
+      handleButtonFields(sidebar, contentContainer, targetElement);
+    }
+
+    if (targetElement.tagName == 'FORM') {
+      updateSidebarForForm(contentContainer, false);
+    }
+  }
+
+  const titleElement = document.createElement('h2')
+  titleElement.textContent = 'Editing Text-based Element'
+  titleElement.className = 'font-bold text-xl'
+
   sidebar.prepend(tagDropdown);
-  sidebar.prepend(sidebarTitle);
+  sidebar.prepend(textInput);
+  sidebar.prepend(titleElement);
 } // DATA OUT: null
+
+function handleButtonFields(sidebar, contentContainer, button) {
+  const urlInput = document.createElement('input');
+  urlInput.type = 'url';
+  urlInput.placeholder = 'Button/Link URL';
+  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
+
+  const checkboxLabel = document.createElement('label');
+  checkboxLabel.setAttribute('for', 'checkbox');
+  checkboxLabel.textContent = ' Open in new tab';
+  checkboxLabel.className = 'inline-flex items-center mt-2';
+
+  const checkbox = document.createElement('input');
+  checkbox.setAttribute('name', 'checkbox');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'ml-2';
+
+  if (button) {
+    urlInput.value = button.href;
+    checkbox.checked = button.target === '_blank';
+  }
+
+  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
+
+  const buttonUpdate = function () {
+    if (!button) {
+      button = document.createElement('a');
+      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+      contentContainer.appendChild(button);
+    }
+    button.href = urlInput.value;
+    button.target = checkbox.checked ? '_blank' : '';
+  };
+
+  urlInput.oninput = buttonUpdate;
+  checkbox.onchange = buttonUpdate;
+
+  sidebar.prepend(urlInput);
+  sidebar.prepend(checkboxLabel);
+}

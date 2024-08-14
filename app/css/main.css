@@ -10,6 +10,10 @@
   border: 1px solid rgba(0, 255, 255, 0);
 }
 
+.pagecontent a, .pagecontent button {
+  pointer-events: none;
+}
+
 /* Give some space for the buttons to live */
 .pagecolumn {
   min-height: 82px;
