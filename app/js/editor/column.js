@@ -134,7 +134,7 @@ function columnHasContent(column) {
   if (column) {
     // Check if column contains any significant elements
     // We assume here that only certain tags are considered "content"
-    const contentTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'video', 'audio', 'a']; // Add other tags as needed
+    const contentTags = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'img', 'video', 'audio', 'form', 'button', 'a']; // Add other tags as needed
     return Array.from(column.querySelectorAll('*')).some(child => {
       // Check if the element is one of the content types and not empty
       return contentTags.includes(child.tagName.toLowerCase()) && (
