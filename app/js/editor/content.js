@@ -161,8 +161,6 @@ function detectAndLoadContentType(contentContainer) {
 
 // This function and the one below it creates various buttons to choose from
 // available elements that can be created.
-// TODO: This function should be used by updateSidebarForTextElements so that the
-//       options are more illustrative than a plaintext dropdown menu.
 // DATA IN: HTML Element, <div>
 function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -178,8 +176,6 @@ function updateSidebarForContentType(contentContainer) {
 
 // This function and the one above it creates various buttons to choose from
 // available elements that can be created.
-// TODO: This function should be used by updateSidebarForTextElements so that the
-//       options are more illustrative than a plaintext dropdown menu.
 // DATA IN: ['Array', 'HTML Element, <div id="sidebar-dynamic">']
 function showNewContentMenu(contentTypes, sidebar) {
   contentTypes.forEach(type => {
@@ -192,8 +188,6 @@ function showNewContentMenu(contentTypes, sidebar) {
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements, or
-//       perhaps empowered by it?
 // DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForForm(contentContainer, newContent) {
   if (newContent) {
@@ -351,8 +345,6 @@ function updateSidebarForForm(contentContainer, newContent) {
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements, or
-//       perhaps empowered by it?
 // DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   // Remove all existing field editors except the add new field section
@@ -448,17 +440,6 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     sidebarForm.appendChild(fieldEditor);
   });
 } // DATA OUT: null
-
-// This function is a bit redundant compared to newer implementations, but...
-// Don't fix it if it ain't broke.
-// TODO: This will eventually be obsolete from updateSidebarForTextElements
-// DATA IN: ['HTML Element, <h*>', 'String:h*'] // h* = all available heading tags.
-function replaceWithNewHeading(oldHeading, newTag) {
-  const newHeading = document.createElement(newTag);
-  newHeading.textContent = oldHeading.textContent;
-  oldHeading.parentNode.replaceChild(newHeading, oldHeading);
-  return newHeading;
-} // DATA OUT: HTML Element, <h*>
 
 // This cobbles together all the needed bits for adding/editing media files.
 // TODO: This should eventually be wrapped up in updateSidebarForTextElements
