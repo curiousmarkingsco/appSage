@@ -3,8 +3,6 @@
   editor/content.js
 
   TODO: A button for adding placeholder media paths for media elements
-  TODO: For anything using color, a manual colorpicker option in case the
-        designer needs to break out of their theme palette.
   TODO: Currently, if a column has no margins, padding, or content inside of
         it, it can be extremely hard to click. How do we resolve this?
 
