@@ -285,21 +285,23 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       }
     });
     control.parentElement.insertBefore(toggleButton, control);
-    // Add color picker input for swatchboard types
     const colorPicker = document.createElement('input');
     colorPicker.type = 'color';
     colorPicker.className = 'col-span-5 mb-2 w-full h-10 p-1 rounded';
 
     colorPicker.addEventListener('input', () => {
       const selectedColor = colorPicker.value;
-      // Ensure inline styles are applied correctly
-      if (labelPrefix === 'Text Color') {
-        grid.style.color = selectedColor;
-      } else if (labelPrefix === 'Background Color') {
-        grid.style.backgroundColor = selectedColor;
-      } else if (labelPrefix === 'Border Color') {
-        grid.style.borderColor = selectedColor;
-      }
+      const tailwindColorClass = `${labelPrefix === 'Text Color' ? 'text' : labelPrefix === 'Background Color' ? 'bg' : 'border'}-[${selectedColor}]`;
+
+      // Remove any existing Tailwind color classes
+      grid.classList.forEach(cls => {
+        if (/^text-\[.*\]$|^bg-\[.*\]$|^border-\[.*\]$/.test(cls)) {
+          grid.classList.remove(cls);
+        }
+      });
+
+      // Add the new Tailwind color class
+      grid.classList.add(tailwindColorClass);
     });
 
     control.appendChild(colorPicker);
@@ -417,24 +419,6 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
     });
     grid.classList.add(control.value);
   };
-  // Add color picker input
-  const colorPicker = document.createElement('input');
-  colorPicker.type = 'color';
-  colorPicker.className = 'col-span-5 mt-2 w-full h-10 p-1 rounded';
-  control.parentElement.appendChild(colorPicker);
-
-  // Apply color from color picker
-  colorPicker.addEventListener('input', () => {
-    const selectedColor = colorPicker.value;
-    // Ensure inline styles are applied correctly
-    if (labelPrefix === 'Text Color') {
-      grid.style.color = selectedColor;
-    } else if (labelPrefix === 'Background Color') {
-      grid.style.backgroundColor = selectedColor;
-    } else if (labelPrefix === 'Border Color') {
-      grid.style.borderColor = selectedColor;
-    }
-  });
 
 } // DATA OUT: null
 
