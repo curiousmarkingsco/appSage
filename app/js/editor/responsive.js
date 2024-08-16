@@ -26,6 +26,13 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         handleInput(bp, labelPrefix, options, cssClassBase, grid, control);
         control.classList.add('col-span-5');
         break;
+      case 'placeholder-media': // Add new case for the placeholder media dropdown
+        control = document.createElement('select');
+        container.appendChild(label);
+        container.appendChild(control);
+        handlePlaceholderMedia(bp, grid, control, options, cssClassBase);
+        control.classList.add('col-span-5');
+        break;
       case 'textarea':
         control = document.createElement('textarea');
         container.appendChild(label);
@@ -445,3 +452,42 @@ function handleTooltips(cssClassToEvaluate, control) {
   const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
   control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
+
+function handlePlaceholderMedia(bp, grid, control, options, cssClassBase) {
+  // Populate the dropdown with placeholder media options
+  for (const key in appSagePlaceholderMedia) {
+    const option = document.createElement('option');
+    option.value = appSagePlaceholderMedia[key]; 
+    option.textContent = key;
+    control.appendChild(option);
+  }
+
+  control.addEventListener('change', function (event) {
+    const selectedMedia = event.target.value;
+
+    // Check if media element already exists in the grid
+    let mediaElement = grid.querySelector(`.${bp}-media`);
+
+    // If no media element exists for this breakpoint, create one
+    if (!mediaElement) {
+      if (selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg')) {
+        mediaElement = document.createElement('img');
+      } else if (selectedMedia.endsWith('.mp4')) {
+        mediaElement = document.createElement('video');
+        mediaElement.controls = true; // Add controls for video playback
+      } else if (selectedMedia.endsWith('.mp3')) {
+        mediaElement = document.createElement('audio');
+        mediaElement.controls = true; // Add controls for audio playback
+      }
+
+      if (mediaElement) {
+        mediaElement.classList.add(`${bp}-media`);
+        grid.appendChild(mediaElement);
+      }
+    }
+
+    if (mediaElement) {
+      mediaElement.src = selectedMedia;
+    }
+  });
+}

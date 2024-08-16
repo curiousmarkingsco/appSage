@@ -34,6 +34,7 @@ function addGridOptions(grid) {
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
+    addPlaceholderMediaDropdown(sidebar, grid);
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
   }

@@ -239,3 +239,8 @@ function addEditableColumnGaps(sidebar, element) {
     container.appendChild(gapContainer);
   });
 } // DATA OUT: null
+
+function addPlaceholderMediaDropdown(sidebar, grid) {
+  // Adding the placeholder media options to the sidebar
+  addDeviceTargetedOptions(sidebar, grid, 'Placeholder Media', 'media', appSagePlaceholderMedia, 'placeholder-media');
+} // DATA OUT: null
