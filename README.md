@@ -47,7 +47,7 @@ appSage uses vanilla JavaScript to provide designers, developers, and ideally yo
 As free and open source software, appSage is currently a front-end only application. If you are a developer, it is up to you to decide how to modify appSage in order to integrate with your back-end.
 
 ## Who made app**Sage** and why?
-appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our goal to make the software industry more competitive. We aim to do this by providing (for free, whenever possible) tools to make great software value propositions without the traditional barriers that people typical face. In particular:
+appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our goal to make the software industry more competitive. We aim to do this by providing (for free, whenever possible) tools to make great software value propositions without the traditional barriers that people typically face. In particular:
 1. Make building a page faster (reduce time barriers)
 2. Make page building accessible to laymens (reduce skill barriers)
 3. Make page building easy and fun (reduce emotional barriers)
