@@ -86,7 +86,7 @@ function handleReset(bp, grid, options, cssClassBase, control){
   resetButton.onclick = () => {
     options.forEach(opt => {
       cssClassBase.forEach(cssClass => {
-        if (opt.includes('gap')) {
+        if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
           grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
         } else {
           grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);

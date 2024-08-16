@@ -54,13 +54,11 @@ function addEditablePadding(sidebar, element) {
   
     if (side === 'a') {
       cssClassBase = 'p';
-      console.log('Removing individual side classes for All:', element.classList.toString());
       element.classList.remove('pt', 'pb', 'pl', 'pr'); 
     } else {
       cssClassBase = `p${side}`;
     }
   
-    console.log(`Applying cssClassBase: ${cssClassBase}`);
     addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
@@ -68,12 +66,21 @@ function addEditablePadding(sidebar, element) {
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const paddingContainer = document.createElement('div');
-    paddingContainer.className = 'grid grid-cols-5 col-span-5'
+    paddingContainer.className = 'grid grid-cols-4 col-span-5'
     const paddingElements = container.querySelectorAll('.Padding');
     paddingElements.forEach(paddingDropdown => {
       paddingContainer.appendChild(paddingDropdown);
     });
+
     container.appendChild(paddingContainer);
+
+    const resetPaddingElement = document.createElement('div');
+    const label = createLabel(bp, `Reset Padding`, `${bp}-padding`);
+    label.className = 'hidden';
+    paddingContainer.appendChild(label);
+    paddingContainer.appendChild(resetPaddingElement);
+    handleReset(bp, element, ['pt', 'pr', 'pb', 'pl', 'p'], values, resetPaddingElement);
+    resetPaddingElement.classList.add('col-span-1');
   });
 } // DATA OUT: null
 
@@ -93,12 +100,21 @@ function addEditableMargin(sidebar, element) {
   breakpoints.forEach(bp => {
     const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
     const marginContainer = document.createElement('div');
-    marginContainer.className = 'grid grid-cols-5 col-span-5'
+    marginContainer.className = 'grid grid-cols-4 col-span-5'
     const marginElements = container.querySelectorAll('.Margin');
     marginElements.forEach(marginDropdown => {
       marginContainer.appendChild(marginDropdown);
     });
+
     container.appendChild(marginContainer);
+
+    const resetMarginElement = document.createElement('div');
+    const label = createLabel(bp, `Reset Margins`, `${bp}-margin`);
+    label.className = 'hidden';
+    marginContainer.appendChild(label);
+    marginContainer.appendChild(resetMarginElement);
+    handleReset(bp, element, ['mt', 'mr', 'mb', 'ml', 'm'], values, resetMarginElement);
+    resetMarginElement.classList.add('col-span-1');
   });
 } // DATA OUT: null
 
@@ -217,7 +233,7 @@ function addEditableDimensions(sidebar, element){
       sizeContainer.appendChild(control);
       handleSingleIconSelect(bp, widthOpt[1], lengthOptions, widthOpt[0], element, control);
     });
-    // ['min-w', 'max-w', 'w']
+
     resetHeightElement = document.createElement('div');
     const label = createLabel(bp, `Reset`, `${bp}-min-w,max-w,w`);
     label.className = 'hidden';
@@ -243,7 +259,7 @@ function addEditableDimensions(sidebar, element){
       sizeContainer.appendChild(control);
       handleSingleIconSelect(bp, heightOpt[1], lengthOptions, heightOpt[0], element, control);
     });
-    // ['min-w', 'max-w', 'w']
+
     resetHeightElement = document.createElement('div');
     const label = createLabel(bp, `Reset`, `${bp}-min-h,max-h,h`);
     label.className = 'hidden';
