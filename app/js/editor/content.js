@@ -457,10 +457,16 @@ function updateSidebarForMedia(contentContainer, newContent) {
     }
     contentContainer = newContainer;
   }
+
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
 
+  // Create a title for the media section
+  const fieldTitle = document.createElement('div');
+  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
+
+  // Create and append the file input
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
@@ -469,6 +475,19 @@ function updateSidebarForMedia(contentContainer, newContent) {
     generateMediaSrc(event, contentContainer, false);
   }
 
+  // Create and append the placeholder dropdown for selecting placeholder media
+  const placeholderDropdown = document.createElement('select');
+  placeholderDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  handlePlaceholderMedia('content', contentContainer, placeholderDropdown, appSagePlaceholderMedia, false);
+
+  // Handle logic to prioritize file or placeholder selection
+  placeholderDropdown.addEventListener('change', function () {
+    const selectedMedia = placeholderDropdown.value;
+    generateMediaSrc({ target: { value: selectedMedia } }, contentContainer, true);  // True indicates URL from placeholder
+  });
+
+  // Create and append the media URL input
   const urlInput = document.createElement('input');
   const mediaCandidate = contentContainer.querySelector('img, video, audio');
   urlInput.type = 'text';
@@ -480,25 +499,7 @@ function updateSidebarForMedia(contentContainer, newContent) {
     let mediaElement = contentContainer.querySelector('img, video, audio');
     const url = urlInput.value;
 
-    // Function to determine media type from Content-Type header
-    async function getMediaType(url) {
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType.startsWith('image/')) {
-          return 'img';
-        } else if (contentType.startsWith('audio/')) {
-          return 'audio';
-        } else if (contentType.startsWith('video/')) {
-          return 'video';
-        }
-      } catch (error) {
-        console.error('Error fetching the media URL:', error);
-      }
-      return null;
-    }
-
+    // Fetch the media type using a helper function
     const mediaType = await getMediaType(url);
 
     if (!mediaElement && mediaType) {
@@ -525,13 +526,10 @@ function updateSidebarForMedia(contentContainer, newContent) {
     }
   };
 
-  contentContainer.appendChild(urlInput);
-
-  const fieldTitle = document.createElement('div');
-  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
-
-  sidebar.prepend(fileInput);
+  // Append all created elements to the sidebar
   sidebar.prepend(urlInput);
+  sidebar.prepend(fileInput);
+  sidebar.prepend(placeholderDropdown);
   sidebar.prepend(createLabelAllDevices());
   sidebar.prepend(fieldTitle);
 } // DATA OUT: null

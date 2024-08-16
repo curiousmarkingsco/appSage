@@ -408,3 +408,49 @@ function handleTooltips(cssClassToEvaluate, control) {
   const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
   control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
+
+function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBackgroundImage = false) {
+  // Populate the dropdown with placeholder media options
+  for (const key in appSagePlaceholderMedia) {
+    const selectedMedia = appSagePlaceholderMedia[key];
+    if (isBackgroundImage && selectedMedia.endsWith('.mp3')) {
+      continue; // Skip audio files
+    }
+
+    const option = document.createElement('option');
+    option.value = selectedMedia;
+    option.textContent = key;
+    control.appendChild(option);
+  }
+
+  control.addEventListener('change', function (event) {
+    const selectedMedia = event.target.value;
+    // Check if media element already exists in the grid
+    let mediaElement = grid.querySelector(`.${bp}-media`);
+
+    // If a media element already exists, remove it
+    if (mediaElement) {
+      mediaElement.remove();
+    }
+    // Create a new media element based on the file type
+    if (selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg')) {
+      mediaElement = document.createElement('img');
+    } else if (selectedMedia.endsWith('.mp4')) {
+      mediaElement = document.createElement('video');
+      mediaElement.controls = true; // Add controls for video playback
+    } else if (selectedMedia.endsWith('.mp3') && !isBackgroundImage) {
+      mediaElement = document.createElement('audio');
+      mediaElement.controls = true; // Add controls for audio playback
+    }
+    if (mediaElement) {
+      mediaElement.classList.add(`${bp}-media`);
+
+      if (isBackgroundImage && selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg')) {
+        grid.style.backgroundImage = `url(${selectedMedia})`;
+      } else {
+        mediaElement.src = selectedMedia;
+        grid.appendChild(mediaElement);
+      }
+    }
+  });
+}
