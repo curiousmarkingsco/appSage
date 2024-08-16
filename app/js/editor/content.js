@@ -733,6 +733,7 @@ function updateSidebarForTextElements(sidebar, container) {
   sidebar.prepend(tagDropdown);
   sidebar.prepend(textInput);
   sidebar.prepend(titleElement);
+  addTextOptions(sidebar, contentContainer);
 } // DATA OUT: null
 
 function handleButtonFields(sidebar, contentContainer, button) {
