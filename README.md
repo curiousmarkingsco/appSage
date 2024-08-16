@@ -29,7 +29,7 @@ This should output the versions of Node.js and npm, confirming that they are ins
 
 Install `http-server`:
 ```sh
-npm install -g http-server
+npm install
 ```
 
 Then, get it started up:
