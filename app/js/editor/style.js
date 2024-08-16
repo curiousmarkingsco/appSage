@@ -197,18 +197,63 @@ function addManualCssEditor(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
 } // DATA OUT: null
 
-function addEditableDimensions(sidebar, grid){
+function addEditableDimensions(sidebar, element){
+  const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
+  const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];
   const lengthOptions = ['full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
-  addDeviceTargetedOptions(sidebar, grid, 'Minimum Height', 'min-h', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Height', 'h', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Maximum Height', 'max-h', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Reset', ['min-h', 'h', 'max-h'], lengthOptions, 'reset');
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const sizeContainer = document.createElement('div');
+    sizeContainer.className = 'grid grid-cols-4 col-span-5';
 
-  addDeviceTargetedOptions(sidebar, grid, 'Minimum Width', 'min-w', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Width', 'w', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Maximum Width', 'max-w', lengthOptions, 'single-icon-select');
-  addDeviceTargetedOptions(sidebar, grid, 'Reset', ['min-w', 'w', 'max-w'], lengthOptions, 'reset');
+    widthOpts.forEach(widthOpt => {
+      // 0 = class prefix, e.g. `min-w`
+      // 1 = Plain English, e.g. 'Minimum Width'
+      const label = createLabel(bp, widthOpt[1], `${bp}-${widthOpt[0]}`);
+      control = document.createElement('div');
+      sizeContainer.appendChild(label);
+      sizeContainer.appendChild(control);
+      handleSingleIconSelect(bp, widthOpt[1], lengthOptions, widthOpt[0], element, control);
+    });
+    // ['min-w', 'max-w', 'w']
+    resetHeightElement = document.createElement('div');
+    const label = createLabel(bp, `Reset`, `${bp}-min-w,max-w,w`);
+    label.className = 'hidden';
+    sizeContainer.appendChild(label);
+    sizeContainer.appendChild(resetHeightElement);
+    handleReset(bp, element, ['min-w', 'max-w', 'w'], lengthOptions, resetHeightElement);
+    resetHeightElement.classList.add('col-span-1');
+
+    container.appendChild(sizeContainer);
+  });
+
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const sizeContainer = document.createElement('div');
+    sizeContainer.className = 'grid grid-cols-4 col-span-5';
+
+    heightOpts.forEach(heightOpt => {
+      // 0 = class prefix, e.g. `min-h`
+      // 1 = Plain English, e.g. 'Minimum Height'
+      const label = createLabel(bp, heightOpt[1], `${bp}-${heightOpt[0]}`);
+      control = document.createElement('div');
+      sizeContainer.appendChild(label);
+      sizeContainer.appendChild(control);
+      handleSingleIconSelect(bp, heightOpt[1], lengthOptions, heightOpt[0], element, control);
+    });
+    // ['min-w', 'max-w', 'w']
+    resetHeightElement = document.createElement('div');
+    const label = createLabel(bp, `Reset`, `${bp}-min-h,max-h,h`);
+    label.className = 'hidden';
+    sizeContainer.appendChild(label);
+    sizeContainer.appendChild(resetHeightElement);
+    handleReset(bp, element, ['min-h', 'max-h', 'h'], lengthOptions, resetHeightElement);
+    resetHeightElement.classList.add('col-span-1');
+
+    container.appendChild(sizeContainer);
+  });
 } // DATA OUT: null
 
 function addEditableColumnGaps(sidebar, element) {
