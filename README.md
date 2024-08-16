@@ -34,7 +34,7 @@ npm install
 
 Then, get it started up:
 ```sh
-http-server
+npx http-server
 ```
 
 ### 3. Begin page building
