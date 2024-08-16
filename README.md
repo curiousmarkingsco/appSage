@@ -8,7 +8,12 @@ git clone git@github.com:curiousmarkingsco/appSage.git
 cd appSage
 ```
 
-### 2. Start the localhost server
+### 2. Start localhost development
+
+#### Option 1, for technophobes
+Open the repository folder and double-click `index.html`
+
+#### Option 2, start a localhost http server
 If you don't already have `npm` installed:
 1.	Visit the Node.js website.
 2.	Download the LTS (Long-Term Support) version, which is recommended for most users.
