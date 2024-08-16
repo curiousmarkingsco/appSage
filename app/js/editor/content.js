@@ -23,20 +23,7 @@ function addContentContainer() {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
 
-  contentContainer.addEventListener('click', function (event) {
-    event.stopPropagation();
-    detectAndLoadContentType(contentContainer);
-    // Editing options for all types of content
-    addEditableBorders(sidebar, contentContainer);
-    addEditableBackgroundColor(sidebar, contentContainer);
-    addEditableBackgroundImage(sidebar, contentContainer);
-    addEditableBackgroundImageURL(sidebar, contentContainer);
-    addEditableBackgroundFeatures(sidebar, contentContainer);
-    addEditableMarginAndPadding(sidebar, contentContainer);
-    addEditableDimensions(sidebar, contentContainer);
-    highlightEditingElement(contentContainer);
-  });
-
+  enableEditContentOnClick(contentContainer);
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -46,6 +33,7 @@ function addContentContainer() {
 // such as the actual text being added, hrefs for links, form fields, etc.
 // DATA IN: HTML Element, <div>
 function enableEditContentOnClick(contentContainer) {
+  const sidebar = document.getElementById('sidebar-dynamic');
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
     detectAndLoadContentType(contentContainer);
@@ -189,7 +177,7 @@ function showNewContentMenu(contentTypes, sidebar) {
 // DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForForm(contentContainer, newContent) {
   if (newContent) {
-    newContainer = addContentContainer(contentContainer, false)
+    newContainer = addContentContainer();
     if (contentContainer.classList.contains('pagecolumn')) {
       // if it's a column, append our new content container
       contentContainer.appendChild(newContainer);
@@ -444,7 +432,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
 // DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
 function updateSidebarForMedia(contentContainer, newContent) {
   if (newContent) {
-    newContainer = addContentContainer(contentContainer, false)
+    newContainer = addContentContainer();
     if (contentContainer.classList.contains('pagecolumn')) {
       // if it's a column, append our new content container
       contentContainer.appendChild(newContainer);
@@ -645,8 +633,7 @@ function updateSidebarForTextElements(sidebar, container) {
 
   let contentContainer;
   if (container.classList.contains('pagecolumn')) {
-    contentContainer = document.createElement('div');
-    contentContainer.className = 'content-container pagecontent text-base';
+    contentContainer = addContentContainer();
     container.appendChild(contentContainer);
   } else {
     contentContainer = container;
@@ -772,4 +759,5 @@ function handleButtonFields(sidebar, contentContainer, button) {
 
   sidebar.prepend(urlInput);
   sidebar.prepend(checkboxLabel);
+  enableEditContentOnClick(contentContainer);
 }

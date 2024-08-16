@@ -16,7 +16,7 @@
 function createColumn() {
   const column = document.createElement('div');
   column.className = 'col-span-1 pagecolumn group';
-
+  enableEditColumnOnClick(column);
   return column;
 } // DATA OUT: HTML Element, <div>
 
