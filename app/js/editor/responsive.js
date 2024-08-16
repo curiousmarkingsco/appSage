@@ -261,7 +261,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   control.appendChild(iconButton);
 }// DATA OUT: null
 
-// This function messily handles all the nuance thus far encountered from
+// This function messily handles all the nuance thus far encountered from 
 // supporting icon styled select dropdowns for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
 function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control) {
@@ -285,6 +285,24 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       }
     });
     control.parentElement.insertBefore(toggleButton, control);
+    // Add color picker input for swatchboard types
+    const colorPicker = document.createElement('input');
+    colorPicker.type = 'color';
+    colorPicker.className = 'col-span-5 mb-2 w-full h-10 p-1 rounded';
+
+    colorPicker.addEventListener('input', () => {
+      const selectedColor = colorPicker.value;
+      // Ensure inline styles are applied correctly
+      if (labelPrefix === 'Text Color') {
+        grid.style.color = selectedColor;
+      } else if (labelPrefix === 'Background Color') {
+        grid.style.backgroundColor = selectedColor;
+      } else if (labelPrefix === 'Border Color') {
+        grid.style.borderColor = selectedColor;
+      }
+    });
+
+    control.appendChild(colorPicker);
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
@@ -399,6 +417,25 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
     });
     grid.classList.add(control.value);
   };
+  // Add color picker input
+  const colorPicker = document.createElement('input');
+  colorPicker.type = 'color';
+  colorPicker.className = 'col-span-5 mt-2 w-full h-10 p-1 rounded';
+  control.parentElement.appendChild(colorPicker);
+
+  // Apply color from color picker
+  colorPicker.addEventListener('input', () => {
+    const selectedColor = colorPicker.value;
+    // Ensure inline styles are applied correctly
+    if (labelPrefix === 'Text Color') {
+      grid.style.color = selectedColor;
+    } else if (labelPrefix === 'Background Color') {
+      grid.style.backgroundColor = selectedColor;
+    } else if (labelPrefix === 'Border Color') {
+      grid.style.borderColor = selectedColor;
+    }
+  });
+
 } // DATA OUT: null
 
 // This function is an all-in-one place for any and all tooltips necessary for
