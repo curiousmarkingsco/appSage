@@ -37,7 +37,7 @@ Then, get it started up:
 npx http-server
 ```
 
-### 3. Begin page building
+##### Begin page building
 Navigate to: [http://localhost:8080](http://localhost:8080) and make a new page.
 
 ## What is app**Sage** and what does it do?
