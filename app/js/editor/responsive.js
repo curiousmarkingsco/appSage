@@ -416,7 +416,6 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
     if (isBackgroundImage && selectedMedia.endsWith('.mp3')) {
       continue; // Skip audio files
     }
-
     const option = document.createElement('option');
     option.value = selectedMedia;
     option.textContent = key;
@@ -425,29 +424,30 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
 
   control.addEventListener('change', function (event) {
     const selectedMedia = event.target.value;
-    // Check if media element already exists in the grid
     let mediaElement = grid.querySelector(`.${bp}-media`);
-
-    // If a media element already exists, remove it
-    if (mediaElement) {
-      mediaElement.remove();
+    // Clear existing background styles if background image is being updated
+    if (isBackgroundImage) {
+      grid.style.backgroundImage = ''; // Clear existing background
+      grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Remove existing bg- classes
     }
-    // Create a new media element based on the file type
-    if (selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg')) {
-      mediaElement = document.createElement('img');
-    } else if (selectedMedia.endsWith('.mp4')) {
-      mediaElement = document.createElement('video');
-      mediaElement.controls = true; // Add controls for video playback
-    } else if (selectedMedia.endsWith('.mp3') && !isBackgroundImage) {
-      mediaElement = document.createElement('audio');
-      mediaElement.controls = true; // Add controls for audio playback
-    }
-    if (mediaElement) {
-      mediaElement.classList.add(`${bp}-media`);
-
-      if (isBackgroundImage && selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg')) {
-        grid.style.backgroundImage = `url(${selectedMedia})`;
-      } else {
+    // Apply media or background
+    if (isBackgroundImage && (selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg'))) {
+      grid.classList.add(`bg-[url('${selectedMedia}')]`);
+      grid.style.backgroundSize = 'cover';
+      grid.style.backgroundPosition = 'center'; // Center the background
+    } else {
+      if (mediaElement) {
+        mediaElement.remove();
+      }
+      if (selectedMedia.endsWith('.mp4')) {
+        mediaElement = document.createElement('video');
+        mediaElement.controls = true;
+      } else if (selectedMedia.endsWith('.mp3')) {
+        mediaElement = document.createElement('audio');
+        mediaElement.controls = true;
+      }
+      if (mediaElement) {
+        mediaElement.classList.add(`${bp}-media`);
         mediaElement.src = selectedMedia;
         grid.appendChild(mediaElement);
       }

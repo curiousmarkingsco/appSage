@@ -119,81 +119,65 @@ function addEditableBackgroundImage(sidebar, grid) {
   const labelPrefix = 'Background Image File';
   const cssClassBase = 'bg';
 
-  // Call the function to add device-targeted options (This will add the file input)
+  // Add file input for direct image selection
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 
-  // Find the file input added by addDeviceTargetedOptions
   const fileInput = sidebar.querySelector('input[type="file"]');
-
   if (fileInput) {
-      // Create a dropdown for selecting placeholder images
-      const placeholderDropdown = document.createElement('select');
-      
-      // Apply the same class as file input (if there's any shared class)
-      placeholderDropdown.className = fileInput.className;
+    const placeholderDropdown = document.createElement('select');
+    placeholderDropdown.className = fileInput.className;
+    placeholderDropdown.style.width = '100%';
+    placeholderDropdown.style.padding = '8px';
+    placeholderDropdown.style.border = '1px solid #ccc';
+    placeholderDropdown.style.borderRadius = '4px';
+    placeholderDropdown.style.marginTop = '8px';
+    placeholderDropdown.style.boxSizing = 'border-box';
 
-      // Add inline styles to ensure full width, similar to input
-      placeholderDropdown.style.width = '100%';  // Full width
-      placeholderDropdown.style.padding = '8px';  // Same padding as the file input
-      placeholderDropdown.style.border = '1px solid #ccc';  // Same border as the file input
-      placeholderDropdown.style.borderRadius = '4px';  // Consistent border radius
-      placeholderDropdown.style.marginTop = '8px';  // Space above the dropdown
-      placeholderDropdown.style.boxSizing = 'border-box'; // Ensure width includes padding
+    const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
+      return appSagePlaceholderMedia[key].endsWith('.jpg') ||
+             appSagePlaceholderMedia[key].endsWith('.png') ||
+             appSagePlaceholderMedia[key].endsWith('.svg');
+    }).reduce((obj, key) => {
+      obj[key] = appSagePlaceholderMedia[key];
+      return obj;
+    }, {});
 
-      // Filter appSagePlaceholderMedia to exclude audio and video files
-      const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
-          return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-                 appSagePlaceholderMedia[key].endsWith('.png') ||
-                 appSagePlaceholderMedia[key].endsWith('.svg');
-      }).reduce((obj, key) => {
-          obj[key] = appSagePlaceholderMedia[key];
-          return obj;
-      }, {});
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select Placeholder Image';
+    placeholderDropdown.appendChild(defaultOption);
 
-      // Populate the dropdown with the filtered placeholder media options (only images)
-      const defaultOption = document.createElement('option');
-      defaultOption.value = '';
-      defaultOption.textContent = 'Select Placeholder Image';
-      placeholderDropdown.appendChild(defaultOption);
+    for (const key in imageOnlyMedia) {
+      const option = document.createElement('option');
+      option.value = imageOnlyMedia[key];
+      option.textContent = key;
+      placeholderDropdown.appendChild(option);
+    }
 
-      for (const key in imageOnlyMedia) {
-          const option = document.createElement('option');
-          option.value = imageOnlyMedia[key];
-          option.textContent = key;
-          placeholderDropdown.appendChild(option);
+    fileInput.parentElement.appendChild(placeholderDropdown);
+
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files.length > 0) {
+        placeholderDropdown.value = '';
+        placeholderDropdown.disabled = false;
       }
+    });
 
-      // Append the dropdown directly below the file input
-      fileInput.parentElement.appendChild(placeholderDropdown);
+    placeholderDropdown.addEventListener('change', function () {
+      if (placeholderDropdown.value) {
+        fileInput.value = '';
+        fileInput.disabled = false;
 
-      // Event listener for file input change
-      fileInput.addEventListener('change', function () {
-          if (fileInput.files.length > 0) {
-              // Clear the placeholder selection when a file is chosen
-              placeholderDropdown.value = '';
-              placeholderDropdown.disabled = false;  // Enable the dropdown
-          }
-      });
-
-      // Event listener for dropdown change
-      placeholderDropdown.addEventListener('change', function () {
-          if (placeholderDropdown.value) {
-              // Clear the file input when a placeholder is chosen
-              fileInput.value = '';
-              fileInput.disabled = false;  // Enable the file input
-
-              // Set the selected placeholder media as background
-              let mediaElement = grid.querySelector('.bg-media');
-              if (!mediaElement) {
-                  mediaElement = document.createElement('img');
-                  mediaElement.classList.add('bg-media');
-                  grid.appendChild(mediaElement);
-              }
-              mediaElement.src = placeholderDropdown.value;
-          }
-      });
+        // Apply background using Tailwind-style class or inline CSS
+        grid.style.backgroundImage = '';
+        grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
+        grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
+        grid.style.backgroundSize = 'cover';
+        grid.style.backgroundPosition = 'center';
+      }
+    });
   } else {
-      console.error('No existing file input found.');
+    console.error('No existing file input found.');
   }
 } // DATA OUT: null
 
