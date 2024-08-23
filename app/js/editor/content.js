@@ -13,7 +13,6 @@
 // elements through the DOM and to be able to do things like add background
 // images while still being able to give the actual element a background color
 // so that legibility is still possible.
-// TODO: The background color example mentioned above isn't actually supported.
 // TODO: Additionally, adding a background color to a button, for example,
 //       creates confusing results since clicking that background doesn't
 //       actually result in clicking the link. This needs to be fixed and
