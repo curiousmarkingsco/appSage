@@ -626,100 +626,173 @@ function generateMediaSrc(event, contentContainer, url){
 //       form fields, links/buttons, and other elements that require certain
 //       types of extra attributes.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(sidebar, container) {
+function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
 
   let contentContainer;
-  if (container.classList.contains('pagecolumn')) {
-    contentContainer = addContentContainer();
-    container.appendChild(contentContainer);
+  if (isNewContent || container.classList.contains('pagecolumn')) {
+      contentContainer = addContentContainer();
+      container.appendChild(contentContainer);
   } else {
-    contentContainer = container;
+      contentContainer = container;
   }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
-    { label: 'Paragraph', value: 'p' },
-    { label: 'Heading 1', value: 'h1' },
-    { label: 'Heading 2', value: 'h2' },
-    { label: 'Heading 3', value: 'h3' },
-    { label: 'Heading 4', value: 'h4' },
-    { label: 'Heading 5', value: 'h5' },
-    { label: 'Heading 6', value: 'h6' },
-    // { label: 'Unordered List', value: 'ul' },
-    // { label: 'Ordered List', value: 'ol' },
-    // { label: 'List Item', value: 'li' },
-    { label: 'Form', value: 'form' },
-    { label: 'Link', value: 'a' },
-    { label: 'Button', value: 'button' }
+      { label: 'Paragraph', value: 'p' },
+      { label: 'Heading 1', value: 'h1' },
+      { label: 'Heading 2', value: 'h2' },
+      { label: 'Heading 3', value: 'h3' },
+      { label: 'Heading 4', value: 'h4' },
+      { label: 'Heading 5', value: 'h5' },
+      { label: 'Heading 6', value: 'h6' },
+      { label: 'Form', value: 'form' },
+      { label: 'Link', value: 'a' },
+      { label: 'Button', value: 'button' },
+      { label: 'Image', value: 'img' },
+      { label: 'Video', value: 'video' },
+      { label: 'Audio', value: 'audio' }
   ];
 
   options.forEach(opt => {
-    const option = document.createElement('option');
-    option.value = opt.value;
-    option.textContent = opt.label;
-    tagDropdown.appendChild(option);
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      tagDropdown.appendChild(option);
   });
 
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
+  const mediaUrlInput = document.createElement('input');
+  mediaUrlInput.type = 'text';
+  mediaUrlInput.placeholder = 'Enter media URL...';
+  mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  function toggleInputs(selectedTag) {
+      if (['img', 'video', 'audio'].includes(selectedTag)) {
+          mediaUrlInput.style.display = 'block';
+          textInput.style.display = 'none';
+      } else {
+          mediaUrlInput.style.display = 'none';
+          textInput.style.display = 'block';
+      }
+  }
+
   tagDropdown.addEventListener('change', function () {
-    const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
 
-    if (!element) {
-      element = document.createElement(selectedTag);
-      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-      contentContainer.appendChild(element);
-    }
+      if (!element) {
+          element = document.createElement(selectedTag);
+          contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+          contentContainer.appendChild(element);
+      }
 
-    element.textContent = textInput.value;
-    if (element.tagName === 'FORM') updateSidebarForForm(element, false);
+      toggleInputs(selectedTag);
+
+      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+          element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+      } else {
+          element.textContent = textInput.value;
+      }
+
+      if (element.tagName === 'FORM') updateSidebarForForm(element, false);
   });
 
   textInput.addEventListener('input', function () {
-    const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
 
-    if (element) {
-      element.textContent = textInput.value;
-    } else {
-      element = document.createElement(selectedTag);
-      element.textContent = textInput.value;
-      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-      contentContainer.appendChild(element);
-    }
+      if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+          element.textContent = textInput.value;
+      }
+  });
+
+  mediaUrlInput.addEventListener('input', function () {
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
+
+      if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
+          element.src = mediaUrlInput.value;
+      }
   });
 
   const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
-    textInput.value = targetElement.textContent;
-    tagDropdown.value = targetElement.tagName.toLowerCase();
-
-    if (targetElement.tagName == 'A' || targetElement.tagName == 'BUTTON') {
-      handleButtonFields(sidebar, contentContainer, targetElement);
-    }
-
-    if (targetElement.tagName == 'FORM') {
-      updateSidebarForForm(contentContainer, false);
-    }
+      if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
+          mediaUrlInput.value = targetElement.src;
+      } else {
+          textInput.value = targetElement.textContent;
+      }
+      tagDropdown.value = targetElement.tagName.toLowerCase();
+      toggleInputs(tagDropdown.value);
   }
 
-  const titleElement = document.createElement('h2')
-  titleElement.textContent = 'Editing Text-based Element'
-  titleElement.className = 'font-bold text-xl'
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = 'Editing Element';
+  titleElement.className = 'font-bold text-xl';
 
   sidebar.prepend(tagDropdown);
   sidebar.prepend(textInput);
+  sidebar.prepend(mediaUrlInput);
   sidebar.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
-} // DATA OUT: null
+}
 
+function handleElementCreation() {
+  const createButton = document.getElementById('create-element-button');
+  createButton.addEventListener('click', function () {
+      const sidebar = document.getElementById('sidebar-dynamic');
+      const container = document.getElementById('page-container');  // Assume this is where new elements go
+      updateSidebarForTextElements(sidebar, container, true);
+  });
+}
+
+function handleButtonFields(sidebar, contentContainer, button) {
+  const urlInput = document.createElement('input');
+  urlInput.type = 'url';
+  urlInput.placeholder = 'Button/Link URL';
+  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
+
+  const checkboxLabel = document.createElement('label');
+  checkboxLabel.setAttribute('for', 'checkbox');
+  checkboxLabel.textContent = ' Open in new tab';
+  checkboxLabel.className = 'inline-flex items-center mt-2';
+
+  const checkbox = document.createElement('input');
+  checkbox.setAttribute('name', 'checkbox');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'ml-2';
+
+  if (button) {
+      urlInput.value = button.href;
+      checkbox.checked = button.target === '_blank';
+  }
+
+  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
+
+  const buttonUpdate = function () {
+      if (!button) {
+          button = document.createElement('a');
+          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+          contentContainer.appendChild(button);
+      }
+      button.href = urlInput.value;
+      button.target = checkbox.checked ? '_blank' : '';
+  };
+
+  urlInput.oninput = buttonUpdate;
+  checkbox.onchange = buttonUpdate;
+
+  sidebar.prepend(urlInput);
+  sidebar.prepend(checkboxLabel);
+  enableEditContentOnClick(contentContainer);
+}
 function handleButtonFields(sidebar, contentContainer, button) {
   const urlInput = document.createElement('input');
   urlInput.type = 'url';
