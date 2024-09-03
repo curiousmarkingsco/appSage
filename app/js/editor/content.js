@@ -122,7 +122,7 @@ function detectAndLoadContentType(contentContainer) {
         updateSidebarForTextElements(sidebar, contentContainer);
         break;
       case 'img': case 'video': case 'audio':
-        updateSidebarForMedia(contentContainer);
+        updateSidebarForTextElements(sidebar, contentContainer);
         break;
     }
   } else {
@@ -154,179 +154,9 @@ function updateSidebarForContentType(contentContainer) {
 
   const contentTypes = [
     { label: `<div class="p-6" data-extra-info="Text Content including Form elements.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
   ];
-  showNewContentMenu(contentTypes, sidebar);
-} // DATA OUT: null
-
-// This function and the one above it creates various buttons to choose from
-// available elements that can be created.
-// DATA IN: ['Array', 'HTML Element, <div id="sidebar-dynamic">']
-function showNewContentMenu(contentTypes, sidebar) {
-  contentTypes.forEach(type => {
-    const button = document.createElement('button');
-    button.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded m-2 h-24 w-24';
-    button.innerHTML = type.label;
-    button.onclick = type.action;
-    sidebar.appendChild(button);
-  });
-} // DATA OUT: null
-
-// This cobbles together all the needed bits for adding/editing form fields.
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForForm(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer();
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '';
-  const sidebarTitle = document.createElement('div');
-  sidebarTitle.innerHTML = `<strong>Edit Form:</strong></div>${generateMobileTabs()}`;
-  activateTabs();
-  let form = contentContainer.querySelector('form');
-  let buttonContainer;
-  let submitButton;
-
-  if (!form) {
-    form = document.createElement('form');
-    contentContainer.prepend(form);
-
-    // Add submit button
-    buttonContainer = document.createElement('div');
-    buttonContainer.className = 'content-container pagecontent text-base';
-    submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.textContent = 'Submit';
-    submitButton.className = 'mt-4 bg-emerald-500 hover:bg-emerald-700 top-2 text-slate-50 font-bold p-2 rounded';
-    form.appendChild(buttonContainer);
-    buttonContainer.appendChild(submitButton);
-  } else {
-    submitButton = form.querySelector('button[type="submit"]');
-    buttonContainer = form.querySelector('button[type="submit"]').parentElement;
-  }
-
-  // Add UI for setting the form action
-  const actionLabel = document.createElement('label');
-  actionLabel.setAttribute('for', 'actionField');
-  actionLabel.textContent = 'Form Action URL:';
-  actionLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const actionField = document.createElement('input');
-  actionField.setAttribute('name', 'actionField');
-  actionField.type = 'url';
-  actionField.placeholder = 'Enter form action URL';
-  actionField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  actionField.value = form.action;
-  actionField.oninput = function () {
-    form.action = actionField.value;
-  };
-
-  // Add UI for setting the form ID
-  const formIdLabel = document.createElement('label');
-  formIdLabel.setAttribute('for', 'formIdField');
-  formIdLabel.textContent = 'Form ID:';
-  formIdLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const formIdField = document.createElement('input');
-  formIdField.setAttribute('name', 'formIdField');
-  formIdField.type = 'text';
-  formIdField.placeholder = 'Enter form ID';
-  formIdField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  formIdField.value = form.id;
-  formIdField.oninput = function () {
-    form.id = formIdField.value;
-  };
-
-  const submitLabel = document.createElement('label');
-  submitLabel.setAttribute('for', 'submitField');
-  submitLabel.textContent = 'Submit Button Text:';
-  submitLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const submitField = document.createElement('input');
-  submitField.setAttribute('name', 'submitField');
-  submitField.type = 'text';
-  submitField.placeholder = 'Change button name';
-  submitField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  submitField.oninput = function () {
-    submitButton.textContent = submitField.value;
-  };
-
-  const inputLabel = document.createElement('label');
-  inputLabel.setAttribute('for', 'inputField');
-  inputLabel.textContent = 'Field Label:';
-  inputLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const inputField = document.createElement('input');
-  inputField.setAttribute('name', 'inputField');
-  inputField.type = 'text';
-  inputField.placeholder = 'Enter label...';
-  inputField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-
-  const typeLabel = document.createElement('label');
-  typeLabel.setAttribute('for', 'typeField');
-  typeLabel.textContent = 'Field Type:';
-  typeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const typeField = document.createElement('select');
-  typeField.setAttribute('name', 'typeField');
-  typeField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  const inputTypes = ['text', 'url', 'tel', 'password', 'number', 'file', 'email', 'date', 'color', 'checkbox'];
-
-  inputTypes.forEach(type => {
-    const option = document.createElement('option');
-    option.value = type;
-    option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-    typeField.appendChild(option);
-  });
-
-  const addButton = document.createElement('button');
-  addButton.textContent = 'Add';
-  addButton.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold py-1.5 px-4 rounded mr-2 mt-2 inline-block';
-  addButton.onclick = function () {
-    const input = document.createElement('input');
-    input.type = typeField.value;
-    input.placeholder = inputField.value; // Use label as placeholder
-    input.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-    const inputContainer = document.createElement('div');
-    inputContainer.className = 'content-container pagecontent text-base';
-
-    inputContainer.appendChild(input);
-    form.insertBefore(inputContainer, buttonContainer);
-    updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
-  };
-
-  const sidebarForm = document.createElement('form');
-  sidebarForm.onsubmit = function (e) {
-    e.preventDefault();
-  };
-
-  const newFieldGroup = document.createElement('div');
-  newFieldGroup.className = 'group my-4 bg-slate-50'
-  sidebar.prepend(sidebarTitle);
-  sidebar.prepend(sidebarForm);
-  sidebarForm.prepend(newFieldGroup);
-  sidebarForm.prepend(formIdField);
-  sidebarForm.prepend(formIdLabel);
-  sidebarForm.prepend(actionField);
-  sidebarForm.prepend(actionLabel);
-  sidebarForm.prepend(submitField);
-  sidebarForm.prepend(submitLabel);
-  newFieldGroup.appendChild(typeLabel);
-  newFieldGroup.appendChild(typeField);
-  newFieldGroup.appendChild(inputLabel);
-  newFieldGroup.appendChild(inputField);
-  newFieldGroup.appendChild(addButton);
-  updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
+  updateSidebarForTextElements(sidebar, contentContainer, true);
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -424,101 +254,6 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
 
     sidebarForm.appendChild(fieldEditor);
   });
-} // DATA OUT: null
-
-// This cobbles together all the needed bits for adding/editing media files.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForMedia(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer();
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`;
-  activateTabs();
-
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
-  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  fileInput.onchange = function (event) {
-    generateMediaSrc(event, contentContainer, false);
-  }
-
-  const urlInput = document.createElement('input');
-  const mediaCandidate = contentContainer.querySelector('img, video, audio');
-  urlInput.type = 'text';
-  urlInput.setAttribute('placeholder', 'Media URL');
-  urlInput.value = mediaCandidate ? mediaCandidate.src : '';
-  urlInput.className = 'shadow border w-full rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
-
-  urlInput.onchange = async () => {
-    let mediaElement = contentContainer.querySelector('img, video, audio');
-    const url = urlInput.value;
-
-    // Function to determine media type from Content-Type header
-    async function getMediaType(url) {
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType.startsWith('image/')) {
-          return 'img';
-        } else if (contentType.startsWith('audio/')) {
-          return 'audio';
-        } else if (contentType.startsWith('video/')) {
-          return 'video';
-        }
-      } catch (error) {
-        console.error('Error fetching the media URL:', error);
-      }
-      return null;
-    }
-
-    const mediaType = await getMediaType(url);
-
-    if (!mediaElement && mediaType) {
-      let newMediaElement;
-
-      if (mediaType === 'img') {
-        newMediaElement = document.createElement('img');
-      } else if (mediaType === 'audio') {
-        newMediaElement = document.createElement('audio');
-        newMediaElement.setAttribute('controls', 'controls');
-      } else if (mediaType === 'video') {
-        newMediaElement = document.createElement('video');
-        newMediaElement.setAttribute('controls', 'controls');
-      }
-
-      if (newMediaElement) {
-        contentContainer.appendChild(newMediaElement);
-        mediaElement = newMediaElement;
-      }
-    }
-
-    if (mediaElement) {
-      mediaElement.setAttribute('src', url);
-    }
-  };
-
-  contentContainer.appendChild(urlInput);
-
-  const fieldTitle = document.createElement('div');
-  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
-
-  sidebar.prepend(fileInput);
-  sidebar.prepend(urlInput);
-  sidebar.prepend(createLabelAllDevices());
-  sidebar.prepend(fieldTitle);
 } // DATA OUT: null
 
 // This function is the operational bits of the "Move Grid" and "Move Content"
@@ -622,9 +357,6 @@ function generateMediaSrc(event, contentContainer, url){
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
-// TODO: Fix any existing bugs, add support for niche circumstances like forms,
-//       form fields, links/buttons, and other elements that require certain
-//       types of extra attributes.
 // DATA IN: HTML Element, <div>
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
   sidebar.innerHTML = `${generateMobileTabs()}`;
@@ -700,7 +432,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
           element.textContent = textInput.value;
       }
 
-      if (element.tagName === 'FORM') updateSidebarForForm(element, false);
+      if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
