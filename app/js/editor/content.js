@@ -23,6 +23,7 @@ function addContentContainer() {
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
 
   enableEditContentOnClick(contentContainer);
+  observeClassManipulation(contentContainer);
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -564,7 +565,7 @@ function createLabelAllDevices() {
 //  To see the offending line, search for this text (less the // part):
 // contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
-function generateMediaSrc(event, contentContainer, url){
+function generateMediaSrc(event, contentContainer, url) {
   const file = event.target.files[0];
   if (file) {
     const reader = new FileReader();
@@ -572,7 +573,7 @@ function generateMediaSrc(event, contentContainer, url){
       let mediaElement = contentContainer.querySelector('img, video, audio');
       const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
 
-      if (!url){
+      if (!url) {
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
           // Remove old element if type does not match
           mediaElement.parentNode.removeChild(mediaElement);
@@ -603,7 +604,7 @@ function generateMediaSrc(event, contentContainer, url){
         const params = new URLSearchParams(window.location.search);
         const config = params.get('config');
         // Let's take the page name and add a randomgen string
-        const generatedId = config + Array.from({length: 12}, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
+        const generatedId = config + Array.from({ length: 12 }, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
         contentContainer.classList.add(`bg-local-${generatedId}`);
         // Store the object under the generated id
         const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
@@ -759,4 +760,125 @@ function handleButtonFields(sidebar, contentContainer, button) {
   sidebar.prepend(urlInput);
   sidebar.prepend(checkboxLabel);
   enableEditContentOnClick(contentContainer);
+}
+
+function adjustClassesForInteractiveElements(container) {
+  const excludedClasses = ['content-container', 'pagecontent'];
+  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
+
+  if (interactiveElements.length === 0) {
+    return;
+  }
+
+  const containerClasses = Array.from(container.classList);
+  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
+
+  if (classesToTransfer.length > 0) {
+    interactiveElements.forEach(element => {
+      element.classList.add(...classesToTransfer);
+    });
+    container.classList.remove(...classesToTransfer);
+  }
+}
+
+
+// Map to track transferred classes from container to child elements
+const classTransferMap = new Map();
+
+// Function to transfer class to child element
+function transferClassToChild(container, className, childElement) {
+  childElement.classList.add(className);
+  container.classList.remove(className);
+
+  if (!classTransferMap.has(container)) {
+    classTransferMap.set(container, new Map());
+  }
+  const containerMap = classTransferMap.get(container);
+  containerMap.set(className, childElement);
+}
+
+// Function to adjust classes for interactive elements
+function adjustClassesForInteractiveElements(container) {
+  const excludedClasses = ['content-container', 'pagecontent'];
+  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
+
+  if (interactiveElements.length === 0) {
+    return;
+  }
+
+  const containerClasses = Array.from(container.classList);
+  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
+
+  if (classesToTransfer.length > 0) {
+    interactiveElements.forEach(element => {
+      classesToTransfer.forEach(className => {
+        transferClassToChild(container, className, element);
+      });
+    });
+  }
+}
+
+// Function to dispatch a custom event when a class is added
+function dispatchClassAdded(container, className) {
+  const event = new CustomEvent('classAdded', {
+    detail: { className }
+  });
+  container.dispatchEvent(event);
+}
+
+// Function to dispatch a custom event when a class is removed
+function dispatchClassRemoved(container, className) {
+  const event = new CustomEvent('classRemoved', {
+    detail: { className }
+  });
+  container.dispatchEvent(event);
+}
+
+// Modify class manipulation to dispatch events
+function addClassToContainer(container, ...classNames) {
+  classNames.forEach(className => {
+    if (!container.classList.contains(className)) {
+      container.classList.add(className);
+      dispatchClassAdded(container, className); // Dispatch custom event for each class
+    }
+  });
+}
+
+function removeClassFromContainer(container, ...classNames) {
+  classNames.forEach(className => {
+    if (container.classList.contains(className)) {
+      container.classList.remove(className);
+      dispatchClassRemoved(container, className); // Dispatch custom event for each class
+    }
+  });
+}
+
+// Handle custom event for class added
+function handleClassAddedEvent(event) {
+  console.log('yeah')
+  const container = event.target;
+  const className = event.detail.className;
+
+  // Logic to handle the class added to the container
+  adjustClassesForInteractiveElements(container);
+}
+
+// Handle custom event for class removed
+function handleClassRemovedEvent(event) {
+  const container = event.target;
+  const className = event.detail.className;
+
+  // If the class was removed from the container, remove it from the child elements too
+  const containerMap = classTransferMap.get(container);
+  if (containerMap && containerMap.has(className)) {
+    const childElement = containerMap.get(className);
+    childElement.classList.remove(className);
+    containerMap.delete(className);  // Clean up the mapping
+  }
+}
+
+// Setup listeners for custom events on the container
+function observeClassManipulation(container) {
+  container.addEventListener('classAdded', handleClassAddedEvent);
+  container.addEventListener('classRemoved', handleClassRemovedEvent);
 }

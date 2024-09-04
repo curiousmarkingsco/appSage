@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addHtmlButton = document.getElementById('addHtml');
   addHtmlButton.addEventListener('click', function () {
-    showHtmlModal(() => {});
+    showHtmlModal(() => { });
   });
 
   // Mouse enter event
@@ -267,8 +267,8 @@ function copyText(textToCopy, element) {
 // When a copy button is clicked, the icon is replaced with a "Tada!" emoji.
 // This function swaps it back to the regular icon after 0.75 seconds.
 // DATA IN: HTML Element
-function resetCopyPageButton(element){
-  setTimeout(function(){
+function resetCopyPageButton(element) {
+  setTimeout(function () {
     element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>';
   }, 750)
 } // DATA OUT: null
@@ -316,24 +316,24 @@ function addEditablePageTitle(container, placement) {
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
   const currentTitle = params.get('config');
-  
+
   // Retrieve the pages object from localStorage
   const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
-  
+
   // Check if the currentTitle exists in the pages object
   if (appSageStorage.pages[currentTitle]) {
     // Clone the data from the current title
     const pageData = appSageStorage.pages[currentTitle];
-    
+
     // Assign the data to the new title
     appSageStorage.pages[newTitle] = pageData;
-    
+
     // Delete the current title entry
     delete appSageStorage.pages[currentTitle];
-    
+
     // Save the updated pages object back to localStorage
     localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-    
+
     // Update the URL parameters
     params.set('config', newTitle);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
@@ -436,7 +436,7 @@ function addEditableMetadata(container, placement) {
       const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
       const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
-  
+
       document.querySelectorAll('.metadata-pair').forEach(pair => {
         const type = pair.querySelector('.meta-type').value;
         const name = pair.querySelector('.meta-name').value;
@@ -445,7 +445,7 @@ function addEditableMetadata(container, placement) {
           metaTags.push({ type, name, content });
         }
       });
-  
+
       settings.metaTags = metaTags;
       storedData.pages[page_id].settings = JSON.stringify(settings);
       localStorage.setItem('appSageStorage', JSON.stringify(storedData));
