@@ -78,20 +78,32 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
 // This function messily handles all the nuance thus far encountered from
 // supporting resetting styles for the sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
-function handleReset(bp, grid, options, cssClassBase, control){
+function handleReset(bp, grid, options, cssClassBase, control) {
   const resetButton = document.createElement('button');
   resetButton.innerHTML = appSageEditorIcons['reset'];
-  resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded'
+  resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded';
   control.appendChild(resetButton);
+
   resetButton.onclick = () => {
     options.forEach(opt => {
-      cssClassBase.forEach(cssClass => {
+      // Check if cssClassBase is an array or a string
+      if (Array.isArray(cssClassBase)) {
+        // If it's an array, loop through each class and remove the class from the grid
+        cssClassBase.forEach(cssClass => {
+          if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
+            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+          } else {
+            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+          }
+        });
+      } else {
+        // If it's a string, directly remove the class from the grid
         if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         }
-      });
+      }
     });
   };
 } // DATA OUT: null
