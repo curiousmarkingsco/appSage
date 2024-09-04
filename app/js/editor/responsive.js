@@ -441,3 +441,49 @@ function handleTooltips(cssClassToEvaluate, control) {
   const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
   control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
+
+function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBackgroundImage = false) {
+  // Populate the dropdown with placeholder media options
+  for (const key in appSagePlaceholderMedia) {
+    const selectedMedia = appSagePlaceholderMedia[key];
+    if (isBackgroundImage && selectedMedia.endsWith('.mp3')) {
+      continue; // Skip audio files
+    }
+    const option = document.createElement('option');
+    option.value = selectedMedia;
+    option.textContent = key;
+    control.appendChild(option);
+  }
+
+  control.addEventListener('change', function (event) {
+    const selectedMedia = event.target.value;
+    let mediaElement = grid.querySelector(`.${bp}-media`);
+    // Clear existing background styles if background image is being updated
+    if (isBackgroundImage) {
+      grid.style.backgroundImage = ''; // Clear existing background
+      grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Remove existing bg- classes
+    }
+    // Apply media or background
+    if (isBackgroundImage && (selectedMedia.endsWith('.jpg') || selectedMedia.endsWith('.png') || selectedMedia.endsWith('.svg'))) {
+      grid.classList.add(`bg-[url('${selectedMedia}')]`);
+      grid.style.backgroundSize = 'cover';
+      grid.style.backgroundPosition = 'center'; // Center the background
+    } else {
+      if (mediaElement) {
+        mediaElement.remove();
+      }
+      if (selectedMedia.endsWith('.mp4')) {
+        mediaElement = document.createElement('video');
+        mediaElement.controls = true;
+      } else if (selectedMedia.endsWith('.mp3')) {
+        mediaElement = document.createElement('audio');
+        mediaElement.controls = true;
+      }
+      if (mediaElement) {
+        mediaElement.classList.add(`${bp}-media`);
+        mediaElement.src = selectedMedia;
+        grid.appendChild(mediaElement);
+      }
+    }
+  });
+}

@@ -442,10 +442,16 @@ function updateSidebarForMedia(contentContainer, newContent) {
     }
     contentContainer = newContainer;
   }
+
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
 
+  // Create a title for the media section
+  const fieldTitle = document.createElement('div');
+  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
+
+  // Create and append the file input
   const fileInput = document.createElement('input');
   fileInput.type = 'file';
   fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
@@ -454,6 +460,19 @@ function updateSidebarForMedia(contentContainer, newContent) {
     generateMediaSrc(event, contentContainer, false);
   }
 
+  // Create and append the placeholder dropdown for selecting placeholder media
+  const placeholderDropdown = document.createElement('select');
+  placeholderDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  handlePlaceholderMedia('content', contentContainer, placeholderDropdown, appSagePlaceholderMedia, false);
+
+  // Handle logic to prioritize file or placeholder selection
+  placeholderDropdown.addEventListener('change', function () {
+    const selectedMedia = placeholderDropdown.value;
+    generateMediaSrc({ target: { value: selectedMedia } }, contentContainer, true);  // True indicates URL from placeholder
+  });
+
+  // Create and append the media URL input
   const urlInput = document.createElement('input');
   const mediaCandidate = contentContainer.querySelector('img, video, audio');
   urlInput.type = 'text';
@@ -465,25 +484,7 @@ function updateSidebarForMedia(contentContainer, newContent) {
     let mediaElement = contentContainer.querySelector('img, video, audio');
     const url = urlInput.value;
 
-    // Function to determine media type from Content-Type header
-    async function getMediaType(url) {
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType.startsWith('image/')) {
-          return 'img';
-        } else if (contentType.startsWith('audio/')) {
-          return 'audio';
-        } else if (contentType.startsWith('video/')) {
-          return 'video';
-        }
-      } catch (error) {
-        console.error('Error fetching the media URL:', error);
-      }
-      return null;
-    }
-
+    // Fetch the media type using a helper function
     const mediaType = await getMediaType(url);
 
     if (!mediaElement && mediaType) {
@@ -510,13 +511,10 @@ function updateSidebarForMedia(contentContainer, newContent) {
     }
   };
 
-  contentContainer.appendChild(urlInput);
-
-  const fieldTitle = document.createElement('div');
-  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
-
-  sidebar.prepend(fileInput);
+  // Append all created elements to the sidebar
   sidebar.prepend(urlInput);
+  sidebar.prepend(fileInput);
+  sidebar.prepend(placeholderDropdown);
   sidebar.prepend(createLabelAllDevices());
   sidebar.prepend(fieldTitle);
 } // DATA OUT: null
@@ -564,18 +562,20 @@ function createLabelAllDevices() {
 //  To see the offending line, search for this text (less the // part):
 // contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
-function generateMediaSrc(event, contentContainer, url){
-  const file = event.target.files[0];
-  if (file) {
+function generateMediaSrc(event, contentContainer, isPlaceholder) {
+  const file = event.target.files ? event.target.files[0] : null;
+  
+  if (file || isPlaceholder) {
     const reader = new FileReader();
-    reader.onload = function (e) {
+    
+    reader.onload = function(e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
+      const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
 
-      if (!url){
+      if (!isPlaceholder) {
+        // For media elements (image, video, audio)
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          // Remove old element if type does not match
-          mediaElement.parentNode.removeChild(mediaElement);
+          mediaElement.remove();  // Remove old element if the type does not match
           mediaElement = null;
         }
 
@@ -585,38 +585,29 @@ function generateMediaSrc(event, contentContainer, url){
             mediaElement = document.createElement('img');
           } else if (mediaType === 'video') {
             mediaElement = document.createElement('video');
-            mediaElement.controls = true; // Add controls for video playback
+            mediaElement.controls = true;  // Add controls for video playback
           } else if (mediaType === 'audio') {
             mediaElement = document.createElement('audio');
-            mediaElement.controls = true; // Add controls for audio playback
+            mediaElement.controls = true;  // Add controls for audio playback
           }
           contentContainer.appendChild(mediaElement);
         }
 
-        // Update source of the existing/new media element
+        // Set the src for the media element
         mediaElement.src = e.target.result;
       } else {
-        // For now, maybe the blob gets put into a localStorage object?
-        // Then there is a function that pulls from there with an
-        // arbitrary value. Either way, the image has to get put in
-        // as an inline style, just the way it is...
-        const params = new URLSearchParams(window.location.search);
-        const config = params.get('config');
-        // Let's take the page name and add a randomgen string
-        const generatedId = config + Array.from({length: 12}, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
-        contentContainer.classList.add(`bg-local-${generatedId}`);
-        // Store the object under the generated id
-        const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
-        appSageStorage.pages[config].blobs[generatedId] = e.target.result;
-        localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-        // TailwindCSS doesn't appear to like entire image blobs LOL
-        // This is a workaround. Though, we should figure out a way to not use
-        // any blobs at all and have some kind of remote URL or local folder
-        // that we write to.
+        // For background images
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
+        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
       }
     };
-    reader.readAsDataURL(file);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      // If handling placeholders, set the background image directly
+      contentContainer.style.backgroundImage = `url(${event.target.value})`;
+    }
   }
 } // DATA OUT: null
 
