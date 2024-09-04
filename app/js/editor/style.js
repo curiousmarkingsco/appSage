@@ -137,7 +137,66 @@ function addEditableBackgroundImage(sidebar, grid) {
   const labelPrefix = 'Background Image File';
   const cssClassBase = 'bg';
 
+  // Add file input for direct image selection
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
+
+  const fileInput = sidebar.querySelector('input[type="file"]');
+  if (fileInput) {
+    const placeholderDropdown = document.createElement('select');
+    placeholderDropdown.className = fileInput.className;
+    placeholderDropdown.style.width = '100%';
+    placeholderDropdown.style.padding = '8px';
+    placeholderDropdown.style.border = '1px solid #ccc';
+    placeholderDropdown.style.borderRadius = '4px';
+    placeholderDropdown.style.marginTop = '8px';
+    placeholderDropdown.style.boxSizing = 'border-box';
+
+    const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
+      return appSagePlaceholderMedia[key].endsWith('.jpg') ||
+             appSagePlaceholderMedia[key].endsWith('.png') ||
+             appSagePlaceholderMedia[key].endsWith('.svg');
+    }).reduce((obj, key) => {
+      obj[key] = appSagePlaceholderMedia[key];
+      return obj;
+    }, {});
+
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Select Placeholder Image';
+    placeholderDropdown.appendChild(defaultOption);
+
+    for (const key in imageOnlyMedia) {
+      const option = document.createElement('option');
+      option.value = imageOnlyMedia[key];
+      option.textContent = key;
+      placeholderDropdown.appendChild(option);
+    }
+
+    fileInput.parentElement.appendChild(placeholderDropdown);
+
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files.length > 0) {
+        placeholderDropdown.value = '';
+        placeholderDropdown.disabled = false;
+      }
+    });
+
+    placeholderDropdown.addEventListener('change', function () {
+      if (placeholderDropdown.value) {
+        fileInput.value = '';
+        fileInput.disabled = false;
+
+        // Apply background using Tailwind-style class or inline CSS
+        grid.style.backgroundImage = '';
+        grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
+        grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
+        grid.style.backgroundSize = 'cover';
+        grid.style.backgroundPosition = 'center';
+      }
+    });
+  } else {
+    console.error('No existing file input found.');
+  }
 } // DATA OUT: null
 
 // This function is dedicated for adding the necessary editing options for
@@ -154,6 +213,21 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'icon-select');
+
+    // Add Reset Button for Background Size
+    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+    breakpoints.forEach(bp => {
+      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+      const resetSizeElement = document.createElement('div');
+      const label = createLabel(bp, `Reset Background Size`, `${bp}-bg-size`);
+      label.className = 'hidden';
+      container.appendChild(label);
+      container.appendChild(resetSizeElement);
+
+      // Add the handleReset call for background size
+      handleReset(bp, grid, ['cover', 'contain'], 'bg', resetSizeElement);
+      resetSizeElement.classList.add('col-span-1');
+    });
   }
 
   // Function to update background position
@@ -162,6 +236,21 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'icon-select');
+
+    // Add Reset Button for Background Position
+    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+    breakpoints.forEach(bp => {
+      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+      const resetPositionElement = document.createElement('div');
+      const label = createLabel(bp, `Reset Background Position`, `${bp}-bg-position`);
+      label.className = 'hidden';
+      container.appendChild(label);
+      container.appendChild(resetPositionElement);
+
+      // Add the handleReset call for background position
+      handleReset(bp, grid, bgPositionOptions, 'bg', resetPositionElement);
+      resetPositionElement.classList.add('col-span-1');
+    });
   }
 
   // Function to update background repeat
@@ -172,11 +261,11 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgRepeatOptions, 'icon-select');
   }
 
-  // Calling all functions to add options
+  // Calling all functions to add options and reset buttons
   addBackgroundSizeOptions();
   addBackgroundPositionOptions();
   addBackgroundRepeatOptions();
-} // DATA OUT: null
+}// DATA OUT: null
 
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
@@ -190,6 +279,21 @@ function addTextOptions(sidebar, element) {
   const fontUnderlineOptions = ['underline', 'not-underline'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
+  // Add Reset Button for Text Color
+  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
+  breakpoints.forEach(bp => {
+    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
+    const resetTextColorElement = document.createElement('div');
+    const label = createLabel(bp, `Reset Text Color`, `${bp}-text-color`);
+    label.className = 'hidden';
+    container.appendChild(label);
+    container.appendChild(resetTextColorElement);
+
+    // Add the handleReset call for text color
+    handleReset(bp, element, textColorOptions, 'text', resetTextColorElement);
+    resetTextColorElement.classList.add('col-span-1');
+  });
+
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
