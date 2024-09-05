@@ -123,7 +123,7 @@ function detectAndLoadContentType(contentContainer) {
         updateSidebarForTextElements(sidebar, contentContainer);
         break;
       case 'img': case 'video': case 'audio':
-        updateSidebarForMedia(contentContainer);
+        updateSidebarForTextElements(sidebar, contentContainer);
         break;
     }
   } else {
@@ -155,179 +155,9 @@ function updateSidebarForContentType(contentContainer) {
 
   const contentTypes = [
     { label: `<div class="p-6" data-extra-info="Text Content including Form elements.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForMedia(contentContainer, true) },
+    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
   ];
-  showNewContentMenu(contentTypes, sidebar);
-} // DATA OUT: null
-
-// This function and the one above it creates various buttons to choose from
-// available elements that can be created.
-// DATA IN: ['Array', 'HTML Element, <div id="sidebar-dynamic">']
-function showNewContentMenu(contentTypes, sidebar) {
-  contentTypes.forEach(type => {
-    const button = document.createElement('button');
-    button.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded m-2 h-24 w-24';
-    button.innerHTML = type.label;
-    button.onclick = type.action;
-    sidebar.appendChild(button);
-  });
-} // DATA OUT: null
-
-// This cobbles together all the needed bits for adding/editing form fields.
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForForm(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer();
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = '';
-  const sidebarTitle = document.createElement('div');
-  sidebarTitle.innerHTML = `<strong>Edit Form:</strong></div>${generateMobileTabs()}`;
-  activateTabs();
-  let form = contentContainer.querySelector('form');
-  let buttonContainer;
-  let submitButton;
-
-  if (!form) {
-    form = document.createElement('form');
-    contentContainer.prepend(form);
-
-    // Add submit button
-    buttonContainer = document.createElement('div');
-    buttonContainer.className = 'content-container pagecontent text-base';
-    submitButton = document.createElement('button');
-    submitButton.type = 'submit';
-    submitButton.textContent = 'Submit';
-    submitButton.className = 'mt-4 bg-emerald-500 hover:bg-emerald-700 top-2 text-slate-50 font-bold p-2 rounded';
-    form.appendChild(buttonContainer);
-    buttonContainer.appendChild(submitButton);
-  } else {
-    submitButton = form.querySelector('button[type="submit"]');
-    buttonContainer = form.querySelector('button[type="submit"]').parentElement;
-  }
-
-  // Add UI for setting the form action
-  const actionLabel = document.createElement('label');
-  actionLabel.setAttribute('for', 'actionField');
-  actionLabel.textContent = 'Form Action URL:';
-  actionLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const actionField = document.createElement('input');
-  actionField.setAttribute('name', 'actionField');
-  actionField.type = 'url';
-  actionField.placeholder = 'Enter form action URL';
-  actionField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  actionField.value = form.action;
-  actionField.oninput = function () {
-    form.action = actionField.value;
-  };
-
-  // Add UI for setting the form ID
-  const formIdLabel = document.createElement('label');
-  formIdLabel.setAttribute('for', 'formIdField');
-  formIdLabel.textContent = 'Form ID:';
-  formIdLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const formIdField = document.createElement('input');
-  formIdField.setAttribute('name', 'formIdField');
-  formIdField.type = 'text';
-  formIdField.placeholder = 'Enter form ID';
-  formIdField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  formIdField.value = form.id;
-  formIdField.oninput = function () {
-    form.id = formIdField.value;
-  };
-
-  const submitLabel = document.createElement('label');
-  submitLabel.setAttribute('for', 'submitField');
-  submitLabel.textContent = 'Submit Button Text:';
-  submitLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const submitField = document.createElement('input');
-  submitField.setAttribute('name', 'submitField');
-  submitField.type = 'text';
-  submitField.placeholder = 'Change button name';
-  submitField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  submitField.oninput = function () {
-    submitButton.textContent = submitField.value;
-  };
-
-  const inputLabel = document.createElement('label');
-  inputLabel.setAttribute('for', 'inputField');
-  inputLabel.textContent = 'Field Label:';
-  inputLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const inputField = document.createElement('input');
-  inputField.setAttribute('name', 'inputField');
-  inputField.type = 'text';
-  inputField.placeholder = 'Enter label...';
-  inputField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-
-  const typeLabel = document.createElement('label');
-  typeLabel.setAttribute('for', 'typeField');
-  typeLabel.textContent = 'Field Type:';
-  typeLabel.className = 'block text-slate-700 text-sm font-bold mb-2';
-
-  const typeField = document.createElement('select');
-  typeField.setAttribute('name', 'typeField');
-  typeField.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  const inputTypes = ['text', 'url', 'tel', 'password', 'number', 'file', 'email', 'date', 'color', 'checkbox'];
-
-  inputTypes.forEach(type => {
-    const option = document.createElement('option');
-    option.value = type;
-    option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-    typeField.appendChild(option);
-  });
-
-  const addButton = document.createElement('button');
-  addButton.textContent = 'Add';
-  addButton.className = 'bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold py-1.5 px-4 rounded mr-2 mt-2 inline-block';
-  addButton.onclick = function () {
-    const input = document.createElement('input');
-    input.type = typeField.value;
-    input.placeholder = inputField.value; // Use label as placeholder
-    input.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-    const inputContainer = document.createElement('div');
-    inputContainer.className = 'content-container pagecontent text-base';
-
-    inputContainer.appendChild(input);
-    form.insertBefore(inputContainer, buttonContainer);
-    updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
-  };
-
-  const sidebarForm = document.createElement('form');
-  sidebarForm.onsubmit = function (e) {
-    e.preventDefault();
-  };
-
-  const newFieldGroup = document.createElement('div');
-  newFieldGroup.className = 'group my-4 bg-slate-50'
-  sidebar.prepend(sidebarTitle);
-  sidebar.prepend(sidebarForm);
-  sidebarForm.prepend(newFieldGroup);
-  sidebarForm.prepend(formIdField);
-  sidebarForm.prepend(formIdLabel);
-  sidebarForm.prepend(actionField);
-  sidebarForm.prepend(actionLabel);
-  sidebarForm.prepend(submitField);
-  sidebarForm.prepend(submitLabel);
-  newFieldGroup.appendChild(typeLabel);
-  newFieldGroup.appendChild(typeField);
-  newFieldGroup.appendChild(inputLabel);
-  newFieldGroup.appendChild(inputField);
-  newFieldGroup.appendChild(addButton);
-  updateSidebarFields(form, sidebarForm, submitButton, inputTypes);
+  updateSidebarForTextElements(sidebar, contentContainer, true);
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -427,101 +257,6 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   });
 } // DATA OUT: null
 
-// This cobbles together all the needed bits for adding/editing media files.
-// TODO: This should eventually be wrapped up in updateSidebarForTextElements
-// DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
-function updateSidebarForMedia(contentContainer, newContent) {
-  if (newContent) {
-    newContainer = addContentContainer();
-    if (contentContainer.classList.contains('pagecolumn')) {
-      // if it's a column, append our new content container
-      contentContainer.appendChild(newContainer);
-    } else {
-      // if it's not a column (presumably another content container),
-      // get the parent (the column) and then append our new content container
-      contentContainer.parentElement.appendChild(newContainer);
-    }
-    contentContainer = newContainer;
-  }
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`;
-  activateTabs();
-
-  const fileInput = document.createElement('input');
-  fileInput.type = 'file';
-  fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
-  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-  fileInput.onchange = function (event) {
-    generateMediaSrc(event, contentContainer, false);
-  }
-
-  const urlInput = document.createElement('input');
-  const mediaCandidate = contentContainer.querySelector('img, video, audio');
-  urlInput.type = 'text';
-  urlInput.setAttribute('placeholder', 'Media URL');
-  urlInput.value = mediaCandidate ? mediaCandidate.src : '';
-  urlInput.className = 'shadow border w-full rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
-
-  urlInput.onchange = async () => {
-    let mediaElement = contentContainer.querySelector('img, video, audio');
-    const url = urlInput.value;
-
-    // Function to determine media type from Content-Type header
-    async function getMediaType(url) {
-      try {
-        const response = await fetch(url, { method: 'HEAD' });
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType.startsWith('image/')) {
-          return 'img';
-        } else if (contentType.startsWith('audio/')) {
-          return 'audio';
-        } else if (contentType.startsWith('video/')) {
-          return 'video';
-        }
-      } catch (error) {
-        console.error('Error fetching the media URL:', error);
-      }
-      return null;
-    }
-
-    const mediaType = await getMediaType(url);
-
-    if (!mediaElement && mediaType) {
-      let newMediaElement;
-
-      if (mediaType === 'img') {
-        newMediaElement = document.createElement('img');
-      } else if (mediaType === 'audio') {
-        newMediaElement = document.createElement('audio');
-        newMediaElement.setAttribute('controls', 'controls');
-      } else if (mediaType === 'video') {
-        newMediaElement = document.createElement('video');
-        newMediaElement.setAttribute('controls', 'controls');
-      }
-
-      if (newMediaElement) {
-        contentContainer.appendChild(newMediaElement);
-        mediaElement = newMediaElement;
-      }
-    }
-
-    if (mediaElement) {
-      mediaElement.setAttribute('src', url);
-    }
-  };
-
-  contentContainer.appendChild(urlInput);
-
-  const fieldTitle = document.createElement('div');
-  fieldTitle.innerHTML = '<h2 class="text-xl font-bold text-slate-900 my-2">Add/Edit Media:</h2></div>';
-
-  sidebar.prepend(fileInput);
-  sidebar.prepend(urlInput);
-  sidebar.prepend(createLabelAllDevices());
-  sidebar.prepend(fieldTitle);
-} // DATA OUT: null
-
 // This function is the operational bits of the "Move Grid" and "Move Content"
 // buttons.
 // DATA IN: ['HTML Element, <div>', 'String:up/down']
@@ -565,18 +300,20 @@ function createLabelAllDevices() {
 //  To see the offending line, search for this text (less the // part):
 // contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
-function generateMediaSrc(event, contentContainer, url) {
-  const file = event.target.files[0];
-  if (file) {
+function generateMediaSrc(event, contentContainer, isPlaceholder) {
+  const file = event.target.files ? event.target.files[0] : null;
+  
+  if (file || isPlaceholder) {
     const reader = new FileReader();
-    reader.onload = function (e) {
+    
+    reader.onload = function(e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file.type.split('/')[0]; // 'image', 'video', or 'audio'
+      const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
 
-      if (!url) {
+      if (!isPlaceholder) {
+        // For media elements (image, video, audio)
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          // Remove old element if type does not match
-          mediaElement.parentNode.removeChild(mediaElement);
+          mediaElement.remove();  // Remove old element if the type does not match
           mediaElement = null;
         }
 
@@ -586,140 +323,161 @@ function generateMediaSrc(event, contentContainer, url) {
             mediaElement = document.createElement('img');
           } else if (mediaType === 'video') {
             mediaElement = document.createElement('video');
-            mediaElement.controls = true; // Add controls for video playback
+            mediaElement.controls = true;  // Add controls for video playback
           } else if (mediaType === 'audio') {
             mediaElement = document.createElement('audio');
-            mediaElement.controls = true; // Add controls for audio playback
+            mediaElement.controls = true;  // Add controls for audio playback
           }
           contentContainer.appendChild(mediaElement);
         }
 
-        // Update source of the existing/new media element
+        // Set the src for the media element
         mediaElement.src = e.target.result;
       } else {
-        // For now, maybe the blob gets put into a localStorage object?
-        // Then there is a function that pulls from there with an
-        // arbitrary value. Either way, the image has to get put in
-        // as an inline style, just the way it is...
-        const params = new URLSearchParams(window.location.search);
-        const config = params.get('config');
-        // Let's take the page name and add a randomgen string
-        const generatedId = config + Array.from({ length: 12 }, () => Math.random().toString(36)[2]).join('').match(/.{1,4}/g).join('-');
-        contentContainer.classList.add(`bg-local-${generatedId}`);
-        // Store the object under the generated id
-        const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
-        appSageStorage.pages[config].blobs[generatedId] = e.target.result;
-        localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-        // TailwindCSS doesn't appear to like entire image blobs LOL
-        // This is a workaround. Though, we should figure out a way to not use
-        // any blobs at all and have some kind of remote URL or local folder
-        // that we write to.
+        // For background images
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
+        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
       }
     };
-    reader.readAsDataURL(file);
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      // If handling placeholders, set the background image directly
+      contentContainer.style.backgroundImage = `url(${event.target.value})`;
+    }
   }
 } // DATA OUT: null
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
-// TODO: Fix any existing bugs, add support for niche circumstances like forms,
-//       form fields, links/buttons, and other elements that require certain
-//       types of extra attributes.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(sidebar, container) {
+function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
   sidebar.innerHTML = `${generateMobileTabs()}`;
   activateTabs();
 
   let contentContainer;
-  if (container.classList.contains('pagecolumn')) {
-    contentContainer = addContentContainer();
-    container.appendChild(contentContainer);
+  if (isNewContent || container.classList.contains('pagecolumn')) {
+      contentContainer = addContentContainer();
+      container.appendChild(contentContainer);
   } else {
-    contentContainer = container;
+      contentContainer = container;
   }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
-    { label: 'Paragraph', value: 'p' },
-    { label: 'Heading 1', value: 'h1' },
-    { label: 'Heading 2', value: 'h2' },
-    { label: 'Heading 3', value: 'h3' },
-    { label: 'Heading 4', value: 'h4' },
-    { label: 'Heading 5', value: 'h5' },
-    { label: 'Heading 6', value: 'h6' },
-    // { label: 'Unordered List', value: 'ul' },
-    // { label: 'Ordered List', value: 'ol' },
-    // { label: 'List Item', value: 'li' },
-    { label: 'Form', value: 'form' },
-    { label: 'Link', value: 'a' },
-    { label: 'Button', value: 'button' }
+      { label: 'Paragraph', value: 'p' },
+      { label: 'Heading 1', value: 'h1' },
+      { label: 'Heading 2', value: 'h2' },
+      { label: 'Heading 3', value: 'h3' },
+      { label: 'Heading 4', value: 'h4' },
+      { label: 'Heading 5', value: 'h5' },
+      { label: 'Heading 6', value: 'h6' },
+      { label: 'Form', value: 'form' },
+      { label: 'Link', value: 'a' },
+      { label: 'Button', value: 'button' },
+      { label: 'Image', value: 'img' },
+      { label: 'Video', value: 'video' },
+      { label: 'Audio', value: 'audio' }
   ];
 
   options.forEach(opt => {
-    const option = document.createElement('option');
-    option.value = opt.value;
-    option.textContent = opt.label;
-    tagDropdown.appendChild(option);
+      const option = document.createElement('option');
+      option.value = opt.value;
+      option.textContent = opt.label;
+      tagDropdown.appendChild(option);
   });
 
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
+  const mediaUrlInput = document.createElement('input');
+  mediaUrlInput.type = 'text';
+  mediaUrlInput.placeholder = 'Enter media URL...';
+  mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  function toggleInputs(selectedTag) {
+      if (['img', 'video', 'audio'].includes(selectedTag)) {
+          mediaUrlInput.style.display = 'block';
+          textInput.style.display = 'none';
+      } else {
+          mediaUrlInput.style.display = 'none';
+          textInput.style.display = 'block';
+      }
+  }
+
   tagDropdown.addEventListener('change', function () {
-    const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
 
-    if (!element) {
-      element = document.createElement(selectedTag);
-      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-      contentContainer.appendChild(element);
-    }
+      if (!element) {
+          element = document.createElement(selectedTag);
+          contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+          contentContainer.appendChild(element);
+      }
 
-    element.textContent = textInput.value;
-    if (element.tagName === 'FORM') updateSidebarForForm(element, false);
+      toggleInputs(selectedTag);
+
+      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+          element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+      } else {
+          element.textContent = textInput.value;
+      }
+
+      if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
-    const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
 
-    if (element) {
-      element.textContent = textInput.value;
-    } else {
-      element = document.createElement(selectedTag);
-      element.textContent = textInput.value;
-      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-      contentContainer.appendChild(element);
-    }
+      if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+          element.textContent = textInput.value;
+      }
+  });
+
+  mediaUrlInput.addEventListener('input', function () {
+      const selectedTag = tagDropdown.value;
+      let element = contentContainer.querySelector(selectedTag);
+
+      if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
+          element.src = mediaUrlInput.value;
+      }
   });
 
   const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
-    textInput.value = targetElement.textContent;
-    tagDropdown.value = targetElement.tagName.toLowerCase();
-
-    if (targetElement.tagName == 'A' || targetElement.tagName == 'BUTTON') {
-      handleButtonFields(sidebar, contentContainer, targetElement);
-    }
-
-    if (targetElement.tagName == 'FORM') {
-      updateSidebarForForm(contentContainer, false);
-    }
+      if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
+          mediaUrlInput.value = targetElement.src;
+      } else {
+          textInput.value = targetElement.textContent;
+      }
+      tagDropdown.value = targetElement.tagName.toLowerCase();
+      toggleInputs(tagDropdown.value);
   }
 
-  const titleElement = document.createElement('h2')
-  titleElement.textContent = 'Editing Text-based Element'
-  titleElement.className = 'font-bold text-xl'
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = 'Editing Element';
+  titleElement.className = 'font-bold text-xl';
 
   sidebar.prepend(tagDropdown);
   sidebar.prepend(textInput);
+  sidebar.prepend(mediaUrlInput);
   sidebar.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
-} // DATA OUT: null
+}
+
+function handleElementCreation() {
+  const createButton = document.getElementById('create-element-button');
+  createButton.addEventListener('click', function () {
+      const sidebar = document.getElementById('sidebar-dynamic');
+      const container = document.getElementById('page-container');  // Assume this is where new elements go
+      updateSidebarForTextElements(sidebar, container, true);
+  });
+}
 
 function handleButtonFields(sidebar, contentContainer, button) {
   const urlInput = document.createElement('input');
@@ -738,20 +496,20 @@ function handleButtonFields(sidebar, contentContainer, button) {
   checkbox.className = 'ml-2';
 
   if (button) {
-    urlInput.value = button.href;
-    checkbox.checked = button.target === '_blank';
+      urlInput.value = button.href;
+      checkbox.checked = button.target === '_blank';
   }
 
   checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
 
   const buttonUpdate = function () {
-    if (!button) {
-      button = document.createElement('a');
-      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-      contentContainer.appendChild(button);
-    }
-    button.href = urlInput.value;
-    button.target = checkbox.checked ? '_blank' : '';
+      if (!button) {
+          button = document.createElement('a');
+          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+          contentContainer.appendChild(button);
+      }
+      button.href = urlInput.value;
+      button.target = checkbox.checked ? '_blank' : '';
   };
 
   urlInput.oninput = buttonUpdate;
@@ -761,124 +519,43 @@ function handleButtonFields(sidebar, contentContainer, button) {
   sidebar.prepend(checkboxLabel);
   enableEditContentOnClick(contentContainer);
 }
+function handleButtonFields(sidebar, contentContainer, button) {
+  const urlInput = document.createElement('input');
+  urlInput.type = 'url';
+  urlInput.placeholder = 'Button/Link URL';
+  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
 
-function adjustClassesForInteractiveElements(container) {
-  const excludedClasses = ['content-container', 'pagecontent'];
-  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
+  const checkboxLabel = document.createElement('label');
+  checkboxLabel.setAttribute('for', 'checkbox');
+  checkboxLabel.textContent = ' Open in new tab';
+  checkboxLabel.className = 'inline-flex items-center mt-2';
 
-  if (interactiveElements.length === 0) {
-    return;
+  const checkbox = document.createElement('input');
+  checkbox.setAttribute('name', 'checkbox');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'ml-2';
+
+  if (button) {
+      urlInput.value = button.href;
+      checkbox.checked = button.target === '_blank';
   }
 
-  const containerClasses = Array.from(container.classList);
-  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
+  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
 
-  if (classesToTransfer.length > 0) {
-    interactiveElements.forEach(element => {
-      element.classList.add(...classesToTransfer);
-    });
-    container.classList.remove(...classesToTransfer);
-  }
-}
+  const buttonUpdate = function () {
+      if (!button) {
+          button = document.createElement('a');
+          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+          contentContainer.appendChild(button);
+      }
+      button.href = urlInput.value;
+      button.target = checkbox.checked ? '_blank' : '';
+  };
 
+  urlInput.oninput = buttonUpdate;
+  checkbox.onchange = buttonUpdate;
 
-// Map to track transferred classes from container to child elements
-const classTransferMap = new Map();
-
-// Function to transfer class to child element
-function transferClassToChild(container, className, childElement) {
-  childElement.classList.add(className);
-  container.classList.remove(className);
-
-  if (!classTransferMap.has(container)) {
-    classTransferMap.set(container, new Map());
-  }
-  const containerMap = classTransferMap.get(container);
-  containerMap.set(className, childElement);
-}
-
-// Function to adjust classes for interactive elements
-function adjustClassesForInteractiveElements(container) {
-  const excludedClasses = ['content-container', 'pagecontent'];
-  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
-
-  if (interactiveElements.length === 0) {
-    return;
-  }
-
-  const containerClasses = Array.from(container.classList);
-  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
-
-  if (classesToTransfer.length > 0) {
-    interactiveElements.forEach(element => {
-      classesToTransfer.forEach(className => {
-        transferClassToChild(container, className, element);
-      });
-    });
-  }
-}
-
-// Function to dispatch a custom event when a class is added
-function dispatchClassAdded(container, className) {
-  const event = new CustomEvent('classAdded', {
-    detail: { className }
-  });
-  container.dispatchEvent(event);
-}
-
-// Function to dispatch a custom event when a class is removed
-function dispatchClassRemoved(container, className) {
-  const event = new CustomEvent('classRemoved', {
-    detail: { className }
-  });
-  container.dispatchEvent(event);
-}
-
-// Modify class manipulation to dispatch events
-function addClassToContainer(container, ...classNames) {
-  classNames.forEach(className => {
-    if (!container.classList.contains(className)) {
-      container.classList.add(className);
-      dispatchClassAdded(container, className); // Dispatch custom event for each class
-    }
-  });
-}
-
-function removeClassFromContainer(container, ...classNames) {
-  classNames.forEach(className => {
-    if (container.classList.contains(className)) {
-      container.classList.remove(className);
-      dispatchClassRemoved(container, className); // Dispatch custom event for each class
-    }
-  });
-}
-
-// Handle custom event for class added
-function handleClassAddedEvent(event) {
-  console.log('yeah')
-  const container = event.target;
-  const className = event.detail.className;
-
-  // Logic to handle the class added to the container
-  adjustClassesForInteractiveElements(container);
-}
-
-// Handle custom event for class removed
-function handleClassRemovedEvent(event) {
-  const container = event.target;
-  const className = event.detail.className;
-
-  // If the class was removed from the container, remove it from the child elements too
-  const containerMap = classTransferMap.get(container);
-  if (containerMap && containerMap.has(className)) {
-    const childElement = containerMap.get(className);
-    childElement.classList.remove(className);
-    containerMap.delete(className);  // Clean up the mapping
-  }
-}
-
-// Setup listeners for custom events on the container
-function observeClassManipulation(container) {
-  container.addEventListener('classAdded', handleClassAddedEvent);
-  container.addEventListener('classRemoved', handleClassRemovedEvent);
+  sidebar.prepend(urlInput);
+  sidebar.prepend(checkboxLabel);
+  enableEditContentOnClick(contentContainer);
 }
