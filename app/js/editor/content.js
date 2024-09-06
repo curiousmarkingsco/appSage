@@ -294,56 +294,40 @@ function createLabelAllDevices() {
 
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
-// TODO: Find an alternative to storing image blobs in the local storage and
-//  in the copy/pastes that might end up in a database bloating it to oblivion.
-//  To see the offending line, search for this text (less the // part):
-// contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
-  
+
   if (file || isPlaceholder) {
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-      let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
+    let mediaElement = contentContainer.querySelector('img, video, audio');
+    const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
 
-      if (!isPlaceholder) {
-        // For media elements (image, video, audio)
-        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          mediaElement.remove();  // Remove old element if the type does not match
-          mediaElement = null;
-        }
-
-        if (!mediaElement) {
-          // Create new element if none exists or wrong type was removed
-          if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-          } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            mediaElement.controls = true;  // Add controls for video playback
-          } else if (mediaType === 'audio') {
-            mediaElement = document.createElement('audio');
-            mediaElement.controls = true;  // Add controls for audio playback
-          }
-          contentContainer.appendChild(mediaElement);
-        }
-
-        // Set the src for the media element
-        mediaElement.src = e.target.result;
-      } else {
-        // For background images
-        contentContainer.style.backgroundImage = `url(${e.target.result})`;
-        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
+    if (!isPlaceholder) {
+      if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
+        mediaElement.remove();  // Remove old element if the type does not match
+        mediaElement = null;
       }
-    };
 
-    if (file) {
-      reader.readAsDataURL(file);
+      if (!mediaElement) {
+        // Create a new media element if one doesn't exist
+        if (mediaType === 'image') {
+          mediaElement = document.createElement('img');
+        } else if (mediaType === 'video') {
+          mediaElement = document.createElement('video');
+          mediaElement.controls = true;
+        } else if (mediaType === 'audio') {
+          mediaElement = document.createElement('audio');
+          mediaElement.controls = true;
+        }
+        contentContainer.appendChild(mediaElement);
+      }
+
+      // Create a temporary URL for the file
+      const mediaPath = URL.createObjectURL(file);
+      mediaElement.src = mediaPath;  // Assign the media path as the src
     } else {
-      // If handling placeholders, set the background image directly
-      contentContainer.style.backgroundImage = `url(${event.target.value})`;
+      contentContainer.style.backgroundImage = `url(${e.target.value})`;
+      contentContainer.classList.add(`bg-[url('${e.target.value}')]`);
     }
   }
 } // DATA OUT: null
