@@ -167,6 +167,10 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
   let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
+  let advanced = false;
+  if (labelPrefix === 'class' || labelPrefix === 'css') {
+    advanced = true;
+  }
   if (collapseLabels && keepLabel === false) {
     const label = document.createElement('label');
     label.className = 'hidden';
@@ -181,7 +185,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
     mobileIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
-    label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
+    label.innerHTML = `<span class="inline-block">${keepLabel}${advanced === true ? ' (Advanced Option)' : ''}</span>`;
     label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
     label.setAttribute('for', forAttr);
     label.prepend(mobileIcon);
