@@ -301,20 +301,24 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
+// TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+    addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+  }
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
 function addManualClassEditor(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+    addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+  }
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
 function addManualCssEditor(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+    addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+  }
 } // DATA OUT: null
 
 function addEditableDimensions(sidebar, element){

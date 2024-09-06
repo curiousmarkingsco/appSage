@@ -111,18 +111,40 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 // This function is intended to facilitate manual CSS styling for the textarea
 // field dedicated for this activity.
 // DATA IN: ['HTML Element, <div>', 'String']
-function applyStyles(element, controlValue) {
+function handleStyles(element, controlValue, mode = 'apply') {
   if (element) {
-    const styles = controlValue.split(';');
-    styles.forEach(style => {
-      const [property, value] = style.split(':');
-      if (property && value) {
-        const camelCaseProperty = property.trim().replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
-        element.style[camelCaseProperty] = value.trim();
+    if (mode === 'apply') {
+      // Apply styles to the element
+      const styles = controlValue.split(';');
+      styles.forEach(style => {
+        const [property, value] = style.split(':');
+        if (property && value) {
+          const camelCaseProperty = property.trim().replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
+          element.style[camelCaseProperty] = value.trim();
+        }
+      });
+    } else if (mode === 'retrieve') {
+      // Retrieve inline styles from the element
+      const computedStyles = element.style;
+      const retrievedStyles = [];
+
+      for (let i = 0; i < computedStyles.length; i++) {
+        const property = computedStyles[i];
+        const value = computedStyles.getPropertyValue(property);
+
+        if (value) {
+          // Convert camelCase properties back to kebab-case
+          const kebabCaseProperty = property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+          retrievedStyles.push(`${kebabCaseProperty}:${value}`);
+        }
       }
-    });
+
+      // Join styles into a semicolon-separated string
+      return retrievedStyles.join(';') + ';';
+    }
   }
-} // DATA OUT: null
+}
+ // DATA OUT: null
 
 // This function attempts to find existing styles so that other functions know
 // what/where to replace new classes, if applicable.
@@ -195,7 +217,12 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
 // DATA IN: See `addDeviceTargetedOptions`
 function handleTextareaType(labelPrefix, grid, control) {
   control.type = 'text';
-  control.value = (grid.classList);
+  if (labelPrefix == 'class') {
+    control.value = (grid.classList);
+  }
+  if (labelPrefix == 'css') {
+    control.value = handleStyles(grid, '', 'retrieve');
+  }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
@@ -205,7 +232,7 @@ function handleTextareaType(labelPrefix, grid, control) {
       control.innerHTML = newHtmlElement;
     }
     if (labelPrefix == 'css') {
-      applyStyles(grid, control.value);
+      handleStyles(grid, control.value, 'apply');
     }
   };
 } // DATA OUT: null

@@ -468,6 +468,8 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   sidebar.prepend(mediaUrlInput);
   sidebar.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
+  addManualClassEditor(sidebar, contentContainer);
+  addManualCssEditor(sidebar, contentContainer);
 }
 
 function handleElementCreation() {
