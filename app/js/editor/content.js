@@ -381,12 +381,22 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   mediaUrlInput.placeholder = 'Enter media URL...';
   mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
+  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  fileInput.onchange = function (event) {
+    generateMediaSrc(event, contentContainer, false);
+  }
+
   function toggleInputs(selectedTag) {
       if (['img', 'video', 'audio'].includes(selectedTag)) {
           mediaUrlInput.style.display = 'block';
+          fileInput.style.display = 'block';
           textInput.style.display = 'none';
       } else {
           mediaUrlInput.style.display = 'none';
+          fileInput.style.display = 'none';
           textInput.style.display = 'block';
       }
   }
@@ -404,7 +414,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
       toggleInputs(selectedTag);
 
       if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-          element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+          element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
       } else {
           element.textContent = textInput.value;
       }
@@ -449,6 +459,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   sidebar.prepend(tagDropdown);
   sidebar.prepend(textInput);
   sidebar.prepend(mediaUrlInput);
+  sidebar.prepend(fileInput);
   sidebar.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
 }
