@@ -418,7 +418,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -427,7 +427,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   });
   control.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      grid.classList.remove(`${cssClassBase}-${opt}`);
     });
     grid.classList.add(control.value);
   };
