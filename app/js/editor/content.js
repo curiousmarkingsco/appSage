@@ -299,38 +299,118 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
 
   if (file || isPlaceholder) {
-    let mediaElement = contentContainer.querySelector('img, video, audio');
-    const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
+    const reader = new FileReader();
 
-    if (!isPlaceholder) {
-      if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-        mediaElement.remove();  // Remove old element if the type does not match
-        mediaElement = null;
-      }
+    reader.onload = async function (e) {
+      let mediaElement = contentContainer.querySelector('img, video, audio');
+      const mediaType = file ? file.type.split('/')[0] : null;
 
-      if (!mediaElement) {
-        // Create a new media element if one doesn't exist
-        if (mediaType === 'image') {
-          mediaElement = document.createElement('img');
-        } else if (mediaType === 'video') {
-          mediaElement = document.createElement('video');
-          mediaElement.controls = true;
-        } else if (mediaType === 'audio') {
-          mediaElement = document.createElement('audio');
-          mediaElement.controls = true;
+      if (!isPlaceholder) {
+        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
+          mediaElement.remove();
+          mediaElement = null;
         }
-        contentContainer.appendChild(mediaElement);
-      }
 
-      // Create a temporary URL for the file
-      const mediaPath = URL.createObjectURL(file);
-      mediaElement.src = mediaPath;  // Assign the media path as the src
+        if (!mediaElement) {
+          if (mediaType === 'image') {
+            mediaElement = document.createElement('img');
+          } else if (mediaType === 'video') {
+            mediaElement = document.createElement('video');
+            mediaElement.controls = true;
+          } else if (mediaType === 'audio') {
+            mediaElement = document.createElement('audio');
+            mediaElement.controls = true;
+          }
+          contentContainer.appendChild(mediaElement);
+        }
+
+        mediaElement.src = e.target.result;
+
+        // Store the media file in IndexedDB
+        const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+        await saveMediaToIndexedDB(file, mediaId);
+        contentContainer.setAttribute('data-media-id', mediaId);
+      } else {
+        contentContainer.style.backgroundImage = `url(${e.target.result})`;
+        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
+      }
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
     } else {
-      contentContainer.style.backgroundImage = `url(${e.target.value})`;
-      contentContainer.classList.add(`bg-[url('${e.target.value}')]`);
+      contentContainer.style.backgroundImage = `url(${event.target.value})`;
     }
   }
 } // DATA OUT: null
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('mediaDatabase', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore('mediaStore', { keyPath: 'id' });
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
+async function saveMediaToIndexedDB(mediaBlob, mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readwrite');
+  const store = transaction.objectStore('mediaStore');
+  const mediaEntry = { id: mediaId, mediaBlob };
+  store.put(mediaEntry);
+}
+
+async function getMediaFromIndexedDB(mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(mediaId);
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject('Error fetching media');
+  });
+}
+
+function displayMediaFromIndexedDB(contentContainer) {
+  const mediaId = contentContainer.getAttribute('data-media-id');
+  if (mediaId) {
+    getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
+      if (mediaEntry) {
+        const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
+        const mediaElement = contentContainer.querySelector('img, video, audio');
+        if (mediaElement) {
+          mediaElement.src = mediaUrl;
+        } else {
+          contentContainer.style.backgroundImage = `url(${mediaUrl})`;
+        }
+      }
+    }).catch((error) => {
+      console.error('Error displaying media from IndexedDB:', error);
+    });
+  }
+}
+
+function handleElementCreation() {
+  const createButton = document.getElementById('create-element-button');
+  createButton.addEventListener('click', function () {
+    const sidebar = document.getElementById('sidebar-dynamic');
+    const container = document.getElementById('page-container');
+    updateSidebarForTextElements(sidebar, container, true);
+  });
+}
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
