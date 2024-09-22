@@ -6,10 +6,13 @@ mkdir -p ./dist
 
 # Output file
 output_file="./dist/appSage.js"
+output_css="./dist/appSage.css"
+css_file="./app/css/main.css"
 
 # Clear the output file if it exists
-echo "Clearing the output file..."
+echo "Clearing the output files..."
 echo -n "" > "$output_file"
+echo -n "" > "$output_css"
 
 # Define an array of the required files in order
 declare -a js_files=(
@@ -52,4 +55,9 @@ do
     fi
 done
 
-echo "All specified JS files have been merged into $output_file"
+echo "Appending $css_file to $output_css"
+echo "/* File: $css_file */" >> "$output_css"
+cat "$css_file" >> "$output_css"
+echo -e "\n" >> "$output_css"  # Add a newline for separation
+
+echo "All specified JS files have been merged into $output_js and $output_css"
