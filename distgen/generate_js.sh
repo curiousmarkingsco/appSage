@@ -5,7 +5,7 @@ echo "Creating dist directory..."
 mkdir -p ./dist
 
 # Output file
-output_file="./dist/appSage.js"
+output_file="./dist/appSage_full.js"
 output_css="./dist/appSage.css"
 css_file="./app/css/main.css"
 

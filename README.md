@@ -59,20 +59,26 @@ Search this repository for the text `TODO: `
 
 1. Give the shell script appropriate permissions:
 ```sh
-chmod +x generate_js.sh
-chmod +x generate_js_with_tw.sh
+chmod +x distgen/generate_js.sh
+chmod +x distgen/generate_js_with_tw.sh
+chmod +x distgen/generate_editor_with_tw.sh
+chmod +x distgen/generate_preview_with_tw.sh
 ```
 
 2. Run it script:
 ##### Linux
 ```sh
-./generate_js.sh
-./generate_js_with_tw.sh
+./distgen/generate_js.sh
+./distgen/generate_js_with_tw.sh
+./distgen/generate_editor_with_tw.sh
+./distgen/generate_preview_with_tw.sh
 ```
 ##### MacOS
 ```sh
-zsh ./generate_js.sh
-zsh ./generate_js_with_tw.sh
+zsh ./distgen/generate_js.sh
+zsh ./distgen/generate_js_with_tw.sh
+zsh ./distgen/generate_editor_with_tw.sh
+zsh ./distgen/generate_preview_with_tw.sh
 ```
 
 
