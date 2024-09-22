@@ -13,6 +13,8 @@ echo -n "" > "$output_file"
 
 # Define an array of the required files in order
 declare -a js_files=(
+    "./app/js/tailwind.js"
+    "./app/js/tailwind.config.js"
     "./app/js/dashboard/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
