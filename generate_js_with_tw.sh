@@ -5,7 +5,7 @@ echo "Creating dist directory..."
 mkdir -p ./dist
 
 # Output file
-output_file="./dist/appSage.js"
+output_file="./dist/appSage.tailwind.js"
 
 # Clear the output file if it exists
 echo "Clearing the output file..."

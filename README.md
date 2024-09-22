@@ -59,17 +59,20 @@ Search this repository for the text `TODO: `
 
 1. Give the shell script appropriate permissions:
 ```sh
-chmod +x merge_js_files.sh
+chmod +x generate_js.sh
+chmod +x generate_js_with_tw.sh
 ```
 
 2. Run it script:
 ##### Linux
 ```sh
-./merge_js_files.sh
+./generate_js.sh
+./generate_js_with_tw.sh
 ```
 ##### MacOS
 ```sh
-zsh ./merge_js_files.sh
+zsh ./generate_js.sh
+zsh ./generate_js_with_tw.sh
 ```
 
 
