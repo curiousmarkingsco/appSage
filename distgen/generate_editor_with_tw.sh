@@ -5,20 +5,16 @@ echo "Creating dist directory..."
 mkdir -p ./dist
 
 # Output file
-output_js="./dist/appSage.tailwind.js"
-output_css="./dist/appSage.css"
-css_file="./app/css/main.css"
+output_js="./dist/appSage_editor.tailwind.js"
 
 # Clear the output file if it exists
 echo "Clearing the output files..."
 echo -n "" > "$output_js"
-echo -n "" > "$output_css"
 
 # Define an array of the required files in order
 declare -a js_files=(
     "./app/js/tailwind.js"
     "./app/js/tailwind.config.js"
-    "./app/js/dashboard/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
     "./app/js/editor/column.js"
@@ -34,7 +30,6 @@ declare -a js_files=(
     "./app/js/editor/responsive.js"
     "./app/js/remote_save.js"
     "./app/js/editor/media.js"
-    "./app/js/preview/main.js"
 )
 
 # Debugging output to verify the array content
@@ -57,9 +52,5 @@ do
     fi
 done
 
-echo "Appending $css_file to $output_css"
-echo "/* File: $css_file */" >> "$output_css"
-cat "$css_file" >> "$output_css"
-echo -e "\n" >> "$output_css"  # Add a newline for separation
 
 echo "All specified JS files have been merged into $output_js and $output_css"
