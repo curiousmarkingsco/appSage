@@ -453,3 +453,37 @@ function addEditableMetadata(container, placement) {
     });
   });
 } // DATA OUT: null
+
+// This used to be in an inline script on the page:
+document.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+
+  if (config) {
+    const json = loadPage(config);
+    if (json) {
+      loadChanges(json);
+      loadPageSettings(config);
+      loadPageBlobs(config);
+      loadPageMetadata(config)
+    }
+    setupAutoSave(config);
+  } else {
+    let pageId = createNewConfigurationFile();
+    setupAutoSave(pageId);
+  }
+});
+
+function createNewConfigurationFile() {
+  let filename = 'Untitled';
+  let counter = 1;
+  while (loadPage(filename)) {
+    filename = `Untitled-${counter}`;
+    counter++;
+  }
+
+  savePage(filename, '[]'); // Initialize with an empty array
+  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
+  return filename;
+}

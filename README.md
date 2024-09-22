@@ -55,5 +55,23 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 ## Coming soon / please help!
 Search this repository for the text `TODO: `
 
+## Compiling the JS
+
+1. Give the shell script appropriate permissions:
+```sh
+chmod +x merge_js_files.sh
+```
+
+2. Run it script:
+##### Linux
+```sh
+./merge_js_files.sh
+```
+##### MacOS
+```sh
+zsh ./merge_js_files.sh
+```
+
+
 ## Contributing
 See: [CONTRIBUTING.md](https://github.com/curiousmarkingsco/appSage/blob/main/CONTRIBUTING.md)

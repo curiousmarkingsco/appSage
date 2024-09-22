@@ -35,3 +35,13 @@ function loadPreview(pageId) {
       console.error('No saved data found for pageId:', pageId);
   }
 } // DATA OUT: null
+
+// This used to be in an inline script on the page:
+document.addEventListener('DOMContentLoaded', function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewPageId = urlParams.get('page');
+
+  if (previewPageId) {
+    loadPreview(previewPageId);
+  }
+});

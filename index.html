@@ -49,22 +49,5 @@
       </div>
     </div>
     <script src="./app/js/dashboard/main.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const container = document.getElementById('pageList');
-        try {
-          const pages = JSON.parse(localStorage['appSageStorage']).pages;
-          Object.keys(pages).forEach(key => {
-            // const value = pages[key];
-            const column = document.createElement('div');
-            column.className = 'col-span-1 pagecolumn group bg-slate-50 border-2 border-slate-200 w-full bg-repeat bg-center'
-            column.innerHTML = `<div class="content-container pagecontent text-base border-slate-200" id=""><!-- <img src=""> --></div><div class="content-container pagecontent text-slate-700 text-2xl m-2" id=""><h2>${key}</h2></div><div class="flex justify-around mb-4 mt-2"><a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="./app/editor.html?config=${key}" target="_blank">Edit</a><a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="./app/preview.html?page=${key}" target="_blank">Preview</a><a class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${key}', this.parentElement.parentElement)" href="javascript:void(0)">Delete</a></div>`;
-            container.appendChild(column);
-          });
-        } catch {
-          container.innerHTML = '<div class="text-center col-span-3"><h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2><a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="./app/editor.html">Start building a page</a>'
-        }
-      });
-    </script>
   </body>
 </html>

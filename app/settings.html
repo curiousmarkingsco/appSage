@@ -24,29 +24,42 @@
       <div id="tooltip" class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-50 opacity-0 transition-opacity duration-300"></div>
       <div id="sidebar" class="w-72 bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16">
         <form id="appSageSettingsForm">
+          <!-- Fonts Section -->
           <fieldset>
             <legend>Custom Fonts</legend>
-            <label for="customFont">Font Name:</label>
-            <input type="text" id="customFont" name="customFont" placeholder="Enter font name">
+            <div id="fontsContainer">
+              <div class="font-entry">
+                <label for="customFont">Font Name:</label>
+                <input type="text" class="customFont" name="customFont[]" placeholder="Enter font name">
+              </div>
+            </div>
+            <button type="button" id="addFont">Add Another Font</button>
           </fieldset>
-
+        
+          <!-- Colors Section -->
           <fieldset>
             <legend>Custom Colors</legend>
-            <label for="customColorName">Color Name:</label>
-            <input type="text" id="customColorName" name="customColorName" placeholder="Enter color name (e.g., 'primary')">
-            
-            <label for="customColorValue">Color Value:</label>
-            <input type="color" id="customColorValue" name="customColorValue">
+            <div id="colorsContainer">
+              <div class="color-entry">
+                <label for="customColorName">Color Name:</label>
+                <input type="text" class="customColorName" name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
+        
+                <label for="customColorValue">Color Value:</label>
+                <input type="color" class="customColorValue" name="customColorValue[]">
+              </div>
+            </div>
+            <button type="button" id="addColor">Add Another Color</button>
           </fieldset>
-
+        
+          <!-- Advanced Mode -->
           <fieldset>
             <legend>Advanced Mode</legend>
             <label for="advancedMode">Enable Advanced Mode:</label>
             <input type="checkbox" id="advancedMode" name="advancedMode">
           </fieldset>
-
+        
           <button type="submit">Save Settings</button>
-        </form>
+        </form>        
       </div>
       <div id="page" class="min-h-screen w-[calc(100%-18rem)] ml-72">
         <!-- The designer's page content goes here -->
