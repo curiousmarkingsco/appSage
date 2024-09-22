@@ -14,15 +14,5 @@
 
     <script src="./js/load.js"></script>
     <script src="./js/preview/main.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const previewPageId = urlParams.get('page');
-
-        if (previewPageId) {
-          loadPreview(previewPageId);
-        }
-      });
-    </script>
   </body>
 </html>
