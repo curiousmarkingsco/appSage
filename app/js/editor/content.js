@@ -403,15 +403,6 @@ function displayMediaFromIndexedDB(contentContainer) {
   }
 }
 
-function handleElementCreation() {
-  const createButton = document.getElementById('create-element-button');
-  createButton.addEventListener('click', function () {
-    const sidebar = document.getElementById('sidebar-dynamic');
-    const container = document.getElementById('page-container');
-    updateSidebarForTextElements(sidebar, container, true);
-  });
-}
-
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
