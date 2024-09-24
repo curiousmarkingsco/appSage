@@ -302,11 +302,11 @@ function createLabelAllDevices() {
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
-  
+
   if (file || isPlaceholder) {
     const reader = new FileReader();
-    
-    reader.onload = function(e) {
+
+    reader.onload = function (e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
       const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
 
@@ -358,35 +358,37 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   let contentContainer;
   if (isNewContent || container.classList.contains('pagecolumn')) {
-      contentContainer = addContentContainer();
-      container.appendChild(contentContainer);
+    contentContainer = addContentContainer();
+    container.appendChild(contentContainer);
   } else {
-      contentContainer = container;
+    contentContainer = container;
   }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
-      { label: 'Paragraph', value: 'p' },
-      { label: 'Heading 1', value: 'h1' },
-      { label: 'Heading 2', value: 'h2' },
-      { label: 'Heading 3', value: 'h3' },
-      { label: 'Heading 4', value: 'h4' },
-      { label: 'Heading 5', value: 'h5' },
-      { label: 'Heading 6', value: 'h6' },
-      { label: 'Form', value: 'form' },
-      { label: 'Link', value: 'a' },
-      { label: 'Button', value: 'button' },
-      { label: 'Image', value: 'img' },
-      { label: 'Video', value: 'video' },
-      { label: 'Audio', value: 'audio' }
+    { label: 'Paragraph', value: 'p' },
+    { label: 'Heading 1', value: 'h1' },
+    { label: 'Heading 2', value: 'h2' },
+    { label: 'Heading 3', value: 'h3' },
+    { label: 'Heading 4', value: 'h4' },
+    { label: 'Heading 5', value: 'h5' },
+    { label: 'Heading 6', value: 'h6' },
+    { label: 'Form', value: 'form' },
+    { label: 'Link', value: 'a' },
+    { label: 'Button', value: 'button' },
+    { label: 'Image', value: 'img' },
+    { label: 'Video', value: 'video' },
+    { label: 'Audio', value: 'audio' }
   ];
 
+  const formContainer = document.createElement('div');
+
   options.forEach(opt => {
-      const option = document.createElement('option');
-      option.value = opt.value;
-      option.textContent = opt.label;
-      tagDropdown.appendChild(option);
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.label;
+    tagDropdown.appendChild(option);
   });
 
   const textInput = document.createElement('textarea');
@@ -399,74 +401,97 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
   function toggleInputs(selectedTag) {
-      if (['img', 'video', 'audio'].includes(selectedTag)) {
-          mediaUrlInput.style.display = 'block';
-          textInput.style.display = 'none';
-      } else {
-          mediaUrlInput.style.display = 'none';
-          textInput.style.display = 'block';
-      }
+    if (['img', 'video', 'audio'].includes(selectedTag)) {
+      mediaUrlInput.style.display = 'block';
+      textInput.style.display = 'none';
+    } else {
+      mediaUrlInput.style.display = 'none';
+      textInput.style.display = 'block';
+    }
   }
 
   tagDropdown.addEventListener('change', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (!element) {
-          element = document.createElement(selectedTag);
-          contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-          contentContainer.appendChild(element);
-      }
+    if (!element) {
+      element = document.createElement(selectedTag);
+      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+      contentContainer.appendChild(element);
+    }
 
-      toggleInputs(selectedTag);
+    toggleInputs(selectedTag);
 
-      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-          element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
-      } else {
-          element.textContent = textInput.value;
-      }
+    if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+      element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+    } else {
+      element.textContent = textInput.value;
+    }
 
-      if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
+    // Call handleButtonFields for 'Link' selection
+    if (['a', 'button'].includes(selectedTag)) {
+      handleButtonFields(formContainer, contentContainer, element);
+    } else {
+      const linkOpts = document.getElementById('linkOpts');
+      if (linkOpts) linkOpts.remove();
+    }
+
+    if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
-          element.textContent = textInput.value;
-      }
+    // If no element exists for the selected tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      contentContainer.appendChild(element);
+    }
+
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+    }
   });
 
   mediaUrlInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
-          element.src = mediaUrlInput.value;
-      }
+    if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
+      element.src = mediaUrlInput.value;
+    }
   });
 
   const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
-      if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
-          mediaUrlInput.value = targetElement.src;
-      } else {
-          textInput.value = targetElement.textContent;
-      }
-      tagDropdown.value = targetElement.tagName.toLowerCase();
-      toggleInputs(tagDropdown.value);
+    if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
+      mediaUrlInput.value = targetElement.src;
+    } else {
+      textInput.value = targetElement.textContent;
+    }
+    tagDropdown.value = targetElement.tagName.toLowerCase();
+    toggleInputs(tagDropdown.value);
   }
 
   const titleElement = document.createElement('h2');
   titleElement.textContent = 'Editing Element';
   titleElement.className = 'font-bold text-xl';
 
-  sidebar.prepend(tagDropdown);
-  sidebar.prepend(textInput);
-  sidebar.prepend(mediaUrlInput);
-  sidebar.prepend(titleElement);
+
+  if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
+    handleButtonFields(formContainer, contentContainer, targetElement);
+  } else {
+    const linkOpts = document.getElementById('linkOpts');
+    if (linkOpts) linkOpts.remove();
+  }
+
+  sidebar.prepend(formContainer);
+  formContainer.prepend(tagDropdown);
+  formContainer.prepend(textInput);
+  formContainer.prepend(mediaUrlInput);
+  formContainer.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
   addManualClassEditor(sidebar, contentContainer);
   addManualCssEditor(sidebar, contentContainer);
@@ -475,13 +500,13 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 function handleElementCreation() {
   const createButton = document.getElementById('create-element-button');
   createButton.addEventListener('click', function () {
-      const sidebar = document.getElementById('sidebar-dynamic');
-      const container = document.getElementById('page-container');  // Assume this is where new elements go
-      updateSidebarForTextElements(sidebar, container, true);
+    const sidebar = document.getElementById('sidebar-dynamic');
+    const container = document.getElementById('page-container');  // Assume this is where new elements go
+    updateSidebarForTextElements(sidebar, container, true);
   });
 }
 
-function handleButtonFields(sidebar, contentContainer, button) {
+function handleButtonFields(formContainer, contentContainer, button) {
   const urlInput = document.createElement('input');
   urlInput.type = 'url';
   urlInput.placeholder = 'Button/Link URL';
@@ -498,67 +523,30 @@ function handleButtonFields(sidebar, contentContainer, button) {
   checkbox.className = 'ml-2';
 
   if (button) {
-      urlInput.value = button.href;
-      checkbox.checked = button.target === '_blank';
+    urlInput.value = button.href;
+    checkbox.checked = button.target === '_blank';
   }
 
   checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
 
   const buttonUpdate = function () {
-      if (!button) {
-          button = document.createElement('a');
-          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-          contentContainer.appendChild(button);
-      }
-      button.href = urlInput.value;
-      button.target = checkbox.checked ? '_blank' : '';
+    if (!button) {
+      button = document.createElement('a');
+      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+      contentContainer.appendChild(button);
+    }
+    button.href = urlInput.value;
+    button.target = checkbox.checked ? '_blank' : '';
   };
 
   urlInput.oninput = buttonUpdate;
   checkbox.onchange = buttonUpdate;
+  const linkOpts = document.createElement('div');
+  linkOpts.id = 'linkOpts';
 
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
-  enableEditContentOnClick(contentContainer);
-}
-function handleButtonFields(sidebar, contentContainer, button) {
-  const urlInput = document.createElement('input');
-  urlInput.type = 'url';
-  urlInput.placeholder = 'Button/Link URL';
-  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-  const checkboxLabel = document.createElement('label');
-  checkboxLabel.setAttribute('for', 'checkbox');
-  checkboxLabel.textContent = ' Open in new tab';
-  checkboxLabel.className = 'inline-flex items-center mt-2';
-
-  const checkbox = document.createElement('input');
-  checkbox.setAttribute('name', 'checkbox');
-  checkbox.type = 'checkbox';
-  checkbox.className = 'ml-2';
-
-  if (button) {
-      urlInput.value = button.href;
-      checkbox.checked = button.target === '_blank';
-  }
-
-  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
-
-  const buttonUpdate = function () {
-      if (!button) {
-          button = document.createElement('a');
-          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-          contentContainer.appendChild(button);
-      }
-      button.href = urlInput.value;
-      button.target = checkbox.checked ? '_blank' : '';
-  };
-
-  urlInput.oninput = buttonUpdate;
-  checkbox.onchange = buttonUpdate;
-
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
+  linkOpts.append(urlInput);
+  linkOpts.append(checkboxLabel);
+  formContainer.append(linkOpts);
   enableEditContentOnClick(contentContainer);
 }
 
@@ -655,7 +643,6 @@ function removeClassFromContainer(container, ...classNames) {
 
 // Handle custom event for class added
 function handleClassAddedEvent(event) {
-  console.log('yeah')
   const container = event.target;
   const className = event.detail.className;
 
