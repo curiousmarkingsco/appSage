@@ -64,7 +64,7 @@ function saveChanges(page) {
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
 function savePage(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
   }
@@ -72,7 +72,7 @@ function savePage(pageId, data) {
     appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].page_data = data;
-  localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
 // This function saves all page's settings from the designer's additions,
@@ -80,7 +80,7 @@ function savePage(pageId, data) {
 // from the dedicated Page Settings sidebar.
 // DATA IN: ['String', 'JSON Object']
 function savePageSettings(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
   }
@@ -88,7 +88,7 @@ function savePageSettings(pageId, data) {
     appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].settings = data;
-  localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
 // This function creates or prepares the necessary localStorage object in order

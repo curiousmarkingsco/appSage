@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BEGIN FAVICONS: Thank you, https://realfavicongenerator.net/ -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="manifest" href="./assets/favicons/site.webmanifest">
+    <link rel="mask-icon" href="./assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
+    <meta name="msapplication-TileColor" content="#f2f0e9">
+    <meta name="theme-color" content="#f2f0e9">
+    <!-- END FAVICONS -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <script src="./js/tailwind.js"></script>
+    <script src="./js/tailwind.config.js"></script>
+    <link rel="stylesheet" href="./css/main.css">
+    <title>App Designer | appSage</title>
+  </head>
+
+  <body>
+    <div class="flex">
+      <div id="tooltip" class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-50 opacity-0 transition-opacity duration-300"></div>
+      <div id="sidebar" class="w-72 bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16">
+        <form id="appSageSettingsForm">
+          <!-- Fonts Section -->
+          <fieldset>
+            <legend>Custom Fonts</legend>
+            <div id="fontsContainer">
+              <div class="font-entry">
+                <label for="customFont">Font Name:</label>
+                <input type="text" class="customFont" name="customFont[]" placeholder="Enter font name">
+              </div>
+            </div>
+            <button type="button" id="addFont">Add Another Font</button>
+          </fieldset>
+        
+          <!-- Colors Section -->
+          <fieldset>
+            <legend>Custom Colors</legend>
+            <div id="colorsContainer">
+              <div class="color-entry">
+                <label for="customColorName">Color Name:</label>
+                <input type="text" class="customColorName" name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
+        
+                <label for="customColorValue">Color Value:</label>
+                <input type="color" class="customColorValue" name="customColorValue[]">
+              </div>
+            </div>
+            <button type="button" id="addColor">Add Another Color</button>
+          </fieldset>
+        
+          <!-- Advanced Mode -->
+          <fieldset>
+            <legend>Advanced Mode</legend>
+            <label for="advancedMode">Enable Advanced Mode:</label>
+            <input type="checkbox" id="advancedMode" name="advancedMode">
+          </fieldset>
+        
+          <button type="submit">Save Settings</button>
+        </form>        
+      </div>
+      <div id="page" class="min-h-screen w-[calc(100%-18rem)] ml-72 mb-24">
+        <!-- The designer's page content goes here -->
+      </div>
+    </div>
+    <div class="mt-20"><!-- Give the bottom some space for anything that might bleed under the Add Grid element --></div>
+
+    <!-- <script src="./js/main.js"></script> -->
+    <!-- <script src="./js/editor/grid.js"></script> -->
+    <!-- <script src="./js/editor/style/grid.js"></script> -->
+    <!-- <script src="./js/editor/column.js"></script> -->
+    <!-- <script src="./js/editor/style/column.js"></script> -->
+    <!-- <script src="./js/editor/content.js"></script> -->
+    <!-- <script src="./js/editor/sidebar.js"></script> -->
+    <!-- <script src="./js/editor/style.js"></script> -->
+    <!-- <script src="./js/editor/main.js"></script> -->
+    <!-- <script src="./js/editor/globals.js"></script> -->
+    <!-- <script src="./js/editor/save.js"></script> -->
+    <!-- <script src="./js/editor/load.js"></script> -->
+    <!-- <script src="./js/load.js"></script> -->
+    <!-- <script src="./js/editor/responsive.js"></script> -->
+    <!-- <script src="./js/remote_save.js"></script> -->
+    <!-- <script src="./js/editor/media.js"></script> -->
+     <script src="./js/settings/main.js"></script>
+    <script>
+
+    </script>
+  </body>
+</html>

@@ -52,8 +52,46 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 2. Make page building accessible to laymens (reduce skill barriers)
 3. Make page building easy and fun (reduce emotional barriers)
 
+## Using appSage as an integration
+
+### Make your storage unique
+By default, pages created get added to `localStorage` under the name "appSageStorage". To ensure your objects don't get mixed up with appSage or other applications that use appSage, create a global variable called `customAppSageStorage`.
+
+See [globals.js](https://github.com/curiousmarkingsco/appSage/blob/main/app/js/editor/globals.js) to see how this works in the code.
+
+For example:
+```js
+var customAppSageStorage = 'dashSageStorage';
+```
+
 ## Coming soon / please help!
 Search this repository for the text `TODO: `
+
+## Compiling the JS
+
+1. Give the shell script appropriate permissions:
+```sh
+chmod +x distgen/generate_js.sh
+chmod +x distgen/generate_js_with_tw.sh
+chmod +x distgen/generate_editor_with_tw.sh
+chmod +x distgen/generate_preview_with_tw.sh
+```
+
+2. Run it script:
+##### Linux
+```sh
+./distgen/generate_js.sh
+./distgen/generate_js_with_tw.sh
+./distgen/generate_editor_with_tw.sh
+./distgen/generate_preview_with_tw.sh
+```
+##### MacOS
+```sh
+zsh ./distgen/generate_js.sh
+zsh ./distgen/generate_js_with_tw.sh
+zsh ./distgen/generate_editor_with_tw.sh
+zsh ./distgen/generate_preview_with_tw.sh
+```
 
 ## Contributing
 See: [CONTRIBUTING.md](https://github.com/curiousmarkingsco/appSage/blob/main/CONTRIBUTING.md)

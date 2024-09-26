@@ -301,26 +301,36 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
+// TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+    }
+  }
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
 function addManualClassEditor(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+    }
+  }
 } // DATA OUT: null
 
-// TODO: Add these to sidebar once 'Advanced' settings is implemented
 function addManualCssEditor(sidebar, element) {
-  addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+    }
+  }
 } // DATA OUT: null
 
 function addEditableDimensions(sidebar, element){
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
   const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];
-  const lengthOptions = ['full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
+  const lengthOptions = ['auto', 'full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
   breakpoints.forEach(bp => {

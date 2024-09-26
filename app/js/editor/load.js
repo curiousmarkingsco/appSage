@@ -40,8 +40,9 @@ function restoreGridCapabilities(grid) {
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     enableEditColumnOnClick(column);
     column.appendChild(createAddContentButton(column));
-    Array.from(column.querySelectorAll('.pagecontent')).forEach(content => {
-      enableEditContentOnClick(content);
+    Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+      enableEditContentOnClick(contentContainer);
+      observeClassManipulation(contentContainer);
     });
   });
 } // DATA OUT: null

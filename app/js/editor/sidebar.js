@@ -24,14 +24,14 @@ function generateMobileTabs() {
   return `
   <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-300">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
+      <div onclick="currentBreakpoint = '${size}';" title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
         ${icon[1]}
       </div>
     `).join('')}
   </div>
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
-      <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-x-1 gap-y-2">
+      <div class="${size !== currentBreakpoint ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-x-1 gap-y-2">
         <h3 class="relative text-lg font-bold text-slate-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-slate-700 text-xs w-7 h-7 p-1 rounded-md border border-slate-500">${appSageEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglishBreakpointNames[size]} Styles</span></h3>
       </div>
     `).join('')}

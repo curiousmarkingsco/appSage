@@ -17,10 +17,11 @@ document.addEventListener('DOMContentLoaded', function () {
     addPageOptions();
   });
 
+
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-full h-full max-h-full pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
@@ -40,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const addHtmlButton = document.getElementById('addHtml');
   addHtmlButton.addEventListener('click', function () {
-    showHtmlModal(() => {});
+    showHtmlModal(() => { });
   });
 
   // Mouse enter event
@@ -127,20 +128,6 @@ function updateTooltip(e, show) {
   }
 } // DATA OUT: null
 
-// This function is for supporting any editor capabilities that involve color.
-// It gives the designer access to the color palette they labored over and
-// keeps them focused on only those colors.
-// DATA IN: JSON Object
-function extractColorNames(colorObject) {
-  let colorArray = [];
-  for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
-    }
-  }
-  return colorArray;
-} // DATA OUT: Array
-
 // This hulking function brings up a modal for pasting in HTML with Tailwind
 // classes. This is for folks who have/bought existing HTML that uses
 // TailwindCSS.
@@ -226,8 +213,8 @@ function getNextValidSibling(element, direction) {
 function copyPageHTML(element) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
@@ -239,7 +226,7 @@ function copyPageHTML(element) {
 function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
@@ -267,8 +254,8 @@ function copyText(textToCopy, element) {
 // When a copy button is clicked, the icon is replaced with a "Tada!" emoji.
 // This function swaps it back to the regular icon after 0.75 seconds.
 // DATA IN: HTML Element
-function resetCopyPageButton(element){
-  setTimeout(function(){
+function resetCopyPageButton(element) {
+  setTimeout(function () {
     element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>';
   }, 750)
 } // DATA OUT: null
@@ -316,24 +303,24 @@ function addEditablePageTitle(container, placement) {
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
   const currentTitle = params.get('config');
-  
+
   // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
-  
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
+
   // Check if the currentTitle exists in the pages object
   if (appSageStorage.pages[currentTitle]) {
     // Clone the data from the current title
     const pageData = appSageStorage.pages[currentTitle];
-    
+
     // Assign the data to the new title
     appSageStorage.pages[newTitle] = pageData;
-    
+
     // Delete the current title entry
     delete appSageStorage.pages[currentTitle];
-    
+
     // Save the updated pages object back to localStorage
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-    
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+
     // Update the URL parameters
     params.set('config', newTitle);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
@@ -369,7 +356,7 @@ function addEditableMetadata(container, placement) {
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
   metaDataContainer.appendChild(metaDataPairsContainer);
 
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = JSON.parse(settings).metaTags;
@@ -433,10 +420,10 @@ function addEditableMetadata(container, placement) {
     input.addEventListener('change', function () {
       const params = new URLSearchParams(window.location.search);
       const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
       const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
-  
+
       document.querySelectorAll('.metadata-pair').forEach(pair => {
         const type = pair.querySelector('.meta-type').value;
         const name = pair.querySelector('.meta-name').value;
@@ -445,11 +432,45 @@ function addEditableMetadata(container, placement) {
           metaTags.push({ type, name, content });
         }
       });
-  
+
       settings.metaTags = metaTags;
       storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem('appSageStorage', JSON.stringify(storedData));
+      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
       console.log('Metadata saved successfully!');
     });
   });
 } // DATA OUT: null
+
+// This used to be in an inline script on the page:
+document.addEventListener('DOMContentLoaded', function () {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+
+  if (config) {
+    const json = loadPage(config);
+    if (json) {
+      loadChanges(json);
+      loadPageSettings(config);
+      loadPageBlobs(config);
+      loadPageMetadata(config)
+    }
+    setupAutoSave(config);
+  } else {
+    let pageId = createNewConfigurationFile();
+    setupAutoSave(pageId);
+  }
+});
+
+function createNewConfigurationFile() {
+  let filename = 'Untitled';
+  let counter = 1;
+  while (loadPage(filename)) {
+    filename = `Untitled-${counter}`;
+    counter++;
+  }
+
+  savePage(filename, '[]'); // Initialize with an empty array
+  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
+  return filename;
+}
