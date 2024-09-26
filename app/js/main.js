@@ -1,6 +1,6 @@
 /*
 
-  dashboard/main.js
+  main.js
 
   This file is primarily for interface elements on index.html, though is also
   used in editor.html.
@@ -40,9 +40,11 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function() {
-    const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
     delete appSageStorage.pages[page_id];
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
     element.remove();
   });
 } // DATA OUT: null
+
+// This used to be in an inline script on the page.

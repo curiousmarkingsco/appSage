@@ -23,6 +23,7 @@ function addContentContainer() {
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
 
   enableEditContentOnClick(contentContainer);
+  observeClassManipulation(contentContainer);
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -412,35 +413,37 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   let contentContainer;
   if (isNewContent || container.classList.contains('pagecolumn')) {
-      contentContainer = addContentContainer();
-      container.appendChild(contentContainer);
+    contentContainer = addContentContainer();
+    container.appendChild(contentContainer);
   } else {
-      contentContainer = container;
+    contentContainer = container;
   }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
-      { label: 'Paragraph', value: 'p' },
-      { label: 'Heading 1', value: 'h1' },
-      { label: 'Heading 2', value: 'h2' },
-      { label: 'Heading 3', value: 'h3' },
-      { label: 'Heading 4', value: 'h4' },
-      { label: 'Heading 5', value: 'h5' },
-      { label: 'Heading 6', value: 'h6' },
-      { label: 'Form', value: 'form' },
-      { label: 'Link', value: 'a' },
-      { label: 'Button', value: 'button' },
-      { label: 'Image', value: 'img' },
-      { label: 'Video', value: 'video' },
-      { label: 'Audio', value: 'audio' }
+    { label: 'Paragraph', value: 'p' },
+    { label: 'Heading 1', value: 'h1' },
+    { label: 'Heading 2', value: 'h2' },
+    { label: 'Heading 3', value: 'h3' },
+    { label: 'Heading 4', value: 'h4' },
+    { label: 'Heading 5', value: 'h5' },
+    { label: 'Heading 6', value: 'h6' },
+    { label: 'Form', value: 'form' },
+    { label: 'Link', value: 'a' },
+    { label: 'Button', value: 'button' },
+    { label: 'Image', value: 'img' },
+    { label: 'Video', value: 'video' },
+    { label: 'Audio', value: 'audio' }
   ];
 
+  const formContainer = document.createElement('div');
+
   options.forEach(opt => {
-      const option = document.createElement('option');
-      option.value = opt.value;
-      option.textContent = opt.label;
-      tagDropdown.appendChild(option);
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.label;
+    tagDropdown.appendChild(option);
   });
 
   const textInput = document.createElement('textarea');
@@ -473,16 +476,16 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   }
 
   tagDropdown.addEventListener('change', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (!element) {
-          element = document.createElement(selectedTag);
-          contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-          contentContainer.appendChild(element);
-      }
+    if (!element) {
+      element = document.createElement(selectedTag);
+      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+      contentContainer.appendChild(element);
+    }
 
-      toggleInputs(selectedTag);
+    toggleInputs(selectedTag);
 
       if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
           element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
@@ -490,101 +493,85 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
           element.textContent = textInput.value;
       }
 
-      if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
+    // Call handleButtonFields for 'Link' selection
+    if (['a', 'button'].includes(selectedTag)) {
+      handleButtonFields(formContainer, contentContainer, element);
+    } else {
+      const linkOpts = document.getElementById('linkOpts');
+      if (linkOpts) linkOpts.remove();
+    }
+
+    if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
-          element.textContent = textInput.value;
-      }
+    // If no element exists for the selected tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      contentContainer.appendChild(element);
+    }
+
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+    }
   });
 
   mediaUrlInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
-          element.src = mediaUrlInput.value;
-      }
+    if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
+      element.src = mediaUrlInput.value;
+    }
   });
 
   const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
-      if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
-          mediaUrlInput.value = targetElement.src;
-      } else {
-          textInput.value = targetElement.textContent;
-      }
-      tagDropdown.value = targetElement.tagName.toLowerCase();
-      toggleInputs(tagDropdown.value);
+    if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
+      mediaUrlInput.value = targetElement.src;
+    } else {
+      textInput.value = targetElement.textContent;
+    }
+    tagDropdown.value = targetElement.tagName.toLowerCase();
+    toggleInputs(tagDropdown.value);
   }
 
   const titleElement = document.createElement('h2');
   titleElement.textContent = 'Editing Element';
   titleElement.className = 'font-bold text-xl';
 
-  sidebar.prepend(tagDropdown);
-  sidebar.prepend(textInput);
-  sidebar.prepend(mediaUrlInput);
-  sidebar.prepend(fileInput);
-  sidebar.prepend(titleElement);
+
+  if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
+    handleButtonFields(formContainer, contentContainer, targetElement);
+  } else {
+    const linkOpts = document.getElementById('linkOpts');
+    if (linkOpts) linkOpts.remove();
+  }
+
+  sidebar.prepend(formContainer);
+  formContainer.prepend(tagDropdown);
+  formContainer.prepend(textInput);
+  formContainer.prepend(mediaUrlInput);
+  formContainer.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
+  addManualClassEditor(sidebar, contentContainer);
+  addManualCssEditor(sidebar, contentContainer);
 }
 
 function handleElementCreation() {
   const createButton = document.getElementById('create-element-button');
   createButton.addEventListener('click', function () {
-      const sidebar = document.getElementById('sidebar-dynamic');
-      const container = document.getElementById('page-container');  // Assume this is where new elements go
-      updateSidebarForTextElements(sidebar, container, true);
+    const sidebar = document.getElementById('sidebar-dynamic');
+    const container = document.getElementById('page-container');  // Assume this is where new elements go
+    updateSidebarForTextElements(sidebar, container, true);
   });
 }
 
-function handleButtonFields(sidebar, contentContainer, button) {
-  const urlInput = document.createElement('input');
-  urlInput.type = 'url';
-  urlInput.placeholder = 'Button/Link URL';
-  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-  const checkboxLabel = document.createElement('label');
-  checkboxLabel.setAttribute('for', 'checkbox');
-  checkboxLabel.textContent = ' Open in new tab';
-  checkboxLabel.className = 'inline-flex items-center mt-2';
-
-  const checkbox = document.createElement('input');
-  checkbox.setAttribute('name', 'checkbox');
-  checkbox.type = 'checkbox';
-  checkbox.className = 'ml-2';
-
-  if (button) {
-      urlInput.value = button.href;
-      checkbox.checked = button.target === '_blank';
-  }
-
-  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
-
-  const buttonUpdate = function () {
-      if (!button) {
-          button = document.createElement('a');
-          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-          contentContainer.appendChild(button);
-      }
-      button.href = urlInput.value;
-      button.target = checkbox.checked ? '_blank' : '';
-  };
-
-  urlInput.oninput = buttonUpdate;
-  checkbox.onchange = buttonUpdate;
-
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
-  enableEditContentOnClick(contentContainer);
-}
-function handleButtonFields(sidebar, contentContainer, button) {
+function handleButtonFields(formContainer, contentContainer, button) {
   const urlInput = document.createElement('input');
   urlInput.type = 'url';
   urlInput.placeholder = 'Button/Link URL';
@@ -619,8 +606,131 @@ function handleButtonFields(sidebar, contentContainer, button) {
 
   urlInput.oninput = buttonUpdate;
   checkbox.onchange = buttonUpdate;
+  const linkOpts = document.createElement('div');
+  linkOpts.id = 'linkOpts';
 
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
+  linkOpts.append(urlInput);
+  linkOpts.append(checkboxLabel);
+  formContainer.append(linkOpts);
   enableEditContentOnClick(contentContainer);
+}
+
+function adjustClassesForInteractiveElements(container) {
+  const excludedClasses = ['content-container', 'pagecontent'];
+  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
+
+  if (interactiveElements.length === 0) {
+    return;
+  }
+
+  const containerClasses = Array.from(container.classList);
+  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
+
+  if (classesToTransfer.length > 0) {
+    interactiveElements.forEach(element => {
+      element.classList.add(...classesToTransfer);
+    });
+    container.classList.remove(...classesToTransfer);
+  }
+}
+
+
+// Map to track transferred classes from container to child elements
+const classTransferMap = new Map();
+
+// Function to transfer class to child element
+function transferClassToChild(container, className, childElement) {
+  childElement.classList.add(className);
+  container.classList.remove(className);
+
+  if (!classTransferMap.has(container)) {
+    classTransferMap.set(container, new Map());
+  }
+  const containerMap = classTransferMap.get(container);
+  containerMap.set(className, childElement);
+}
+
+// Function to adjust classes for interactive elements
+function adjustClassesForInteractiveElements(container) {
+  const excludedClasses = ['content-container', 'pagecontent'];
+  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
+
+  if (interactiveElements.length === 0) {
+    return;
+  }
+
+  const containerClasses = Array.from(container.classList);
+  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
+
+  if (classesToTransfer.length > 0) {
+    interactiveElements.forEach(element => {
+      classesToTransfer.forEach(className => {
+        transferClassToChild(container, className, element);
+      });
+    });
+  }
+}
+
+// Function to dispatch a custom event when a class is added
+function dispatchClassAdded(container, className) {
+  const event = new CustomEvent('classAdded', {
+    detail: { className }
+  });
+  container.dispatchEvent(event);
+}
+
+// Function to dispatch a custom event when a class is removed
+function dispatchClassRemoved(container, className) {
+  const event = new CustomEvent('classRemoved', {
+    detail: { className }
+  });
+  container.dispatchEvent(event);
+}
+
+// Modify class manipulation to dispatch events
+function addClassToContainer(container, ...classNames) {
+  classNames.forEach(className => {
+    if (!container.classList.contains(className)) {
+      container.classList.add(className);
+      dispatchClassAdded(container, className); // Dispatch custom event for each class
+    }
+  });
+}
+
+function removeClassFromContainer(container, ...classNames) {
+  classNames.forEach(className => {
+    if (container.classList.contains(className)) {
+      container.classList.remove(className);
+      dispatchClassRemoved(container, className); // Dispatch custom event for each class
+    }
+  });
+}
+
+// Handle custom event for class added
+function handleClassAddedEvent(event) {
+  const container = event.target;
+  const className = event.detail.className;
+
+  // Logic to handle the class added to the container
+  adjustClassesForInteractiveElements(container);
+}
+
+// Handle custom event for class removed
+function handleClassRemovedEvent(event) {
+  const container = event.target;
+  const className = event.detail.className;
+
+  // If the class was removed from the container, remove it from the child elements too
+  const containerMap = classTransferMap.get(container);
+  if (containerMap && containerMap.has(className)) {
+    const childElement = containerMap.get(className);
+    childElement.classList.remove(className);
+    containerMap.delete(className);  // Clean up the mapping
+  }
+}
+
+// Setup listeners for custom events on the container
+function observeClassManipulation(container) {
+  container.addEventListener('classAdded', handleClassAddedEvent);
+  container.addEventListener('classRemoved', handleClassRemovedEvent);
 }

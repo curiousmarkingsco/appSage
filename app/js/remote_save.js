@@ -15,7 +15,7 @@
 // to the user's selected remote server. It may or may not be operational.
 // DATA IN: ['String', 'String', 'String:Optional']
 function saveDataToServer(url, page_id, css_content = null) {
-  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id];
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id];
   const fullPath = url + (page_id ? ('/' + page_id) : '');
   fetch(fullPath, {
     method: 'POST',
@@ -38,6 +38,7 @@ function flattenJSONToHTML(jsonString, parentInfo) {
     let parentClassName = JSON.parse(parentInfo).className || '';
     parentClassName = parentClassName.replace('w-[calc(100%-18rem)]', 'w-full');
     parentClassName = parentClassName.replace('ml-72', 'min-h-screen');
+    parentClassName = parentClassName.replace('mb-24', '');
 
     const content = jsonArray.map(obj => {
       if (obj.tagName === "DIV" && obj.className && obj.content) {

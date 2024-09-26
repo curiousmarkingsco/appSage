@@ -91,17 +91,17 @@ function handleReset(bp, grid, options, cssClassBase, control) {
         // If it's an array, loop through each class and remove the class from the grid
         cssClassBase.forEach(cssClass => {
           if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
           } else {
-            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
           }
         });
       } else {
         // If it's a string, directly remove the class from the grid
         if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
+          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         }
       }
     });
@@ -111,18 +111,40 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 // This function is intended to facilitate manual CSS styling for the textarea
 // field dedicated for this activity.
 // DATA IN: ['HTML Element, <div>', 'String']
-function applyStyles(element, controlValue) {
+function handleStyles(element, controlValue, mode = 'apply') {
   if (element) {
-    const styles = controlValue.split(';');
-    styles.forEach(style => {
-      const [property, value] = style.split(':');
-      if (property && value) {
-        const camelCaseProperty = property.trim().replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
-        element.style[camelCaseProperty] = value.trim();
+    if (mode === 'apply') {
+      // Apply styles to the element
+      const styles = controlValue.split(';');
+      styles.forEach(style => {
+        const [property, value] = style.split(':');
+        if (property && value) {
+          const camelCaseProperty = property.trim().replace(/-([a-z])/g, (match, p1) => p1.toUpperCase());
+          element.style[camelCaseProperty] = value.trim();
+        }
+      });
+    } else if (mode === 'retrieve') {
+      // Retrieve inline styles from the element
+      const computedStyles = element.style;
+      const retrievedStyles = [];
+
+      for (let i = 0; i < computedStyles.length; i++) {
+        const property = computedStyles[i];
+        const value = computedStyles.getPropertyValue(property);
+
+        if (value) {
+          // Convert camelCase properties back to kebab-case
+          const kebabCaseProperty = property.replace(/[A-Z]/g, (match) => `-${match.toLowerCase()}`);
+          retrievedStyles.push(`${kebabCaseProperty}:${value}`);
+        }
       }
-    });
+
+      // Join styles into a semicolon-separated string
+      return retrievedStyles.join(';') + ';';
+    }
   }
-} // DATA OUT: null
+}
+ // DATA OUT: null
 
 // This function attempts to find existing styles so that other functions know
 // what/where to replace new classes, if applicable.
@@ -130,7 +152,7 @@ function applyStyles(element, controlValue) {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -145,6 +167,10 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
   let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
+  let advanced = false;
+  if (labelPrefix === 'class' || labelPrefix === 'css') {
+    advanced = true;
+  }
   if (collapseLabels && keepLabel === false) {
     const label = document.createElement('label');
     label.className = 'hidden';
@@ -159,7 +185,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
     mobileIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
-    label.innerHTML = `<span class="inline-block">${keepLabel}</span>`;
+    label.innerHTML = `<span class="inline-block">${keepLabel}${advanced === true ? ' (Advanced Option)' : ''}</span>`;
     label.className = 'block col-span-5 text-slate-700 text-xs uppercase mt-2';
     label.setAttribute('for', forAttr);
     label.prepend(mobileIcon);
@@ -180,7 +206,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   control.onchange = (event) => {
     if (labelPrefix === 'Background Image URL') {
       // assumes 'bg' is URL
-      newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
+      newValue = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
@@ -195,7 +221,12 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
 // DATA IN: See `addDeviceTargetedOptions`
 function handleTextareaType(labelPrefix, grid, control) {
   control.type = 'text';
-  control.value = (grid.classList);
+  if (labelPrefix == 'class') {
+    control.value = (grid.classList);
+  }
+  if (labelPrefix == 'css') {
+    control.value = handleStyles(grid, '', 'retrieve');
+  }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
@@ -205,7 +236,7 @@ function handleTextareaType(labelPrefix, grid, control) {
       control.innerHTML = newHtmlElement;
     }
     if (labelPrefix == 'css') {
-      applyStyles(grid, control.value);
+      handleStyles(grid, control.value, 'apply');
     }
   };
 } // DATA OUT: null
@@ -243,7 +274,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${(smallSelect && !borderOption) ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   
   options.forEach(option => {
-    const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -253,7 +284,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   
   selectControl.onchange = () => {
     options.forEach(opt => {
-      const classToRemove = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+      const classToRemove = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
       grid.classList.remove(classToRemove);
     });
 
@@ -347,19 +378,19 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
-        grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
           if (!swatchboard) b.classList.remove('bg-sky-200')
           if (swatchboard) b.classList.remove('border-sky-300');
         });
-        if (cssClassBase === 'justify') grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
       if (option !== 'reset') {
-        grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+        grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
         // column justification requires flex to work as expected
-        if (cssClassBase === 'justify') grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
@@ -401,7 +432,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
   checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
   checkbox.onchange = () => {
-    const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
+    const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
   };
   control.appendChild(checkbox);
@@ -418,7 +449,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -427,7 +458,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   });
   control.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
     });
     grid.classList.add(control.value);
   };

@@ -2,16 +2,32 @@
 
   editor/globals.js
   
-  These house all the icons needed for the editor. Most icons are from
+  These house all the icons needed for the editor. Many icons are from
   FontAwesome, added to this repository in July 2024 under a paid license
   under the ownership of Ian McKenzie (https://psychosage.io/contact/)
 
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - 
+  https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 */
 
-
+if (typeof customAppSageStorage !== 'undefined') {
+  // This allows developers to set a custom storage name so that if people
+  // are using multiple appSage derived products, the object won't get too
+  // bogged down or confused. This was originally made to support dashSage.
+  var appSageStorageString = customAppSageStorage;
+  var appSageSettingsString = `${customAppSageStorage}Settings`;
+} else {
+  var appSageStorageString = 'appSageStorage';
+  var appSageSettingsString = 'appSageSettings';
+}
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
+var interactivityState = '';
 
+var currentBreakpoint = 'xs';
 var plainEnglishBreakpointNames = {
   "xs": 'Extra Small',
   "sm": 'Small-Sized',
@@ -78,6 +94,9 @@ var appSageEditorIcons = {
     "lg": '<svg data-extra-info="For wide tablet screens & larger" fill="currentColor" class="h-full w-full rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>',
     "xl": '<svg data-extra-info="For laptop screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>',
     "2xl": '<svg data-extra-info="For desktop screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 352c0 35.3 28.7 64 64 64l176 0-10.7 32L160 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-69.3 0L336 416l176 0c35.3 0 64-28.7 64-64l0-288c0-35.3-28.7-64-64-64L64 0zM512 64l0 224L64 288 64 64l448 0z"/></svg>'
+  },
+  "html-states": {
+    "hover": '<svg data-extra-info="When the mouse is over the element" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M320 112c59.2 0 109.6 37.9 128.3 90.7c5 14.2 7.7 29.4 7.7 45.3c0 0-40 40-136 40s-136-40-136-40c0-15.9 2.7-31.1 7.7-45.3c18.7-52.8 69-90.7 128.3-90.7zm0-48c-90.1 0-165.2 64.8-180.9 150.4C55.1 237.5 0 276.2 0 320c0 70.7 143.3 128 320 128s320-57.3 320-128c0-43.8-55.1-82.5-139.1-105.6C485.2 128.8 410.2 64 320 64zm0 288a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM104 328a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm408-24a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>'
   },
   "heading": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 46.3 14.3 32 32 32l48 0 48 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-16 0 0 112 224 0 0-112-16 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l48 0 48 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-16 0 0 144 0 176 16 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-48 0-48 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l16 0 0-144-224 0 0 144 16 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-48 0-48 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l16 0 0-176L48 96 32 96C14.3 96 0 81.7 0 64z"/></svg>',
   "media": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M192 64c0-35.3 28.7-64 64-64L576 0c35.3 0 64 28.7 64 64l0 69.6c-12.9-6.1-27.9-7.1-41.7-2.5l-98.9 33-37.8-60.5c-2.9-4.7-8.1-7.5-13.6-7.5s-10.6 2.8-13.6 7.5L388 177.9l-15.3-19.7c-3-3.9-7.7-6.2-12.6-6.2s-9.6 2.3-12.6 6.2l-56 72c-3.8 4.8-4.4 11.4-1.7 16.9s8.3 9 14.4 9l64 0 0 64-112 0c-35.3 0-64-28.7-64-64l0-192zM319.5 404.6c-13.8 10.3-25.2 25.2-29.6 43.4L64 448c-35.3 0-64-28.7-64-64L0 160c0-35.3 28.7-64 64-64l96 0 0 264c0 17.7 14.3 32 32 32l150.2 0c-8.2 3.3-15.8 7.5-22.6 12.6zM320 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM56 168l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0c-8.8 0-16 7.2-16 16zm16 80c-8.8 0-16 7.2-16 16l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0zM56 360l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0c-8.8 0-16 7.2-16 16zM630 164.5c6.3 4.5 10 11.8 10 19.5l0 48 0 160c0 1.2-.1 2.4-.3 3.6c.2 1.5 .3 2.9 .3 4.4c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5l0-88.2-144 48L448 464c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5L400 296l0-48c0-10.3 6.6-19.5 16.4-22.8l192-64c7.3-2.4 15.4-1.2 21.6 3.3z"/></svg>',
@@ -167,3 +186,17 @@ var appSageEditorIcons = {
   "gap-y": '<svg class="h-full w-full rotate-90" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>',
   "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>'
 }
+
+// This function is for supporting any editor capabilities that involve color.
+// It gives the designer access to the color palette they labored over and
+// keeps them focused on only those colors.
+// DATA IN: JSON Object
+function extractColorNames(colorObject) {
+  let colorArray = [];
+  for (const colorFamily in colorObject) {
+    for (const shade in colorObject[colorFamily]) {
+      colorArray.push(`${colorFamily}-${shade}`);
+    }
+  }
+  return colorArray;
+} // DATA OUT: Array
