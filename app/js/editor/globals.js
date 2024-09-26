@@ -2,9 +2,14 @@
 
   editor/globals.js
   
-  These house all the icons needed for the editor. Most icons are from
+  These house all the icons needed for the editor. Many icons are from
   FontAwesome, added to this repository in July 2024 under a paid license
   under the ownership of Ian McKenzie (https://psychosage.io/contact/)
+
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - 
+  https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 */
 
@@ -22,6 +27,7 @@ var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
 
+var currentBreakpoint = 'xs';
 var plainEnglishBreakpointNames = {
   "xs": 'Extra Small',
   "sm": 'Small-Sized',
