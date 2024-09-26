@@ -556,6 +556,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   formContainer.prepend(tagDropdown);
   formContainer.prepend(textInput);
   formContainer.prepend(mediaUrlInput);
+  formContainer.prepend(fileInput);
   formContainer.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
   addManualClassEditor(sidebar, contentContainer);
