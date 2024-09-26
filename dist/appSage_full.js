@@ -681,11 +681,11 @@ function createLabelAllDevices() {
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
-  
+
   if (file || isPlaceholder) {
     const reader = new FileReader();
-    
-    reader.onload = function(e) {
+
+    reader.onload = function (e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
       const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
 
@@ -737,35 +737,37 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   let contentContainer;
   if (isNewContent || container.classList.contains('pagecolumn')) {
-      contentContainer = addContentContainer();
-      container.appendChild(contentContainer);
+    contentContainer = addContentContainer();
+    container.appendChild(contentContainer);
   } else {
-      contentContainer = container;
+    contentContainer = container;
   }
 
   const tagDropdown = document.createElement('select');
   tagDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   const options = [
-      { label: 'Paragraph', value: 'p' },
-      { label: 'Heading 1', value: 'h1' },
-      { label: 'Heading 2', value: 'h2' },
-      { label: 'Heading 3', value: 'h3' },
-      { label: 'Heading 4', value: 'h4' },
-      { label: 'Heading 5', value: 'h5' },
-      { label: 'Heading 6', value: 'h6' },
-      { label: 'Form', value: 'form' },
-      { label: 'Link', value: 'a' },
-      { label: 'Button', value: 'button' },
-      { label: 'Image', value: 'img' },
-      { label: 'Video', value: 'video' },
-      { label: 'Audio', value: 'audio' }
+    { label: 'Paragraph', value: 'p' },
+    { label: 'Heading 1', value: 'h1' },
+    { label: 'Heading 2', value: 'h2' },
+    { label: 'Heading 3', value: 'h3' },
+    { label: 'Heading 4', value: 'h4' },
+    { label: 'Heading 5', value: 'h5' },
+    { label: 'Heading 6', value: 'h6' },
+    { label: 'Form', value: 'form' },
+    { label: 'Link', value: 'a' },
+    { label: 'Button', value: 'button' },
+    { label: 'Image', value: 'img' },
+    { label: 'Video', value: 'video' },
+    { label: 'Audio', value: 'audio' }
   ];
 
+  const formContainer = document.createElement('div');
+
   options.forEach(opt => {
-      const option = document.createElement('option');
-      option.value = opt.value;
-      option.textContent = opt.label;
-      tagDropdown.appendChild(option);
+    const option = document.createElement('option');
+    option.value = opt.value;
+    option.textContent = opt.label;
+    tagDropdown.appendChild(option);
   });
 
   const textInput = document.createElement('textarea');
@@ -778,74 +780,97 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
   function toggleInputs(selectedTag) {
-      if (['img', 'video', 'audio'].includes(selectedTag)) {
-          mediaUrlInput.style.display = 'block';
-          textInput.style.display = 'none';
-      } else {
-          mediaUrlInput.style.display = 'none';
-          textInput.style.display = 'block';
-      }
+    if (['img', 'video', 'audio'].includes(selectedTag)) {
+      mediaUrlInput.style.display = 'block';
+      textInput.style.display = 'none';
+    } else {
+      mediaUrlInput.style.display = 'none';
+      textInput.style.display = 'block';
+    }
   }
 
   tagDropdown.addEventListener('change', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (!element) {
-          element = document.createElement(selectedTag);
-          contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-          contentContainer.appendChild(element);
-      }
+    if (!element) {
+      element = document.createElement(selectedTag);
+      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
+      contentContainer.appendChild(element);
+    }
 
-      toggleInputs(selectedTag);
+    toggleInputs(selectedTag);
 
-      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-          element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
-      } else {
-          element.textContent = textInput.value;
-      }
+    if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+      element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+    } else {
+      element.textContent = textInput.value;
+    }
 
-      if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
+    // Call handleButtonFields for 'Link' selection
+    if (['a', 'button'].includes(selectedTag)) {
+      handleButtonFields(formContainer, contentContainer, element);
+    } else {
+      const linkOpts = document.getElementById('linkOpts');
+      if (linkOpts) linkOpts.remove();
+    }
+
+    if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
-          element.textContent = textInput.value;
-      }
+    // If no element exists for the selected tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      contentContainer.appendChild(element);
+    }
+
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+    }
   });
 
   mediaUrlInput.addEventListener('input', function () {
-      const selectedTag = tagDropdown.value;
-      let element = contentContainer.querySelector(selectedTag);
+    const selectedTag = tagDropdown.value;
+    let element = contentContainer.querySelector(selectedTag);
 
-      if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
-          element.src = mediaUrlInput.value;
-      }
+    if (element && ['img', 'video', 'audio'].includes(selectedTag)) {
+      element.src = mediaUrlInput.value;
+    }
   });
 
   const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
-      if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
-          mediaUrlInput.value = targetElement.src;
-      } else {
-          textInput.value = targetElement.textContent;
-      }
-      tagDropdown.value = targetElement.tagName.toLowerCase();
-      toggleInputs(tagDropdown.value);
+    if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
+      mediaUrlInput.value = targetElement.src;
+    } else {
+      textInput.value = targetElement.textContent;
+    }
+    tagDropdown.value = targetElement.tagName.toLowerCase();
+    toggleInputs(tagDropdown.value);
   }
 
   const titleElement = document.createElement('h2');
   titleElement.textContent = 'Editing Element';
   titleElement.className = 'font-bold text-xl';
 
-  sidebar.prepend(tagDropdown);
-  sidebar.prepend(textInput);
-  sidebar.prepend(mediaUrlInput);
-  sidebar.prepend(titleElement);
+
+  if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
+    handleButtonFields(formContainer, contentContainer, targetElement);
+  } else {
+    const linkOpts = document.getElementById('linkOpts');
+    if (linkOpts) linkOpts.remove();
+  }
+
+  sidebar.prepend(formContainer);
+  formContainer.prepend(tagDropdown);
+  formContainer.prepend(textInput);
+  formContainer.prepend(mediaUrlInput);
+  formContainer.prepend(titleElement);
   addTextOptions(sidebar, contentContainer);
   addManualClassEditor(sidebar, contentContainer);
   addManualCssEditor(sidebar, contentContainer);
@@ -854,13 +879,13 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 function handleElementCreation() {
   const createButton = document.getElementById('create-element-button');
   createButton.addEventListener('click', function () {
-      const sidebar = document.getElementById('sidebar-dynamic');
-      const container = document.getElementById('page-container');  // Assume this is where new elements go
-      updateSidebarForTextElements(sidebar, container, true);
+    const sidebar = document.getElementById('sidebar-dynamic');
+    const container = document.getElementById('page-container');  // Assume this is where new elements go
+    updateSidebarForTextElements(sidebar, container, true);
   });
 }
 
-function handleButtonFields(sidebar, contentContainer, button) {
+function handleButtonFields(formContainer, contentContainer, button) {
   const urlInput = document.createElement('input');
   urlInput.type = 'url';
   urlInput.placeholder = 'Button/Link URL';
@@ -877,67 +902,30 @@ function handleButtonFields(sidebar, contentContainer, button) {
   checkbox.className = 'ml-2';
 
   if (button) {
-      urlInput.value = button.href;
-      checkbox.checked = button.target === '_blank';
+    urlInput.value = button.href;
+    checkbox.checked = button.target === '_blank';
   }
 
   checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
 
   const buttonUpdate = function () {
-      if (!button) {
-          button = document.createElement('a');
-          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-          contentContainer.appendChild(button);
-      }
-      button.href = urlInput.value;
-      button.target = checkbox.checked ? '_blank' : '';
+    if (!button) {
+      button = document.createElement('a');
+      button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
+      contentContainer.appendChild(button);
+    }
+    button.href = urlInput.value;
+    button.target = checkbox.checked ? '_blank' : '';
   };
 
   urlInput.oninput = buttonUpdate;
   checkbox.onchange = buttonUpdate;
+  const linkOpts = document.createElement('div');
+  linkOpts.id = 'linkOpts';
 
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
-  enableEditContentOnClick(contentContainer);
-}
-function handleButtonFields(sidebar, contentContainer, button) {
-  const urlInput = document.createElement('input');
-  urlInput.type = 'url';
-  urlInput.placeholder = 'Button/Link URL';
-  urlInput.className = 'mt-2 p-2 border border-slate-300 w-full';
-
-  const checkboxLabel = document.createElement('label');
-  checkboxLabel.setAttribute('for', 'checkbox');
-  checkboxLabel.textContent = ' Open in new tab';
-  checkboxLabel.className = 'inline-flex items-center mt-2';
-
-  const checkbox = document.createElement('input');
-  checkbox.setAttribute('name', 'checkbox');
-  checkbox.type = 'checkbox';
-  checkbox.className = 'ml-2';
-
-  if (button) {
-      urlInput.value = button.href;
-      checkbox.checked = button.target === '_blank';
-  }
-
-  checkboxLabel.insertBefore(checkbox, checkboxLabel.firstChild);
-
-  const buttonUpdate = function () {
-      if (!button) {
-          button = document.createElement('a');
-          button.className = 'bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded';
-          contentContainer.appendChild(button);
-      }
-      button.href = urlInput.value;
-      button.target = checkbox.checked ? '_blank' : '';
-  };
-
-  urlInput.oninput = buttonUpdate;
-  checkbox.onchange = buttonUpdate;
-
-  sidebar.prepend(urlInput);
-  sidebar.prepend(checkboxLabel);
+  linkOpts.append(urlInput);
+  linkOpts.append(checkboxLabel);
+  formContainer.append(linkOpts);
   enableEditContentOnClick(contentContainer);
 }
 
@@ -1034,7 +1022,6 @@ function removeClassFromContainer(container, ...classNames) {
 
 // Handle custom event for class added
 function handleClassAddedEvent(event) {
-  console.log('yeah')
   const container = event.target;
   const className = event.detail.className;
 
@@ -1468,7 +1455,7 @@ function addManualCssEditor(sidebar, element) {
 function addEditableDimensions(sidebar, element){
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
   const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];
-  const lengthOptions = ['full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
+  const lengthOptions = ['auto', 'full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
   const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
 
   breakpoints.forEach(bp => {
@@ -2060,6 +2047,7 @@ function createNewConfigurationFile() {
 
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
+var interactivityState = '';
 
 var plainEnglishBreakpointNames = {
   "xs": 'Extra Small',
@@ -2127,6 +2115,9 @@ var appSageEditorIcons = {
     "lg": '<svg data-extra-info="For wide tablet screens & larger" fill="currentColor" class="h-full w-full rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>',
     "xl": '<svg data-extra-info="For laptop screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>',
     "2xl": '<svg data-extra-info="For desktop screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 352c0 35.3 28.7 64 64 64l176 0-10.7 32L160 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-69.3 0L336 416l176 0c35.3 0 64-28.7 64-64l0-288c0-35.3-28.7-64-64-64L64 0zM512 64l0 224L64 288 64 64l448 0z"/></svg>'
+  },
+  "html-states": {
+    "hover": '<svg data-extra-info="When the mouse is over the element" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M320 112c59.2 0 109.6 37.9 128.3 90.7c5 14.2 7.7 29.4 7.7 45.3c0 0-40 40-136 40s-136-40-136-40c0-15.9 2.7-31.1 7.7-45.3c18.7-52.8 69-90.7 128.3-90.7zm0-48c-90.1 0-165.2 64.8-180.9 150.4C55.1 237.5 0 276.2 0 320c0 70.7 143.3 128 320 128s320-57.3 320-128c0-43.8-55.1-82.5-139.1-105.6C485.2 128.8 410.2 64 320 64zm0 288a24 24 0 1 1 0 48 24 24 0 1 1 0-48zM104 328a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zm408-24a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>'
   },
   "heading": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 46.3 14.3 32 32 32l48 0 48 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-16 0 0 112 224 0 0-112-16 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l48 0 48 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-16 0 0 144 0 176 16 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-48 0-48 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l16 0 0-144-224 0 0 144 16 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-48 0-48 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l16 0 0-176L48 96 32 96C14.3 96 0 81.7 0 64z"/></svg>',
   "media": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M192 64c0-35.3 28.7-64 64-64L576 0c35.3 0 64 28.7 64 64l0 69.6c-12.9-6.1-27.9-7.1-41.7-2.5l-98.9 33-37.8-60.5c-2.9-4.7-8.1-7.5-13.6-7.5s-10.6 2.8-13.6 7.5L388 177.9l-15.3-19.7c-3-3.9-7.7-6.2-12.6-6.2s-9.6 2.3-12.6 6.2l-56 72c-3.8 4.8-4.4 11.4-1.7 16.9s8.3 9 14.4 9l64 0 0 64-112 0c-35.3 0-64-28.7-64-64l0-192zM319.5 404.6c-13.8 10.3-25.2 25.2-29.6 43.4L64 448c-35.3 0-64-28.7-64-64L0 160c0-35.3 28.7-64 64-64l96 0 0 264c0 17.7 14.3 32 32 32l150.2 0c-8.2 3.3-15.8 7.5-22.6 12.6zM320 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM56 168l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0c-8.8 0-16 7.2-16 16zm16 80c-8.8 0-16 7.2-16 16l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0zM56 360l0 16c0 8.8 7.2 16 16 16l16 0c8.8 0 16-7.2 16-16l0-16c0-8.8-7.2-16-16-16l-16 0c-8.8 0-16 7.2-16 16zM630 164.5c6.3 4.5 10 11.8 10 19.5l0 48 0 160c0 1.2-.1 2.4-.3 3.6c.2 1.5 .3 2.9 .3 4.4c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5l0-88.2-144 48L448 464c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5L400 296l0-48c0-10.3 6.6-19.5 16.4-22.8l192-64c7.3-2.4 15.4-1.2 21.6 3.3z"/></svg>',
@@ -2586,17 +2577,17 @@ function handleReset(bp, grid, options, cssClassBase, control) {
         // If it's an array, loop through each class and remove the class from the grid
         cssClassBase.forEach(cssClass => {
           if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
           } else {
-            grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
           }
         });
       } else {
         // If it's a string, directly remove the class from the grid
         if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
+          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
-          grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         }
       }
     });
@@ -2647,7 +2638,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -2701,7 +2692,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   control.onchange = (event) => {
     if (labelPrefix === 'Background Image URL') {
       // assumes 'bg' is URL
-      newValue = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
+      newValue = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
@@ -2769,7 +2760,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${(smallSelect && !borderOption) ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   
   options.forEach(option => {
-    const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -2779,7 +2770,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   
   selectControl.onchange = () => {
     options.forEach(opt => {
-      const classToRemove = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+      const classToRemove = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
       grid.classList.remove(classToRemove);
     });
 
@@ -2873,19 +2864,19 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
-        grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
           if (!swatchboard) b.classList.remove('bg-sky-200')
           if (swatchboard) b.classList.remove('border-sky-300');
         });
-        if (cssClassBase === 'justify') grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
       if (option !== 'reset') {
-        grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+        grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
         // column justification requires flex to work as expected
-        if (cssClassBase === 'justify') grid.classList.add(`${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
@@ -2927,7 +2918,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
   checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
   checkbox.onchange = () => {
-    const className = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
+    const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
   };
   control.appendChild(checkbox);
@@ -2944,7 +2935,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -2953,7 +2944,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   });
   control.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
     });
     grid.classList.add(control.value);
   };
