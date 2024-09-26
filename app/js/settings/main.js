@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   const advancedModeCheckbox = document.getElementById("advancedMode");
-  const storedSettings = JSON.parse(localStorage.getItem("appSageSettings")) || {};
+  const storedSettings = JSON.parse(localStorage.getItem(appSageSettingsString)) || {};
 
   // Set advanced mode state if previously stored
   if (storedSettings.advancedMode) {
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       customColors,
       advancedMode
     };
-    localStorage.setItem("appSageSettings", JSON.stringify(appSageSettings));
+    localStorage.setItem(appSageSettingsString, JSON.stringify(appSageSettings));
 
     // Dynamically update Tailwind configuration
     updateTailwindConfig(appSageSettings);
