@@ -1620,20 +1620,6 @@ function updateTooltip(e, show) {
   }
 } // DATA OUT: null
 
-// This function is for supporting any editor capabilities that involve color.
-// It gives the designer access to the color palette they labored over and
-// keeps them focused on only those colors.
-// DATA IN: JSON Object
-function extractColorNames(colorObject) {
-  let colorArray = [];
-  for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
-    }
-  }
-  return colorArray;
-} // DATA OUT: Array
-
 // This hulking function brings up a modal for pasting in HTML with Tailwind
 // classes. This is for folks who have/bought existing HTML that uses
 // TailwindCSS.
@@ -1719,8 +1705,8 @@ function getNextValidSibling(element, direction) {
 function copyPageHTML(element) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
@@ -1732,7 +1718,7 @@ function copyPageHTML(element) {
 function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
@@ -1811,7 +1797,7 @@ function changeLocalStoragePageTitle(newTitle) {
   const currentTitle = params.get('config');
 
   // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
 
   // Check if the currentTitle exists in the pages object
   if (appSageStorage.pages[currentTitle]) {
@@ -1825,7 +1811,7 @@ function changeLocalStoragePageTitle(newTitle) {
     delete appSageStorage.pages[currentTitle];
 
     // Save the updated pages object back to localStorage
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
     // Update the URL parameters
     params.set('config', newTitle);
@@ -1862,7 +1848,7 @@ function addEditableMetadata(container, placement) {
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
   metaDataContainer.appendChild(metaDataPairsContainer);
 
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = JSON.parse(settings).metaTags;
@@ -1926,7 +1912,7 @@ function addEditableMetadata(container, placement) {
     input.addEventListener('change', function () {
       const params = new URLSearchParams(window.location.search);
       const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
       const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
 
@@ -1941,7 +1927,7 @@ function addEditableMetadata(container, placement) {
 
       settings.metaTags = metaTags;
       storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem('appSageStorage', JSON.stringify(storedData));
+      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
       console.log('Metadata saved successfully!');
     });
   });
@@ -1992,7 +1978,14 @@ function createNewConfigurationFile() {
 
 */
 
-
+if (typeof customAppSageStorage !== 'undefined') {
+  // This allows developers to set a custom storage name so that if people
+  // are using multiple appSage derived products, the object won't get too
+  // bogged down or confused. This was originally made to support dashSage.
+  var appSageStorageString = customAppSageStorage;
+} else {
+  var appSageStorageString = 'appSageStorage';
+}
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
@@ -2156,6 +2149,19 @@ var appSageEditorIcons = {
   "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>'
 }
 
+// This function is for supporting any editor capabilities that involve color.
+// It gives the designer access to the color palette they labored over and
+// keeps them focused on only those colors.
+// DATA IN: JSON Object
+function extractColorNames(colorObject) {
+  let colorArray = [];
+  for (const colorFamily in colorObject) {
+    for (const shade in colorObject[colorFamily]) {
+      colorArray.push(`${colorFamily}-${shade}`);
+    }
+  }
+  return colorArray;
+} // DATA OUT: Array
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -2224,7 +2230,7 @@ function saveChanges(page) {
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
 function savePage(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
   }
@@ -2232,7 +2238,7 @@ function savePage(pageId, data) {
     appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].page_data = data;
-  localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
 // This function saves all page's settings from the designer's additions,
@@ -2240,7 +2246,7 @@ function savePage(pageId, data) {
 // from the dedicated Page Settings sidebar.
 // DATA IN: ['String', 'JSON Object']
 function savePageSettings(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
   }
@@ -2248,7 +2254,7 @@ function savePageSettings(pageId, data) {
     appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].settings = data;
-  localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
 // This function creates or prepares the necessary localStorage object in order
@@ -2332,7 +2338,7 @@ function restoreGridCapabilities(grid) {
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 function loadPage(pageId) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (appSageStorage.pages && appSageStorage.pages[pageId] && appSageStorage.pages[pageId].page_data) {
     return appSageStorage.pages[pageId].page_data;
   } else {
@@ -2345,7 +2351,7 @@ function loadPage(pageId) {
 // tidier, these blobs are stored in an object separate from the HTML content.
 // DATA IN: String
 function loadPageBlobs(config) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   const page = document.getElementById('page');
 
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].blobs) {
@@ -2364,7 +2370,7 @@ function loadPageBlobs(config) {
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
 function loadPageMetadata(page_id, element) {
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = settings.metaTags;
@@ -2391,7 +2397,7 @@ function loadPageMetadata(page_id, element) {
 // DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false){
   // Load the appSageStorage object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   
   // Check if the page and settings exist
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {
@@ -2971,7 +2977,7 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
 // to the user's selected remote server. It may or may not be operational.
 // DATA IN: ['String', 'String', 'String:Optional']
 function saveDataToServer(url, page_id, css_content = null) {
-  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id];
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id];
   const fullPath = url + (page_id ? ('/' + page_id) : '');
   fetch(fullPath, {
     method: 'POST',
