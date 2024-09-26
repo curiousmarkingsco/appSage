@@ -128,20 +128,6 @@ function updateTooltip(e, show) {
   }
 } // DATA OUT: null
 
-// This function is for supporting any editor capabilities that involve color.
-// It gives the designer access to the color palette they labored over and
-// keeps them focused on only those colors.
-// DATA IN: JSON Object
-function extractColorNames(colorObject) {
-  let colorArray = [];
-  for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
-    }
-  }
-  return colorArray;
-} // DATA OUT: Array
-
 // This hulking function brings up a modal for pasting in HTML with Tailwind
 // classes. This is for folks who have/bought existing HTML that uses
 // TailwindCSS.
@@ -227,8 +213,8 @@ function getNextValidSibling(element, direction) {
 function copyPageHTML(element) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem('appSageStorage')).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
@@ -240,7 +226,7 @@ function copyPageHTML(element) {
 function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
@@ -319,7 +305,7 @@ function changeLocalStoragePageTitle(newTitle) {
   const currentTitle = params.get('config');
 
   // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
 
   // Check if the currentTitle exists in the pages object
   if (appSageStorage.pages[currentTitle]) {
@@ -333,7 +319,7 @@ function changeLocalStoragePageTitle(newTitle) {
     delete appSageStorage.pages[currentTitle];
 
     // Save the updated pages object back to localStorage
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
     // Update the URL parameters
     params.set('config', newTitle);
@@ -370,7 +356,7 @@ function addEditableMetadata(container, placement) {
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
   metaDataContainer.appendChild(metaDataPairsContainer);
 
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = JSON.parse(settings).metaTags;
@@ -434,7 +420,7 @@ function addEditableMetadata(container, placement) {
     input.addEventListener('change', function () {
       const params = new URLSearchParams(window.location.search);
       const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
       const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
 
@@ -449,7 +435,7 @@ function addEditableMetadata(container, placement) {
 
       settings.metaTags = metaTags;
       storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem('appSageStorage', JSON.stringify(storedData));
+      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
       console.log('Metadata saved successfully!');
     });
   });

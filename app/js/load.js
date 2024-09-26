@@ -12,7 +12,7 @@
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 function loadPage(pageId) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (appSageStorage.pages && appSageStorage.pages[pageId] && appSageStorage.pages[pageId].page_data) {
     return appSageStorage.pages[pageId].page_data;
   } else {
@@ -25,7 +25,7 @@ function loadPage(pageId) {
 // tidier, these blobs are stored in an object separate from the HTML content.
 // DATA IN: String
 function loadPageBlobs(config) {
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   const page = document.getElementById('page');
 
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].blobs) {
@@ -44,7 +44,7 @@ function loadPageBlobs(config) {
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
 function loadPageMetadata(page_id, element) {
-  const storedData = JSON.parse(localStorage.getItem('appSageStorage'));
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
   if (settings) {
     const metaTags = settings.metaTags;
@@ -71,7 +71,7 @@ function loadPageMetadata(page_id, element) {
 // DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false){
   // Load the appSageStorage object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage') || '{}');
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   
   // Check if the page and settings exist
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {
