@@ -13,8 +13,10 @@ if (typeof customAppSageStorage !== 'undefined') {
   // are using multiple appSage derived products, the object won't get too
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
+  var appSageSettingsString = `${customAppSageStorage}Settings`;
 } else {
   var appSageStorageString = 'appSageStorage';
+  var appSageSettingsString = 'appSageSettings';
 }
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);

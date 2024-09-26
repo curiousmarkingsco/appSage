@@ -304,20 +304,26 @@ function addTextOptions(sidebar, element) {
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
 function addManualClassEditor(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
 function addManualCssEditor(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettings)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
