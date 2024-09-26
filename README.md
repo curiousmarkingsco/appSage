@@ -93,6 +93,5 @@ zsh ./distgen/generate_editor_with_tw.sh
 zsh ./distgen/generate_preview_with_tw.sh
 ```
 
-
 ## Contributing
 See: [CONTRIBUTING.md](https://github.com/curiousmarkingsco/appSage/blob/main/CONTRIBUTING.md)
