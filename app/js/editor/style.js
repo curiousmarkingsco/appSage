@@ -304,7 +304,7 @@ function addTextOptions(sidebar, element) {
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  if (localStorage.getItem(appSageSettings)){
+  if (localStorage.getItem(appSageSettingsString)){
     if(JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
@@ -312,7 +312,7 @@ function addManualHtmlElement(sidebar, element) {
 } // DATA OUT: null
 
 function addManualClassEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettings)){
+  if (localStorage.getItem(appSageSettingsString)){
     if(JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
@@ -320,7 +320,7 @@ function addManualClassEditor(sidebar, element) {
 } // DATA OUT: null
 
 function addManualCssEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettings)){
+  if (localStorage.getItem(appSageSettingsString)){
     if(JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
