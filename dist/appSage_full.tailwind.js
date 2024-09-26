@@ -154,59 +154,6 @@ tailwind.config = {
 }
 
 
-/* File: ./app/js/dashboard/main.js */
-/*
-
-  dashboard/main.js
-
-  This file is primarily for interface elements on index.html, though is also
-  used in editor.html.
-
-*/
-
-// This function is for confirmation of deleting pages and elements.
-// DATA IN: ['String', 'function()']
-function showConfirmationModal(message, onConfirm) {
-  const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
-  modal.innerHTML = `
-      <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
-          <p class="text-slate-900">${message}</p>
-          <div class="flex justify-between mt-4">
-              <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-slate-50 font-bold p-2 rounded">Delete</button>
-              <button id="cancelDelete" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
-          </div>
-      </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  document.getElementById('confirmDelete').addEventListener('click', function () {
-    onConfirm();
-    document.body.removeChild(modal);
-  });
-
-  document.getElementById('cancelDelete').addEventListener('click', function () {
-    document.body.removeChild(modal);
-  });
-} // DATA OUT: null
-
-// This function is for permanently deleting a page from localStorage.
-// DATA IN: ['String', 'HTML Element, <div>']
-function deletePage(page_id, element) {
-  const message = "Are you sure you want to delete this page? This action cannot be undone.";
-
-  showConfirmationModal(message, function() {
-    const appSageStorage = JSON.parse(localStorage.getItem('appSageStorage'));
-    delete appSageStorage.pages[page_id];
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-    element.remove();
-  });
-} // DATA OUT: null
-
-// This used to be in an inline script on the page.
-
-
 /* File: ./app/js/editor/grid.js */
 /*
 
@@ -1718,10 +1665,11 @@ document.addEventListener('DOMContentLoaded', function () {
     addPageOptions();
   });
 
+
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-full h-full max-h-full pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
@@ -2630,7 +2578,7 @@ function loadPageSettings(config, view = false){
       });
     }
     if (element && view) {
-      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72');
+      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
       element.classList.add ('w-full', 'min-h-screen');
     }
   } else {
@@ -3202,6 +3150,7 @@ function flattenJSONToHTML(jsonString, parentInfo) {
     let parentClassName = JSON.parse(parentInfo).className || '';
     parentClassName = parentClassName.replace('w-[calc(100%-18rem)]', 'w-full');
     parentClassName = parentClassName.replace('ml-72', 'min-h-screen');
+    parentClassName = parentClassName.replace('mb-24', '');
 
     const content = jsonArray.map(obj => {
       if (obj.tagName === "DIV" && obj.className && obj.content) {

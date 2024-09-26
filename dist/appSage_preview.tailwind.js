@@ -259,7 +259,7 @@ function loadPageSettings(config, view = false){
       });
     }
     if (element && view) {
-      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72');
+      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
       element.classList.add ('w-full', 'min-h-screen');
     }
   } else {

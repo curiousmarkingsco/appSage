@@ -17,10 +17,11 @@ document.addEventListener('DOMContentLoaded', function () {
     addPageOptions();
   });
 
+
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-full h-full max-h-full pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
