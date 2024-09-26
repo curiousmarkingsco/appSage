@@ -14,11 +14,11 @@
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addColumnAlignmentOptions(sidebar, column) {
   const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const placeSelfOptions = ['start', 'end', 'center', 'stretch', 'reset'];
+  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`); 
 
-  // Justify Content - See: https://tailwindcss.com/docs/justify-content
+  // Add 'Justify Content' as an icon-select
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
-  // Place Self - See: https://tailwindcss.com/docs/place-self
-  // TODO: Add missing icons to js/editor/globals.js
-  addDeviceTargetedOptions(sidebar, column, 'Place Self', 'place-self', placeSelfOptions, 'icon-select');
-} // DATA OUT: null
+
+  // Add 'Column Span' as an icon-select or select
+  addDeviceTargetedOptions(sidebar, column, 'Column Span', 'col-span', colSpanOptions, 'select'); // 'icon-select' is also possible
+}  // DATA OUT: null
