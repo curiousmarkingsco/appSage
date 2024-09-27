@@ -29,7 +29,7 @@ function enableEditColumnOnClick(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
     event.stopPropagation();
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateMobileTabs()}`;
+    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
     activateTabs();
     highlightEditingElement(column);
 

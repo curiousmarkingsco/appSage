@@ -11,7 +11,7 @@
 // These tabs represent the selected targeted viewport for the designer's
 // editing actions.
 // DATA IN: null
-function generateMobileTabs() {
+function generateSidebarTabs() {
   const icons = {
       'xs': ['Smartwatch & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
       'sm': ['Mobile & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>'],
@@ -28,6 +28,13 @@ function generateMobileTabs() {
         ${icon[1]}
       </div>
     `).join('')}
+  </div>
+  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-12 left-0 align-items-stretch justify-stretch top-0 bg-slate-300">
+  ${Object.entries(interactivityStates).map(([name, prependClass]) => `
+    <div onclick="interactivityState = '${prependClass[0]}';" title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-full text-center text-slate-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-slate-200 border-b-4">
+      ${name}
+    </div>
+  `).join('')}
   </div>
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
@@ -72,6 +79,23 @@ function activateTabs() {
           section.classList.add('hidden');
         }
       });
+    });
+  });
+
+  document.querySelectorAll('#interactivityTabContainer div').forEach(tab => {
+    tab.addEventListener('click', function () {
+      // Toggle display of associated content or styles when a tab is clicked
+      const allTabs = document.querySelectorAll('.interactivity-tab');
+      allTabs.forEach(t => {
+        t.classList.remove('bg-slate-50');
+        t.classList.remove('border-slate-50');
+        t.classList.add('border-slate-200');
+      }); // Remove highlight from all tabs
+      this.classList.remove('border-slate-200');
+      this.classList.add('bg-slate-50');  // Highlight the clicked tab
+      this.classList.add('border-slate-50');
+
+      console.log(interactivityState);
     });
   });
 } // DATA OUT: null
