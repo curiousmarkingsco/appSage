@@ -16,7 +16,7 @@ echo -n "" > "$output_css"
 
 # Define an array of the required files in order
 declare -a js_files=(
-    "./app/js/dashboard/main.js"
+    "./app/js/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
     "./app/js/editor/column.js"
