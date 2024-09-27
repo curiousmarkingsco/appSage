@@ -150,7 +150,7 @@ function detectAndLoadContentType(contentContainer) {
 // DATA IN: HTML Element, <div>
 function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateSidebarTabs()}`;
   activateTabs();
 
   const contentTypes = [
@@ -353,7 +353,7 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
-  sidebar.innerHTML = `${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
 
   let contentContainer;

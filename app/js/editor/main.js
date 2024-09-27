@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`; // Clear existing editor
+  sidebar.innerHTML = `${generateSidebarTabs()}`; // Clear existing editor
   const editTitle = document.createElement('div');
   editTitle.innerHTML = `<strong>Edit Page Styles &amp; Metadata</strong>`
   activateTabs();
