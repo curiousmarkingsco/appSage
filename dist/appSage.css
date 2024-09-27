@@ -20,6 +20,10 @@
   min-height: 82px;
 }
 
+.pagecontent:empty {
+  padding: 15px;
+}
+
 /* Visual indicator of the element being currently edited */
 #editing-highlight {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */

@@ -11,7 +11,7 @@
 // DATA IN: HTML Element, <div>
 function addGridOptions(grid) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateSidebarTabs()}`;
   activateTabs();
 
   if (grid) {
@@ -165,7 +165,7 @@ function enableEditColumnOnClick(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
     event.stopPropagation();
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateMobileTabs()}`;
+    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
     activateTabs();
     highlightEditingElement(column);
 
@@ -313,14 +313,14 @@ function moveColumnHorizontal(column, direction) {
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addColumnAlignmentOptions(sidebar, column) {
   const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const placeSelfOptions = ['start', 'end', 'center', 'stretch', 'reset'];
+  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`); 
 
-  // Justify Content - See: https://tailwindcss.com/docs/justify-content
+  // Add 'Justify Content' as an icon-select
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
-  // Place Self - See: https://tailwindcss.com/docs/place-self
-  // TODO: Add missing icons to js/editor/globals.js
-  addDeviceTargetedOptions(sidebar, column, 'Place Self', 'place-self', placeSelfOptions, 'icon-select');
-} // DATA OUT: null
+
+  // Add 'Column Span' as an icon-select or select
+  addDeviceTargetedOptions(sidebar, column, 'Column Span', 'col-span', colSpanOptions, 'select'); // 'icon-select' is also possible
+}  // DATA OUT: null
 
 
 /* File: ./app/js/editor/content.js */
@@ -476,7 +476,7 @@ function detectAndLoadContentType(contentContainer) {
 // DATA IN: HTML Element, <div>
 function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateSidebarTabs()}`;
   activateTabs();
 
   const contentTypes = [
@@ -679,7 +679,7 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
-  sidebar.innerHTML = `${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
 
   let contentContainer;
@@ -1010,7 +1010,7 @@ function observeClassManipulation(container) {
 // These tabs represent the selected targeted viewport for the designer's
 // editing actions.
 // DATA IN: null
-function generateMobileTabs() {
+function generateSidebarTabs() {
   const icons = {
       'xs': ['Smartwatch & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
       'sm': ['Mobile & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>'],
@@ -1023,14 +1023,21 @@ function generateMobileTabs() {
   return `
   <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-300">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== 'xs' ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
+      <div onclick="currentBreakpoint = '${size}';" title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
         ${icon[1]}
       </div>
     `).join('')}
   </div>
+  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-12 left-0 align-items-stretch justify-stretch top-0 bg-slate-300">
+  ${Object.entries(interactivityStates).map(([name, prependClass]) => `
+    <div onclick="interactivityState = '${prependClass[0]}';" title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-full text-center text-slate-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-slate-200 border-b-4">
+      ${name}
+    </div>
+  `).join('')}
+  </div>
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
-      <div class="${size !== 'xs' ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-x-1 gap-y-2">
+      <div class="${size !== currentBreakpoint ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-x-1 gap-y-2">
         <h3 class="relative text-lg font-bold text-slate-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-slate-700 text-xs w-7 h-7 p-1 rounded-md border border-slate-500">${appSageEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglishBreakpointNames[size]} Styles</span></h3>
       </div>
     `).join('')}
@@ -1071,6 +1078,23 @@ function activateTabs() {
           section.classList.add('hidden');
         }
       });
+    });
+  });
+
+  document.querySelectorAll('#interactivityTabContainer div').forEach(tab => {
+    tab.addEventListener('click', function () {
+      // Toggle display of associated content or styles when a tab is clicked
+      const allTabs = document.querySelectorAll('.interactivity-tab');
+      allTabs.forEach(t => {
+        t.classList.remove('bg-slate-50');
+        t.classList.remove('border-slate-50');
+        t.classList.add('border-slate-200');
+      }); // Remove highlight from all tabs
+      this.classList.remove('border-slate-200');
+      this.classList.add('bg-slate-50');  // Highlight the clicked tab
+      this.classList.add('border-slate-50');
+
+      console.log(interactivityState);
     });
   });
 } // DATA OUT: null
@@ -1382,20 +1406,26 @@ function addTextOptions(sidebar, element) {
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettingsString)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
 function addManualClassEditor(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettingsString)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
 function addManualCssEditor(sidebar, element) {
-  if(JSON.parse(localStorage.appSageSettings).advancedMode) {
-    addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+  if (localStorage.getItem(appSageSettingsString)){
+    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+    }
   }
 } // DATA OUT: null
 
@@ -1558,7 +1588,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`; // Clear existing editor
+  sidebar.innerHTML = `${generateSidebarTabs()}`; // Clear existing editor
   const editTitle = document.createElement('div');
   editTitle.innerHTML = `<strong>Edit Page Styles &amp; Metadata</strong>`
   activateTabs();
@@ -1972,9 +2002,14 @@ function createNewConfigurationFile() {
 
   editor/globals.js
   
-  These house all the icons needed for the editor. Most icons are from
+  These house all the icons needed for the editor. Many icons are from
   FontAwesome, added to this repository in July 2024 under a paid license
   under the ownership of Ian McKenzie (https://psychosage.io/contact/)
+
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - 
+  https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.
+  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 */
 
@@ -1983,13 +2018,22 @@ if (typeof customAppSageStorage !== 'undefined') {
   // are using multiple appSage derived products, the object won't get too
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
+  var appSageSettingsString = `${customAppSageStorage}Settings`;
 } else {
   var appSageStorageString = 'appSageStorage';
+  var appSageSettingsString = 'appSageSettings';
 }
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
+var interactivityStates = {
+  "default": ['', 'Default'],
+  "hover": ['hover', 'When the user taps (mobile) or has their cursor on top of the element (desktop)'],
+  "focus": ['focus', 'When the user has tapped the element to use it in some way'],
+  "active": ['active', 'When the element has been activated by the user from interacting in some way']
+}
 
+var currentBreakpoint = 'xs';
 var plainEnglishBreakpointNames = {
   "xs": 'Extra Small',
   "sm": 'Small-Sized',
@@ -2531,17 +2575,17 @@ function handleReset(bp, grid, options, cssClassBase, control) {
         // If it's an array, loop through each class and remove the class from the grid
         cssClassBase.forEach(cssClass => {
           if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
           } else {
-            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
           }
         });
       } else {
         // If it's a string, directly remove the class from the grid
         if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
-          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         }
       }
     });
@@ -2592,7 +2636,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -2646,7 +2690,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   control.onchange = (event) => {
     if (labelPrefix === 'Background Image URL') {
       // assumes 'bg' is URL
-      newValue = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
+      newValue = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
@@ -2714,7 +2758,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${(smallSelect && !borderOption) ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
   
   options.forEach(option => {
-    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -2724,7 +2768,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   
   selectControl.onchange = () => {
     options.forEach(opt => {
-      const classToRemove = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+      const classToRemove = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
       grid.classList.remove(classToRemove);
     });
 
@@ -2818,19 +2862,19 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
-        grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
           if (!swatchboard) b.classList.remove('bg-sky-200')
           if (swatchboard) b.classList.remove('border-sky-300');
         });
-        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
       if (option !== 'reset') {
-        grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+        grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
         // column justification requires flex to work as expected
-        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
@@ -2872,7 +2916,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
   checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
   checkbox.onchange = () => {
-    const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
+    const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
   };
   control.appendChild(checkbox);
@@ -2889,7 +2933,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -2898,7 +2942,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   });
   control.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
     });
     grid.classList.add(control.value);
   };
