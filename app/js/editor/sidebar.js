@@ -24,14 +24,14 @@ function generateSidebarTabs() {
   return `
   <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-slate-300">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div onclick="currentBreakpoint = '${size}';" title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
+      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-12 text-slate-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-slate-200 border-t-4">
         ${icon[1]}
       </div>
     `).join('')}
   </div>
   <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-12 left-0 align-items-stretch justify-stretch top-0 bg-slate-300">
   ${Object.entries(interactivityStates).map(([name, prependClass]) => `
-    <div onclick="interactivityState = '${prependClass[0]}';" title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-full text-center text-slate-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-slate-200 border-b-4">
+    <div title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-full text-center text-slate-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-slate-200 border-b-4">
       ${name}
     </div>
   `).join('')}
@@ -70,6 +70,7 @@ function activateTabs() {
 
       // Get the breakpoint from the class, assumes class is first in the list!
       const bp = this.classList[0].replace('tab-', '');
+      currentBreakpoint = bp;
 
       // Assuming you have sections with IDs corresponding to breakpoints
       document.querySelectorAll('.tab-content').forEach(section => {
@@ -95,7 +96,8 @@ function activateTabs() {
       this.classList.add('bg-slate-50');  // Highlight the clicked tab
       this.classList.add('border-slate-50');
 
-      console.log(interactivityState);
+      const state = this.classList[0].replace('tab-', '');
+      interactivityState = state;
     });
   });
 } // DATA OUT: null
