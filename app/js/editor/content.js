@@ -43,6 +43,12 @@ function addContentOptions(content) {
   const sidebar = document.getElementById('sidebar-dynamic');
   updateSidebarForContentType(content);
   // Editing options for all types of content
+  const targetElement = content.firstChild;
+
+  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
+    content = targetElement;
+  }
+
   addEditableBorders(sidebar, content);
   addEditableBackgroundColor(sidebar, content);
   addEditableBackgroundImage(sidebar, content);
@@ -455,19 +461,28 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
     handleButtonFields(formContainer, contentContainer, targetElement);
+
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, targetElement);
+    addManualClassEditor(sidebar, targetElement);
+    addManualCssEditor(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
-  }
 
-  sidebar.prepend(formContainer);
-  formContainer.prepend(tagDropdown);
-  formContainer.prepend(textInput);
-  formContainer.prepend(mediaUrlInput);
-  formContainer.prepend(titleElement);
-  addTextOptions(sidebar, contentContainer);
-  addManualClassEditor(sidebar, contentContainer);
-  addManualCssEditor(sidebar, contentContainer);
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, contentContainer);
+    addManualClassEditor(sidebar, contentContainer);
+    addManualCssEditor(sidebar, contentContainer);
+  }
 }
 
 function handleElementCreation() {
