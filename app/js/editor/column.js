@@ -26,31 +26,35 @@ function createColumn() {
 // column, and then adding the editor buttons, dropdowns, etc.
 // DATA IN: HTML Element, <div>
 function enableEditColumnOnClick(column) {
-  const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
     event.stopPropagation();
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
-    activateTabs();
-    highlightEditingElement(column);
-
-    const moveButtons = document.createElement('div');
-    moveButtons.className = 'flex justify-between my-2'
-    moveButtons.id = 'moveColumnButtons'
-    sidebar.prepend(moveButtons);
-    moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'left'));
-    moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
-    moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
-
-    addColumnAlignmentOptions(sidebar, column);
-    addEditableBorders(sidebar, column);
-    addEditableBackgroundColor(sidebar, column);
-    addEditableBackgroundImage(sidebar, column);
-    addEditableBackgroundImageURL(sidebar, column);
-    addEditableBackgroundFeatures(sidebar, column);
-    addEditableDimensions(sidebar, column);
-    addEditableMarginAndPadding(sidebar, column);
+    addColumnOptions(column);
   });
 } // DATA OUT: null
+
+function addColumnOptions(column) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
+  highlightEditingElement(column);
+
+  const moveButtons = document.createElement('div');
+  moveButtons.className = 'flex justify-between my-2'
+  moveButtons.id = 'moveColumnButtons'
+  sidebar.prepend(moveButtons);
+  moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'left'));
+  moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
+  moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
+
+  addColumnAlignmentOptions(sidebar, column);
+  addEditableBorders(sidebar, column);
+  addEditableBackgroundColor(sidebar, column);
+  addEditableBackgroundImage(sidebar, column);
+  addEditableBackgroundImageURL(sidebar, column);
+  addEditableBackgroundFeatures(sidebar, column);
+  addEditableDimensions(sidebar, column);
+  addEditableMarginAndPadding(sidebar, column);
+}
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Because it is a column, this sometimes or often

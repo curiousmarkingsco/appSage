@@ -23,6 +23,7 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
 }
+
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
