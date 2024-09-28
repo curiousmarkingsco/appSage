@@ -51,14 +51,14 @@ function addEditablePadding(sidebar, element) {
 
   sides.forEach(side => {
     let cssClassBase;
-  
+
     if (side === 'a') {
       cssClassBase = 'p';
-      element.classList.remove('pt', 'pb', 'pl', 'pr'); 
+      element.classList.remove('pt', 'pb', 'pl', 'pr');
     } else {
       cssClassBase = `p${side}`;
     }
-  
+
     addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
@@ -153,8 +153,8 @@ function addEditableBackgroundImage(sidebar, grid) {
 
     const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
       return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-             appSagePlaceholderMedia[key].endsWith('.png') ||
-             appSagePlaceholderMedia[key].endsWith('.svg');
+        appSagePlaceholderMedia[key].endsWith('.png') ||
+        appSagePlaceholderMedia[key].endsWith('.svg');
     }).reduce((obj, key) => {
       obj[key] = appSagePlaceholderMedia[key];
       return obj;
@@ -304,30 +304,30 @@ function addTextOptions(sidebar, element) {
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
 function addManualClassEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
 function addManualCssEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
-function addEditableDimensions(sidebar, element){
+function addEditableDimensions(sidebar, element) {
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
   const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];
   const lengthOptions = ['auto', 'full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
