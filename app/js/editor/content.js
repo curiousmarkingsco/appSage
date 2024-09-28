@@ -520,7 +520,6 @@ function handleButtonFields(formContainer, contentContainer, button) {
   linkOpts.append(urlInput);
   linkOpts.append(checkboxLabel);
   formContainer.append(linkOpts);
-  enableEditContentOnClick(contentContainer);
 }
 
 function adjustClassesForInteractiveElements(container) {
