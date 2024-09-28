@@ -347,9 +347,9 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
-    { label: 'Form', value: 'form' },
-    { label: 'Link', value: 'a' },
-    { label: 'Button', value: 'button' },
+    // { label: 'Form', value: 'form' },
+    { label: 'Link / Button', value: 'a' },
+    // { label: 'Button', value: 'button' },
     { label: 'Image', value: 'img' },
     { label: 'Video', value: 'video' },
     { label: 'Audio', value: 'audio' }
