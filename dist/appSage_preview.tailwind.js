@@ -180,6 +180,7 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
 }
+
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
@@ -436,10 +437,10 @@ function loadPageMetadata(page_id, element) {
 // expected '#page' div, page settings are stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
-function loadPageSettings(config, view = false){
+function loadPageSettings(config, view = false) {
   // Load the appSageStorage object from localStorage
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  
+
   // Check if the page and settings exist
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {
     let settings;
@@ -448,19 +449,19 @@ function loadPageSettings(config, view = false){
     } catch {
       settings = appSageStorage.pages[config].settings;
     }
-    
+
     // Find the element by config and set the className if it exists
     const element = document.getElementById(settings.id);
     if (element && settings.className) {
       element.className = settings.className;
     }
-    
+
     // Append metaTags to the head if they exist
     if (settings.metaTags) {
       const head = document.getElementsByTagName('head')[0];
       const div = document.createElement('div');
       div.innerHTML = settings.metaTags;
-      
+
       // Append each meta tag found in the div to the head
       Array.from(div.childNodes).forEach(tag => {
         if (tag.nodeType === Node.ELEMENT_NODE) { // Ensure it is an element
@@ -470,7 +471,7 @@ function loadPageSettings(config, view = false){
     }
     if (element && view) {
       element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
-      element.classList.add ('w-full', 'min-h-screen');
+      element.classList.add('w-full', 'min-h-screen');
     }
   } else {
     console.log('Settings for the specified page do not exist.');
@@ -496,24 +497,24 @@ function loadPageSettings(config, view = false){
 function loadPreview(pageId) {
   const json = loadPage(pageId);
   if (json) {
-      const pageContainer = document.getElementById('page');
-      pageContainer.innerHTML = ''; // Clear existing content
+    const pageContainer = document.getElementById('page');
+    pageContainer.innerHTML = ''; // Clear existing content
 
-      document.querySelector('title').textContent = pageId;
+    document.querySelector('title').textContent = pageId;
 
-      const data = JSON.parse(json);
-      data.forEach(item => {
-          const element = document.createElement(item.tagName);
-          element.className = item.className;
-          element.innerHTML = item.content;
-          pageContainer.appendChild(element);
-      });
+    const data = JSON.parse(json);
+    data.forEach(item => {
+      const element = document.createElement(item.tagName);
+      element.className = item.className;
+      element.innerHTML = item.content;
+      pageContainer.appendChild(element);
+    });
 
-      loadPageSettings(pageId, true);
-      loadPageBlobs(pageId);
-      loadPageMetadata(pageId);
+    loadPageSettings(pageId, true);
+    loadPageBlobs(pageId);
+    loadPageMetadata(pageId);
   } else {
-      console.error('No saved data found for pageId:', pageId);
+    console.error('No saved data found for pageId:', pageId);
   }
 } // DATA OUT: null
 

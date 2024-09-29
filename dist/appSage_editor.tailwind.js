@@ -196,7 +196,7 @@ function showConfirmationModal(message, onConfirm) {
 function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
-  showConfirmationModal(message, function() {
+  showConfirmationModal(message, function () {
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
     delete appSageStorage.pages[page_id];
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
@@ -371,31 +371,35 @@ function createColumn() {
 // column, and then adding the editor buttons, dropdowns, etc.
 // DATA IN: HTML Element, <div>
 function enableEditColumnOnClick(column) {
-  const sidebar = document.getElementById('sidebar-dynamic');
   column.addEventListener('click', function (event) {
     event.stopPropagation();
-    sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
-    activateTabs();
-    highlightEditingElement(column);
-
-    const moveButtons = document.createElement('div');
-    moveButtons.className = 'flex justify-between my-2'
-    moveButtons.id = 'moveColumnButtons'
-    sidebar.prepend(moveButtons);
-    moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'left'));
-    moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
-    moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
-
-    addColumnAlignmentOptions(sidebar, column);
-    addEditableBorders(sidebar, column);
-    addEditableBackgroundColor(sidebar, column);
-    addEditableBackgroundImage(sidebar, column);
-    addEditableBackgroundImageURL(sidebar, column);
-    addEditableBackgroundFeatures(sidebar, column);
-    addEditableDimensions(sidebar, column);
-    addEditableMarginAndPadding(sidebar, column);
+    addColumnOptions(column);
   });
 } // DATA OUT: null
+
+function addColumnOptions(column) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
+  highlightEditingElement(column);
+
+  const moveButtons = document.createElement('div');
+  moveButtons.className = 'flex justify-between my-2'
+  moveButtons.id = 'moveColumnButtons'
+  sidebar.prepend(moveButtons);
+  moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'left'));
+  moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
+  moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
+
+  addColumnAlignmentOptions(sidebar, column);
+  addEditableBorders(sidebar, column);
+  addEditableBackgroundColor(sidebar, column);
+  addEditableBackgroundImage(sidebar, column);
+  addEditableBackgroundImageURL(sidebar, column);
+  addEditableBackgroundFeatures(sidebar, column);
+  addEditableDimensions(sidebar, column);
+  addEditableMarginAndPadding(sidebar, column);
+}
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Because it is a column, this sometimes or often
@@ -522,7 +526,7 @@ function moveColumnHorizontal(column, direction) {
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addColumnAlignmentOptions(sidebar, column) {
   const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`); 
+  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`);
 
   // Add 'Justify Content' as an icon-select
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');
@@ -568,21 +572,31 @@ function addContentContainer() {
 // such as the actual text being added, hrefs for links, form fields, etc.
 // DATA IN: HTML Element, <div>
 function enableEditContentOnClick(contentContainer) {
-  const sidebar = document.getElementById('sidebar-dynamic');
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
-    detectAndLoadContentType(contentContainer);
-    // Editing options for all types of content
-    addEditableBorders(sidebar, contentContainer);
-    addEditableBackgroundColor(sidebar, contentContainer);
-    addEditableBackgroundImage(sidebar, contentContainer);
-    addEditableBackgroundImageURL(sidebar, contentContainer);
-    addEditableBackgroundFeatures(sidebar, contentContainer);
-    addEditableMarginAndPadding(sidebar, contentContainer);
-    addEditableDimensions(sidebar, contentContainer);
-    highlightEditingElement(contentContainer);
+    addContentOptions(contentContainer);
   });
 } // DATA OUT: null
+
+function addContentOptions(content) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  updateSidebarForContentType(content);
+  // Editing options for all types of content
+  const targetElement = content.firstChild;
+
+  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
+    content = targetElement;
+  }
+
+  addEditableBorders(sidebar, content);
+  addEditableBackgroundColor(sidebar, content);
+  addEditableBackgroundImage(sidebar, content);
+  addEditableBackgroundImageURL(sidebar, content);
+  addEditableBackgroundFeatures(sidebar, content);
+  addEditableMarginAndPadding(sidebar, content);
+  addEditableDimensions(sidebar, content);
+  highlightEditingElement(content);
+}
 
 // This function creates the button for adding content to the column currently
 // being hovered over by the designer.
@@ -641,30 +655,14 @@ function createVerticalMoveContentButton(contentContainer, direction) {
   return button;
 } // DATA OUT: HTML Element, <button>
 
-// This function figures out what to do after something in the editing view is
-// clicked and either creates or finds the contextually relevant element and
-// updates the sidebar with relevant styling options.
+// This function and the one below it creates various buttons to choose from
+// available elements that can be created.
 // DATA IN: HTML Element, <div>
-function detectAndLoadContentType(contentContainer) {
+function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  // const oldMoveButtons = document.getElementById('moveContentButtons');
-  // if (oldMoveButtons) { oldMoveButtons.remove }
-  // 'form' MUST be first so that other elements don't get snagged up
-  const types = ['form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'button', 'input', 'textarea'];//, 'div', 'ul' ,'ol', 'li', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
-  const found = types.find(type => contentContainer.querySelector(type));
-  if (found) {
-    switch (found) {
-      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': case 'button': case 'a': case 'p': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
-        updateSidebarForTextElements(sidebar, contentContainer);
-        break;
-      case 'img': case 'video': case 'audio':
-        updateSidebarForTextElements(sidebar, contentContainer);
-        break;
-    }
-  } else {
-    // If no specific type is found, proceed with showing options to add new content
-    updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
-  }
+  sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
+  updateSidebarForTextElements(sidebar, contentContainer);
 
   const moveButtons = document.createElement('div');
   moveButtons.className = 'flex justify-between my-2';
@@ -678,21 +676,6 @@ function detectAndLoadContentType(contentContainer) {
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 
   highlightEditingElement(contentContainer);
-} // DATA OUT: null
-
-// This function and the one below it creates various buttons to choose from
-// available elements that can be created.
-// DATA IN: HTML Element, <div>
-function updateSidebarForContentType(contentContainer) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateSidebarTabs()}`;
-  activateTabs();
-
-  const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Text Content including Form elements.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-  ];
-  updateSidebarForTextElements(sidebar, contentContainer, true);
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -909,9 +892,9 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
-    { label: 'Form', value: 'form' },
-    { label: 'Link', value: 'a' },
-    { label: 'Button', value: 'button' },
+    // { label: 'Form', value: 'form' },
+    { label: 'Link / Button', value: 'a' },
+    // { label: 'Button', value: 'button' },
     { label: 'Image', value: 'img' },
     { label: 'Video', value: 'video' },
     { label: 'Audio', value: 'audio' }
@@ -1017,19 +1000,28 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
     handleButtonFields(formContainer, contentContainer, targetElement);
+
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, targetElement);
+    addManualClassEditor(sidebar, targetElement);
+    addManualCssEditor(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
-  }
 
-  sidebar.prepend(formContainer);
-  formContainer.prepend(tagDropdown);
-  formContainer.prepend(textInput);
-  formContainer.prepend(mediaUrlInput);
-  formContainer.prepend(titleElement);
-  addTextOptions(sidebar, contentContainer);
-  addManualClassEditor(sidebar, contentContainer);
-  addManualCssEditor(sidebar, contentContainer);
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, contentContainer);
+    addManualClassEditor(sidebar, contentContainer);
+    addManualCssEditor(sidebar, contentContainer);
+  }
 }
 
 function handleElementCreation() {
@@ -1082,7 +1074,6 @@ function handleButtonFields(formContainer, contentContainer, button) {
   linkOpts.append(urlInput);
   linkOpts.append(checkboxLabel);
   formContainer.append(linkOpts);
-  enableEditContentOnClick(contentContainer);
 }
 
 function adjustClassesForInteractiveElements(container) {
@@ -1221,12 +1212,12 @@ function observeClassManipulation(container) {
 // DATA IN: null
 function generateSidebarTabs() {
   const icons = {
-      'xs': ['Smartwatch & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
-      'sm': ['Mobile & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>'],
-      'md': ['Tall tablet & larger', '<svg fill="currentColor" class="h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
-      'lg': ['Wide tablet & larger', '<svg fill="currentColor" class="h-5 w-5 mx-auto rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
-      'xl': ['Laptop & larger', '<svg fill="currentColor" class="h-8 w-8 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>'],
-      '2xl': ['Desktop & larger', '<svg fill="currentColor" class="h-8 w-8 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 352c0 35.3 28.7 64 64 64l176 0-10.7 32L160 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-69.3 0L336 416l176 0c35.3 0 64-28.7 64-64l0-288c0-35.3-28.7-64-64-64L64 0zM512 64l0 224L64 288 64 64l448 0z"/></svg>']
+    'xs': ['Smartwatch & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>'],
+    'sm': ['Mobile & larger', '<svg fill="currentColor" class="h-4 w-4 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>'],
+    'md': ['Tall tablet & larger', '<svg fill="currentColor" class="h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
+    'lg': ['Wide tablet & larger', '<svg fill="currentColor" class="h-5 w-5 mx-auto rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L384 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 448c0 8.8 7.2 16 16 16l96 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-96 0c-8.8 0-16 7.2-16 16zM384 64L64 64l0 320 320 0 0-320z"/></svg>'],
+    'xl': ['Laptop & larger', '<svg fill="currentColor" class="h-8 w-8 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M128 32C92.7 32 64 60.7 64 96l0 256 64 0 0-256 384 0 0 256 64 0 0-256c0-35.3-28.7-64-64-64L128 32zM19.2 384C8.6 384 0 392.6 0 403.2C0 445.6 34.4 480 76.8 480l486.4 0c42.4 0 76.8-34.4 76.8-76.8c0-10.6-8.6-19.2-19.2-19.2L19.2 384z"/></svg>'],
+    '2xl': ['Desktop & larger', '<svg fill="currentColor" class="h-8 w-8 mx-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 352c0 35.3 28.7 64 64 64l176 0-10.7 32L160 448c-17.7 0-32 14.3-32 32s14.3 32 32 32l256 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-69.3 0L336 416l176 0c35.3 0 64-28.7 64-64l0-288c0-35.3-28.7-64-64-64L64 0zM512 64l0 224L64 288 64 64l448 0z"/></svg>']
   };
 
   return `
@@ -1237,7 +1228,7 @@ function generateSidebarTabs() {
       </div>
     `).join('')}
   </div>
-  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-12 left-0 align-items-stretch justify-stretch top-0 bg-slate-300">
+  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-10 left-0 align-items-stretch justify-stretch top-0 bg-slate-300">
   ${Object.entries(interactivityStates).map(([name, prependClass]) => `
     <div title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-slate-200' : 'bg-slate-50 border-slate-50'} w-full text-center text-slate-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-slate-200 border-b-4">
       ${name}
@@ -1305,7 +1296,17 @@ function activateTabs() {
       this.classList.add('border-slate-50');
 
       const state = this.classList[0].replace('tab-', '');
-      interactivityState = state;
+      interactivityState = state === 'default' ? '' : state;
+
+      const currentlyEditingElement = document.getElementById('editing-highlight');
+
+      if (currentlyEditingElement.classList.contains('pagegrid')) {
+        addGridOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('pagecolumn')) {
+        addColumnOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('pagecontent')) {
+        addContentOptions(currentlyEditingElement);
+      }
     });
   });
 } // DATA OUT: null
@@ -1364,14 +1365,14 @@ function addEditablePadding(sidebar, element) {
 
   sides.forEach(side => {
     let cssClassBase;
-  
+
     if (side === 'a') {
       cssClassBase = 'p';
-      element.classList.remove('pt', 'pb', 'pl', 'pr'); 
+      element.classList.remove('pt', 'pb', 'pl', 'pr');
     } else {
       cssClassBase = `p${side}`;
     }
-  
+
     addDeviceTargetedOptions(sidebar, element, `Padding (${side === 'a' ? 'All' : side})`, cssClassBase, values, 'single-icon-select');
   });
 
@@ -1466,8 +1467,8 @@ function addEditableBackgroundImage(sidebar, grid) {
 
     const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
       return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-             appSagePlaceholderMedia[key].endsWith('.png') ||
-             appSagePlaceholderMedia[key].endsWith('.svg');
+        appSagePlaceholderMedia[key].endsWith('.png') ||
+        appSagePlaceholderMedia[key].endsWith('.svg');
     }).reduce((obj, key) => {
       obj[key] = appSagePlaceholderMedia[key];
       return obj;
@@ -1617,30 +1618,30 @@ function addTextOptions(sidebar, element) {
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
 function addManualClassEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
 function addManualCssEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)){
-    if(JSON.parse(localStorage.appSageSettings).advancedMode) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }
 } // DATA OUT: null
 
-function addEditableDimensions(sidebar, element){
+function addEditableDimensions(sidebar, element) {
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
   const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];
   const lengthOptions = ['auto', 'full', 'screen', '1/2', '1/3', '2/3', '1/4', '3/4', '1/5', '2/5', '3/5', '4/5', '1/6', '5/6', '8', '10', '12', '16', '20', '24', '28', '32', '36', '40', '44', '48', '52', '64', '72', '96'];
@@ -1746,10 +1747,40 @@ function addEditableColumnGaps(sidebar, element) {
 document.addEventListener('DOMContentLoaded', function () {
 
   const editPageButton = document.getElementById('editPageSettings');
-  editPageButton.addEventListener('click', function () {
-    addPageOptions();
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const pageSettingsButton = document.getElementById('pageSettings');
+  const appSageSettingsButton = document.getElementById('appSageSettings');
+  const settingsSidebar = document.getElementById('settingsSidebar');
+  const sidebar = document.getElementById('sidebar');
+
+  // Show/hide the drop-up menu
+  editPageButton.addEventListener('click', function (event) {
+    dropdownMenu.classList.toggle('hidden');
+    event.stopPropagation(); // Prevent the event from propagating further
   });
 
+  // Clicking outside the dropdown menu hides it
+  document.addEventListener('click', function () {
+    dropdownMenu.classList.add('hidden');
+  });
+
+  // Prevent click inside the menu from closing it
+  dropdownMenu.addEventListener('click', function (event) {
+    event.stopPropagation();
+  });
+
+  // Handle Page Settings button click
+  pageSettingsButton.addEventListener('click', function () {
+    addPageOptions(); // Call your existing function
+    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+  });
+
+  // Handle appSage Settings button click
+  appSageSettingsButton.addEventListener('click', function () {
+    settingsSidebar.classList.remove('hidden');
+    sidebar.classList.add('hidden');
+    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+  });
 
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
@@ -2234,6 +2265,7 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
 }
+
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
@@ -2650,10 +2682,10 @@ function loadPageMetadata(page_id, element) {
 // expected '#page' div, page settings are stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
-function loadPageSettings(config, view = false){
+function loadPageSettings(config, view = false) {
   // Load the appSageStorage object from localStorage
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  
+
   // Check if the page and settings exist
   if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {
     let settings;
@@ -2662,19 +2694,19 @@ function loadPageSettings(config, view = false){
     } catch {
       settings = appSageStorage.pages[config].settings;
     }
-    
+
     // Find the element by config and set the className if it exists
     const element = document.getElementById(settings.id);
     if (element && settings.className) {
       element.className = settings.className;
     }
-    
+
     // Append metaTags to the head if they exist
     if (settings.metaTags) {
       const head = document.getElementsByTagName('head')[0];
       const div = document.createElement('div');
       div.innerHTML = settings.metaTags;
-      
+
       // Append each meta tag found in the div to the head
       Array.from(div.childNodes).forEach(tag => {
         if (tag.nodeType === Node.ELEMENT_NODE) { // Ensure it is an element
@@ -2684,7 +2716,7 @@ function loadPageSettings(config, view = false){
     }
     if (element && view) {
       element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
-      element.classList.add ('w-full', 'min-h-screen');
+      element.classList.add('w-full', 'min-h-screen');
     }
   } else {
     console.log('Settings for the specified page do not exist.');
@@ -2839,7 +2871,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
     }
   }
 }
- // DATA OUT: null
+// DATA OUT: null
 
 // This function attempts to find existing styles so that other functions know
 // what/where to replace new classes, if applicable.
@@ -2925,7 +2957,7 @@ function handleTextareaType(labelPrefix, grid, control) {
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
-    if (labelPrefix == 'html'){
+    if (labelPrefix == 'html') {
       const newHtmlElement = document.createElement('div');
       newHtmlElement.innerHTML = control.value;
       control.innerHTML = newHtmlElement;
@@ -2945,16 +2977,15 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const borderOption = (labelPrefix === 'Border Width' || labelPrefix === 'Border Radius');
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
-  
+
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2 ' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${(smallSelect && !borderOption) ? (labelPrefix + ' w-20 ') : ''}`;
-  
+
   const iconTarget = appSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${(smallSelect && !borderOption) ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
-  
+
   const selectControl = document.createElement('select');
-  
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
     extraInfo = tooltips['padding']
@@ -2964,10 +2995,10 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;
   }
-  
+
   selectControl.setAttribute('data-extra-info', extraInfo);
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${(smallSelect && !borderOption) ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
-  
+
   options.forEach(option => {
     const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
@@ -2976,7 +3007,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     optionElement.selected = String(grid.classList).includes(value);
     selectControl.appendChild(optionElement);
   });
-  
+
   selectControl.onchange = () => {
     options.forEach(opt => {
       const classToRemove = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
@@ -2987,14 +3018,14 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     if (cssClassBase === 'm') {
       grid.classList.remove('mt-0', 'mb-0', 'ml-0', 'mr-0', 'mt-1', 'mb-1', 'ml-1', 'mr-1', 'mt-2', 'mb-2', 'ml-2', 'mr-2', 'mt-4', 'mb-4', 'ml-4', 'mr-4', 'mt-8', 'mb-8', 'ml-8', 'mr-8', 'mt-16', 'mb-16', 'ml-16', 'mr-16');
     }
-    
+
     if (cssClassBase === 'p') {
       grid.classList.remove('pt-0', 'pb-0', 'pl-0', 'pr-0', 'pt-1', 'pb-1', 'pl-1', 'pr-1', 'pt-2', 'pb-2', 'pl-2', 'pr-2', 'pt-4', 'pb-4', 'pl-4', 'pr-4', 'pt-8', 'pb-8', 'pl-8', 'pr-8', 'pt-16', 'pb-16', 'pl-16', 'pr-16');
     }
 
     grid.classList.add(selectControl.value);
   };
-  
+
   control.appendChild(selectControl);
   control.appendChild(iconButton);
 }// DATA OUT: null
@@ -3063,7 +3094,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       iconButton.setAttribute('data-extra-info', tooltips['bg-icon'] + option + " of the box it's inside");
     } else {
       handleTooltips(`${cssClassBase}-${option}`, iconButton);
-    }  
+    }
     if ((grid.classList).contains(iconTextCandidate1) && !swatchboard) {
       // Candidate1 means it is not a color icon, so we add a highlight to it.
       iconButton.classList.add('bg-sky-200');
@@ -3278,20 +3309,20 @@ function flattenJSONToHTML(jsonString, parentInfo) {
 // DATA IN: null
 function getCompiledCSS() {
   const styles = document.querySelectorAll('style');
-    let tailwindStyles = '';
+  let tailwindStyles = '';
 
-    for (let style of styles) {
-      if (style.innerHTML.includes("/* ! tailwindcss v")) {
-        tailwindStyles = style.innerHTML;
-        break;
-      }
+  for (let style of styles) {
+    if (style.innerHTML.includes("/* ! tailwindcss v")) {
+      tailwindStyles = style.innerHTML;
+      break;
     }
+  }
 
-    if (tailwindStyles) {
-      return tailwindStyles;
-    } else {
-      console.log('No TailwindCSS styles found.');
-    }
+  if (tailwindStyles) {
+    return tailwindStyles;
+  } else {
+    console.log('No TailwindCSS styles found.');
+  }
 } // DATA IN: String
 
 
