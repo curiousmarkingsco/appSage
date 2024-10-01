@@ -24,6 +24,10 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         container.appendChild(label);
         container.appendChild(control);
         handleInput(bp, labelPrefix, options, cssClassBase, grid, control);
+        // If this is for a background image file, append the placeholder dropdown
+        if (labelPrefix === 'Background Image File') {
+          addPlaceholderDropdown(control, grid);
+        }
         control.classList.add('col-span-5');
         break;
       case 'textarea':
@@ -515,6 +519,63 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
         mediaElement.src = selectedMedia;
         grid.appendChild(mediaElement);
       }
+    }
+  });
+}
+
+// Function to handle the dropdown for selecting placeholder images
+function addPlaceholderDropdown(fileInput, grid) {
+  const placeholderDropdown = document.createElement('select');
+  placeholderDropdown.className = 'background-file-input';
+  placeholderDropdown.style.width = '100%';
+  placeholderDropdown.style.padding = '8px';
+  placeholderDropdown.style.border = '1px solid #ccc';
+  placeholderDropdown.style.borderRadius = '4px';
+  placeholderDropdown.style.marginTop = '8px';
+  placeholderDropdown.style.boxSizing = 'border-box';
+
+  fileInput.parentElement.style.width = '100%';
+  fileInput.parentElement.appendChild(placeholderDropdown);
+
+  const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
+    return appSagePlaceholderMedia[key].endsWith('.jpg') ||
+           appSagePlaceholderMedia[key].endsWith('.png') ||
+           appSagePlaceholderMedia[key].endsWith('.svg');
+  }).reduce((obj, key) => {
+    obj[key] = appSagePlaceholderMedia[key];
+    return obj;
+  }, {});
+
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Select Placeholder Image';
+  placeholderDropdown.appendChild(defaultOption);
+
+  for (const key in imageOnlyMedia) {
+    const option = document.createElement('option');
+    option.value = imageOnlyMedia[key];
+    option.textContent = key;
+    placeholderDropdown.appendChild(option);
+  }
+
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      placeholderDropdown.value = '';
+      placeholderDropdown.disabled = false;
+    }
+  });
+
+  placeholderDropdown.addEventListener('change', function () {
+    if (placeholderDropdown.value) {
+      fileInput.value = '';
+      fileInput.disabled = false;
+
+      // Apply background using Tailwind-style class or inline CSS
+      grid.style.backgroundImage = '';
+      grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
+      grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
+      grid.style.backgroundSize = 'cover';
+      grid.style.backgroundPosition = 'center';
     }
   });
 }

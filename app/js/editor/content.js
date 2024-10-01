@@ -332,7 +332,8 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
         await saveMediaToIndexedDB(file, mediaId);
         contentContainer.setAttribute('data-media-id', mediaId);
       } else {
-        generateBgUrl(contentContainer, true);
+        contentContainer.style.backgroundImage = `url(${e.target.result})`;
+        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
       }
     };
 
@@ -343,16 +344,6 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
     }
   }
 } // DATA OUT: null
-
-function generateBgUrl(contentContainer, isPlaceholder, url = null) {
-  if (isPlaceholder) {
-    // If it's a placeholder, set the placeholder background image
-    contentContainer.style.backgroundImage = `url('/app/placeholder_media/lightmode_jpg/square_placeholder.jpg')`;
-  } else if (url) {
-    // If a URL is provided, use it as the background image
-    contentContainer.style.backgroundImage = `url(${url})`;
-  }
-}
 
 // Helper functions for IndexedDB storage
 function openDatabase() {
@@ -455,35 +446,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     tagDropdown.appendChild(option);
   });
 
-  const mediaSourceDropdown = document.createElement('select');
-  mediaSourceDropdown.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
-
-  const mediaOptions = [
-    { label: 'URL', value: 'url' },
-    { label: 'File Upload', value: 'file' },
-    { label: 'Placeholder', value: 'placeholder' }
-  ];
-
-  mediaOptions.forEach(option => {
-    const opt = document.createElement('option');
-    opt.value = option.value;
-    opt.textContent = option.label;
-    mediaSourceDropdown.appendChild(opt);
-  });
-
-  mediaSourceDropdown.addEventListener('change', function () {
-    const selectedSource = mediaSourceDropdown.value;
-    if (selectedSource === 'placeholder') {
-      generateBgUrl(contentContainer, true);
-    } else if (selectedSource === 'url') {
-      mediaUrlInput.style.display = 'block';
-      fileInput.style.display = 'none';
-    } else if (selectedSource === 'file') {
-      fileInput.style.display = 'block';
-      mediaUrlInput.style.display = 'none';
-    }
-  });
-
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
@@ -506,15 +468,11 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
       mediaUrlInput.style.display = 'block';
       fileInput.style.display = 'block';
       textInput.style.display = 'none';
-    } else if (selectedTag === 'bg-image') {
-      mediaUrlInput.style.display = 'block';
-      fileInput.style.display = 'block';
-      textInput.style.display = 'block';
-    } else {
+  } else {
       mediaUrlInput.style.display = 'none';
       fileInput.style.display = 'none';
       textInput.style.display = 'block';
-    }
+  }
   }
 
   tagDropdown.addEventListener('change', function () {
@@ -596,7 +554,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   sidebar.prepend(formContainer);
   formContainer.prepend(tagDropdown);
-  formContainer.prepend(mediaSourceDropdown);
   formContainer.prepend(textInput);
   formContainer.prepend(mediaUrlInput);
   formContainer.prepend(fileInput);
