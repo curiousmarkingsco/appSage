@@ -985,18 +985,20 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   tagDropdown.addEventListener('change', function () {
     const selectedTag = tagDropdown.value;
     let element;
-    if (contentContainer.tagName !== 'div') {
-      contentContainer = contentContainer.parentNode;
-      console.log(contentContainer.parentNode)
-      element = contentContainer.querySelector(selectedTag);
+    let tempContentContainer;
+
+    if (!contentContainer.classList.contains('pagecontent')) {
+      tempContentContainer = contentContainer.parentNode;
+      element = tempContentContainer.querySelector(selectedTag);
     } else {
-      element = contentContainer.querySelector(selectedTag);
+      tempContentContainer = contentContainer;
+      element = tempContentContainer.querySelector(selectedTag);
     }
 
-    if (!element) {
+    if (element === null) {
       element = document.createElement(selectedTag);
-      contentContainer.innerHTML = '';  // Clear existing content within contentContainer
-      contentContainer.appendChild(element);
+      tempContentContainer.innerHTML = '';  // Clear existing content within tempContentContainer
+      tempContentContainer.appendChild(element);
     }
 
     toggleInputs(selectedTag);
@@ -1009,13 +1011,13 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
-      handleButtonFields(formContainer, contentContainer, element);
+      handleButtonFields(formContainer, tempContentContainer, element);
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
     }
 
-    if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, contentContainer, true);
+    // if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, tempContentContainer, true);
   });
 
   textInput.addEventListener('input', function () {
