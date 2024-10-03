@@ -274,10 +274,6 @@ function createLabelAllDevices() {
 
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
-// TODO: Find an alternative to storing image blobs in the local storage and
-//  in the copy/pastes that might end up in a database bloating it to oblivion.
-//  To see the offending line, search for this text (less the // part):
-// contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
@@ -285,35 +281,36 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
   if (file || isPlaceholder) {
     const reader = new FileReader();
 
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
+      const mediaType = file ? file.type.split('/')[0] : null;
 
       if (!isPlaceholder) {
-        // For media elements (image, video, audio)
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          mediaElement.remove();  // Remove old element if the type does not match
+          mediaElement.remove();
           mediaElement = null;
         }
 
         if (!mediaElement) {
-          // Create new element if none exists or wrong type was removed
           if (mediaType === 'image') {
             mediaElement = document.createElement('img');
           } else if (mediaType === 'video') {
             mediaElement = document.createElement('video');
-            mediaElement.controls = true;  // Add controls for video playback
+            mediaElement.controls = true;
           } else if (mediaType === 'audio') {
             mediaElement = document.createElement('audio');
-            mediaElement.controls = true;  // Add controls for audio playback
+            mediaElement.controls = true;
           }
           contentContainer.appendChild(mediaElement);
         }
 
-        // Set the src for the media element
         mediaElement.src = e.target.result;
+
+        // Store the media file in IndexedDB
+        const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+        await saveMediaToIndexedDB(file, mediaId);
+        contentContainer.setAttribute('data-media-id', mediaId);
       } else {
-        // For background images
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
         contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
       }
@@ -322,11 +319,69 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
     if (file) {
       reader.readAsDataURL(file);
     } else {
-      // If handling placeholders, set the background image directly
       contentContainer.style.backgroundImage = `url(${event.target.value})`;
     }
   }
 } // DATA OUT: null
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('mediaDatabase', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore('mediaStore', { keyPath: 'id' });
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
+async function saveMediaToIndexedDB(mediaBlob, mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readwrite');
+  const store = transaction.objectStore('mediaStore');
+  const mediaEntry = { id: mediaId, mediaBlob };
+  store.put(mediaEntry);
+}
+
+async function getMediaFromIndexedDB(mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(mediaId);
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject('Error fetching media');
+  });
+}
+
+function displayMediaFromIndexedDB(contentContainer) {
+  const mediaId = contentContainer.getAttribute('data-media-id');
+  if (mediaId) {
+    getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
+      if (mediaEntry) {
+        const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
+        const mediaElement = contentContainer.querySelector('img, video, audio');
+        if (mediaElement) {
+          mediaElement.src = mediaUrl;
+        } else {
+          contentContainer.style.backgroundImage = `url(${mediaUrl})`;
+        }
+      }
+    }).catch((error) => {
+      console.error('Error displaying media from IndexedDB:', error);
+    });
+  }
+}
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
@@ -379,14 +434,24 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   mediaUrlInput.placeholder = 'Enter media URL...';
   mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
+  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  fileInput.onchange = function (event) {
+    generateMediaSrc(event, contentContainer, false);
+  }
+
   function toggleInputs(selectedTag) {
     if (['img', 'video', 'audio'].includes(selectedTag)) {
       mediaUrlInput.style.display = 'block';
+      fileInput.style.display = 'block';
       textInput.style.display = 'none';
-    } else {
+  } else {
       mediaUrlInput.style.display = 'none';
+      fileInput.style.display = 'none';
       textInput.style.display = 'block';
-    }
+  }
   }
 
   tagDropdown.addEventListener('change', function () {
@@ -401,11 +466,11 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     toggleInputs(selectedTag);
 
-    if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-      element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
-    } else {
-      element.textContent = textInput.value;
-    }
+      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+          element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
+      } else {
+          element.textContent = textInput.value;
+      }
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
@@ -465,11 +530,22 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
     formContainer.prepend(textInput);
-    formContainer.prepend(mediaUrlInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
     addManualClassEditor(sidebar, targetElement);
     addManualCssEditor(sidebar, targetElement);
+  }  else if (targetElement && ['IMG', 'AUDIO', 'VIDEO'].includes(targetElement.tagName)) {
+    const linkOpts = document.getElementById('linkOpts');
+    if (linkOpts) linkOpts.remove();
+
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(fileInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, contentContainer);
+    addManualClassEditor(sidebar, contentContainer);
+    addManualCssEditor(sidebar, contentContainer);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
@@ -477,7 +553,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
     formContainer.prepend(textInput);
-    formContainer.prepend(mediaUrlInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
     addManualClassEditor(sidebar, contentContainer);
