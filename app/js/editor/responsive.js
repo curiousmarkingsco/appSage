@@ -86,6 +86,7 @@ function handleReset(bp, grid, options, cssClassBase, control) {
   const resetButton = document.createElement('button');
   resetButton.innerHTML = appSageEditorIcons['reset'];
   resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded';
+  resetButton.setAttribute('data-extra-info', tooltips['reset']);
   control.appendChild(resetButton);
 
   resetButton.onclick = () => {
@@ -538,8 +539,8 @@ function addPlaceholderDropdown(fileInput, grid) {
 
   const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
     return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-           appSagePlaceholderMedia[key].endsWith('.png') ||
-           appSagePlaceholderMedia[key].endsWith('.svg');
+      appSagePlaceholderMedia[key].endsWith('.png') ||
+      appSagePlaceholderMedia[key].endsWith('.svg');
   }).reduce((obj, key) => {
     obj[key] = appSagePlaceholderMedia[key];
     return obj;

@@ -24,18 +24,20 @@ function addGridOptions(grid) {
     moveButtons.appendChild(addRemoveGridButton(grid, sidebar));
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
 
+    // Grid-specific editing options
     addEditableColumns(sidebar, grid);
     addGridAlignmentOptions(sidebar, grid);
-    addEditableDimensions(sidebar, grid);
-    highlightEditingElement(grid);
-
     addEditableColumnGaps(sidebar, grid);
+
+    // Standard editing options
     addEditableBorders(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
+    addEditableDimensions(sidebar, grid);
+    highlightEditingElement(grid);
   }
 } // DATA OUT: null
 

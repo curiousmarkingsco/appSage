@@ -2,10 +2,6 @@
 
   editor/content.js
 
-  TODO: A button for adding placeholder media paths for media elements
-  TODO: Currently, if a column has no margins, padding, or content inside of
-        it, it can be extremely hard to click. How do we resolve this?
-
 */
 
 // This function creates a container for individual HTML elements. This is
@@ -21,9 +17,12 @@
 function addContentContainer() {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
+  const contentTag = document.createElement('p'); // create a paragraph by default
+  contentContainer.append(contentTag);
 
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
+  addContentOptions(contentContainer);
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -39,26 +38,6 @@ function enableEditContentOnClick(contentContainer) {
   });
 } // DATA OUT: null
 
-function addContentOptions(content) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  updateSidebarForContentType(content);
-  // Editing options for all types of content
-  const targetElement = content.firstChild;
-
-  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
-    content = targetElement;
-  }
-
-  addEditableBorders(sidebar, content);
-  addEditableBackgroundColor(sidebar, content);
-  addEditableBackgroundImage(sidebar, content);
-  addEditableBackgroundImageURL(sidebar, content);
-  addEditableBackgroundFeatures(sidebar, content);
-  addEditableMarginAndPadding(sidebar, content);
-  addEditableDimensions(sidebar, content);
-  highlightEditingElement(content);
-}
-
 // This function creates the button for adding content to the column currently
 // being hovered over by the designer.
 // DATA IN: HTML Element, <div>
@@ -69,7 +48,8 @@ function createAddContentButton(column) {
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
   button.addEventListener('click', function (event) {
     event.stopPropagation();
-    updateSidebarForContentType(column);
+    const contentContainer = addContentContainer();
+    column.appendChild(contentContainer);
     highlightEditingElement(column);
   });
   return button;
@@ -119,7 +99,7 @@ function createVerticalMoveContentButton(contentContainer, direction) {
 // This function and the one below it creates various buttons to choose from
 // available elements that can be created.
 // DATA IN: HTML Element, <div>
-function updateSidebarForContentType(contentContainer) {
+function addContentOptions(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
   activateTabs();
@@ -131,7 +111,7 @@ function updateSidebarForContentType(contentContainer) {
   sidebar.prepend(moveButtons);
 
   // Minus one to remove the 'Add Content' button from the count
-  const contentCount = contentContainer.parentElement.children.length - 1
+  const contentCount = contentContainer.children.length - 1
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
@@ -207,7 +187,9 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
       const option = document.createElement('option');
       option.value = type;
       option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-      if (type === input.type) option.selected = true;
+      if (type === input.type) {
+        option.selected = true;
+      }
       fieldType.appendChild(option);
     });
     fieldType.onchange = function () {
@@ -389,11 +371,13 @@ function displayMediaFromIndexedDB(contentContainer) {
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
+  const targetElement = container.firstChild;
+  let directEditing = false;
 
   let contentContainer;
-  if (isNewContent || container.classList.contains('pagecolumn')) {
-    contentContainer = addContentContainer();
-    container.appendChild(contentContainer);
+  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
+    directEditing = true;
+    contentContainer = targetElement;
   } else {
     contentContainer = container;
   }
@@ -447,16 +431,23 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
       mediaUrlInput.style.display = 'block';
       fileInput.style.display = 'block';
       textInput.style.display = 'none';
-  } else {
+    } else {
       mediaUrlInput.style.display = 'none';
       fileInput.style.display = 'none';
       textInput.style.display = 'block';
-  }
+    }
   }
 
   tagDropdown.addEventListener('change', function () {
     const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+    let element;
+    if (contentContainer.tagName !== 'div') {
+      contentContainer = contentContainer.parentNode;
+      console.log(contentContainer.parentNode)
+      element = contentContainer.querySelector(selectedTag);
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
 
     if (!element) {
       element = document.createElement(selectedTag);
@@ -466,11 +457,11 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     toggleInputs(selectedTag);
 
-      if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-          element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
-      } else {
-          element.textContent = textInput.value;
-      }
+    if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
+      element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
+    } else {
+      element.textContent = textInput.value;
+    }
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
@@ -485,14 +476,22 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+    let element;
 
-    // If no element exists for the selected tag, create one
+    if (directEditing) {
+      // This predicates that an img/video/audio (media) tag already exists
+      element = contentContainer;
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
+
+    // If no element exists for the media tag, create one
     if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element = document.createElement(selectedTag);
       contentContainer.appendChild(element);
     }
 
+    // If it's not a media tag, update the text
     if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element.textContent = textInput.value;
     }
@@ -506,8 +505,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
       element.src = mediaUrlInput.value;
     }
   });
-
-  const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
     if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
@@ -534,18 +531,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     addTextOptions(sidebar, targetElement);
     addManualClassEditor(sidebar, targetElement);
     addManualCssEditor(sidebar, targetElement);
-  }  else if (targetElement && ['IMG', 'AUDIO', 'VIDEO'].includes(targetElement.tagName)) {
-    const linkOpts = document.getElementById('linkOpts');
-    if (linkOpts) linkOpts.remove();
-
-    sidebar.prepend(formContainer);
-    formContainer.prepend(tagDropdown);
-    formContainer.prepend(mediaUrlInput);
-    formContainer.prepend(fileInput);
-    formContainer.prepend(titleElement);
-    addTextOptions(sidebar, contentContainer);
-    addManualClassEditor(sidebar, contentContainer);
-    addManualCssEditor(sidebar, contentContainer);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
@@ -553,20 +538,23 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
     formContainer.prepend(textInput);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
     addManualClassEditor(sidebar, contentContainer);
     addManualCssEditor(sidebar, contentContainer);
   }
-}
 
-function handleElementCreation() {
-  const createButton = document.getElementById('create-element-button');
-  createButton.addEventListener('click', function () {
-    const sidebar = document.getElementById('sidebar-dynamic');
-    const container = document.getElementById('page-container');  // Assume this is where new elements go
-    updateSidebarForTextElements(sidebar, container, true);
-  });
+  // Standard editing options
+  addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
+  addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundImageURL(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
+  addEditableMarginAndPadding(sidebar, contentContainer);
+  addEditableDimensions(sidebar, contentContainer);
+  highlightEditingElement(contentContainer);
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {
