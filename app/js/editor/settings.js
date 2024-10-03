@@ -65,7 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
     localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
     generateGfontsEmbedCode();
 
-    alert('Settings saved!');
+    const params = new URLSearchParams(window.location.search);
+    params.set('settingsSaved', 'true');
+    window.location.href = window.location.pathname + '?' + params.toString();
   });
 
   // Functionality to add more shades to a color group
@@ -143,7 +145,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     colorsContainer.appendChild(newColorGroup); // Append the new color group to the container
   });
-
 });
 
 function generateGfontsEmbedCode() {
@@ -160,3 +161,54 @@ function generateGfontsEmbedCode() {
   }
   console.log('Fonts saved to metadata.')
 }
+
+function showSettingsModal() {
+  const settingsModal = document.getElementById('settingsModal');
+  settingsModal.classList.remove('hidden');
+
+  document.getElementById('confirmSaveSettings').addEventListener('click', function () {
+    document.getElementById('appSageSettingsForm').submit();
+  });
+
+  document.getElementById('cancelSaveSettings').addEventListener('click', function () {
+    settingsModal.classList.add('hidden');
+  });
+}
+
+
+function showSettingsSavedModal() {
+  // Parse the query parameters from the URL
+  const params = new URLSearchParams(window.location.search);
+
+  // Check if the "settingsSaved" parameter is true
+  if (params.get('settingsSaved') === 'true') {
+      // Create the modal HTML and insert it into the DOM
+      const modal = document.createElement('div');
+      modal.innerHTML = `
+          <div class="fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center">
+              <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
+                  <p class="text-slate-900">Your settings have been successfully saved!</p>
+                  <div class="flex justify-center mt-4">
+                      <button id="closeModal" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">
+                          OK
+                      </button>
+                  </div>
+              </div>
+          </div>
+      `;
+      document.body.appendChild(modal);
+
+      // Add event listener to close the modal
+      document.getElementById('closeModal').addEventListener('click', () => {
+          // Remove the modal from the DOM
+          modal.remove();
+      });
+
+      // Remove the "settingsSaved" parameter from the URL without reloading the page
+      params.delete('settingsSaved');
+      const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+      window.history.replaceState({}, '', newUrl);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', showSettingsSavedModal);

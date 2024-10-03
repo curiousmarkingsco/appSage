@@ -42,9 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Handle appSage Settings button click
   appSageSettingsButton.addEventListener('click', function () {
-    settingsSidebar.classList.remove('hidden');
-    sidebar.classList.add('hidden');
-    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+    showSettingsModal();
   });
 
   const addGridButton = document.getElementById('addGrid');
