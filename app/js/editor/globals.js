@@ -211,6 +211,32 @@ function extractColorNames(colorObject) {
   return colorArray;
 } // DATA OUT: Array
 
+function mergeFontsIntoTailwindConfig() {
+  // Retrieve the fonts from localStorage
+  let appSageSettings = JSON.parse(localStorage.getItem('appSageSettings'));
+  let storedFonts = appSageSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
+
+  // Ensure tailwind.config exists and has the theme and fontFamily objects
+  if (!tailwind.config) {
+    tailwind.config = {};
+  }
+
+  if (!tailwind.config.theme) {
+    tailwind.config.theme = {};
+  }
+
+  if (!tailwind.config.theme.fontFamily) {
+    tailwind.config.theme.fontFamily = {};
+  }
+
+  // Merge each stored font into tailwind.config.theme.fontFamily
+  Object.keys(storedFonts).forEach(fontKey => {
+    tailwind.config.theme.fontFamily[fontKey] = [storedFonts[fontKey]];
+  });
+
+  // The tailwind.config.theme.fontFamily now contains the merged fonts
+}
+
 function mergeTailwindColors(theme) {
   // Check if `theme.extend.colors` exists
   if (theme.extend && theme.extend.colors) {
@@ -262,7 +288,10 @@ function restoreSettings() {
     // Restore fonts: dynamically add any manually entered fonts to the <select> options
     let fonts = document.getElementById('fonts');
     if (fonts && settings.fonts) {
-      settings.fonts.forEach(font => {
+      // Loop through the keys of the fonts object
+      Object.keys(settings.fonts).forEach(fontKey => {
+        let font = settings.fonts[fontKey]; // Get the font value from the object
+
         // Check if the font already exists in the <select>
         let optionExists = Array.from(fonts.options).some(option => option.value === font);
         if (!optionExists) {
@@ -382,3 +411,4 @@ function restoreSettings() {
 
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
+window.addEventListener('load', mergeFontsIntoTailwindConfig);
