@@ -15,24 +15,24 @@
 function loadPreview(pageId) {
   const json = loadPage(pageId);
   if (json) {
-      const pageContainer = document.getElementById('page');
-      pageContainer.innerHTML = ''; // Clear existing content
+    const pageContainer = document.getElementById('page');
+    pageContainer.innerHTML = ''; // Clear existing content
 
-      document.querySelector('title').textContent = pageId;
+    document.querySelector('title').textContent = pageId;
 
-      const data = JSON.parse(json);
-      data.forEach(item => {
-          const element = document.createElement(item.tagName);
-          element.className = item.className;
-          element.innerHTML = item.content;
-          pageContainer.appendChild(element);
-      });
+    const data = JSON.parse(json);
+    data.forEach(item => {
+      const element = document.createElement(item.tagName);
+      element.className = item.className;
+      element.innerHTML = item.content;
+      pageContainer.appendChild(element);
+    });
 
-      loadPageSettings(pageId, true);
-      loadPageBlobs(pageId);
-      loadPageMetadata(pageId);
+    loadPageSettings(pageId, true);
+    loadPageBlobs(pageId);
+    loadPageMetadata(pageId);
   } else {
-      console.error('No saved data found for pageId:', pageId);
+    console.error('No saved data found for pageId:', pageId);
   }
 } // DATA OUT: null
 

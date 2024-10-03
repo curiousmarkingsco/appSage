@@ -13,10 +13,40 @@
 document.addEventListener('DOMContentLoaded', function () {
 
   const editPageButton = document.getElementById('editPageSettings');
-  editPageButton.addEventListener('click', function () {
-    addPageOptions();
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const pageSettingsButton = document.getElementById('pageSettings');
+  const appSageSettingsButton = document.getElementById('appSageSettings');
+  const settingsSidebar = document.getElementById('settingsSidebar');
+  const sidebar = document.getElementById('sidebar');
+
+  // Show/hide the drop-up menu
+  editPageButton.addEventListener('click', function (event) {
+    dropdownMenu.classList.toggle('hidden');
+    event.stopPropagation(); // Prevent the event from propagating further
   });
 
+  // Clicking outside the dropdown menu hides it
+  document.addEventListener('click', function () {
+    dropdownMenu.classList.add('hidden');
+  });
+
+  // Prevent click inside the menu from closing it
+  dropdownMenu.addEventListener('click', function (event) {
+    event.stopPropagation();
+  });
+
+  // Handle Page Settings button click
+  pageSettingsButton.addEventListener('click', function () {
+    addPageOptions(); // Call your existing function
+    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+  });
+
+  // Handle appSage Settings button click
+  appSageSettingsButton.addEventListener('click', function () {
+    settingsSidebar.classList.remove('hidden');
+    sidebar.classList.add('hidden');
+    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+  });
 
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
@@ -66,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function addPageOptions() {
   const page = document.getElementById('page');
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `${generateMobileTabs()}`; // Clear existing editor
+  sidebar.innerHTML = `${generateSidebarTabs()}`; // Clear existing editor
   const editTitle = document.createElement('div');
   editTitle.innerHTML = `<strong>Edit Page Styles &amp; Metadata</strong>`
   activateTabs();

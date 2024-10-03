@@ -14,7 +14,7 @@
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addColumnAlignmentOptions(sidebar, column) {
   const justifyContentsOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
-  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`); 
+  const colSpanOptions = Array.from({ length: 12 }, (_, i) => `${i + 1}`);
 
   // Add 'Justify Content' as an icon-select
   addDeviceTargetedOptions(sidebar, column, 'Justify Content', 'justify', justifyContentsOptions, 'icon-select');

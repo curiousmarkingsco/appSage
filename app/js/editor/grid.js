@@ -10,7 +10,7 @@
 // DATA IN: HTML Element, <div>
 function addGridOptions(grid) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateMobileTabs()}`;
+  sidebar.innerHTML = `<div><strong>Edit Grid</strong></div>${generateSidebarTabs()}`;
   activateTabs();
 
   if (grid) {

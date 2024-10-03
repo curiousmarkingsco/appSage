@@ -18,7 +18,7 @@ echo -n "" > "$output_css"
 declare -a js_files=(
     "./app/js/tailwind.js"
     "./app/js/tailwind.config.js"
-    "./app/js/dashboard/main.js"
+    "./app/js/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
     "./app/js/editor/column.js"

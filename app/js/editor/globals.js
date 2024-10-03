@@ -23,9 +23,16 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
 }
+
 var tailwindColors = tailwind.config.theme.colors;
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
+var interactivityStates = {
+  "default": ['', 'Default'],
+  "hover": ['hover', 'When the user taps (mobile) or has their cursor on top of the element (desktop)'],
+  "focus": ['focus', 'When the user has tapped the element to use it in some way'],
+  "active": ['active', 'When the element has been activated by the user from interacting in some way']
+}
 
 var currentBreakpoint = 'xs';
 var plainEnglishBreakpointNames = {
