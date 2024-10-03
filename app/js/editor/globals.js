@@ -24,7 +24,9 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageSettingsString = 'appSageSettings';
 }
 
-var tailwindColors = tailwind.config.theme.colors;
+updateTailwindConfig();
+var tailwindColors = mergeTailwindColors(tailwind.config.theme);
+
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
 var interactivityStates = {
@@ -208,3 +210,17 @@ function extractColorNames(colorObject) {
   }
   return colorArray;
 } // DATA OUT: Array
+
+function mergeTailwindColors(theme) {
+  // Check if `theme.extend.colors` exists
+  if (theme.extend && theme.extend.colors) {
+    // Merge `theme.colors` and `theme.extend.colors`, maintaining structure
+    return {
+      ...theme.extend.colors,
+      ...theme.colors
+    };
+  }
+
+  // Return `theme.colors` if no `theme.extend.colors` exists
+  return theme.colors;
+}
