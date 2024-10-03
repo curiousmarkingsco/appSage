@@ -139,64 +139,6 @@ function addEditableBackgroundImage(sidebar, grid) {
 
   // Add file input for direct image selection
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
-
-  const fileInput = sidebar.querySelector('input[type="file"]');
-  if (fileInput) {
-    const placeholderDropdown = document.createElement('select');
-    placeholderDropdown.className = fileInput.className;
-    placeholderDropdown.style.width = '100%';
-    placeholderDropdown.style.padding = '8px';
-    placeholderDropdown.style.border = '1px solid #ccc';
-    placeholderDropdown.style.borderRadius = '4px';
-    placeholderDropdown.style.marginTop = '8px';
-    placeholderDropdown.style.boxSizing = 'border-box';
-
-    const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
-      return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-        appSagePlaceholderMedia[key].endsWith('.png') ||
-        appSagePlaceholderMedia[key].endsWith('.svg');
-    }).reduce((obj, key) => {
-      obj[key] = appSagePlaceholderMedia[key];
-      return obj;
-    }, {});
-
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select Placeholder Image';
-    placeholderDropdown.appendChild(defaultOption);
-
-    for (const key in imageOnlyMedia) {
-      const option = document.createElement('option');
-      option.value = imageOnlyMedia[key];
-      option.textContent = key;
-      placeholderDropdown.appendChild(option);
-    }
-
-    fileInput.parentElement.appendChild(placeholderDropdown);
-
-    fileInput.addEventListener('change', function () {
-      if (fileInput.files.length > 0) {
-        placeholderDropdown.value = '';
-        placeholderDropdown.disabled = false;
-      }
-    });
-
-    placeholderDropdown.addEventListener('change', function () {
-      if (placeholderDropdown.value) {
-        fileInput.value = '';
-        fileInput.disabled = false;
-
-        // Apply background using Tailwind-style class or inline CSS
-        grid.style.backgroundImage = '';
-        grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
-        grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
-        grid.style.backgroundSize = 'cover';
-        grid.style.backgroundPosition = 'center';
-      }
-    });
-  } else {
-    console.error('No existing file input found.');
-  }
 } // DATA OUT: null
 
 // This function is dedicated for adding the necessary editing options for
