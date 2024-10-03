@@ -11,7 +11,6 @@
 // functions that show up in the sidebar.
 // DATA IN: null
 document.addEventListener('DOMContentLoaded', function () {
-
   const editPageButton = document.getElementById('editPageSettings');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
@@ -88,6 +87,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, true);
 }); // DATA OUT: null
+
+// Function to save metadata to localStorage, ensuring no duplicate tags
+function saveMetadataToLocalStorage(page_id, newMetaTags) {
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const settings = JSON.parse(storedData.pages[page_id].settings);
+
+  if (!settings.metaTags) {
+    settings.metaTags = [];
+  }
+
+  // Helper function to check if the meta tag already exists
+  function tagExists(newTag) {
+    return settings.metaTags.some(tag => tag.type === newTag.type && tag.name === newTag.name);
+  }
+
+  // Iterate over the newMetaTags and add them if they don't already exist
+  newMetaTags.forEach(newTag => {
+    if (!tagExists(newTag)) {
+      settings.metaTags.push(newTag); // Add new meta tag only if it doesn't exist
+    } else {
+      console.warn(`Meta tag with type: "${newTag.type}" and name: "${newTag.name}" already exists.`);
+    }
+  });
+
+  // Save updated settings back to localStorage
+  storedData.pages[page_id].settings = JSON.stringify(settings);
+  localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
+
+  console.log('Metadata saved successfully!');
+}
+
 
 // This function is for adding to the sidebar all the options available for
 // styles that impact the entire page, or metadata like page titles, og:image
@@ -262,7 +292,11 @@ function copyMetadata(element) {
   let metaTagsString = '';
 
   metaTags.forEach(tag => {
-    metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    if (tag.type === 'link') {
+      metaTagsString += `<link rel="${tag.name}" href="${tag.content}">`;
+    } else {
+      metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    }
   });
 
   copyText(metaTagsString, element);
@@ -383,7 +417,7 @@ function addEditableMetadata(container, placement) {
   const page_id = params.get('config');
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
@@ -397,6 +431,8 @@ function addEditableMetadata(container, placement) {
       });
     }
   }
+
+
 
   // Add initial empty metadata pair
   function addMetadataPair(meta_type, meta_name, meta_content) {
@@ -413,8 +449,13 @@ function addEditableMetadata(container, placement) {
     optionProperty.value = 'property';
     optionName.selected = 'property' === meta_type;
     optionProperty.text = 'Property';
+    const optionLink = document.createElement('option');
+    optionLink.value = 'link';
+    optionLink.selected = 'link' === meta_type;
+    optionLink.text = 'Link';
     select.appendChild(optionName);
     select.appendChild(optionProperty);
+    select.appendChild(optionLink);
 
     const nameInput = document.createElement('input');
     nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -448,12 +489,7 @@ function addEditableMetadata(container, placement) {
 
   document.querySelectorAll('.metadata').forEach(input => {
     input.addEventListener('change', function () {
-      const params = new URLSearchParams(window.location.search);
-      const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-      const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
-
       document.querySelectorAll('.metadata-pair').forEach(pair => {
         const type = pair.querySelector('.meta-type').value;
         const name = pair.querySelector('.meta-name').value;
@@ -463,10 +499,7 @@ function addEditableMetadata(container, placement) {
         }
       });
 
-      settings.metaTags = metaTags;
-      storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
-      console.log('Metadata saved successfully!');
+      saveMetadataToLocalStorage(page_id, metaTags);
     });
   });
 } // DATA OUT: null
