@@ -234,18 +234,20 @@ function addGridOptions(grid) {
     moveButtons.appendChild(addRemoveGridButton(grid, sidebar));
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
 
+    // Grid-specific editing options
     addEditableColumns(sidebar, grid);
     addGridAlignmentOptions(sidebar, grid);
-    addEditableDimensions(sidebar, grid);
-    highlightEditingElement(grid);
-
     addEditableColumnGaps(sidebar, grid);
+
+    // Standard editing options
     addEditableBorders(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
     addEditableBackgroundFeatures(sidebar, grid);
     addEditableMarginAndPadding(sidebar, grid);
+    addEditableDimensions(sidebar, grid);
+    highlightEditingElement(grid);
   }
 } // DATA OUT: null
 
@@ -391,14 +393,17 @@ function addColumnOptions(column) {
   moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
   moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
 
+  // Column-specific editing options
   addColumnAlignmentOptions(sidebar, column);
+
+  // Standard editing options
   addEditableBorders(sidebar, column);
   addEditableBackgroundColor(sidebar, column);
   addEditableBackgroundImage(sidebar, column);
   addEditableBackgroundImageURL(sidebar, column);
   addEditableBackgroundFeatures(sidebar, column);
-  addEditableDimensions(sidebar, column);
   addEditableMarginAndPadding(sidebar, column);
+  addEditableDimensions(sidebar, column);
 }
 
 // This function creates the button for moving the element it belongs to upward
@@ -541,10 +546,6 @@ function addColumnAlignmentOptions(sidebar, column) {
 
   editor/content.js
 
-  TODO: A button for adding placeholder media paths for media elements
-  TODO: Currently, if a column has no margins, padding, or content inside of
-        it, it can be extremely hard to click. How do we resolve this?
-
 */
 
 // This function creates a container for individual HTML elements. This is
@@ -560,9 +561,12 @@ function addColumnAlignmentOptions(sidebar, column) {
 function addContentContainer() {
   const contentContainer = document.createElement('div');
   contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
+  const contentTag = document.createElement('p'); // create a paragraph by default
+  contentContainer.append(contentTag);
 
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
+  addContentOptions(contentContainer);
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -578,26 +582,6 @@ function enableEditContentOnClick(contentContainer) {
   });
 } // DATA OUT: null
 
-function addContentOptions(content) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  updateSidebarForContentType(content);
-  // Editing options for all types of content
-  const targetElement = content.firstChild;
-
-  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
-    content = targetElement;
-  }
-
-  addEditableBorders(sidebar, content);
-  addEditableBackgroundColor(sidebar, content);
-  addEditableBackgroundImage(sidebar, content);
-  addEditableBackgroundImageURL(sidebar, content);
-  addEditableBackgroundFeatures(sidebar, content);
-  addEditableMarginAndPadding(sidebar, content);
-  addEditableDimensions(sidebar, content);
-  highlightEditingElement(content);
-}
-
 // This function creates the button for adding content to the column currently
 // being hovered over by the designer.
 // DATA IN: HTML Element, <div>
@@ -608,7 +592,8 @@ function createAddContentButton(column) {
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
   button.addEventListener('click', function (event) {
     event.stopPropagation();
-    updateSidebarForContentType(column);
+    const contentContainer = addContentContainer();
+    column.appendChild(contentContainer);
     highlightEditingElement(column);
   });
   return button;
@@ -658,7 +643,7 @@ function createVerticalMoveContentButton(contentContainer, direction) {
 // This function and the one below it creates various buttons to choose from
 // available elements that can be created.
 // DATA IN: HTML Element, <div>
-function updateSidebarForContentType(contentContainer) {
+function addContentOptions(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
   activateTabs();
@@ -670,7 +655,7 @@ function updateSidebarForContentType(contentContainer) {
   sidebar.prepend(moveButtons);
 
   // Minus one to remove the 'Add Content' button from the count
-  const contentCount = contentContainer.parentElement.children.length - 1
+  const contentCount = contentContainer.children.length - 1
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
@@ -746,7 +731,9 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
       const option = document.createElement('option');
       option.value = type;
       option.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-      if (type === input.type) option.selected = true;
+      if (type === input.type) {
+        option.selected = true;
+      }
       fieldType.appendChild(option);
     });
     fieldType.onchange = function () {
@@ -813,10 +800,6 @@ function createLabelAllDevices() {
 
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
-// TODO: Find an alternative to storing image blobs in the local storage and
-//  in the copy/pastes that might end up in a database bloating it to oblivion.
-//  To see the offending line, search for this text (less the // part):
-// contentContainer.style.backgroundImage
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
 function generateMediaSrc(event, contentContainer, isPlaceholder) {
   const file = event.target.files ? event.target.files[0] : null;
@@ -824,35 +807,36 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
   if (file || isPlaceholder) {
     const reader = new FileReader();
 
-    reader.onload = function (e) {
+    reader.onload = async function (e) {
       let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file ? file.type.split('/')[0] : null;  // 'image', 'video', 'audio'
+      const mediaType = file ? file.type.split('/')[0] : null;
 
       if (!isPlaceholder) {
-        // For media elements (image, video, audio)
         if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          mediaElement.remove();  // Remove old element if the type does not match
+          mediaElement.remove();
           mediaElement = null;
         }
 
         if (!mediaElement) {
-          // Create new element if none exists or wrong type was removed
           if (mediaType === 'image') {
             mediaElement = document.createElement('img');
           } else if (mediaType === 'video') {
             mediaElement = document.createElement('video');
-            mediaElement.controls = true;  // Add controls for video playback
+            mediaElement.controls = true;
           } else if (mediaType === 'audio') {
             mediaElement = document.createElement('audio');
-            mediaElement.controls = true;  // Add controls for audio playback
+            mediaElement.controls = true;
           }
           contentContainer.appendChild(mediaElement);
         }
 
-        // Set the src for the media element
         mediaElement.src = e.target.result;
+
+        // Store the media file in IndexedDB
+        const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+        await saveMediaToIndexedDB(file, mediaId);
+        contentContainer.setAttribute('data-media-id', mediaId);
       } else {
-        // For background images
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
         contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
       }
@@ -861,11 +845,69 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
     if (file) {
       reader.readAsDataURL(file);
     } else {
-      // If handling placeholders, set the background image directly
       contentContainer.style.backgroundImage = `url(${event.target.value})`;
     }
   }
 } // DATA OUT: null
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('mediaDatabase', 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore('mediaStore', { keyPath: 'id' });
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
+async function saveMediaToIndexedDB(mediaBlob, mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readwrite');
+  const store = transaction.objectStore('mediaStore');
+  const mediaEntry = { id: mediaId, mediaBlob };
+  store.put(mediaEntry);
+}
+
+async function getMediaFromIndexedDB(mediaId) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
+
+  return new Promise((resolve, reject) => {
+    const request = store.get(mediaId);
+    request.onsuccess = (event) => resolve(event.target.result);
+    request.onerror = (event) => reject('Error fetching media');
+  });
+}
+
+function displayMediaFromIndexedDB(contentContainer) {
+  const mediaId = contentContainer.getAttribute('data-media-id');
+  if (mediaId) {
+    getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
+      if (mediaEntry) {
+        const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
+        const mediaElement = contentContainer.querySelector('img, video, audio');
+        if (mediaElement) {
+          mediaElement.src = mediaUrl;
+        } else {
+          contentContainer.style.backgroundImage = `url(${mediaUrl})`;
+        }
+      }
+    }).catch((error) => {
+      console.error('Error displaying media from IndexedDB:', error);
+    });
+  }
+}
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
@@ -873,11 +915,13 @@ function generateMediaSrc(event, contentContainer, isPlaceholder) {
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
+  const targetElement = container.firstChild;
+  let directEditing = false;
 
   let contentContainer;
-  if (isNewContent || container.classList.contains('pagecolumn')) {
-    contentContainer = addContentContainer();
-    container.appendChild(contentContainer);
+  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
+    directEditing = true;
+    contentContainer = targetElement;
   } else {
     contentContainer = container;
   }
@@ -918,19 +962,36 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   mediaUrlInput.placeholder = 'Enter media URL...';
   mediaUrlInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
 
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
+  fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  fileInput.onchange = function (event) {
+    generateMediaSrc(event, contentContainer, false);
+  }
+
   function toggleInputs(selectedTag) {
     if (['img', 'video', 'audio'].includes(selectedTag)) {
       mediaUrlInput.style.display = 'block';
+      fileInput.style.display = 'block';
       textInput.style.display = 'none';
     } else {
       mediaUrlInput.style.display = 'none';
+      fileInput.style.display = 'none';
       textInput.style.display = 'block';
     }
   }
 
   tagDropdown.addEventListener('change', function () {
     const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+    let element;
+    if (contentContainer.tagName !== 'div') {
+      contentContainer = contentContainer.parentNode;
+      console.log(contentContainer.parentNode)
+      element = contentContainer.querySelector(selectedTag);
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
 
     if (!element) {
       element = document.createElement(selectedTag);
@@ -941,7 +1002,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     toggleInputs(selectedTag);
 
     if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-      element.src = mediaUrlInput.value || 'placeholder/path/to/media'; // Fallback to a placeholder if no URL
+      element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
     } else {
       element.textContent = textInput.value;
     }
@@ -959,14 +1020,22 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
-    let element = contentContainer.querySelector(selectedTag);
+    let element;
 
-    // If no element exists for the selected tag, create one
+    if (directEditing) {
+      // This predicates that an img/video/audio (media) tag already exists
+      element = contentContainer;
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
+
+    // If no element exists for the media tag, create one
     if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element = document.createElement(selectedTag);
       contentContainer.appendChild(element);
     }
 
+    // If it's not a media tag, update the text
     if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element.textContent = textInput.value;
     }
@@ -980,8 +1049,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
       element.src = mediaUrlInput.value;
     }
   });
-
-  const targetElement = contentContainer.firstChild;
 
   if (targetElement) {
     if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
@@ -1004,7 +1071,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
     formContainer.prepend(textInput);
-    formContainer.prepend(mediaUrlInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
     addManualClassEditor(sidebar, targetElement);
@@ -1017,20 +1083,22 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     formContainer.prepend(tagDropdown);
     formContainer.prepend(textInput);
     formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
     addManualClassEditor(sidebar, contentContainer);
     addManualCssEditor(sidebar, contentContainer);
   }
-}
 
-function handleElementCreation() {
-  const createButton = document.getElementById('create-element-button');
-  createButton.addEventListener('click', function () {
-    const sidebar = document.getElementById('sidebar-dynamic');
-    const container = document.getElementById('page-container');  // Assume this is where new elements go
-    updateSidebarForTextElements(sidebar, container, true);
-  });
+  // Standard editing options
+  addEditableBorders(sidebar, contentContainer);
+  addEditableBackgroundColor(sidebar, contentContainer);
+  addEditableBackgroundImage(sidebar, contentContainer);
+  addEditableBackgroundImageURL(sidebar, contentContainer);
+  addEditableBackgroundFeatures(sidebar, contentContainer);
+  addEditableMarginAndPadding(sidebar, contentContainer);
+  addEditableDimensions(sidebar, contentContainer);
+  highlightEditingElement(contentContainer);
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {
@@ -1307,6 +1375,13 @@ function activateTabs() {
       } else if (currentlyEditingElement.classList.contains('pagecontent')) {
         addContentOptions(currentlyEditingElement);
       }
+
+      // Highlight sidebar for passive visual indication of interactivity state
+      const sidebar = document.getElementById('sidebar');
+      // Reset
+      Object.keys(interactivityStates).forEach((state) => sidebar.classList.remove(state));
+      // Add current state
+      if (interactivityState !== '') sidebar.classList.add(interactivityState);
     });
   });
 } // DATA OUT: null
@@ -1453,64 +1528,6 @@ function addEditableBackgroundImage(sidebar, grid) {
 
   // Add file input for direct image selection
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
-
-  const fileInput = sidebar.querySelector('input[type="file"]');
-  if (fileInput) {
-    const placeholderDropdown = document.createElement('select');
-    placeholderDropdown.className = fileInput.className;
-    placeholderDropdown.style.width = '100%';
-    placeholderDropdown.style.padding = '8px';
-    placeholderDropdown.style.border = '1px solid #ccc';
-    placeholderDropdown.style.borderRadius = '4px';
-    placeholderDropdown.style.marginTop = '8px';
-    placeholderDropdown.style.boxSizing = 'border-box';
-
-    const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
-      return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-        appSagePlaceholderMedia[key].endsWith('.png') ||
-        appSagePlaceholderMedia[key].endsWith('.svg');
-    }).reduce((obj, key) => {
-      obj[key] = appSagePlaceholderMedia[key];
-      return obj;
-    }, {});
-
-    const defaultOption = document.createElement('option');
-    defaultOption.value = '';
-    defaultOption.textContent = 'Select Placeholder Image';
-    placeholderDropdown.appendChild(defaultOption);
-
-    for (const key in imageOnlyMedia) {
-      const option = document.createElement('option');
-      option.value = imageOnlyMedia[key];
-      option.textContent = key;
-      placeholderDropdown.appendChild(option);
-    }
-
-    fileInput.parentElement.appendChild(placeholderDropdown);
-
-    fileInput.addEventListener('change', function () {
-      if (fileInput.files.length > 0) {
-        placeholderDropdown.value = '';
-        placeholderDropdown.disabled = false;
-      }
-    });
-
-    placeholderDropdown.addEventListener('change', function () {
-      if (placeholderDropdown.value) {
-        fileInput.value = '';
-        fileInput.disabled = false;
-
-        // Apply background using Tailwind-style class or inline CSS
-        grid.style.backgroundImage = '';
-        grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
-        grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
-        grid.style.backgroundSize = 'cover';
-        grid.style.backgroundPosition = 'center';
-      }
-    });
-  } else {
-    console.error('No existing file input found.');
-  }
 } // DATA OUT: null
 
 // This function is dedicated for adding the necessary editing options for
@@ -2331,7 +2348,8 @@ var tooltips = {
   'italicize': "Italicize your text",
   'underline': "Underline your text",
   'padding': "Create space between the edge of the box and content inside of it.",
-  'margin': "Create space between the edge of the box and content inside of it."
+  'margin': "Create space between the edge of the box and content inside of it.",
+  'reset': "Reset to default settings."
 }
 
 // global variable
@@ -2751,6 +2769,10 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         container.appendChild(label);
         container.appendChild(control);
         handleInput(bp, labelPrefix, options, cssClassBase, grid, control);
+        // If this is for a background image file, append the placeholder dropdown
+        if (labelPrefix === 'Background Image File') {
+          addPlaceholderDropdown(control, grid);
+        }
         control.classList.add('col-span-5');
         break;
       case 'textarea':
@@ -2809,6 +2831,7 @@ function handleReset(bp, grid, options, cssClassBase, control) {
   const resetButton = document.createElement('button');
   resetButton.innerHTML = appSageEditorIcons['reset'];
   resetButton.className = 'iconButton h-12 w-12 p-4 bg-slate-100 hover:bg-slate-200 p-2 rounded';
+  resetButton.setAttribute('data-extra-info', tooltips['reset']);
   control.appendChild(resetButton);
 
   resetButton.onclick = () => {
@@ -3241,6 +3264,63 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
         mediaElement.src = selectedMedia;
         grid.appendChild(mediaElement);
       }
+    }
+  });
+}
+
+// Function to handle the dropdown for selecting placeholder images
+function addPlaceholderDropdown(fileInput, grid) {
+  const placeholderDropdown = document.createElement('select');
+  placeholderDropdown.className = 'background-file-input';
+  placeholderDropdown.style.width = '100%';
+  placeholderDropdown.style.padding = '8px';
+  placeholderDropdown.style.border = '1px solid #ccc';
+  placeholderDropdown.style.borderRadius = '4px';
+  placeholderDropdown.style.marginTop = '8px';
+  placeholderDropdown.style.boxSizing = 'border-box';
+
+  fileInput.parentElement.style.width = '100%';
+  fileInput.parentElement.appendChild(placeholderDropdown);
+
+  const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
+    return appSagePlaceholderMedia[key].endsWith('.jpg') ||
+      appSagePlaceholderMedia[key].endsWith('.png') ||
+      appSagePlaceholderMedia[key].endsWith('.svg');
+  }).reduce((obj, key) => {
+    obj[key] = appSagePlaceholderMedia[key];
+    return obj;
+  }, {});
+
+  const defaultOption = document.createElement('option');
+  defaultOption.value = '';
+  defaultOption.textContent = 'Select Placeholder Image';
+  placeholderDropdown.appendChild(defaultOption);
+
+  for (const key in imageOnlyMedia) {
+    const option = document.createElement('option');
+    option.value = imageOnlyMedia[key];
+    option.textContent = key;
+    placeholderDropdown.appendChild(option);
+  }
+
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files.length > 0) {
+      placeholderDropdown.value = '';
+      placeholderDropdown.disabled = false;
+    }
+  });
+
+  placeholderDropdown.addEventListener('change', function () {
+    if (placeholderDropdown.value) {
+      fileInput.value = '';
+      fileInput.disabled = false;
+
+      // Apply background using Tailwind-style class or inline CSS
+      grid.style.backgroundImage = '';
+      grid.classList.remove(...Array.from(grid.classList).filter(c => c.startsWith('bg-'))); // Clear previous background classes
+      grid.classList.add(`bg-[url('${placeholderDropdown.value}')]`);
+      grid.style.backgroundSize = 'cover';
+      grid.style.backgroundPosition = 'center';
     }
   });
 }
