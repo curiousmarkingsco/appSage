@@ -46,5 +46,3 @@ function deletePage(page_id, element) {
     element.remove();
   });
 } // DATA OUT: null
-
-// This used to be in an inline script on the page.
