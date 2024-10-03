@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", function () {
   
     // Convert font names to object with kebab-case keys
     let fontsObject = allFonts.reduce((acc, font) => {
-      const fontKey = font.toLowerCase().replace(/\+/g, ''); // Convert to kebab-case
-      acc[fontKey] = font;
+      const fontKey = font.toLowerCase().replace(/\+/g, '').replace(/\ /g, ''); // Convert to kebab-case
+      acc[fontKey] = font.replace(/\ /g, '+');
       return acc;
     }, {});
   

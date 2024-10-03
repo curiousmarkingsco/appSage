@@ -215,7 +215,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
-  const fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font.replace(/\+/g, '-').toLowerCase());
+  const fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font.replace(/\+/g, '').toLowerCase());
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
