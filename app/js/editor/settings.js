@@ -15,39 +15,22 @@ document.addEventListener("DOMContentLoaded", function () {
     const fontEntry = document.createElement("div");
     fontEntry.classList.add("font-entry");
     fontEntry.innerHTML = `
-      <label for="customFont">Font Name:</label>
-      <input type="text" class="customFont" name="customFont[]" placeholder="Enter font name">
+      <input type="text" placeholder="Enter a Google Font name" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline">
     `;
     fontsContainer.appendChild(fontEntry);
   });
-
-  // Add event listener for adding new color fields
-  document.getElementById("addColor").addEventListener("click", function () {
-    const colorsContainer = document.getElementById("colorsContainer");
-    const colorEntry = document.createElement("div");
-    colorEntry.classList.add("color-entry");
-    colorEntry.innerHTML = `
-      <label for="customColorName">Color Name:</label>
-      <input type="text" class="customColorName" name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
-      
-      <label for="customColorValue">Color Value:</label>
-      <input type="color" class="customColorValue" name="customColorValue[]">
-    `;
-    colorsContainer.appendChild(colorEntry);
-  });
 });
-
-// Global settings variable
-var appSageSettingsString = "appSageSettings";
 
 // Save settings to localStorage
 document.getElementById('appSageSettingsForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
-  // Collect form data
+  // Collect font data from both the default input and dynamically added ones
+  let fontInputs = Array.from(document.querySelectorAll('#fontsContainer input[type="text"]')).map(input => input.value).filter(Boolean);
+
   let formData = {
     fonts: Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value),
-    manualFont: document.getElementById('manual-font').value,
+    manualFonts: fontInputs, // collect all the dynamic font inputs
     colors: Array.from(document.querySelectorAll('.color-entry')).map(entry => ({
       name: entry.querySelector('.customColorName').value,
       value: entry.querySelector('.customColorValue').value
@@ -75,7 +58,18 @@ function restoreSettings() {
       }
     });
 
-    document.getElementById('manual-font').value = settings.manualFont || '';
+    // Restore manually entered fonts (including dynamically added ones)
+    if (settings.manualFonts && settings.manualFonts.length > 0) {
+      let fontsContainer = document.getElementById('fontsContainer');
+      settings.manualFonts.forEach(font => {
+        const fontEntry = document.createElement("div");
+        fontEntry.classList.add("font-entry", "mt-2");
+        fontEntry.innerHTML = `
+          <input type="text" placeholder="Enter a Google Font name" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" value="${font}">
+        `;
+        fontsContainer.appendChild(fontEntry);
+      });
+    }
 
     // Restore colors
     if (settings.colors) {
@@ -91,7 +85,7 @@ function restoreSettings() {
             <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${color.name}">
           </div>
           <div>
-            <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+            <label for="customColorValue" class="block text-slate-600 font-medium">Color:</label>
             <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]" value="${color.value}">
           </div>
         `;
