@@ -101,3 +101,17 @@ function updateTailwindConfig(settings) {
     });
   }
 }
+
+function generateGfontsEmbedCode() {
+  const selectedFonts = Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value).join('&family=');
+  if (selectedFonts) {
+      const embedCode = `
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=${selectedFonts}&display=swap" rel="stylesheet">
+      `;
+      document.getElementById('embed-code').textContent = embedCode.trim();
+  } else {
+      document.getElementById('embed-code').textContent = '<!-- No fonts selected -->';
+  }
+}

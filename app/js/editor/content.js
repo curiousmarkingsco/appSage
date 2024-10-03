@@ -33,21 +33,31 @@ function addContentContainer() {
 // such as the actual text being added, hrefs for links, form fields, etc.
 // DATA IN: HTML Element, <div>
 function enableEditContentOnClick(contentContainer) {
-  const sidebar = document.getElementById('sidebar-dynamic');
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
-    detectAndLoadContentType(contentContainer);
-    // Editing options for all types of content
-    addEditableBorders(sidebar, contentContainer);
-    addEditableBackgroundColor(sidebar, contentContainer);
-    addEditableBackgroundImage(sidebar, contentContainer);
-    addEditableBackgroundImageURL(sidebar, contentContainer);
-    addEditableBackgroundFeatures(sidebar, contentContainer);
-    addEditableMarginAndPadding(sidebar, contentContainer);
-    addEditableDimensions(sidebar, contentContainer);
-    highlightEditingElement(contentContainer);
+    addContentOptions(contentContainer);
   });
 } // DATA OUT: null
+
+function addContentOptions(content) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  updateSidebarForContentType(content);
+  // Editing options for all types of content
+  const targetElement = content.firstChild;
+
+  if (targetElement && ['IMG', 'VIDEO', 'AUDIO', 'A', 'BUTTON'].includes(targetElement.tagName)) {
+    content = targetElement;
+  }
+
+  addEditableBorders(sidebar, content);
+  addEditableBackgroundColor(sidebar, content);
+  addEditableBackgroundImage(sidebar, content);
+  addEditableBackgroundImageURL(sidebar, content);
+  addEditableBackgroundFeatures(sidebar, content);
+  addEditableMarginAndPadding(sidebar, content);
+  addEditableDimensions(sidebar, content);
+  highlightEditingElement(content);
+}
 
 // This function creates the button for adding content to the column currently
 // being hovered over by the designer.
@@ -106,30 +116,14 @@ function createVerticalMoveContentButton(contentContainer, direction) {
   return button;
 } // DATA OUT: HTML Element, <button>
 
-// This function figures out what to do after something in the editing view is
-// clicked and either creates or finds the contextually relevant element and
-// updates the sidebar with relevant styling options.
+// This function and the one below it creates various buttons to choose from
+// available elements that can be created.
 // DATA IN: HTML Element, <div>
-function detectAndLoadContentType(contentContainer) {
+function updateSidebarForContentType(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  // const oldMoveButtons = document.getElementById('moveContentButtons');
-  // if (oldMoveButtons) { oldMoveButtons.remove }
-  // 'form' MUST be first so that other elements don't get snagged up
-  const types = ['form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'img', 'video', 'audio', 'a', 'button', 'input', 'textarea'];//, 'div', 'ul' ,'ol', 'li', 'textarea', 'input', 'select', 'option', 'figure', 'figcaption', 'article', 'section', 'header', 'nav', 'aside', 'footer', 'address', 'main', 'blockquote', 'dl', 'dt', 'dd'];
-  const found = types.find(type => contentContainer.querySelector(type));
-  if (found) {
-    switch (found) {
-      case 'h1': case 'h2': case 'h3': case 'h4': case 'h5': case 'h6': case 'button': case 'a': case 'p': case 'ol': case 'ul': case 'li': case 'form': case 'textarea': case 'input':
-        updateSidebarForTextElements(sidebar, contentContainer);
-        break;
-      case 'img': case 'video': case 'audio':
-        updateSidebarForTextElements(sidebar, contentContainer);
-        break;
-    }
-  } else {
-    // If no specific type is found, proceed with showing options to add new content
-    updateSidebarForContentType(contentContainer);  // Redisplay content options as a fallback
-  }
+  sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
+  updateSidebarForTextElements(sidebar, contentContainer);
 
   const moveButtons = document.createElement('div');
   moveButtons.className = 'flex justify-between my-2';
@@ -143,21 +137,6 @@ function detectAndLoadContentType(contentContainer) {
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 
   highlightEditingElement(contentContainer);
-} // DATA OUT: null
-
-// This function and the one below it creates various buttons to choose from
-// available elements that can be created.
-// DATA IN: HTML Element, <div>
-function updateSidebarForContentType(contentContainer) {
-  const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Add Content Type:</strong></div>${generateMobileTabs()}`;
-  activateTabs();
-
-  const contentTypes = [
-    { label: `<div class="p-6" data-extra-info="Text Content including Form elements.">${appSageEditorIcons["heading"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-    { label: `<div class="p-6" data-extra-info="Multi-Media Files">${appSageEditorIcons["media"]}</div>`, action: () => updateSidebarForTextElements(sidebar, contentContainer) },
-  ];
-  updateSidebarForTextElements(sidebar, contentContainer, true);
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -408,7 +387,7 @@ function displayMediaFromIndexedDB(contentContainer) {
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
 function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
-  sidebar.innerHTML = `${generateMobileTabs()}`;
+  sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
 
   let contentContainer;
@@ -429,9 +408,9 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
-    { label: 'Form', value: 'form' },
-    { label: 'Link', value: 'a' },
-    { label: 'Button', value: 'button' },
+    // { label: 'Form', value: 'form' },
+    { label: 'Link / Button', value: 'a' },
+    // { label: 'Button', value: 'button' },
     { label: 'Image', value: 'img' },
     { label: 'Video', value: 'video' },
     { label: 'Audio', value: 'audio' }
@@ -547,20 +526,38 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   if (targetElement && ['A', 'BUTTON'].includes(targetElement.tagName)) {
     handleButtonFields(formContainer, contentContainer, targetElement);
+
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, targetElement);
+    addManualClassEditor(sidebar, targetElement);
+    addManualCssEditor(sidebar, targetElement);
+  }  else if (targetElement && ['IMG', 'AUDIO', 'VIDEO'].includes(targetElement.tagName)) {
+    const linkOpts = document.getElementById('linkOpts');
+    if (linkOpts) linkOpts.remove();
+
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(mediaUrlInput);
+    formContainer.prepend(fileInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, contentContainer);
+    addManualClassEditor(sidebar, contentContainer);
+    addManualCssEditor(sidebar, contentContainer);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
-  }
 
-  sidebar.prepend(formContainer);
-  formContainer.prepend(tagDropdown);
-  formContainer.prepend(textInput);
-  formContainer.prepend(mediaUrlInput);
-  formContainer.prepend(fileInput);
-  formContainer.prepend(titleElement);
-  addTextOptions(sidebar, contentContainer);
-  addManualClassEditor(sidebar, contentContainer);
-  addManualCssEditor(sidebar, contentContainer);
+    sidebar.prepend(formContainer);
+    formContainer.prepend(tagDropdown);
+    formContainer.prepend(textInput);
+    formContainer.prepend(titleElement);
+    addTextOptions(sidebar, contentContainer);
+    addManualClassEditor(sidebar, contentContainer);
+    addManualCssEditor(sidebar, contentContainer);
+  }
 }
 
 function handleElementCreation() {
@@ -613,7 +610,6 @@ function handleButtonFields(formContainer, contentContainer, button) {
   linkOpts.append(urlInput);
   linkOpts.append(checkboxLabel);
   formContainer.append(linkOpts);
-  enableEditContentOnClick(contentContainer);
 }
 
 function adjustClassesForInteractiveElements(container) {

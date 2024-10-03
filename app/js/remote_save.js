@@ -61,18 +61,18 @@ function flattenJSONToHTML(jsonString, parentInfo) {
 // DATA IN: null
 function getCompiledCSS() {
   const styles = document.querySelectorAll('style');
-    let tailwindStyles = '';
+  let tailwindStyles = '';
 
-    for (let style of styles) {
-      if (style.innerHTML.includes("/* ! tailwindcss v")) {
-        tailwindStyles = style.innerHTML;
-        break;
-      }
+  for (let style of styles) {
+    if (style.innerHTML.includes("/* ! tailwindcss v")) {
+      tailwindStyles = style.innerHTML;
+      break;
     }
+  }
 
-    if (tailwindStyles) {
-      return tailwindStyles;
-    } else {
-      console.log('No TailwindCSS styles found.');
-    }
+  if (tailwindStyles) {
+    return tailwindStyles;
+  } else {
+    console.log('No TailwindCSS styles found.');
+  }
 } // DATA IN: String

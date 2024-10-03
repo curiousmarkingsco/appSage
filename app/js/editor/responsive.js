@@ -95,17 +95,17 @@ function handleReset(bp, grid, options, cssClassBase, control) {
         // If it's an array, loop through each class and remove the class from the grid
         cssClassBase.forEach(cssClass => {
           if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
           } else {
-            grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
           }
         });
       } else {
         // If it's a string, directly remove the class from the grid
         if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
-          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
-          grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         }
       }
     });
@@ -148,7 +148,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
     }
   }
 }
- // DATA OUT: null
+// DATA OUT: null
 
 // This function attempts to find existing styles so that other functions know
 // what/where to replace new classes, if applicable.
@@ -156,7 +156,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -210,7 +210,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   control.onchange = (event) => {
     if (labelPrefix === 'Background Image URL') {
       // assumes 'bg' is URL
-      newValue = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
+      newValue = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
@@ -234,7 +234,7 @@ function handleTextareaType(labelPrefix, grid, control) {
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
-    if (labelPrefix == 'html'){
+    if (labelPrefix == 'html') {
       const newHtmlElement = document.createElement('div');
       newHtmlElement.innerHTML = control.value;
       control.innerHTML = newHtmlElement;
@@ -254,16 +254,15 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   const borderOption = (labelPrefix === 'Border Width' || labelPrefix === 'Border Radius');
   const smallSelect = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Gap') || labelPrefix.includes('Height') || labelPrefix.includes('Width'));
   const iconTargetName = labelPrefix.toLowerCase().replace(' ', '-').replace(/[()]/g, '');
-  
+
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2 ' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${(smallSelect && !borderOption) ? (labelPrefix + ' w-20 ') : ''}`;
-  
+
   const iconTarget = appSageEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${(smallSelect && !borderOption) ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-slate-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
-  
+
   const selectControl = document.createElement('select');
-  
   let extraInfo;
   if (labelPrefix.includes('Padding')) {
     extraInfo = tooltips['padding']
@@ -273,22 +272,22 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;
   }
-  
+
   selectControl.setAttribute('data-extra-info', extraInfo);
   selectControl.className = `appearance-none w-full bg-slate-50 p-2 border border-slate-300 ${(smallSelect && !borderOption) ? 'max-w-16 ' : ''}${fontSize ? 'pr-24 ' : ''}relative rounded`;
-  
+
   options.forEach(option => {
-    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
     optionElement.selected = String(grid.classList).includes(value);
     selectControl.appendChild(optionElement);
   });
-  
+
   selectControl.onchange = () => {
     options.forEach(opt => {
-      const classToRemove = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
+      const classToRemove = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`;
       grid.classList.remove(classToRemove);
     });
 
@@ -296,14 +295,14 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     if (cssClassBase === 'm') {
       grid.classList.remove('mt-0', 'mb-0', 'ml-0', 'mr-0', 'mt-1', 'mb-1', 'ml-1', 'mr-1', 'mt-2', 'mb-2', 'ml-2', 'mr-2', 'mt-4', 'mb-4', 'ml-4', 'mr-4', 'mt-8', 'mb-8', 'ml-8', 'mr-8', 'mt-16', 'mb-16', 'ml-16', 'mr-16');
     }
-    
+
     if (cssClassBase === 'p') {
       grid.classList.remove('pt-0', 'pb-0', 'pl-0', 'pr-0', 'pt-1', 'pb-1', 'pl-1', 'pr-1', 'pt-2', 'pb-2', 'pl-2', 'pr-2', 'pt-4', 'pb-4', 'pl-4', 'pr-4', 'pt-8', 'pb-8', 'pl-8', 'pr-8', 'pt-16', 'pb-16', 'pl-16', 'pr-16');
     }
 
     grid.classList.add(selectControl.value);
   };
-  
+
   control.appendChild(selectControl);
   control.appendChild(iconButton);
 }// DATA OUT: null
@@ -372,7 +371,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       iconButton.setAttribute('data-extra-info', tooltips['bg-icon'] + option + " of the box it's inside");
     } else {
       handleTooltips(`${cssClassBase}-${option}`, iconButton);
-    }  
+    }
     if ((grid.classList).contains(iconTextCandidate1) && !swatchboard) {
       // Candidate1 means it is not a color icon, so we add a highlight to it.
       iconButton.classList.add('bg-sky-200');
@@ -382,19 +381,19 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     iconButton.onclick = () => {
       options.forEach(opt => {
-        grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
           if (!swatchboard) b.classList.remove('bg-sky-200')
           if (swatchboard) b.classList.remove('border-sky-300');
         });
-        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
       if (option !== 'reset') {
-        grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
+        grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
         // column justification requires flex to work as expected
-        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}flex`);
+        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
     if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
@@ -436,7 +435,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
   checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
   checkbox.onchange = () => {
-    const className = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
+    const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
   };
   control.appendChild(checkbox);
@@ -453,7 +452,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
     optionElement.value = value;
     optionElement.textContent = option;
@@ -462,7 +461,7 @@ function handleSelect(bp, grid, control, options, cssClassBase) {
   });
   control.onchange = () => {
     options.forEach(opt => {
-      grid.classList.remove(`${interactivityState}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
     });
     grid.classList.add(control.value);
   };
