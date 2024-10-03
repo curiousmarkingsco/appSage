@@ -125,7 +125,7 @@ function addMetasToHead() {
   const metaTags = settings.metaTags;
   const headTag = document.getElementsByTagName('head')[0];
 
-  metaTags.forEach(tag => {
+  if (metaTags !== '') metaTags.forEach(tag => {
     if (tag.type === 'link') {
       const metatag = document.createElement('link');
       metatag.setAttribute('rel', tag.name);

@@ -24,16 +24,23 @@ document.addEventListener("DOMContentLoaded", function () {
   // Function to save settings
   document.getElementById('appSageSettingsForm').addEventListener('submit', function (event) {
     event.preventDefault();
-
+  
     // Collect selected fonts and manually added fonts
     let selectedFonts = Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value);
     let manualFonts = Array.from(document.querySelectorAll('#fontsContainer input[type="text"]'))
       .map(input => input.value)
       .filter(Boolean); // Remove empty entries
-
+  
     // Combine selected and manually entered fonts
     let allFonts = [...new Set([...selectedFonts, ...manualFonts])]; // Avoid duplicates
-
+  
+    // Convert font names to object with kebab-case keys
+    let fontsObject = allFonts.reduce((acc, font) => {
+      const fontKey = font.toLowerCase().replace(/\+/g, ''); // Convert to kebab-case
+      acc[fontKey] = font;
+      return acc;
+    }, {});
+  
     // Create a structure for colors where each color has multiple shades
     let colors = Array.from(document.querySelectorAll('.color-group')).reduce((acc, group) => {
       const colorName = group.querySelector('.customColorName').value;
@@ -41,34 +48,35 @@ document.addEventListener("DOMContentLoaded", function () {
       // Ensure a color name is entered
       if (colorName) {
         acc[colorName] = {};
-
+  
         // For each color group, collect the shades
         group.querySelectorAll('.shade-entry').forEach(entry => {
           const shade = entry.querySelector('.colorShade').value;
           const colorValue = entry.querySelector('.customColorValue').value;
-
+  
           // Add the shade and color value to the color group
           acc[colorName][shade] = colorValue;
         });
       }
-
+  
       return acc;
     }, {});
-
+  
     let formData = {
-      fonts: allFonts,
-      colors: colors, // Save the grouped colors
+      fonts: fontsObject, // Save the fonts object
+      colors: colors,     // Save the grouped colors
       advancedMode: document.getElementById('advancedMode').checked
     };
-
+  
     // Store in localStorage
     localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
     generateGfontsEmbedCode();
-
+  
     const params = new URLSearchParams(window.location.search);
     params.set('settingsSaved', 'true');
     window.location.href = window.location.pathname + '?' + params.toString();
   });
+  
 
   // Functionality to add more shades to a color group
   document.querySelectorAll('.addShade').forEach(button => {

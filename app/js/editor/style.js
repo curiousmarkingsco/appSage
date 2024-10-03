@@ -215,6 +215,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
+  const fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font.replace(/\+/g, '-').toLowerCase());
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
@@ -236,6 +237,7 @@ function addTextOptions(sidebar, element) {
     resetTextColorElement.classList.add('col-span-1');
   });
 
+  addDeviceTargetedOptions(sidebar, element, 'Font Family', 'font', fontOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
