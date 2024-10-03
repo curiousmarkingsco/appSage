@@ -46,14 +46,17 @@ function addColumnOptions(column) {
   moveButtons.appendChild(createRemoveColumnButton(column, column.parentElement));
   moveButtons.appendChild(createHorizontalMoveColumnButton(column, 'right'));
 
+  // Column-specific editing options
   addColumnAlignmentOptions(sidebar, column);
+
+  // Standard editing options
   addEditableBorders(sidebar, column);
   addEditableBackgroundColor(sidebar, column);
   addEditableBackgroundImage(sidebar, column);
   addEditableBackgroundImageURL(sidebar, column);
   addEditableBackgroundFeatures(sidebar, column);
-  addEditableDimensions(sidebar, column);
   addEditableMarginAndPadding(sidebar, column);
+  addEditableDimensions(sidebar, column);
 }
 
 // This function creates the button for moving the element it belongs to upward

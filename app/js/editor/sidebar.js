@@ -108,6 +108,13 @@ function activateTabs() {
       } else if (currentlyEditingElement.classList.contains('pagecontent')) {
         addContentOptions(currentlyEditingElement);
       }
+
+      // Highlight sidebar for passive visual indication of interactivity state
+      const sidebar = document.getElementById('sidebar');
+      // Reset
+      Object.keys(interactivityStates).forEach((state) => sidebar.classList.remove(state));
+      // Add current state
+      if (interactivityState !== '') sidebar.classList.add(interactivityState);
     });
   });
 } // DATA OUT: null

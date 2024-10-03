@@ -89,7 +89,8 @@ var tooltips = {
   'italicize': "Italicize your text",
   'underline': "Underline your text",
   'padding': "Create space between the edge of the box and content inside of it.",
-  'margin': "Create space between the edge of the box and content inside of it."
+  'margin': "Create space between the edge of the box and content inside of it.",
+  'reset': "Reset to default settings."
 }
 
 // global variable
