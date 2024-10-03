@@ -145,10 +145,7 @@ tailwind.config = {
         '900': '#033669'
       }
     },
-    fontFamily: {
-      sans: ['Source Sans Pro', 'sans-serif'],
-      serif: ['Source Serif Pro', 'serif'],
-    },
+    fontFamily: {},
     extend: {},
   }
 }
@@ -203,8 +200,6 @@ function deletePage(page_id, element) {
     element.remove();
   });
 } // DATA OUT: null
-
-// This used to be in an inline script on the page.
 
 
 /* File: ./app/js/editor/grid.js */
@@ -1606,6 +1601,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
+  const fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font.replace(/\+/g, '').toLowerCase());
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
@@ -1627,6 +1623,7 @@ function addTextOptions(sidebar, element) {
     resetTextColorElement.classList.add('col-span-1');
   });
 
+  addDeviceTargetedOptions(sidebar, element, 'Font Family', 'font', fontOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
@@ -1638,7 +1635,7 @@ function addTextOptions(sidebar, element) {
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
@@ -1646,7 +1643,7 @@ function addManualHtmlElement(sidebar, element) {
 
 function addManualClassEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
@@ -1654,7 +1651,7 @@ function addManualClassEditor(sidebar, element) {
 
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }
@@ -1764,7 +1761,6 @@ function addEditableColumnGaps(sidebar, element) {
 // functions that show up in the sidebar.
 // DATA IN: null
 document.addEventListener('DOMContentLoaded', function () {
-
   const editPageButton = document.getElementById('editPageSettings');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
@@ -1796,9 +1792,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Handle appSage Settings button click
   appSageSettingsButton.addEventListener('click', function () {
-    settingsSidebar.classList.remove('hidden');
-    sidebar.classList.add('hidden');
-    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+    showSettingsModal();
   });
 
   const addGridButton = document.getElementById('addGrid');
@@ -1841,6 +1835,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, true);
 }); // DATA OUT: null
+
+// Function to save metadata to localStorage, ensuring no duplicate tags
+function saveMetadataToLocalStorage(page_id, newMetaTags) {
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const settings = JSON.parse(storedData.pages[page_id].settings);
+
+  if (!settings.metaTags) {
+    settings.metaTags = [];
+  }
+
+  // Helper function to check if the meta tag already exists
+  function tagExists(newTag) {
+    return settings.metaTags.some(tag => tag.type === newTag.type && tag.name === newTag.name);
+  }
+
+  // Iterate over the newMetaTags and add them if they don't already exist
+  newMetaTags.forEach(newTag => {
+    if (!tagExists(newTag)) {
+      settings.metaTags.push(newTag); // Add new meta tag only if it doesn't exist
+    } else {
+      console.warn(`Meta tag with type: "${newTag.type}" and name: "${newTag.name}" already exists.`);
+    }
+  });
+
+  // Save updated settings back to localStorage
+  storedData.pages[page_id].settings = JSON.stringify(settings);
+  localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
+
+  console.log('Metadata saved successfully!');
+}
+
 
 // This function is for adding to the sidebar all the options available for
 // styles that impact the entire page, or metadata like page titles, og:image
@@ -2015,7 +2040,11 @@ function copyMetadata(element) {
   let metaTagsString = '';
 
   metaTags.forEach(tag => {
-    metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    if (tag.type === 'link') {
+      metaTagsString += `<link rel="${tag.name}" href="${tag.content}">`;
+    } else {
+      metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    }
   });
 
   copyText(metaTagsString, element);
@@ -2136,7 +2165,7 @@ function addEditableMetadata(container, placement) {
   const page_id = params.get('config');
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
@@ -2150,6 +2179,8 @@ function addEditableMetadata(container, placement) {
       });
     }
   }
+
+
 
   // Add initial empty metadata pair
   function addMetadataPair(meta_type, meta_name, meta_content) {
@@ -2166,8 +2197,13 @@ function addEditableMetadata(container, placement) {
     optionProperty.value = 'property';
     optionName.selected = 'property' === meta_type;
     optionProperty.text = 'Property';
+    const optionLink = document.createElement('option');
+    optionLink.value = 'link';
+    optionLink.selected = 'link' === meta_type;
+    optionLink.text = 'Link';
     select.appendChild(optionName);
     select.appendChild(optionProperty);
+    select.appendChild(optionLink);
 
     const nameInput = document.createElement('input');
     nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -2201,12 +2237,7 @@ function addEditableMetadata(container, placement) {
 
   document.querySelectorAll('.metadata').forEach(input => {
     input.addEventListener('change', function () {
-      const params = new URLSearchParams(window.location.search);
-      const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-      const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
-
       document.querySelectorAll('.metadata-pair').forEach(pair => {
         const type = pair.querySelector('.meta-type').value;
         const name = pair.querySelector('.meta-name').value;
@@ -2216,10 +2247,7 @@ function addEditableMetadata(container, placement) {
         }
       });
 
-      settings.metaTags = metaTags;
-      storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
-      console.log('Metadata saved successfully!');
+      saveMetadataToLocalStorage(page_id, metaTags);
     });
   });
 } // DATA OUT: null
@@ -2285,7 +2313,9 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageSettingsString = 'appSageSettings';
 }
 
-var tailwindColors = tailwind.config.theme.colors;
+updateTailwindConfig();
+var tailwindColors = mergeTailwindColors(tailwind.config.theme);
+
 var colorArray = extractColorNames(tailwindColors);
 var interactivityState = '';
 var interactivityStates = {
@@ -2469,6 +2499,209 @@ function extractColorNames(colorObject) {
   }
   return colorArray;
 } // DATA OUT: Array
+
+function mergeFontsIntoTailwindConfig() {
+  // Retrieve the fonts from localStorage
+  let appSageSettings = JSON.parse(localStorage.getItem('appSageSettings'));
+  let storedFonts = appSageSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
+
+  // Ensure tailwind.config exists and has the theme and fontFamily objects
+  if (!tailwind.config) {
+    tailwind.config = {};
+  }
+
+  if (!tailwind.config.theme) {
+    tailwind.config.theme = {};
+  }
+
+  if (!tailwind.config.theme.fontFamily) {
+    tailwind.config.theme.fontFamily = {};
+  }
+
+  // Merge each stored font into tailwind.config.theme.fontFamily
+  Object.keys(storedFonts).forEach(fontKey => {
+    console.log(storedFonts[fontKey].replace(/\+/g, ' '))
+    tailwind.config.theme.fontFamily[fontKey] = [storedFonts[fontKey].replace(/\+/g, ' ')];
+  });
+
+  // The tailwind.config.theme.fontFamily now contains the merged fonts
+}
+
+function mergeTailwindColors(theme) {
+  // Check if `theme.extend.colors` exists
+  if (theme.extend && theme.extend.colors) {
+    // Merge `theme.colors` and `theme.extend.colors`, maintaining structure
+    return {
+      ...theme.extend.colors,
+      ...theme.colors
+    };
+  }
+
+  // Return `theme.colors` if no `theme.extend.colors` exists
+  return theme.colors;
+}
+
+// Function to dynamically update Tailwind config with multiple fonts/colors
+function updateTailwindConfig() {
+  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (settings !== null) {
+    // Handle custom fonts
+    if (settings.fonts.length > 0) {
+      if (!tailwind.config.theme.fontFamily) {
+        tailwind.config.theme.fontFamily = {};
+      }
+      tailwind.config.theme.fontFamily.custom = settings.fonts;
+    }
+
+    // Handle custom colors
+    if (Object.keys(settings.colors).length > 0) {
+      if (!tailwind.config.theme.extend) {
+        tailwind.config.theme.extend = {};
+      }
+      if (!tailwind.config.theme.extend.colors) {
+        tailwind.config.theme.extend.colors = {};
+      }
+
+      Object.keys(settings.colors).forEach(function (customColor) {
+        tailwind.config.theme.extend.colors[customColor] = settings.colors[customColor];
+      });
+    }
+  }
+}
+
+// Restore settings from localStorage
+function restoreSettings() {
+  let storedData = localStorage.getItem(appSageSettingsString);
+  if (storedData) {
+    let settings = JSON.parse(storedData);
+
+    // Restore fonts: dynamically add any manually entered fonts to the <select> options
+    let fonts = document.getElementById('fonts');
+    if (fonts && settings.fonts) {
+      // Loop through the keys of the fonts object
+      Object.keys(settings.fonts).forEach(fontKey => {
+        let font = settings.fonts[fontKey]; // Get the font value from the object
+
+        // Check if the font already exists in the <select>
+        let optionExists = Array.from(fonts.options).some(option => option.value === font);
+        if (!optionExists) {
+          let newOption = document.createElement('option');
+          newOption.value = font;
+          newOption.textContent = font;
+          newOption.selected = true;
+          fonts.appendChild(newOption);
+        } else {
+          // Select existing option if it's already present
+          Array.from(fonts.options).forEach(option => {
+            if (option.value === font) {
+              option.selected = true;
+            }
+          });
+        }
+      });
+    }
+
+    // Restore colors
+    let colorsContainer = document.getElementById('colorsContainer');
+    if (colorsContainer && settings.colors) {
+      colorsContainer.innerHTML = ''; // Clear existing entries
+
+      Object.keys(settings.colors).forEach(colorName => {
+        let shades = settings.colors[colorName];
+
+        // Create color group container
+        let colorGroup = document.createElement('div');
+        colorGroup.classList.add('color-group', 'space-y-4');
+
+        // Color name input
+        colorGroup.innerHTML = `
+          <div class="color-name-section">
+            <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
+            <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${colorName}" placeholder="Enter color name (e.g., 'primary')">
+          </div>
+          <div class="shades-container space-y-2"></div>
+          <button type="button" class="addShade mt-2 py-2 px-4 bg-blue-500 text-white rounded shadow">Add Shade</button>
+        `;
+
+        let shadesContainer = colorGroup.querySelector('.shades-container');
+
+        // Add each shade to the color group
+        Object.keys(shades).forEach(shade => {
+          let shadeEntry = document.createElement('div');
+          shadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
+
+          shadeEntry.innerHTML = `
+            <div>
+              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+              <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <option value="50" ${shade === '50' ? 'selected' : ''}>50</option>
+                <option value="100" ${shade === '100' ? 'selected' : ''}>100</option>
+                <option value="200" ${shade === '200' ? 'selected' : ''}>200</option>
+                <option value="300" ${shade === '300' ? 'selected' : ''}>300</option>
+                <option value="400" ${shade === '400' ? 'selected' : ''}>400</option>
+                <option value="500" ${shade === '500' ? 'selected' : ''}>500</option>
+                <option value="600" ${shade === '600' ? 'selected' : ''}>600</option>
+                <option value="700" ${shade === '700' ? 'selected' : ''}>700</option>
+                <option value="800" ${shade === '800' ? 'selected' : ''}>800</option>
+                <option value="900" ${shade === '900' ? 'selected' : ''}>900</option>
+                <option value="950" ${shade === '950' ? 'selected' : ''}>950</option>
+              </select>
+            </div>
+            <div>
+              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+              <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]" value="${shades[shade]}">
+            </div>
+          `;
+
+          shadesContainer.appendChild(shadeEntry);
+        });
+
+        // Append the color group to the container
+        colorsContainer.appendChild(colorGroup);
+
+        // Add event listener to add shades dynamically to each color group
+        colorGroup.querySelector('.addShade').addEventListener('click', function () {
+          let newShadeEntry = document.createElement('div');
+          newShadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
+          
+          newShadeEntry.innerHTML = `
+            <div>
+              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+              <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+                <option value="600">600</option>
+                <option value="700">700</option>
+                <option value="800">800</option>
+                <option value="900">900</option>
+                <option value="950">950</option>
+              </select>
+            </div>
+            <div>
+              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+              <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
+            </div>
+          `;
+
+          shadesContainer.appendChild(newShadeEntry);
+        });
+      });
+    }
+
+    // Restore advanced mode
+    if (fonts && colorsContainer) {
+      document.getElementById('advancedMode').checked = settings.advancedMode || false;
+    }
+  }
+}
+
+// Call restoreSettings when the page loads
+window.addEventListener('load', restoreSettings);
+window.addEventListener('load', mergeFontsIntoTailwindConfig);
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -2688,10 +2921,17 @@ function loadPageMetadata(page_id, element) {
         const element = document.querySelector('head');
 
         metaTags.forEach(tag => {
-          const metaTag = document.createElement('meta');
-          metaTag.setAttribute(tag.type, tag.name);
-          metaTag.setAttribute('content', tag.content);
-          element.appendChild(metaTag);
+          if (tag.type === 'link') {
+            const metaTag = document.createElement('link');
+            metaTag.setAttribute('href', tag.content);
+            metaTag.setAttribute('rel', tag.name);
+            element.appendChild(metaTag);
+          } else {
+            const metaTag = document.createElement('meta');
+            metaTag.setAttribute(tag.type, tag.name);
+            metaTag.setAttribute('content', tag.content);
+            element.appendChild(metaTag);
+          }
         });
       }
     }
@@ -2742,6 +2982,31 @@ function loadPageSettings(config, view = false) {
     console.log('Settings for the specified page do not exist.');
   }
 } // DATA OUT: null
+
+function addMetasToHead() {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config') || params.get('page');
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const settings = JSON.parse(storedData.pages[config].settings);
+  const metaTags = settings.metaTags;
+  const headTag = document.getElementsByTagName('head')[0];
+
+  if (metaTags !== '') metaTags.forEach(tag => {
+    if (tag.type === 'link') {
+      const metatag = document.createElement('link');
+      metatag.setAttribute('rel', tag.name);
+      metatag.setAttribute('href', tag.content);
+      headTag.appendChild(metatag);
+    } else {
+      const metatag = document.createElement('meta');
+      metatag.setAttribute(tag.type, tag.name);
+      metatag.setAttribute('content', tag.content);
+      headTag.appendChild(metatag);
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', addMetasToHead);
 
 
 /* File: ./app/js/editor/responsive.js */
