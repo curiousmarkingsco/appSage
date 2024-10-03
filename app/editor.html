@@ -13,6 +13,8 @@
   <meta name="msapplication-TileColor" content="#f2f0e9">
   <meta name="theme-color" content="#f2f0e9">
   <!-- END FAVICONS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <!-- <script src="https://cdn.tailwindcss.com"></script> -->
   <script src="./js/tailwind.js"></script>
   <script src="./js/tailwind.config.js"></script>
@@ -70,33 +72,54 @@
         </fieldset>
 
         <!-- Colors Section -->
-        <fieldset class="border border-slate-300 p-4 rounded">
-          <legend class="text-lg font-semibold">Custom Colors</legend>
-          <div id="colorsContainer" class="space-y-2">
-            <div class="color-entry flex space-x-4">
-              <div>
-                <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
-                <input type="text"
-                  class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline"
-                  name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
-              </div>
+        <!-- Colors Section -->
+<fieldset class="border border-slate-300 p-4 rounded">
+  <legend class="text-lg font-semibold">Custom Colors</legend>
+  <div id="colorsContainer" class="space-y-4">
+    <div class="color-group">
+      <div class="color-name-section">
+        <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
+        <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
+      </div>
 
-              <div>
-                <label for="customColorValue" class="block text-slate-600 font-medium">Color:</label>
-                <input type="color"
-                  class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline"
-                  name="customColorValue[]">
-              </div>
-            </div>
+      <div class="shades-container space-y-2">
+        <div class="shade-entry flex space-x-4">
+          <div>
+            <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+            <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="200">200</option>
+              <option value="300">300</option>
+              <option value="400">400</option>
+              <option value="500">500</option>
+              <option value="600">600</option>
+              <option value="700">700</option>
+              <option value="800">800</option>
+              <option value="900">900</option>
+              <option value="950">950</option>
+            </select>
           </div>
-          <button type="button" id="addColor" class="mt-2 py-2 px-4 bg-blue-500 text-white rounded shadow">Add Another
-            Color</button>
-        </fieldset>
+          <div>
+            <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+            <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="addShade mt-2 py-2 px-4 bg-blue-500 text-white rounded shadow">Add Shade</button>
+    </div>
+  </div>
+  
+  <button type="button" id="addColorGroup" class="mt-4 py-2 px-4 bg-green-500 text-white rounded shadow">Add Another Color Group</button>
+</fieldset>
+
 
         <!-- Advanced Mode -->
         <fieldset class="border border-slate-300 p-4 rounded">
           <legend class="text-lg font-semibold">Advanced Mode</legend>
-          <label for="advancedMode" class="inline-flex items-center space-x-2 text-slate-600 font-medium">
+          <label data-extra-info="Turn this on if you are a coder person or enjoy getting confused and breaking things."
+            for="advancedMode" class="inline-flex items-center space-x-2 text-slate-600 font-medium">
             <input type="checkbox" id="advancedMode" name="advancedMode"
               class="shadow border rounded focus:outline-none focus:shadow-outline">
             <span>Enable Advanced Mode</span>

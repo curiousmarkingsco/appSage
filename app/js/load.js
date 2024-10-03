@@ -55,10 +55,17 @@ function loadPageMetadata(page_id, element) {
         const element = document.querySelector('head');
 
         metaTags.forEach(tag => {
-          const metaTag = document.createElement('meta');
-          metaTag.setAttribute(tag.type, tag.name);
-          metaTag.setAttribute('content', tag.content);
-          element.appendChild(metaTag);
+          if (tag.type === 'link') {
+            const metaTag = document.createElement('link');
+            metaTag.setAttribute('href', tag.content);
+            metaTag.setAttribute('rel', tag.name);
+            element.appendChild(metaTag);
+          } else {
+            const metaTag = document.createElement('meta');
+            metaTag.setAttribute(tag.type, tag.name);
+            metaTag.setAttribute('content', tag.content);
+            element.appendChild(metaTag);
+          }
         });
       }
     }
