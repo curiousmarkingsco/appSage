@@ -145,7 +145,10 @@ tailwind.config = {
         '900': '#033669'
       }
     },
-    fontFamily: {},
+    fontFamily: {
+      sans: ['Source Sans Pro', 'sans-serif'],
+      serif: ['Source Serif Pro', 'serif'],
+    },
     extend: {},
   }
 }
@@ -1601,7 +1604,10 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
-  const fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font.replace(/\+/g, '').toLowerCase());
+  let fontOptions = ['sans-serif', 'serif']
+  if (localStorage.getItem(appSageSettingsString)){
+    fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font);
+  }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
@@ -3081,7 +3087,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('select');
         container.appendChild(label);
         container.appendChild(control);
-        handleSelect(bp, grid, control, options, cssClassBase);
+        handleSelect(bp, grid, control, options, cssClassBase, labelPrefix);
         control.classList.add('col-span-5');
         break;
       default:
@@ -3458,18 +3464,26 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
 // This function messily handles all the nuance thus far encountered from
 // supporting select elements for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
-function handleSelect(bp, grid, control, options, cssClassBase) {
+function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
   if (!options) {
     console.error('No options provided for select input type.');
     return;
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
-    optionElement.value = value;
-    optionElement.textContent = option;
+    let option_key = null;
+    if (labelPrefix === 'Font Family') {
+      option_key = option.replace(/\+/g, '').toLowerCase();
+      optionElement.textContent = option.replace(/\+/g, ' ');
+      console.log(getCurrentStyle(bp, options, cssClassBase, grid))
+      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option_key;
+    } else {
+      optionElement.textContent = option;
+    }
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option_key ? option_key : option}`;
     optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
+    optionElement.value = value;
     control.appendChild(optionElement);
   });
   control.onchange = () => {

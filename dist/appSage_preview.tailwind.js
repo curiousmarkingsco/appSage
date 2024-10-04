@@ -145,7 +145,10 @@ tailwind.config = {
         '900': '#033669'
       }
     },
-    fontFamily: {},
+    fontFamily: {
+      sans: ['Source Sans Pro', 'sans-serif'],
+      serif: ['Source Serif Pro', 'serif'],
+    },
     extend: {},
   }
 }
