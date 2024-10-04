@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "http-server": "^14.1.1"
+    "http-server": "^14.1.1",
+    "tailwindsjs": "^1.0.0"
   }
 }
