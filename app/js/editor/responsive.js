@@ -528,6 +528,7 @@ function addPlaceholderDropdown(fileInput, grid) {
   const placeholderDropdown = document.createElement('select');
   placeholderDropdown.className = 'background-file-input';
   placeholderDropdown.style.width = '100%';
+  placeholderDropdown.classList.add('col-span-5');
   placeholderDropdown.style.padding = '8px';
   placeholderDropdown.style.border = '1px solid #ccc';
   placeholderDropdown.style.borderRadius = '4px';
