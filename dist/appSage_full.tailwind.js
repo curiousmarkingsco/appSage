@@ -580,7 +580,7 @@ window.addEventListener('load', function () {
 
 
 /* File: ./app/js/editor/settings.js */
-// settings/main.js
+// editor/settings.js
 
 document.addEventListener("DOMContentLoaded", function () {
   const advancedModeCheckbox = document.getElementById("advancedMode");

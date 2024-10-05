@@ -1,4 +1,4 @@
-// settings/main.js
+// editor/settings.js
 
 document.addEventListener("DOMContentLoaded", function () {
   const advancedModeCheckbox = document.getElementById("advancedMode");
