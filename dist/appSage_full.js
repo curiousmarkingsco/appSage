@@ -2115,7 +2115,7 @@ function addTextOptions(sidebar, element) {
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   let fontOptions = ['sans-serif', 'serif']
   if (localStorage.getItem(appSageSettingsString)) {
-    fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font);
+    fontOptions = Object.values(JSON.parse(localStorage.getItem(appSageSettingsString)).fonts).map(font => font);
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
