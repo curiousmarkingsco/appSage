@@ -269,6 +269,8 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = tooltips['padding']
   } else if (labelPrefix.includes('Margin')) {
     extraInfo = tooltips['margin']
+  } else if (labelPrefix.includes('Opacity')) {
+    extraInfo = tooltips['opacity']
   } else {
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;

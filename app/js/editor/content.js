@@ -546,6 +546,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
   // Standard editing options
   addEditableBorders(sidebar, contentContainer);
+  addEditableOpacity(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundImageURL(sidebar, contentContainer);
