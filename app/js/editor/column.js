@@ -51,6 +51,7 @@ function addColumnOptions(column) {
 
   // Standard editing options
   addEditableBorders(sidebar, column);
+  addEditableOpacity(sidebar, column);
   addEditableBackgroundColor(sidebar, column);
   addEditableBackgroundImage(sidebar, column);
   addEditableBackgroundImageURL(sidebar, column);

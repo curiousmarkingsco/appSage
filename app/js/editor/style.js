@@ -212,6 +212,17 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
+function addEditableOpacity(sidebar, element) {
+  const labelPrefix = 'Opacity';
+  const cssClassBase = 'opacity';
+  const opacityOptions = ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
+
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, opacityOptions, 'single-icon-select');
+}// DATA OUT: null
+
+// This funciton is dedicated to adding the editing elements relevant to the
+// suite of expected editing options for stylizing text and its placement.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];

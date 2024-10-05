@@ -31,6 +31,7 @@ function addGridOptions(grid) {
 
     // Standard editing options
     addEditableBorders(sidebar, grid);
+    addEditableOpacity(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
