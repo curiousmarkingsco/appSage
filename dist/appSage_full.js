@@ -3646,15 +3646,8 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
 // Function to handle the dropdown for selecting placeholder images
 function addPlaceholderDropdown(fileInput, grid) {
   const placeholderDropdown = document.createElement('select');
-  placeholderDropdown.className = 'background-file-input';
-  placeholderDropdown.style.width = '100%';
-  placeholderDropdown.style.padding = '8px';
-  placeholderDropdown.style.border = '1px solid #ccc';
-  placeholderDropdown.style.borderRadius = '4px';
-  placeholderDropdown.style.marginTop = '8px';
-  placeholderDropdown.style.boxSizing = 'border-box';
+  placeholderDropdown.className = 'background-file-input shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline col-span-5';
 
-  fileInput.parentElement.style.width = '100%';
   fileInput.parentElement.appendChild(placeholderDropdown);
 
   const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
