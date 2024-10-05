@@ -125,23 +125,26 @@ function addMetasToHead() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config') || params.get('page');
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = JSON.parse(storedData.pages[config].settings);
-  const metaTags = settings.metaTags;
-  const headTag = document.getElementsByTagName('head')[0];
-
-  if (metaTags !== '') metaTags.forEach(tag => {
-    if (tag.type === 'link') {
-      const metatag = document.createElement('link');
-      metatag.setAttribute('rel', tag.name);
-      metatag.setAttribute('href', tag.content);
-      headTag.appendChild(metatag);
-    } else {
-      const metatag = document.createElement('meta');
-      metatag.setAttribute(tag.type, tag.name);
-      metatag.setAttribute('content', tag.content);
-      headTag.appendChild(metatag);
-    }
-  });
+  let settings;
+  if (storedData && storedData.pages){
+    settings = JSON.parse(storedData.pages[config].settings);
+    const metaTags = settings.metaTags;
+    const headTag = document.getElementsByTagName('head')[0];
+  
+    if (metaTags !== '') metaTags.forEach(tag => {
+      if (tag.type === 'link') {
+        const metatag = document.createElement('link');
+        metatag.setAttribute('rel', tag.name);
+        metatag.setAttribute('href', tag.content);
+        headTag.appendChild(metatag);
+      } else {
+        const metatag = document.createElement('meta');
+        metatag.setAttribute(tag.type, tag.name);
+        metatag.setAttribute('content', tag.content);
+        headTag.appendChild(metatag);
+      }
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', addMetasToHead);
