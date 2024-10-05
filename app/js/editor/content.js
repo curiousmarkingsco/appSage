@@ -23,6 +23,8 @@ function addContentContainer() {
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
   addContentOptions(contentContainer);
+  displayMediaFromIndexedDB(contentContainer);
+
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
