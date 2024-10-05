@@ -31,7 +31,7 @@
   min-height: 82px;
 }
 
-.pagecontent:empty {
+.pagecontent:empty, .pagecolumn {
   padding: 15px;
 }
 
