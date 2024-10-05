@@ -216,7 +216,7 @@ function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   let fontOptions = ['sans-serif', 'serif']
-  if (localStorage.getItem(appSageSettingsString)){
+  if (localStorage.getItem(appSageSettingsString)) {
     fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font);
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
@@ -252,7 +252,7 @@ function addTextOptions(sidebar, element) {
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
@@ -260,7 +260,7 @@ function addManualHtmlElement(sidebar, element) {
 
 function addManualClassEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
@@ -268,7 +268,7 @@ function addManualClassEditor(sidebar, element) {
 
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }

@@ -57,6 +57,8 @@ function addColumnOptions(column) {
   addEditableBackgroundFeatures(sidebar, column);
   addEditableMarginAndPadding(sidebar, column);
   addEditableDimensions(sidebar, column);
+  addManualClassEditor(sidebar, column);
+  addManualCssEditor(sidebar, column);
 }
 
 // This function creates the button for moving the element it belongs to upward

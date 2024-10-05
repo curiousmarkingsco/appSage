@@ -373,7 +373,7 @@ function restoreSettings() {
         colorGroup.querySelector('.addShade').addEventListener('click', function () {
           let newShadeEntry = document.createElement('div');
           newShadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
-          
+
           newShadeEntry.innerHTML = `
             <div>
               <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
@@ -409,6 +409,11 @@ function restoreSettings() {
   }
 }
 
+var advancedMode = false;
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
 window.addEventListener('load', mergeFontsIntoTailwindConfig);
+window.addEventListener('load', function () {
+  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (settings) advancedMode = settings.advancedMode;
+});
