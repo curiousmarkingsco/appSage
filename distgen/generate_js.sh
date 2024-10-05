@@ -16,6 +16,8 @@ echo -n "" > "$output_css"
 
 # Define an array of the required files in order
 declare -a js_files=(
+    "./app/js/editor/globals.js"
+    "./app/js/editor/settings.js"
     "./app/js/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
@@ -25,7 +27,6 @@ declare -a js_files=(
     "./app/js/editor/sidebar.js"
     "./app/js/editor/style.js"
     "./app/js/editor/main.js"
-    "./app/js/editor/globals.js"
     "./app/js/editor/save.js"
     "./app/js/editor/load.js"
     "./app/js/load.js"
