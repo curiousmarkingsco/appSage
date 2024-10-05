@@ -531,8 +531,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
-    addManualClassEditor(sidebar, targetElement);
-    addManualCssEditor(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
@@ -544,8 +542,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
-    addManualClassEditor(sidebar, contentContainer);
-    addManualCssEditor(sidebar, contentContainer);
   }
 
   // Standard editing options
@@ -556,6 +552,8 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
   addEditableDimensions(sidebar, contentContainer);
+  addManualClassEditor(sidebar, contentContainer);
+  addManualCssEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
 }
 

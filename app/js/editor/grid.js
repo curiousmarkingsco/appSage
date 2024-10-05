@@ -38,6 +38,8 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addManualClassEditor(sidebar, grid);
+    addManualCssEditor(sidebar, grid);
   }
 } // DATA OUT: null
 
