@@ -101,8 +101,6 @@ function createVerticalMoveContentButton(contentContainer, direction) {
 // DATA IN: HTML Element, <div>
 function addContentOptions(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
-  activateTabs();
   updateSidebarForTextElements(sidebar, contentContainer);
 
   const moveButtons = document.createElement('div');
@@ -368,7 +366,7 @@ function displayMediaFromIndexedDB(contentContainer) {
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
+function updateSidebarForTextElements(sidebar, container) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
   const targetElement = container.firstChild;
@@ -467,7 +465,8 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
-      handleButtonFields(formContainer, tempContentContainer, element);
+      // Reload tab to ensure proper editing options for targetting the tag itself
+      addContentOptions(tempContentContainer);
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
@@ -519,7 +518,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   }
 
   const titleElement = document.createElement('h2');
-  titleElement.textContent = 'Editing Element';
+  titleElement.textContent = 'Editing Content';
   titleElement.className = 'font-bold text-xl';
 
 
