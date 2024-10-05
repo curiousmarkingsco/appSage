@@ -239,6 +239,7 @@ function addGridOptions(grid) {
 
     // Standard editing options
     addEditableBorders(sidebar, grid);
+    addEditableOpacity(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
@@ -246,6 +247,8 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addManualClassEditor(sidebar, grid);
+    addManualCssEditor(sidebar, grid);
   }
 } // DATA OUT: null
 
@@ -396,12 +399,15 @@ function addColumnOptions(column) {
 
   // Standard editing options
   addEditableBorders(sidebar, column);
+  addEditableOpacity(sidebar, column);
   addEditableBackgroundColor(sidebar, column);
   addEditableBackgroundImage(sidebar, column);
   addEditableBackgroundImageURL(sidebar, column);
   addEditableBackgroundFeatures(sidebar, column);
   addEditableMarginAndPadding(sidebar, column);
   addEditableDimensions(sidebar, column);
+  addManualClassEditor(sidebar, column);
+  addManualCssEditor(sidebar, column);
 }
 
 // This function creates the button for moving the element it belongs to upward
@@ -643,8 +649,6 @@ function createVerticalMoveContentButton(contentContainer, direction) {
 // DATA IN: HTML Element, <div>
 function addContentOptions(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
-  activateTabs();
   updateSidebarForTextElements(sidebar, contentContainer);
 
   const moveButtons = document.createElement('div');
@@ -910,7 +914,7 @@ function displayMediaFromIndexedDB(contentContainer) {
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
+function updateSidebarForTextElements(sidebar, container) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
   const targetElement = container.firstChild;
@@ -1009,7 +1013,8 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
-      handleButtonFields(formContainer, tempContentContainer, element);
+      // Reload tab to ensure proper editing options for targetting the tag itself
+      addContentOptions(tempContentContainer);
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
@@ -1061,7 +1066,7 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   }
 
   const titleElement = document.createElement('h2');
-  titleElement.textContent = 'Editing Element';
+  titleElement.textContent = 'Editing Content';
   titleElement.className = 'font-bold text-xl';
 
 
@@ -1073,8 +1078,6 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
-    addManualClassEditor(sidebar, targetElement);
-    addManualCssEditor(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
@@ -1086,18 +1089,19 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
-    addManualClassEditor(sidebar, contentContainer);
-    addManualCssEditor(sidebar, contentContainer);
   }
 
   // Standard editing options
   addEditableBorders(sidebar, contentContainer);
+  addEditableOpacity(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundImageURL(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
   addEditableDimensions(sidebar, contentContainer);
+  addManualClassEditor(sidebar, contentContainer);
+  addManualCssEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
 }
 
@@ -1601,11 +1605,22 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
+function addEditableOpacity(sidebar, element) {
+  const labelPrefix = 'Opacity';
+  const cssClassBase = 'opacity';
+  const opacityOptions = ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
+
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, opacityOptions, 'single-icon-select');
+}// DATA OUT: null
+
+// This funciton is dedicated to adding the editing elements relevant to the
+// suite of expected editing options for stylizing text and its placement.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   let fontOptions = ['sans-serif', 'serif']
-  if (localStorage.getItem(appSageSettingsString)){
+  if (localStorage.getItem(appSageSettingsString)) {
     fontOptions = Object.values(JSON.parse(localStorage.appSageSettings).fonts).map(font => font);
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
@@ -1614,21 +1629,6 @@ function addTextOptions(sidebar, element) {
   const fontUnderlineOptions = ['underline', 'not-underline'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
-  // Add Reset Button for Text Color
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-  breakpoints.forEach(bp => {
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    const resetTextColorElement = document.createElement('div');
-    const label = createLabel(bp, `Reset Text Color`, `${bp}-text-color`);
-    label.className = 'hidden';
-    container.appendChild(label);
-    container.appendChild(resetTextColorElement);
-
-    // Add the handleReset call for text color
-    handleReset(bp, element, textColorOptions, 'text', resetTextColorElement);
-    resetTextColorElement.classList.add('col-span-1');
-  });
-
   addDeviceTargetedOptions(sidebar, element, 'Font Family', 'font', fontOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
@@ -1641,7 +1641,7 @@ function addTextOptions(sidebar, element) {
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
@@ -1649,7 +1649,7 @@ function addManualHtmlElement(sidebar, element) {
 
 function addManualClassEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
@@ -1657,7 +1657,7 @@ function addManualClassEditor(sidebar, element) {
 
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }
@@ -2323,6 +2323,7 @@ updateTailwindConfig();
 var tailwindColors = mergeTailwindColors(tailwind.config.theme);
 
 var colorArray = extractColorNames(tailwindColors);
+colorArray.push('reset');
 var interactivityState = '';
 var interactivityStates = {
   "default": ['', 'Default'],
@@ -2387,6 +2388,7 @@ var tooltips = {
   'underline': "Underline your text",
   'padding': "Create space between the edge of the box and content inside of it.",
   'margin': "Create space between the edge of the box and content inside of it.",
+  'opacity': "Change how transparent the element is. Careful! This changes the opacity of everything inside the element.",
   'reset': "Reset to default settings."
 }
 
@@ -2489,7 +2491,8 @@ var appSageEditorIcons = {
   "maximum-width": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M32 64c17.7 0 32 14.3 32 32l0 320c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 96C0 78.3 14.3 64 32 64zm214.6 73.4c12.5 12.5 12.5 32.8 0 45.3L205.3 224l229.5 0-41.4-41.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l96 96c12.5 12.5 12.5 32.8 0 45.3l-96 96c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L434.7 288l-229.5 0 41.4 41.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-96-96c-12.5-12.5-12.5-32.8 0-45.3l96-96c12.5-12.5 32.8-12.5 45.3 0zM640 96l0 320c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-320c0-17.7 14.3-32 32-32s32 14.3 32 32z"/></svg>',
   "gap-x": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>',
   "gap-y": '<svg class="h-full w-full rotate-90" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>',
-  "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>'
+  "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>',
+  "opacity": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M448 256c0-106-86-192-192-192l0 384c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>'
 }
 
 // This function is for supporting any editor capabilities that involve color.
@@ -2526,7 +2529,6 @@ function mergeFontsIntoTailwindConfig() {
 
   // Merge each stored font into tailwind.config.theme.fontFamily
   Object.keys(storedFonts).forEach(fontKey => {
-    console.log(storedFonts[fontKey].replace(/\+/g, ' '))
     tailwind.config.theme.fontFamily[fontKey] = [storedFonts[fontKey].replace(/\+/g, ' ')];
   });
 
@@ -2669,7 +2671,7 @@ function restoreSettings() {
         colorGroup.querySelector('.addShade').addEventListener('click', function () {
           let newShadeEntry = document.createElement('div');
           newShadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
-          
+
           newShadeEntry.innerHTML = `
             <div>
               <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
@@ -2705,9 +2707,15 @@ function restoreSettings() {
   }
 }
 
+var advancedMode = false;
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
 window.addEventListener('load', mergeFontsIntoTailwindConfig);
+window.addEventListener('load', function () {
+  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (settings) advancedMode = settings.advancedMode;
+});
+
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -2915,32 +2923,35 @@ function loadPageBlobs(config) {
 // expected '#page' div, metadata is stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
-function loadPageMetadata(page_id, element) {
+function loadPageMetadata(page_id) {
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = storedData.pages[page_id].settings;
-  if (settings) {
-    const metaTags = settings.metaTags;
-    if (metaTags) {
-      if (element) {
-        return metaTags;
-      } else {
-        const element = document.querySelector('head');
+  const metaTags = storedData.pages[page_id].settings.metaTags;
+  const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (metaTags && metaTags !== '') {
+    const element = document.querySelector('head');
 
-        metaTags.forEach(tag => {
-          if (tag.type === 'link') {
-            const metaTag = document.createElement('link');
-            metaTag.setAttribute('href', tag.content);
-            metaTag.setAttribute('rel', tag.name);
-            element.appendChild(metaTag);
-          } else {
-            const metaTag = document.createElement('meta');
-            metaTag.setAttribute(tag.type, tag.name);
-            metaTag.setAttribute('content', tag.content);
-            element.appendChild(metaTag);
-          }
-        });
+    metaTags.forEach(tag => {
+      if (tag.type === 'link') {
+        const metaTag = document.createElement('link');
+        metaTag.setAttribute('href', tag.content);
+        metaTag.setAttribute('rel', tag.name);
+        element.appendChild(metaTag);
+      } else {
+        const metaTag = document.createElement('meta');
+        metaTag.setAttribute(tag.type, tag.name);
+        metaTag.setAttribute('content', tag.content);
+        element.appendChild(metaTag);
       }
-    }
+    });
+  }
+
+  if (fontSettings) {
+    const element = document.querySelector('head');
+    let fonts = Object.values(fontSettings.fonts).join('&family=');
+    const metaTag = document.createElement('link');
+    metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
+    metaTag.setAttribute('rel', 'stylesheet');
+    element.appendChild(metaTag);
   }
 } // DATA OUT: String || null
 
@@ -2993,23 +3004,29 @@ function addMetasToHead() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config') || params.get('page');
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = JSON.parse(storedData.pages[config].settings);
-  const metaTags = settings.metaTags;
-  const headTag = document.getElementsByTagName('head')[0];
+  let settings;
 
-  if (metaTags !== '') metaTags.forEach(tag => {
-    if (tag.type === 'link') {
-      const metatag = document.createElement('link');
-      metatag.setAttribute('rel', tag.name);
-      metatag.setAttribute('href', tag.content);
-      headTag.appendChild(metatag);
-    } else {
-      const metatag = document.createElement('meta');
-      metatag.setAttribute(tag.type, tag.name);
-      metatag.setAttribute('content', tag.content);
-      headTag.appendChild(metatag);
+  if (storedData && storedData.pages && storedData.pages[config]){
+    settings = storedData.pages[config].settings;
+    const metaTags = settings.metaTags;
+    if (typeof metaTags !== 'undefined') {
+      const headTag = document.getElementsByTagName('head')[0];
+    
+      if (metaTags !== '') metaTags.forEach(tag => {
+        if (tag.type === 'link') {
+          const metatag = document.createElement('link');
+          metatag.setAttribute('rel', tag.name);
+          metatag.setAttribute('href', tag.content);
+          headTag.appendChild(metatag);
+        } else {
+          const metatag = document.createElement('meta');
+          metatag.setAttribute(tag.type, tag.name);
+          metatag.setAttribute('content', tag.content);
+          headTag.appendChild(metatag);
+        }
+      });
     }
-  });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', addMetasToHead);
@@ -3175,7 +3192,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}${cssClassBase !== '' ? '-': ''}${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -3189,7 +3206,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 // DATA IN: ['String:Breakpoint class name', 'String', 'String']
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
-  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Family' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
   let advanced = false;
   if (labelPrefix === 'class' || labelPrefix === 'css') {
     advanced = true;
@@ -3201,7 +3218,7 @@ function createLabel(bp, labelPrefix, forAttr) {
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
     keepLabel = labelPrefix.replace('Minimum ', '');
-    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel;
+    keepLabel = keepLabel.includes('Font Family') ? 'Font Styles' : keepLabel;
     keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel;
     keepLabel = keepLabel.includes('Gap') ? 'Gaps Between Columns' : keepLabel;
     const label = document.createElement('label');
@@ -3287,6 +3304,8 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = tooltips['padding']
   } else if (labelPrefix.includes('Margin')) {
     extraInfo = tooltips['margin']
+  } else if (labelPrefix.includes('Opacity')) {
+    extraInfo = tooltips['opacity']
   } else {
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;
@@ -3374,6 +3393,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   options.forEach(option => {
     const iconButton = document.createElement('button');
     iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
+      iconButton.classList.remove('bg-slate-200');
+      iconButton.classList.add('bg-sky-200');
+    }
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = appSageEditorIcons[iconTextCandidate1] || appSageEditorIcons[iconTextCandidate2] || appSageEditorIcons[option];
@@ -3402,7 +3425,8 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       options.forEach(opt => {
         grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
-          if (!swatchboard) b.classList.remove('bg-sky-200')
+          if (!swatchboard) b.classList.remove('bg-sky-200');
+          if (!swatchboard) b.classList.add('bg-slate-200');
           if (swatchboard) b.classList.remove('border-sky-300');
         });
         if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
@@ -3411,6 +3435,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
+        if (!swatchboard) iconButton.classList.remove('bg-slate-200');
         // column justification requires flex to work as expected
         if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
@@ -3452,7 +3477,8 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   const checkbox = document.createElement('input')
   checkbox.type = 'checkbox';
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
-  checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
+  // In this particular case, cssClassBase needs to not get passed due to Tailwind class syntax
+  checkbox.checked = getCurrentStyle(bp, options, '', grid) === cssClassBase;
   checkbox.onchange = () => {
     const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
@@ -3476,13 +3502,12 @@ function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
     if (labelPrefix === 'Font Family') {
       option_key = option.replace(/\+/g, '').toLowerCase();
       optionElement.textContent = option.replace(/\+/g, ' ');
-      console.log(getCurrentStyle(bp, options, cssClassBase, grid))
-      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option_key;
+      optionElement.selected = getCurrentStyle(bp, [option_key], cssClassBase, grid) === option_key;
     } else {
       optionElement.textContent = option;
+      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
     }
     const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option_key ? option_key : option}`;
-    optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
     optionElement.value = value;
     control.appendChild(optionElement);
   });
