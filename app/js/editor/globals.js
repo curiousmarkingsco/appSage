@@ -231,7 +231,6 @@ function mergeFontsIntoTailwindConfig() {
 
   // Merge each stored font into tailwind.config.theme.fontFamily
   Object.keys(storedFonts).forEach(fontKey => {
-    console.log(storedFonts[fontKey].replace(/\+/g, ' '))
     tailwind.config.theme.fontFamily[fontKey] = [storedFonts[fontKey].replace(/\+/g, ' ')];
   });
 
