@@ -171,7 +171,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 // DATA IN: ['String:Breakpoint class name', 'String', 'String']
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
-  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Family' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
   let advanced = false;
   if (labelPrefix === 'class' || labelPrefix === 'css') {
     advanced = true;
@@ -183,7 +183,7 @@ function createLabel(bp, labelPrefix, forAttr) {
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
     keepLabel = labelPrefix.replace('Minimum ', '');
-    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel;
+    keepLabel = keepLabel.includes('Font Family') ? 'Font Styles' : keepLabel;
     keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel;
     keepLabel = keepLabel.includes('Gap') ? 'Gaps Between Columns' : keepLabel;
     const label = document.createElement('label');
