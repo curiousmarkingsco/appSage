@@ -225,21 +225,6 @@ function addTextOptions(sidebar, element) {
   const fontUnderlineOptions = ['underline', 'not-underline'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
-  // Add Reset Button for Text Color
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-  breakpoints.forEach(bp => {
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    const resetTextColorElement = document.createElement('div');
-    const label = createLabel(bp, `Reset Text Color`, `${bp}-text-color`);
-    label.className = 'hidden';
-    container.appendChild(label);
-    container.appendChild(resetTextColorElement);
-
-    // Add the handleReset call for text color
-    handleReset(bp, element, textColorOptions, 'text', resetTextColorElement);
-    resetTextColorElement.classList.add('col-span-1');
-  });
-
   addDeviceTargetedOptions(sidebar, element, 'Font Family', 'font', fontOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');

@@ -28,6 +28,7 @@ updateTailwindConfig();
 var tailwindColors = mergeTailwindColors(tailwind.config.theme);
 
 var colorArray = extractColorNames(tailwindColors);
+colorArray.push('reset');
 var interactivityState = '';
 var interactivityStates = {
   "default": ['', 'Default'],
