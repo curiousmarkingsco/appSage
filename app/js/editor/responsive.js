@@ -157,7 +157,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}${cssClassBase !== '' ? '-': ''}${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -356,6 +356,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   options.forEach(option => {
     const iconButton = document.createElement('button');
     iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
+      iconButton.classList.remove('bg-slate-200');
+      iconButton.classList.add('bg-sky-200');
+    }
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = appSageEditorIcons[iconTextCandidate1] || appSageEditorIcons[iconTextCandidate2] || appSageEditorIcons[option];
@@ -384,7 +388,8 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       options.forEach(opt => {
         grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
-          if (!swatchboard) b.classList.remove('bg-sky-200')
+          if (!swatchboard) b.classList.remove('bg-sky-200');
+          if (!swatchboard) b.classList.add('bg-slate-200');
           if (swatchboard) b.classList.remove('border-sky-300');
         });
         if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
@@ -393,6 +398,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
+        if (!swatchboard) iconButton.classList.remove('bg-slate-200');
         // column justification requires flex to work as expected
         if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
@@ -434,7 +440,8 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   const checkbox = document.createElement('input')
   checkbox.type = 'checkbox';
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
-  checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
+  // In this particular case, cssClassBase needs to not get passed due to Tailwind class syntax
+  checkbox.checked = getCurrentStyle(bp, options, '', grid) === cssClassBase;
   checkbox.onchange = () => {
     const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
@@ -458,7 +465,6 @@ function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
     if (labelPrefix === 'Font Family') {
       option_key = option.replace(/\+/g, '').toLowerCase();
       optionElement.textContent = option.replace(/\+/g, ' ');
-      console.log(getCurrentStyle(bp, options, cssClassBase, grid))
       optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option_key;
     } else {
       optionElement.textContent = option;
