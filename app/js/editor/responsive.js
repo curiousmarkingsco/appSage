@@ -465,12 +465,12 @@ function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
     if (labelPrefix === 'Font Family') {
       option_key = option.replace(/\+/g, '').toLowerCase();
       optionElement.textContent = option.replace(/\+/g, ' ');
-      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option_key;
+      optionElement.selected = getCurrentStyle(bp, [option_key], cssClassBase, grid) === option_key;
     } else {
       optionElement.textContent = option;
+      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
     }
     const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option_key ? option_key : option}`;
-    optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
     optionElement.value = value;
     control.appendChild(optionElement);
   });

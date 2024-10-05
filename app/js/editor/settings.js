@@ -155,8 +155,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
-function generateGfontsEmbedCode() {
-  const selectedFonts = Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value).join('&family=');
+function generateGfontsEmbedCode(fonts) {
+  const selectedFonts = fonts || Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value).join('&family=');
   if (selectedFonts) {
     const embedTag = {
       content: `https://fonts.googleapis.com/css2?family=${selectedFonts}&display=swap`,
