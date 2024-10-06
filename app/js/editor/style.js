@@ -145,9 +145,9 @@ function addEditableBackgroundImage(sidebar, grid) {
 // background images and the styles applicable to them.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditableBackgroundFeatures(sidebar, grid) {
-  const bgSizeOptions = ['cover', 'contain'];
-  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];
-  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
+  const bgSizeOptions = ['cover', 'contain', 'reset'];
+  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right', 'reset'];
+  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'reset'];
 
   // Function to update background image size
   function addBackgroundSizeOptions() {
@@ -155,21 +155,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'icon-select');
-
-    // Add Reset Button for Background Size
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetSizeElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Size`, `${bp}-bg-size`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetSizeElement);
-
-      // Add the handleReset call for background size
-      handleReset(bp, grid, ['cover', 'contain'], 'bg', resetSizeElement);
-      resetSizeElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background position
@@ -178,21 +163,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'icon-select');
-
-    // Add Reset Button for Background Position
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetPositionElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Position`, `${bp}-bg-position`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetPositionElement);
-
-      // Add the handleReset call for background position
-      handleReset(bp, grid, bgPositionOptions, 'bg', resetPositionElement);
-      resetPositionElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background repeat

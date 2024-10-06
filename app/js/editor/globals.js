@@ -87,6 +87,7 @@ var tooltips = {
   'border-style-other': "Change the border style to be a ",
   'background-size-cover': "Make your background image cover the entire box; cropping will occur",
   'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'background-position': "Align the position of the image to the element's ",
   'swatchboard': "TailwindCSS class name: ",
   'bg-icon': "Position your background image to the ",
   'italicize': "Italicize your text",

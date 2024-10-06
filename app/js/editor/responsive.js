@@ -319,7 +319,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     return;
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
-  const bgIcon = (labelPrefix === 'Background Position');
+  const bgIcon = (labelPrefix === 'Background Position' || labelPrefix === 'Background Repeat');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
@@ -357,7 +357,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${(bgIcon && option !== 'reset') ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
       iconButton.classList.remove('bg-slate-200');
       iconButton.classList.add('bg-sky-200');
@@ -371,6 +371,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else if (labelPrefix === 'Border Style') {
       iconButton.setAttribute('data-extra-info', option === 'none' ? tooltips['border-style-none'] : tooltips['border-style-other'] + option + ' line');
     } else if (labelPrefix === 'Background Size') {
+      iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
+    } else if (labelPrefix === 'Background Position') {
+      iconButton.setAttribute('data-extra-info', option === 'reset' ? tooltips['reset'] : `${tooltips['background-position']} ${option + '.'}`);
+    } else if (labelPrefix === 'Background Repeat') {
       iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
     } else if (swatchboard) {
       iconButton.setAttribute('data-extra-info', tooltips['swatchboard'] + `${cssClassBase}-${option}`);
