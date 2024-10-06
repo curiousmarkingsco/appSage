@@ -109,7 +109,7 @@ function addContentOptions(contentContainer) {
   sidebar.prepend(moveButtons);
 
   // Minus one to remove the 'Add Content' button from the count
-  const contentCount = contentContainer.children.length - 1
+  const contentCount = contentContainer.parentNode.children.length - 1
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
