@@ -364,30 +364,33 @@ function addEditablePageTitle(container, placement) {
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+  const currentPageId = params.get('config');
 
-  // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
+  // Retrieve the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
 
-  // Check if the currentTitle exists in the pages object
-  if (appSageStorage.pages[currentTitle]) {
-    // Clone the data from the current title
-    const pageData = appSageStorage.pages[currentTitle];
+  // Find the current title using the page ID
+  let currentTitle = null;
+  for (let [title, id] of Object.entries(titleIdMap)) {
+    if (id === currentPageId) {
+      currentTitle = title;
+      break;
+    }
+  }
 
-    // Assign the data to the new title
-    appSageStorage.pages[newTitle] = pageData;
+  if (currentTitle) {
+    // Update the mapping with the new title
+    delete titleIdMap[currentTitle];
+    titleIdMap[newTitle] = currentPageId;
 
-    // Delete the current title entry
-    delete appSageStorage.pages[currentTitle];
+    // Save the updated mapping back to localStorage
+    localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
 
-    // Save the updated pages object back to localStorage
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
-    // Update the URL parameters
-    params.set('config', newTitle);
+    // Update the URL parameters (the page ID remains the same)
+    params.set('config', currentPageId);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   } else {
-    console.error(`Page with title "${currentTitle}" does not exist.`);
+    console.error(`Page with ID "${currentPageId}" does not exist.`);
   }
 } // DATA OUT: null
 
@@ -524,14 +527,25 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function createNewConfigurationFile() {
-  let filename = 'Untitled';
+  const pageId = generateAlphanumericId();
+  let title = 'Untitled';
   let counter = 1;
-  while (loadPage(filename)) {
-    filename = `Untitled-${counter}`;
+  // Load or create the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  while (title in titleIdMap) {
+    title = `Untitled-${counter}`;
     counter++;
   }
+  // Save the mapping of title to ID
+  titleIdMap[title] = pageId;
+  localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
 
-  savePage(filename, '[]'); // Initialize with an empty array
-  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
-  return filename;
+  savePage(pageId, '[]'); // Initialize with an empty array
+  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  return pageId;
+}
+
+function generateAlphanumericId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
