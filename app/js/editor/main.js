@@ -447,7 +447,7 @@ function addEditableMetadata(container, placement) {
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
-  if (settings) {
+  if (typeof settings.length !== 'undefined') {
     const metaTags = JSON.parse(settings).metaTags;
 
     if (metaTags) {
