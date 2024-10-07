@@ -26,6 +26,20 @@ function addContentContainer() {
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
+// Helper function to find the closest content container up to 10 levels deep
+function findClosestContentContainer(element) {
+  let currentElement = element;
+  let levels = 10;
+  while (currentElement && levels > 0) {
+    if (currentElement.classList.contains('content-container')) {
+      return currentElement;
+    }
+    currentElement = currentElement.parentElement;
+    levels--;
+  }
+  return null;
+}
+
 // This function adds a lot of the standard editing options that should be
 // available for all elements. This listens for any clicks on editable content
 // and also adds more important editing options before the standard options,
@@ -34,7 +48,10 @@ function addContentContainer() {
 function enableEditContentOnClick(contentContainer) {
   contentContainer.addEventListener('click', function (event) {
     event.stopPropagation();
-    addContentOptions(contentContainer);
+    const closestContainer = findClosestContentContainer(event.target);
+    if (closestContainer) {
+      addContentOptions(closestContainer);
+    }
   });
 } // DATA OUT: null
 
@@ -108,9 +125,8 @@ function addContentOptions(contentContainer) {
   moveButtons.id = 'moveContentButtons';
   sidebar.prepend(moveButtons);
 
-  // Minus one to remove the 'Add Content' button from the count
-  const multipleContent = contentContainer.parentNode === null ? contentContainer.children : contentContainer.parentNode.children;
-  const contentCount = multipleContent.length - 1
+  const multipleContent = contentContainer.parentNode?.children || [];
+  const contentCount = multipleContent.length;
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
@@ -217,22 +233,36 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
   });
 } // DATA OUT: null
 
+// Helper function to find the next valid sibling for moving content
+function getNextValidSibling(element, direction) {
+  let sibling = direction === 'up' ? element.previousElementSibling : element.nextElementSibling;
+
+  while (sibling) {
+    if (sibling.classList.contains('content-container')) {
+      return sibling;
+    }
+    sibling = direction === 'up' ? sibling.previousElementSibling : sibling.nextElementSibling;
+  }
+  return null;
+}
+
 // This function is the operational bits of the "Move Grid" and "Move Content"
 // buttons.
 // DATA IN: ['HTML Element, <div>', 'String:up/down']
 function moveVertical(element, direction) {
-  const parent = element.parentNode;
+  let parentContainer = findClosestContentContainer(element.parentNode);
+  if (!parentContainer) return;
+
   let targetSibling = getNextValidSibling(element, direction);
 
   if (direction === 'up' && targetSibling) {
-    parent.insertBefore(element, targetSibling);
+    parentContainer.insertBefore(element, targetSibling);
   } else if (direction === 'down' && targetSibling) {
-    // For moving down, we need to insert before the next element of the targetSibling
     const nextToTarget = targetSibling.nextElementSibling;
     if (nextToTarget) {
-      parent.insertBefore(element, nextToTarget);
+      parentContainer.insertBefore(element, nextToTarget);
     } else {
-      parent.appendChild(element);  // If there's no next sibling, append to the end of the parent
+      parentContainer.appendChild(element);
     }
   }
 } // DATA OUT: null
