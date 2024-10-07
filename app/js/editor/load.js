@@ -20,9 +20,18 @@ function loadChanges(json) {
     element.innerHTML = item.content;
     pageContainer.appendChild(element);
 
-    if (element.classList.contains('grid')) {
+    if (element.classList.contains('pagegrid')) {
       restoreGridCapabilities(element);
     }
+  });
+
+  pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
+  });
+
+  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
+    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });
 
   const grid = document.querySelector('#page .grid');

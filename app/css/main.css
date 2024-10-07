@@ -22,10 +22,6 @@
   background-color: rgba(0, 0, 255, 0.1);
 }
 
-.pagecontent a, .pagecontent button {
-  pointer-events: none;
-}
-
 /* Give some space for the buttons to live */
 .pagecolumn {
   min-height: 82px;
@@ -37,7 +33,7 @@
 
 /* Visual indicator of the element being currently edited */
 #editing-highlight {
-  box-shadow: 0 0 10px rgba(0, 255, 255, 0.75); /* Optional: adds a glow effect for stronger emphasis */
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.75);
 }
 
 .pagegrid:hover {
