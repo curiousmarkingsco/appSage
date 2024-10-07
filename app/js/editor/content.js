@@ -108,9 +108,18 @@ function addContentOptions(contentContainer) {
   moveButtons.id = 'moveContentButtons';
   sidebar.prepend(moveButtons);
 
+  let multipleContent;
+  let contentCount;
+  if (contentContainer.classList.contains('pastedHtmlContainer')) {
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    contentCount = gridCount + contentCount + flexCount;
+  } else {
   // Minus one to remove the 'Add Content' button from the count
-  const multipleContent = contentContainer.parentNode === null ? contentContainer.children : contentContainer.parentNode.children;
-  const contentCount = multipleContent.length - 1
+    multipleContent = contentContainer.parentNode === null ? contentContainer.children : contentContainer.parentNode.children;
+    contentCount = multipleContent.length - 1;
+  }
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
@@ -391,6 +400,7 @@ function updateSidebarForTextElements(sidebar, container) {
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
+    { label: 'Heading 6', value: 'span' },
     // { label: 'Form', value: 'form' },
     { label: 'Link / Button', value: 'a' },
     // { label: 'Button', value: 'button' },
@@ -468,6 +478,7 @@ function updateSidebarForTextElements(sidebar, container) {
     if (['a', 'button'].includes(selectedTag)) {
       // Reload tab to ensure proper editing options for targetting the tag itself
       addContentOptions(tempContentContainer);
+      tempContentContainer.addEventListener('click', function(e) { e.preventDefault(); });
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();

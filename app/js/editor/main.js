@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
   const appSageSettingsButton = document.getElementById('appSageSettings');
-  const settingsSidebar = document.getElementById('settingsSidebar');
-  const sidebar = document.getElementById('sidebar');
 
   // Show/hide the drop-up menu
   editPageButton.addEventListener('click', function (event) {
@@ -212,19 +210,48 @@ function showHtmlModal(onConfirm = null) {
   document.getElementById('confirmHtml').addEventListener('click', function () {
     if (onConfirm) onConfirm();
     const page = document.getElementById('page');
-    const content = document.getElementById('tailwindHtml');
+    const content = document.getElementById('tailwindHtml').value;
+
+    // Create a container to hold the pasted content
     const parentElement = document.createElement('div');
-    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep p-4'
+    parentElement.classList = 'pastedHtmlContainer pagecontent ugc-keep p-4';
     page.appendChild(parentElement);
-    const element = document.createElement('div');
-    element.classList = 'pagecolumn col-span-1 p-4'
-    parentElement.appendChild(element);
-    const childElement = document.createElement('div');
-    childElement.classList = 'content-container pagecontent htmlContent p-4'
-    childElement.innerHTML = content.value;
-    element.appendChild(childElement);
+
+    // Create a temporary container for parsing the HTML
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = content;
+
+    // Recursively wrap each element in pagecontent div, allowing nested pagecontent divs
+    function wrapElements(container) {
+      const children = Array.from(container.childNodes);
+
+      children.forEach((child) => {
+        if (child.nodeType === Node.ELEMENT_NODE) {
+          // Create the wrapper for the element
+          const wrapper = document.createElement('div');
+          wrapper.classList = 'content-container pagecontent htmlContent';
+
+          // Wrap every element
+          wrapper.appendChild(child.cloneNode(true));
+          container.replaceChild(wrapper, child);
+
+          enableEditContentOnClick(wrapper);
+          observeClassManipulation(wrapper);
+          // Continue wrapping children of this newly added element
+          wrapElements(wrapper.firstChild);  // Recurse on the wrapped child
+
+        }
+      });
+    }
+
+    wrapElements(tempContainer);
+
+    // Append the processed content to the parent element
+    parentElement.appendChild(tempContainer);
+
     document.body.removeChild(modal);
   });
+
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);

@@ -19,7 +19,10 @@ function addGridOptions(grid) {
     moveButtons.id = 'moveGridButtons'
     sidebar.prepend(moveButtons);
 
-    const gridCount = document.getElementById('page').querySelectorAll('.grid').length
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    gridCount = gridCount + contentCount + flexCount;
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'up'));
     moveButtons.appendChild(addRemoveGridButton(grid, sidebar));
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
