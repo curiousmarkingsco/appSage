@@ -509,7 +509,9 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
