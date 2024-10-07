@@ -14,15 +14,25 @@
 //       actually result in clicking the link. This needs to be fixed and
 //       crafted more intentionally for certain elements.
 // DATA IN: null
-function addContentContainer() {
-  const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
-  const contentTag = document.createElement('p'); // create a paragraph by default
-  contentContainer.append(contentTag);
+function addContentContainer(level = 1) {
+  if (level > 10) return; // Stop nesting after 10 levels to prevent over-complication.
 
+  const contentContainer = document.createElement('div');
+  contentContainer.className = `content-container-level-${level} content-container pagecontent text-base`;
+
+  const contentTag = document.createElement('p'); // Default paragraph content
+  contentContainer.append(contentTag);
+  
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
   addContentOptions(contentContainer);
+
+  if (level < 10) {
+    const nestedContainer = addContentContainer(level + 1);
+    if (nestedContainer) {
+      contentContainer.append(nestedContainer);
+    }
+  }
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
