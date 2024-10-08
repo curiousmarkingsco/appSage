@@ -10,7 +10,7 @@
 // DATA IN: HTML Element, <div>
 function addContainerOptions(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Container Row</strong></div>${generateSidebarTabs()}`;
+  sidebar.innerHTML = `<div><strong>Edit Flexible Container</strong></div>${generateSidebarTabs()}`;
   activateTabs();
 
   if (container) {
@@ -27,8 +27,6 @@ function addContainerOptions(container) {
     moveButtons.appendChild(addRemoveContainerButton(container, sidebar));
     if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
 
-    container.appendChild(createAddContentButton(container));
-
     // Container-specific editing options
     addContainerAlignmentOptions(sidebar, container);
 
@@ -42,24 +40,26 @@ function addContainerOptions(container) {
     addEditableMarginAndPadding(sidebar, container);
     addEditableDimensions(sidebar, container);
     highlightEditingElement(container);
+    addIdAndClassToElements();
     addManualClassEditor(sidebar, container);
     addManualCssEditor(sidebar, container);
   }
 } // DATA OUT: null
 
 function createAddContainerButton(containingBox) {
-  const menuItem = document.createElement('button');
-  menuItem.setAttribute('data-extra-info', tooltips['add-container']);
-  menuItem.className = 'addContainer hidden group-hover:block w-48 h-12 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded';
-  menuItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg><svg class="w-4 h-4 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>`;
-  menuItem.addEventListener('click', function () {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['add-container']);
+  button.className = 'addContainer hidden w-48 h-12 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded';
+  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg><svg class="w-4 h-4 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>`;
+  button.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
-    containerContainer.className = 'group w-auto min-w-auto max-w-auto min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    containerContainer.className = 'group w-auto min-w-auto max-w-auto min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0';
 
     containingBox.appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
     highlightEditingElement(containerContainer);
+    addIdAndClassToElements();
 
     // Enable recursive boxes
     const addContainerButton = createAddContainerButton(containerContainer);
@@ -71,7 +71,17 @@ function createAddContainerButton(containingBox) {
 
     enableEditContainerOnClick(containerContainer);
   });
-  return menuItem;
+  containingBox.addEventListener('mouseover', function(event){
+    event.stopPropagation();
+    button.classList.add('block');
+    button.classList.remove('hidden');
+  });
+  containingBox.addEventListener('mouseout', function(event){
+    event.stopPropagation();
+    button.classList.add('hidden');
+    button.classList.remove('block');
+  });
+  return button;
 } 
 
 // This function creates the button for deleting the container currently being
@@ -121,5 +131,6 @@ function enableEditContainerOnClick(container) {
     event.stopPropagation();
     addContainerOptions(container);
     highlightEditingElement(container);
+    addIdAndClassToElements();
   });
 } // DATA OUT: null

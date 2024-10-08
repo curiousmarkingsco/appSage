@@ -73,7 +73,7 @@ var tooltips = {
   'move-column': "Move this column to the ",
   'remove-column': "Remove this column forever (that\'s a long time!)",
   'add-column': "Add another column to this grid",
-  'add-container': "Add another column to this element",
+  'add-container': "Add another container to this element",
   'add-content': "Add content to this column",
   'remove-content': "Remove this content forever (that\'s a long time!)",
   'move-content-up': "Move this content upward in the column",
@@ -424,4 +424,10 @@ window.addEventListener('load', mergeFontsIntoTailwindConfig);
 window.addEventListener('load', function () {
   const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
   if (settings) advancedMode = settings.advancedMode;
+
+  if (advancedMode === true) {
+    document.getElementById('addHtml').classList.remove('hidden');
+    document.getElementById('addContainer').classList.remove('hidden');
+    document.getElementById('copyMetadata').classList.remove('hidden');
+  }
 });

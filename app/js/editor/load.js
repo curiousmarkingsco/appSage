@@ -24,7 +24,7 @@ function loadChanges(json) {
       restoreGridCapabilities(element);
     }
 
-    if (element.classList.contains('pagecontainer')) {
+    if (element.classList.contains('maincontainer')) {
       restoreContainerCapabilities(element);
     }
   });
@@ -65,9 +65,19 @@ function restoreGridCapabilities(grid) {
 function restoreContainerCapabilities(container) {
   const addContentButton = createAddContentButton(container);
   container.appendChild(addContentButton);
+  const addContainerButton = createAddContainerButton(container);
+  container.appendChild(addContainerButton);
   enableEditContainerOnClick(container);
+  Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+    const addChildContentButton = createAddContentButton(contentContainer);
+    contentContainer.appendChild(addChildContentButton);
+    const addChildContainerButton = createAddContainerButton(contentContainer);
+    contentContainer.appendChild(addChildContainerButton);
+  });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
 } // DATA OUT: null
+
+
