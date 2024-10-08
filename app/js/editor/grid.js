@@ -42,6 +42,7 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
     addManualClassEditor(sidebar, grid);
     addManualCssEditor(sidebar, grid);
   }
@@ -94,5 +95,6 @@ function enableEditGridOnClick(grid) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
   });
 } // DATA OUT: null

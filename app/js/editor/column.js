@@ -37,6 +37,7 @@ function addColumnOptions(column) {
   sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
   activateTabs();
   highlightEditingElement(column);
+  addIdAndClassToElements();
 
   const moveButtons = document.createElement('div');
   moveButtons.className = 'flex justify-between my-2'
@@ -133,6 +134,7 @@ function createAddColumnButton(gridContainer) {
     addEditableMarginAndPadding(sidebar, newColumn);
 
     highlightEditingElement(newColumn);
+    addIdAndClassToElements();
   };
   return menuItem;
 } // DATA OUT: HTML Element, <button>
