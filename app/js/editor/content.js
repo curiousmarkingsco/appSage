@@ -16,7 +16,7 @@
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
+  contentContainer.className = 'content-container pagecontent w-auto'; // A new class specifically for content
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 

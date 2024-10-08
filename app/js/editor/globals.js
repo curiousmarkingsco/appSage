@@ -73,6 +73,7 @@ var tooltips = {
   'move-column': "Move this column to the ",
   'remove-column': "Remove this column forever (that\'s a long time!)",
   'add-column': "Add another column to this grid",
+  'add-container': "Add another column to this element",
   'add-content': "Add content to this column",
   'remove-content': "Remove this content forever (that\'s a long time!)",
   'move-content-up': "Move this content upward in the column",

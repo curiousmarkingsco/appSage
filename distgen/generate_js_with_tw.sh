@@ -23,6 +23,8 @@ declare -a js_files=(
     "./app/js/main.js"
     "./app/js/editor/grid.js"
     "./app/js/editor/style/grid.js"
+    "./app/js/editor/container.js"
+    "./app/js/editor/style/container.js"
     "./app/js/editor/column.js"
     "./app/js/editor/style/column.js"
     "./app/js/editor/content.js"

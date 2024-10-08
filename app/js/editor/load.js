@@ -23,6 +23,10 @@ function loadChanges(json) {
     if (element.classList.contains('pagegrid')) {
       restoreGridCapabilities(element);
     }
+
+    if (element.classList.contains('pagecontainer')) {
+      restoreContainerCapabilities(element);
+    }
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
@@ -40,7 +44,7 @@ function loadChanges(json) {
   }
 } // DATA OUT: null
 
-// This function makes it so that saved elements can be edited once more.
+// This function makes it so that saved elements related to grids can be edited once more.
 // DATA IN: HTML Element, <div>
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
@@ -53,5 +57,17 @@ function restoreGridCapabilities(grid) {
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
     });
+  });
+} // DATA OUT: null
+
+// This function makes it so that saved elements related to container box can be edited once more.
+// DATA IN: HTML Element, <div>
+function restoreContainerCapabilities(container) {
+  const addContentButton = createAddContentButton(container);
+  container.appendChild(addContentButton);
+  enableEditContainerOnClick(container);
+  Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
   });
 } // DATA OUT: null
