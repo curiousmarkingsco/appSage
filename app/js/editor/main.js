@@ -64,6 +64,27 @@ document.addEventListener('DOMContentLoaded', function () {
     enableEditGridOnClick(gridContainer);
   });
 
+  const addContainerButton = document.getElementById('addContainer');
+  addContainerButton.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+    document.getElementById('page').appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    highlightEditingElement(containerContainer);
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    enableEditContainerOnClick(containerContainer);
+  });
+
   const addHtmlButton = document.getElementById('addHtml');
   addHtmlButton.addEventListener('click', function () {
     showHtmlModal(() => { });
