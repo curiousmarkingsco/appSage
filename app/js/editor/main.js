@@ -353,7 +353,10 @@ function resetCopyPageButton(element) {
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
+
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
   titleLabel.setAttribute('for', 'page-title');
@@ -394,7 +397,7 @@ function changeLocalStoragePageTitle(newTitle) {
   const currentPageId = params.get('config');
 
   // Retrieve the title-ID mapping from localStorage
-  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
   // Find the current title using the page ID
   let currentTitle = null;
@@ -411,7 +414,7 @@ function changeLocalStoragePageTitle(newTitle) {
     titleIdMap[newTitle] = currentPageId;
 
     // Save the updated mapping back to localStorage
-    localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
 
     // Update the URL parameters (the page ID remains the same)
     params.set('config', currentPageId);
@@ -536,13 +539,13 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
   let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
   document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
-    if (json) {
+    if (json && json.length > 0) {
       loadChanges(json);
       loadPageSettings(config);
       loadPageBlobs(config);
@@ -560,14 +563,14 @@ function createNewConfigurationFile() {
   let title = 'Untitled';
   let counter = 1;
   // Load or create the title-ID mapping from localStorage
-  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
   while (title in titleIdMap) {
     title = `Untitled-${counter}`;
     counter++;
   }
   // Save the mapping of title to ID
   titleIdMap[title] = pageId;
-  localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
+  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};

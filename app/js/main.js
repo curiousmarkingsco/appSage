@@ -41,7 +41,7 @@ function deletePage(page_id, element) {
 
   showConfirmationModal(message, function () {
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap') || '{}');
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
 
     if (appSageStorage.pages && appSageStorage.pages[page_id]) {
       delete appSageStorage.pages[page_id];
@@ -55,7 +55,7 @@ function deletePage(page_id, element) {
     }
 
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
     element.remove();
 
     console.log(`Page with ID ${page_id} has been deleted successfully.`);
