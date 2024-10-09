@@ -376,7 +376,10 @@ function resetCopyPageButton(element) {
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
+
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
   titleLabel.setAttribute('for', 'page-title');
@@ -414,30 +417,33 @@ function addEditablePageTitle(container, placement) {
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+  const currentPageId = params.get('config');
 
-  // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
+  // Retrieve the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
-  // Check if the currentTitle exists in the pages object
-  if (appSageStorage.pages[currentTitle]) {
-    // Clone the data from the current title
-    const pageData = appSageStorage.pages[currentTitle];
+  // Find the current title using the page ID
+  let currentTitle = null;
+  for (let [title, id] of Object.entries(titleIdMap)) {
+    if (id === currentPageId) {
+      currentTitle = title;
+      break;
+    }
+  }
 
-    // Assign the data to the new title
-    appSageStorage.pages[newTitle] = pageData;
+  if (currentTitle) {
+    // Update the mapping with the new title
+    delete titleIdMap[currentTitle];
+    titleIdMap[newTitle] = currentPageId;
 
-    // Delete the current title entry
-    delete appSageStorage.pages[currentTitle];
+    // Save the updated mapping back to localStorage
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
 
-    // Save the updated pages object back to localStorage
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
-    // Update the URL parameters
-    params.set('config', newTitle);
+    // Update the URL parameters (the page ID remains the same)
+    params.set('config', currentPageId);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   } else {
-    console.error(`Page with title "${currentTitle}" does not exist.`);
+    console.error(`Page with ID "${currentPageId}" does not exist.`);
   }
 } // DATA OUT: null
 
@@ -556,11 +562,13 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
-    if (json) {
+    if (json && json.length > 0) {
       loadChanges(json);
       loadPageSettings(config);
       loadPageBlobs(config);
@@ -574,12 +582,24 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function createNewConfigurationFile() {
-  let filename = 'Untitled';
+  const pageId = generateAlphanumericId();
+  let title = 'Untitled';
   let counter = 1;
-  while (loadPage(filename)) {
-    filename = `Untitled-${counter}`;
+  // Load or create the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  while (title in titleIdMap) {
+    title = `Untitled-${counter}`;
     counter++;
   }
+  // Save the mapping of title to ID
+  titleIdMap[title] = pageId;
+  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
   savePage(filename, '[]'); // Initialize with an empty array
   window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
@@ -620,4 +640,9 @@ function addIdAndClassToElements() {
       element.classList.add(`group/[${newId}]`);
     }
   });
+}
+
+function generateAlphanumericId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
