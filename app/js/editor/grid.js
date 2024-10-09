@@ -42,6 +42,7 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
     addManualClassEditor(sidebar, grid);
     addManualCssEditor(sidebar, grid);
   }
@@ -87,13 +88,13 @@ function createVerticalMoveGridButton(grid, direction) {
 } // DATA OUT: HTML Element, <button>
 
 // This function is intended to present the sidebar editing options when a grid
-// is clicked. Only the outer edges of the grid are clickable for this to work
-// due to columns and content overlapping it.
+// is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditGridOnClick(grid) {
   grid.addEventListener('click', function (event) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
   });
 } // DATA OUT: null
