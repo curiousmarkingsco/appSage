@@ -69,10 +69,12 @@ function savePage(pageId, data) {
     appSageStorage.pages = {};
   }
   if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+    appSageStorage.pages[pageId] = { page_data: [], title: 'Untitled', settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].page_data = data;
+
   localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  console.log('Page saved successfully with title:', appSageStorage.pages[pageId].title);
 } // DATA OUT: null
 
 // This function saves all page's settings from the designer's additions,

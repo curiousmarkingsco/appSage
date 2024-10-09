@@ -536,7 +536,9 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+  const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
@@ -566,8 +568,13 @@ function createNewConfigurationFile() {
   // Save the mapping of title to ID
   titleIdMap[title] = pageId;
   localStorage.setItem('titleIdMap', JSON.stringify(titleIdMap));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  savePage(pageId, '[]'); // Initialize with an empty array
   window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   return pageId;
 }
