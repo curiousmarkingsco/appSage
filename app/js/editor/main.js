@@ -56,12 +56,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     addGridOptions(gridContainer);
     highlightEditingElement(gridContainer);
+    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
+  });
+
+  const addContainerButton = document.getElementById('addContainer');
+  addContainerButton.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+    document.getElementById('page').appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    highlightEditingElement(containerContainer);
+    addIdAndClassToElements();
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    enableEditContainerOnClick(containerContainer);
   });
 
   const addHtmlButton = document.getElementById('addHtml');
@@ -585,4 +608,40 @@ function createNewConfigurationFile() {
 function generateAlphanumericId() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function addIdAndClassToElements() {
+  const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
+  
+  // Helper function to generate a random alphanumeric string of a given length
+  function generateRandomId(length = 8) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  // Function to ensure the generated ID is unique on the page
+  function generateUniqueId() {
+    let the_id;
+    do {
+      the_id = generateRandomId();
+    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+    return the_id;
+  }
+
+  // Find elements that match the specified classes
+  const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
+
+  elements.forEach(element => {
+    // Check if the element already has a class like 'group/some_id'
+    const hasGroupClass = Array.from(element.classList).some(cls => cls.startsWith('group/'));
+    
+    if (!hasGroupClass) { // Only add ID and class if no group/ID class exists
+      const newId = generateUniqueId();
+      element.classList.add(`group/[${newId}]`);
+    }
+  });
 }
