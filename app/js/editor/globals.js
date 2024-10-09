@@ -19,9 +19,11 @@ if (typeof customAppSageStorage !== 'undefined') {
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
+  var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
+  var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
 updateTailwindConfig();

@@ -56,7 +56,7 @@
         try {
           const appSageStorage = JSON.parse(localStorage['appSageStorage']);
           const pages = appSageStorage.pages;
-          const titleIdMap = JSON.parse(localStorage.getItem('titleIdMap')) || {};
+          const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
           Object.keys(pages).forEach(pageId => {
             const pageTitle = Object.keys(titleIdMap).find(title => titleIdMap[title] === pageId) || pageId;
