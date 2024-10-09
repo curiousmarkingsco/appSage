@@ -426,8 +426,11 @@ window.addEventListener('load', function () {
   if (settings) advancedMode = settings.advancedMode;
 
   if (advancedMode === true) {
-    document.getElementById('addHtml').classList.remove('hidden');
-    document.getElementById('addContainer').classList.remove('hidden');
-    document.getElementById('copyMetadata').classList.remove('hidden');
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
   }
 });
