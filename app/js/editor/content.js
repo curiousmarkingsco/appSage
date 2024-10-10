@@ -412,7 +412,8 @@ function updateSidebarForTextElements(sidebar, container) {
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
-    { label: 'Heading 6', value: 'span' },
+    { label: 'Line of text', value: 'span' },
+    { label: 'Block of text', value: 'div' },
     // { label: 'Form', value: 'form' },
     { label: 'Link / Button', value: 'a' },
     // { label: 'Button', value: 'button' },
@@ -433,6 +434,40 @@ function updateSidebarForTextElements(sidebar, container) {
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  const srOnly = document.createElement('input');
+  srOnly.placeholder = 'Text for screen readers';
+  srOnly.className = 'shadow border hidden rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  srOnly.setAttribute('data-extra-info', 'If your element relies on imagery or visual references to make sense, add text here to give more detail.');
+  if (advancedMode === true) srOnly.classList.remove('hidden');
+
+  srOnly.addEventListener('change', function () {
+    const selectedTag = tagDropdown.value;
+    let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
+
+    if (directEditing) {
+      // This predicates that an img/video/audio (media) tag already exists
+      element = contentContainer;
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
+
+    // If no element exists for the media tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
+      contentContainer.appendChild(element);
+    }
+
+    // If it's not a media tag, update the text
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
+    }
+  });
 
   const mediaUrlInput = document.createElement('input');
   mediaUrlInput.type = 'text';
@@ -502,6 +537,9 @@ function updateSidebarForTextElements(sidebar, container) {
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
     let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
 
     if (directEditing) {
       // This predicates that an img/video/audio (media) tag already exists
@@ -513,12 +551,14 @@ function updateSidebarForTextElements(sidebar, container) {
     // If no element exists for the media tag, create one
     if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
       contentContainer.appendChild(element);
     }
 
     // If it's not a media tag, update the text
     if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
     }
   });
 
@@ -535,7 +575,11 @@ function updateSidebarForTextElements(sidebar, container) {
     if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
       mediaUrlInput.value = targetElement.src;
     } else {
-      textInput.value = targetElement.textContent;
+      textInput.value = getTextWithoutSROnly(targetElement);
+      const srOnlySpan = targetElement.querySelector('.sr-only');
+      if (srOnlySpan) {
+        srOnly.value = srOnlySpan.textContent;
+      }
     }
     tagDropdown.value = targetElement.tagName.toLowerCase();
     toggleInputs(tagDropdown.value);
@@ -551,6 +595,7 @@ function updateSidebarForTextElements(sidebar, container) {
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
@@ -560,6 +605,7 @@ function updateSidebarForTextElements(sidebar, container) {
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(mediaUrlInput);
     formContainer.prepend(fileInput);
@@ -580,6 +626,15 @@ function updateSidebarForTextElements(sidebar, container) {
   addManualCssEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
   addIdAndClassToElements();
+}
+
+function getTextWithoutSROnly(element) {
+  const clonedElement = element.cloneNode(true);
+  
+  // Remove all elements with the class 'sr-only'
+  clonedElement.querySelectorAll('.sr-only').forEach(el => el.remove());
+
+  return clonedElement.textContent.trim();
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {
