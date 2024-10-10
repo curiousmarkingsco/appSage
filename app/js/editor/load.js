@@ -68,12 +68,20 @@ function restoreContainerCapabilities(container) {
   container.appendChild(addContentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
+  if (advancedMode === true){
+    const addHtmlButton = createAddHtmlButton(container);
+    container.appendChild(addHtmlButton);
+  }
   enableEditContainerOnClick(container);
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
     enableEditContainerOnClick(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
