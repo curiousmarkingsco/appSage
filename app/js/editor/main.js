@@ -233,7 +233,8 @@ function showHtmlModal(onConfirm = null) {
   document.getElementById('confirmHtml').addEventListener('click', function () {
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
-    convertTailwindHtml(content);
+    const page = document.getElementById('page');
+    page.appendChild(convertTailwindHtml(content));
     document.body.removeChild(modal);
   });
 
@@ -244,14 +245,13 @@ function showHtmlModal(onConfirm = null) {
 } // DATA OUT: null
 
 function convertTailwindHtml(content) {
-  const page = document.getElementById('page');
   // Create a container to hold the pasted content
   const parentElement = document.createElement('div');
   parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep p-4';
   parentElement.innerHTML = content;
 
   wrapElements(parentElement);
-  page.appendChild(parentElement);
+  return parentElement;
 }
 
 function wrapElements(container) {
