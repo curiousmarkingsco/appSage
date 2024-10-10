@@ -214,8 +214,12 @@ var appSageEditorIcons = {
 function extractColorNames(colorObject) {
   let colorArray = [];
   for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
+    if (typeof colorObject[colorFamily] == 'string') {
+      colorArray.push(colorFamily);
+    } else {
+      for (const shade in colorObject[colorFamily]) {
+        colorArray.push(`${colorFamily}-${shade}`);
+      }
     }
   }
   return colorArray;

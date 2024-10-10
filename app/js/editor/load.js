@@ -30,18 +30,19 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
-  });
-
-  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
-    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });
 
   const grid = document.querySelector('#page .grid');
   if (grid) {
     addGridOptions(grid);
   }
+
+  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
+    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
+  });
 } // DATA OUT: null
 
 // This function makes it so that saved elements related to grids can be edited once more.
