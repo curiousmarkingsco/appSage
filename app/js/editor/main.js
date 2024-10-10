@@ -232,46 +232,8 @@ function showHtmlModal(onConfirm = null) {
 
   document.getElementById('confirmHtml').addEventListener('click', function () {
     if (onConfirm) onConfirm();
-    const page = document.getElementById('page');
     const content = document.getElementById('tailwindHtml').value;
-
-    // Create a container to hold the pasted content
-    const parentElement = document.createElement('div');
-    parentElement.classList = 'pastedHtmlContainer pagecontent ugc-keep p-4';
-    page.appendChild(parentElement);
-
-    // Create a temporary container for parsing the HTML
-    const tempContainer = document.createElement('div');
-    tempContainer.innerHTML = content;
-
-    // Recursively wrap each element in pagecontent div, allowing nested pagecontent divs
-    function wrapElements(container) {
-      const children = Array.from(container.childNodes);
-
-      children.forEach((child) => {
-        if (child.nodeType === Node.ELEMENT_NODE) {
-          // Create the wrapper for the element
-          const wrapper = document.createElement('div');
-          wrapper.classList = 'content-container pagecontent htmlContent';
-
-          // Wrap every element
-          wrapper.appendChild(child.cloneNode(true));
-          container.replaceChild(wrapper, child);
-
-          enableEditContentOnClick(wrapper);
-          observeClassManipulation(wrapper);
-          // Continue wrapping children of this newly added element
-          wrapElements(wrapper.firstChild);  // Recurse on the wrapped child
-
-        }
-      });
-    }
-
-    wrapElements(tempContainer);
-
-    // Append the processed content to the parent element
-    parentElement.appendChild(tempContainer);
-
+    convertTailwindHtml(content);
     document.body.removeChild(modal);
   });
 
@@ -280,6 +242,93 @@ function showHtmlModal(onConfirm = null) {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
+
+function convertTailwindHtml(content) {
+  const page = document.getElementById('page');
+  // Create a container to hold the pasted content
+  const parentElement = document.createElement('div');
+  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep p-4';
+  parentElement.innerHTML = content;
+
+  wrapElements(parentElement);
+  page.appendChild(parentElement);
+}
+
+function wrapElements(container) {
+  const children = Array.from(container.childNodes);
+
+  const structureTags = ['ARTICLE', 'SECTION', 'DIV', 'NAV', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'];
+
+  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE', 
+    'IMG', 'VIDEO', 'AUDIO', 'FIGURE', 'IFRAME',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
+    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS', 
+    'PROGRESS', 'METER', 'DL', 'DT', 'DD'];
+
+  const tableTags = ['TH', 'TD', 'COL', 'COLGROUP'];
+
+  children.forEach((child) => {
+    if (child.nodeType === Node.ELEMENT_NODE) {
+      // Check if child is part of a grid structure by looking at its immediate parent
+      const isInGrid = container.classList.contains('grid');
+
+      // Check if the element is holding content children
+      const hasContentChildren = Array.from(child.children).some(el => 
+        contentTags.includes(el.tagName) || tableTags.includes(el.tagName)
+      );
+
+      // Apply grid-related classes
+      if (child.classList.contains('grid')) {
+        child.classList.add('pagegrid');
+      }
+
+      // If child is inside a grid, apply `pagecolumn` class
+      if (isInGrid) {
+        child.classList.add('pagecolumn');
+      }
+
+      // Handle structured elements like `th`, `td`, etc.
+      if (tableTags.includes(child.tagName)) {
+        child.classList.add('pagecontent', 'content-container');
+        const wrapper = document.createElement('div');
+        // Wrap the internal HTML content of `th`, `td`, etc.
+        wrapper.innerHTML = child.innerHTML;
+        child.innerHTML = ''; // Clear original content
+        child.appendChild(wrapper);
+        // Enable editing and observation for the element
+        enableEditContentOnClick(child);
+        observeClassManipulation(child);
+      } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
+        // For divs with single content elements, add classes directly without wrapping
+        child.classList.add('pagecontent', 'content-container');
+      } else if (contentTags.includes(child.tagName)) {
+        // Wrap content elements in a div with `pagecontent content-container` classes
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('pagecontent', 'content-container');
+        wrapper.appendChild(child.cloneNode(true));
+        container.replaceChild(wrapper, child);
+
+        // Enable editing and observation for the wrapper
+        enableEditContentOnClick(wrapper);
+        observeClassManipulation(wrapper);
+
+        // Recursively apply wrapping to the children of the new wrapper
+        wrapElements(wrapper.firstChild);
+      } else if (hasContentChildren) {
+        // If the element houses content, add `pagecontainer` class but don't wrap
+        child.classList.add('pagecontainer');
+
+        // Recursively apply wrapping to children
+        wrapElements(child);
+      } else {
+        // Recursively handle child elements for non-wrapped cases
+        child.classList.add('pagecontainer');
+        wrapElements(child);
+      }
+    }
+  });
+}
+
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
@@ -372,6 +421,8 @@ function resetCopyPageButton(element) {
   }, 750)
 } // DATA OUT: null
 
+// This function creates the form input for changing the page's title.
+// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
@@ -601,14 +652,18 @@ function createNewConfigurationFile() {
   appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
   localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  savePage(filename, '[]'); // Initialize with an empty array
-  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
-  return filename;
+  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  return pageId;
+}
+
+function generateAlphanumericId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
 
 function addIdAndClassToElements() {
   const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
-  
+
   // Helper function to generate a random alphanumeric string of a given length
   function generateRandomId(length = 8) {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -634,15 +689,10 @@ function addIdAndClassToElements() {
   elements.forEach(element => {
     // Check if the element already has a class like 'group/some_id'
     const hasGroupClass = Array.from(element.classList).some(cls => cls.startsWith('group/'));
-    
+
     if (!hasGroupClass) { // Only add ID and class if no group/ID class exists
       const newId = generateUniqueId();
       element.classList.add(`group/[${newId}]`);
     }
   });
-}
-
-function generateAlphanumericId() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }

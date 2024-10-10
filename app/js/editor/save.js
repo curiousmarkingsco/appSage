@@ -74,7 +74,6 @@ function savePage(pageId, data) {
   appSageStorage.pages[pageId].page_data = data;
 
   localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-  console.log('Page saved successfully with title:', appSageStorage.pages[pageId].title);
 } // DATA OUT: null
 
 // This function saves all page's settings from the designer's additions,
