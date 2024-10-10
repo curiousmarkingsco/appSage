@@ -216,7 +216,7 @@ function updateTooltip(e, show) {
 // DATA IN: Optional function()
 function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
@@ -235,27 +235,25 @@ function showHtmlModal(element, onConfirm = null) {
   confButton.textContent = 'Add HTML';
   btnContainer.prepend(confButton);
   confButton.addEventListener('click', function () {
-    console.log('once?')
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
-    element.appendChild(convertTailwindHtml(content));
+    convertTailwindHtml(content, element);
     document.body.removeChild(modal);
   });
-
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
 
-function convertTailwindHtml(content) {
+function convertTailwindHtml(content, element) {
   // Create a container to hold the pasted content
   const parentElement = document.createElement('div');
-  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep';
+  parentElement.classList = 'pastedHtmlContainer pagecontainer';
   parentElement.innerHTML = content;
+  element.appendChild(parentElement);
 
   wrapElements(parentElement);
-  return parentElement;
 }
 
 function wrapElements(container) {
@@ -332,7 +330,6 @@ function wrapElements(container) {
     }
   });
 }
-
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes

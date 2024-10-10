@@ -193,7 +193,7 @@ function showSettingsSavedModal() {
       // Create the modal HTML and insert it into the DOM
       const modal = document.createElement('div');
       modal.innerHTML = `
-          <div class="fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center">
+          <div class="fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center">
               <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
                   <p class="text-slate-900">Your settings have been successfully saved!</p>
                   <div class="flex justify-center mt-4">
