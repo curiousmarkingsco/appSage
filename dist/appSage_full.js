@@ -215,8 +215,12 @@ var appSageEditorIcons = {
 function extractColorNames(colorObject) {
   let colorArray = [];
   for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
+    if (typeof colorObject[colorFamily] == 'string') {
+      colorArray.push(colorFamily);
+    } else {
+      for (const shade in colorObject[colorFamily]) {
+        colorArray.push(`${colorFamily}-${shade}`);
+      }
     }
   }
   return colorArray;
@@ -1638,7 +1642,7 @@ function displayMediaFromIndexedDB(contentContainer) {
 function updateSidebarForTextElements(sidebar, container) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
-  const targetElement = container.firstChild;
+  const targetElement = container.firstElementChild;
   let directEditing = false;
 
   let contentContainer;
@@ -1663,7 +1667,7 @@ function updateSidebarForTextElements(sidebar, container) {
     { label: 'Block of text', value: 'div' },
     // { label: 'Form', value: 'form' },
     { label: 'Link / Button', value: 'a' },
-    // { label: 'Button', value: 'button' },
+    { label: 'Button', value: 'button' },
     { label: 'Image', value: 'img' },
     { label: 'Video', value: 'video' },
     { label: 'Audio', value: 'audio' }
@@ -1823,9 +1827,11 @@ function updateSidebarForTextElements(sidebar, container) {
       mediaUrlInput.value = targetElement.src;
     } else {
       textInput.value = getTextWithoutSROnly(targetElement);
-      const srOnlySpan = targetElement.querySelector('.sr-only');
-      if (srOnlySpan) {
-        srOnly.value = srOnlySpan.textContent;
+      if (typeof targetElement.children !== 'undefined') {
+        const srOnlySpan = targetElement.querySelector('.sr-only');
+        if (srOnlySpan) {
+          srOnly.value = srOnlySpan.textContent;
+        }
       }
     }
     tagDropdown.value = targetElement.tagName.toLowerCase();
@@ -1877,11 +1883,14 @@ function updateSidebarForTextElements(sidebar, container) {
 
 function getTextWithoutSROnly(element) {
   const clonedElement = element.cloneNode(true);
-  
-  // Remove all elements with the class 'sr-only'
-  clonedElement.querySelectorAll('.sr-only').forEach(el => el.remove());
+  if (typeof clonedElement.children === 'undefined') {
+    return '';
+  } else {
+    // Remove all elements with the class 'sr-only'
+    clonedElement.querySelectorAll('.sr-only').forEach(el => el.remove());
 
-  return clonedElement.textContent.trim();
+    return clonedElement.textContent.trim();
+  }
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {
@@ -3347,18 +3356,19 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
-  });
-
-  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
-    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });
 
   const grid = document.querySelector('#page .grid');
   if (grid) {
     addGridOptions(grid);
   }
+
+  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
+    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
+  });
 } // DATA OUT: null
 
 // This function makes it so that saved elements related to grids can be edited once more.
