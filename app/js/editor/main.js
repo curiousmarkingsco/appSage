@@ -336,8 +336,16 @@ function wrapElements(container) {
 // DATA IN: null
 function highlightEditingElement(element) {
   removeEditingHighlights(); // Clear existing highlights
+  document.getElementById('page').querySelectorAll('.highlightButton').forEach(btn => {
+    btn.classList.add('hidden');
+    btn.classList.remove('block');
+  });
   if (element) {
     element.id = 'editing-highlight'; // Highlight the current element
+    element.querySelectorAll(':scope > .highlightButton').forEach(btn => {
+      btn.classList.add('block');
+      btn.classList.remove('hidden');
+    });
   }
 } // DATA OUT: null
 
