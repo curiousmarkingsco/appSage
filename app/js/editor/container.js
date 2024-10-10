@@ -46,6 +46,18 @@ function addContainerOptions(container) {
   }
 } // DATA OUT: null
 
+function createAddHtmlButton(containingBox) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', 'Paste in a Tailwind template');
+  button.className = 'addContainer highlightButton hidden w-16 h-12 absolute -bottom-12 left-44 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
+  button.innerHTML = `<svg class="h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 54 33"><g clip-path="url(#prefix__clip0)"><path fill="#ffffff" fill-rule="evenodd" d="M27 0c-7.2 0-11.7 3.6-13.5 10.8 2.7-3.6 5.85-4.95 9.45-4.05 2.054.513 3.522 2.004 5.147 3.653C30.744 13.09 33.808 16.2 40.5 16.2c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C36.756 3.11 33.692 0 27 0zM13.5 16.2C6.3 16.2 1.8 19.8 0 27c2.7-3.6 5.85-4.95 9.45-4.05 2.054.514 3.522 2.004 5.147 3.653C17.244 29.29 20.308 32.4 27 32.4c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C23.256 19.31 20.192 16.2 13.5 16.2z"clip-rule="evenodd" /></g><defs><clipPath id="prefix__clip0"><path fill="#fff" d="M0 0h54v32.4H0z" /></clipPath></defs></svg>`
+
+  button.addEventListener('click', function (e) {
+    showHtmlModal(containingBox, () => { });
+  });
+  return button;
+}
+
 function createAddContainerButton(containingBox) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-container']);
@@ -63,6 +75,11 @@ function createAddContainerButton(containingBox) {
     // Enable recursive boxes
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
+
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
 
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
@@ -130,6 +147,10 @@ function createVerticalMoveContainerButton(container, direction) {
 function enableEditContainerOnClick(container) {
   container.addEventListener('click', function (event) {
     event.stopPropagation();
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(container);
+      container.appendChild(addHtmlButton);
+    }
     addContainerOptions(container);
     highlightEditingElement(container);
     addIdAndClassToElements();

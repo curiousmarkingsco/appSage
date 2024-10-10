@@ -1116,6 +1116,18 @@ function addContainerOptions(container) {
   }
 } // DATA OUT: null
 
+function createAddHtmlButton(containingBox) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', 'Paste in a Tailwind template');
+  button.className = 'addContainer highlightButton hidden w-16 h-12 absolute -bottom-12 left-44 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
+  button.innerHTML = `<svg class="h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 54 33"><g clip-path="url(#prefix__clip0)"><path fill="#ffffff" fill-rule="evenodd" d="M27 0c-7.2 0-11.7 3.6-13.5 10.8 2.7-3.6 5.85-4.95 9.45-4.05 2.054.513 3.522 2.004 5.147 3.653C30.744 13.09 33.808 16.2 40.5 16.2c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C36.756 3.11 33.692 0 27 0zM13.5 16.2C6.3 16.2 1.8 19.8 0 27c2.7-3.6 5.85-4.95 9.45-4.05 2.054.514 3.522 2.004 5.147 3.653C17.244 29.29 20.308 32.4 27 32.4c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C23.256 19.31 20.192 16.2 13.5 16.2z"clip-rule="evenodd" /></g><defs><clipPath id="prefix__clip0"><path fill="#fff" d="M0 0h54v32.4H0z" /></clipPath></defs></svg>`
+
+  button.addEventListener('click', function (e) {
+    showHtmlModal(containingBox, () => { });
+  });
+  return button;
+}
+
 function createAddContainerButton(containingBox) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-container']);
@@ -1133,6 +1145,11 @@ function createAddContainerButton(containingBox) {
     // Enable recursive boxes
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
+
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
 
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
@@ -1200,6 +1217,10 @@ function createVerticalMoveContainerButton(container, direction) {
 function enableEditContainerOnClick(container) {
   container.addEventListener('click', function (event) {
     event.stopPropagation();
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(container);
+      container.appendChild(addHtmlButton);
+    }
     addContainerOptions(container);
     highlightEditingElement(container);
     addIdAndClassToElements();
@@ -2774,8 +2795,8 @@ document.addEventListener('DOMContentLoaded', function () {
   addContainerButton.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
     containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
-
-    document.getElementById('page').appendChild(containerContainer);
+    const page = document.getElementById('page');
+    page.appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
     addIdAndClassToElements();
@@ -2784,17 +2805,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
 
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
+
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
-  });
-
-  const addHtmlButton = document.getElementById('addHtml');
-  addHtmlButton.addEventListener('click', function () {
-    showHtmlModal(() => { });
   });
 
   // Mouse enter event
@@ -2919,30 +2940,32 @@ function updateTooltip(e, show) {
 // the page/page editor with the markup. Or... do we just ignore the fact that
 // it isn't Tailwind-y and let them edit it anyway? In which case, nothing to do here.
 // DATA IN: Optional function()
-function showHtmlModal(onConfirm = null) {
+function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
           <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
-          <div class="flex justify-between mt-4">
-              <button id="confirmHtml" class="bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded">Add HTML</button>
-              <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+          <div class="flex justify-between mt-4" id="btnContainer">
+            <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
 
   document.body.appendChild(modal);
 
-  document.getElementById('confirmHtml').addEventListener('click', function () {
+  const btnContainer = document.getElementById('btnContainer');
+  const confButton = document.createElement('button');
+  confButton.className = 'bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded';
+  confButton.textContent = 'Add HTML';
+  btnContainer.prepend(confButton);
+  confButton.addEventListener('click', function () {
+    console.log('once?')
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
-    const page = document.getElementById('page');
-    page.appendChild(convertTailwindHtml(content));
+    element.appendChild(convertTailwindHtml(content));
     document.body.removeChild(modal);
-    const params = new URLSearchParams(window.location.search);
-    window.location.href = window.location.pathname + '?' + params.toString();
   });
 
 
@@ -3595,12 +3618,20 @@ function restoreContainerCapabilities(container) {
   container.appendChild(addContentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
+  if (advancedMode === true){
+    const addHtmlButton = createAddHtmlButton(container);
+    container.appendChild(addHtmlButton);
+  }
   enableEditContainerOnClick(container);
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
     enableEditContainerOnClick(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {

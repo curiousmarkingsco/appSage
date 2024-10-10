@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function () {
   addContainerButton.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
     containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
-
-    document.getElementById('page').appendChild(containerContainer);
+    const page = document.getElementById('page');
+    page.appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
     addIdAndClassToElements();
@@ -79,17 +79,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
 
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
+
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
-  });
-
-  const addHtmlButton = document.getElementById('addHtml');
-  addHtmlButton.addEventListener('click', function () {
-    showHtmlModal(() => { });
   });
 
   // Mouse enter event
@@ -214,30 +214,32 @@ function updateTooltip(e, show) {
 // the page/page editor with the markup. Or... do we just ignore the fact that
 // it isn't Tailwind-y and let them edit it anyway? In which case, nothing to do here.
 // DATA IN: Optional function()
-function showHtmlModal(onConfirm = null) {
+function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
   modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
           <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
-          <div class="flex justify-between mt-4">
-              <button id="confirmHtml" class="bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded">Add HTML</button>
-              <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+          <div class="flex justify-between mt-4" id="btnContainer">
+            <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
 
   document.body.appendChild(modal);
 
-  document.getElementById('confirmHtml').addEventListener('click', function () {
+  const btnContainer = document.getElementById('btnContainer');
+  const confButton = document.createElement('button');
+  confButton.className = 'bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded';
+  confButton.textContent = 'Add HTML';
+  btnContainer.prepend(confButton);
+  confButton.addEventListener('click', function () {
+    console.log('once?')
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
-    const page = document.getElementById('page');
-    page.appendChild(convertTailwindHtml(content));
+    element.appendChild(convertTailwindHtml(content));
     document.body.removeChild(modal);
-    const params = new URLSearchParams(window.location.search);
-    window.location.href = window.location.pathname + '?' + params.toString();
   });
 
 
