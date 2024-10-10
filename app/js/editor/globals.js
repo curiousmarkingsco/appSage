@@ -26,6 +26,21 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
+var advancedMode = false;
+const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
+if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
+
+window.addEventListener('load', function () {
+  if (advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
+});
+
 updateTailwindConfig();
 var tailwindColors = mergeTailwindColors(tailwind.config.theme);
 
@@ -423,23 +438,9 @@ function restoreSettings() {
   }
 }
 
-var advancedMode = false;
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
 window.addEventListener('load', mergeFontsIntoTailwindConfig);
-window.addEventListener('load', function () {
-  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
-  if (settings) advancedMode = settings.advancedMode;
-
-  if (advancedMode === true) {
-    const pasteHtmlBtn = document.getElementById('addHtml');
-    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
-    const addContainerBtn = document.getElementById('addContainer')
-    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
-    const copyMetaBtn = document.getElementById('copyMetadata')
-    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
-  }
-});
 
 function appSageLocalNuke(){
   localStorage.removeItem(appSageStorageString);

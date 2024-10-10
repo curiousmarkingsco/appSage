@@ -30,7 +30,6 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
-    
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -79,8 +78,8 @@ function restoreContainerCapabilities(container) {
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
-      const addHtmlButton = createAddHtmlButton(containerContainer);
-      containerContainer.appendChild(addHtmlButton);
+      const addChildHtmlButton = createAddHtmlButton(contentContainer);
+      contentContainer.appendChild(addChildHtmlButton);
     }
     enableEditContainerOnClick(contentContainer);
   });

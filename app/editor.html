@@ -31,9 +31,9 @@
   </div>
   <div class="lg:flex hidden">
     <div id="tooltip"
-      class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-50 opacity-0 transition-opacity duration-300">
+      class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300">
     </div>
-    <div id="sidebar" class="w-72 bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
+    <div id="sidebar" class="w-72 z-[1000] bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
       <!-- Sidebar content for editing elements will be dynamically added here -->
       <div id="sidebar-dynamic" class="p-4">
         <p>No content to edit. Add content by making a grid or column.</p>
@@ -45,7 +45,7 @@
     </div>
   </div>
   <div class="hidden lg:block mt-20"><!-- Give the bottom some space for anything that might bleed under the Add Grid element --></div>
-  <div class="lg:block hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50"
+  <div class="lg:block z-[1000] hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50"
     id="gridButtonsBottombar">
     <button id="addGrid" data-extra-info="Create a grid"
       class="pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">

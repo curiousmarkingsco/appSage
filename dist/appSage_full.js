@@ -27,6 +27,21 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
+var advancedMode = false;
+const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
+if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
+
+window.addEventListener('load', function () {
+  if (advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
+});
+
 updateTailwindConfig();
 var tailwindColors = mergeTailwindColors(tailwind.config.theme);
 
@@ -424,23 +439,9 @@ function restoreSettings() {
   }
 }
 
-var advancedMode = false;
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
 window.addEventListener('load', mergeFontsIntoTailwindConfig);
-window.addEventListener('load', function () {
-  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
-  if (settings) advancedMode = settings.advancedMode;
-
-  if (advancedMode === true) {
-    const pasteHtmlBtn = document.getElementById('addHtml');
-    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
-    const addContainerBtn = document.getElementById('addContainer')
-    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
-    const copyMetaBtn = document.getElementById('copyMetadata')
-    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
-  }
-});
 
 function appSageLocalNuke(){
   localStorage.removeItem(appSageStorageString);
@@ -644,7 +645,7 @@ function showSettingsSavedModal() {
       // Create the modal HTML and insert it into the DOM
       const modal = document.createElement('div');
       modal.innerHTML = `
-          <div class="fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center">
+          <div class="fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center">
               <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
                   <p class="text-slate-900">Your settings have been successfully saved!</p>
                   <div class="flex justify-center mt-4">
@@ -687,7 +688,7 @@ document.addEventListener('DOMContentLoaded', showSettingsSavedModal);
 // DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-50 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-slate-900">${message}</p>
@@ -1033,10 +1034,6 @@ function createVerticalMoveContainerButton(container, direction) {
 function enableEditContainerOnClick(container) {
   container.addEventListener('click', function (event) {
     event.stopPropagation();
-    if (advancedMode === true){
-      const addHtmlButton = createAddHtmlButton(container);
-      container.appendChild(addHtmlButton);
-    }
     addContainerOptions(container);
     highlightEditingElement(container);
     addIdAndClassToElements();
@@ -2758,7 +2755,7 @@ function updateTooltip(e, show) {
 // DATA IN: Optional function()
 function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
@@ -2777,27 +2774,25 @@ function showHtmlModal(element, onConfirm = null) {
   confButton.textContent = 'Add HTML';
   btnContainer.prepend(confButton);
   confButton.addEventListener('click', function () {
-    console.log('once?')
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
-    element.appendChild(convertTailwindHtml(content));
+    convertTailwindHtml(content, element);
     document.body.removeChild(modal);
   });
-
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
 
-function convertTailwindHtml(content) {
+function convertTailwindHtml(content, element) {
   // Create a container to hold the pasted content
   const parentElement = document.createElement('div');
-  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep';
+  parentElement.classList = 'pastedHtmlContainer pagecontainer';
   parentElement.innerHTML = content;
+  element.appendChild(parentElement);
 
   wrapElements(parentElement);
-  return parentElement;
 }
 
 function wrapElements(container) {
@@ -2874,7 +2869,6 @@ function wrapElements(container) {
     }
   });
 }
-
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
@@ -3396,7 +3390,6 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
-    
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -3445,8 +3438,8 @@ function restoreContainerCapabilities(container) {
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
-      const addHtmlButton = createAddHtmlButton(containerContainer);
-      containerContainer.appendChild(addHtmlButton);
+      const addChildHtmlButton = createAddHtmlButton(contentContainer);
+      contentContainer.appendChild(addChildHtmlButton);
     }
     enableEditContainerOnClick(contentContainer);
   });

@@ -147,10 +147,6 @@ function createVerticalMoveContainerButton(container, direction) {
 function enableEditContainerOnClick(container) {
   container.addEventListener('click', function (event) {
     event.stopPropagation();
-    if (advancedMode === true){
-      const addHtmlButton = createAddHtmlButton(container);
-      container.appendChild(addHtmlButton);
-    }
     addContainerOptions(container);
     highlightEditingElement(container);
     addIdAndClassToElements();
