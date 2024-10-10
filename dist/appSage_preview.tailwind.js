@@ -176,9 +176,11 @@ if (typeof customAppSageStorage !== 'undefined') {
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
+  var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
+  var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
 updateTailwindConfig();
@@ -230,13 +232,17 @@ var tooltips = {
   'move-column': "Move this column to the ",
   'remove-column': "Remove this column forever (that\'s a long time!)",
   'add-column': "Add another column to this grid",
+  'add-container': "Add another container to this element",
   'add-content': "Add content to this column",
   'remove-content': "Remove this content forever (that\'s a long time!)",
   'move-content-up': "Move this content upward in the column",
   'move-content-down': "Move this content downward in the column",
   'remove-grid': "Remove this grid forever (that\'s a long time!)",
+  'remove-container': "Remove this container forever (that\'s a long time!)",
   'move-grid-up': "Move this grid upward in the document",
   'move-grid-down': "Move this grid downward in the document",
+  'move-container-up': "Move this container left or upward in the document",
+  'move-container-down': "Move this container right or downward in the document",
   'color-vision-impairement': "Please remember to make colors contrast well for people with vision impairments.",
   'text-alignment-justify': "Make text expand across the entire box. If you're not a professional designer, this option is a bad idea",
   'text-alignment-other': "Align text to the ",
@@ -244,6 +250,7 @@ var tooltips = {
   'border-style-other': "Change the border style to be a ",
   'background-size-cover': "Make your background image cover the entire box; cropping will occur",
   'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'background-position': "Align the position of the image to the element's ",
   'swatchboard': "TailwindCSS class name: ",
   'bg-icon': "Position your background image to the ",
   'italicize': "Italicize your text",
@@ -576,6 +583,15 @@ window.addEventListener('load', mergeFontsIntoTailwindConfig);
 window.addEventListener('load', function () {
   const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
   if (settings) advancedMode = settings.advancedMode;
+
+  if (advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
 });
 
 

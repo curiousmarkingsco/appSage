@@ -20,9 +20,11 @@ if (typeof customAppSageStorage !== 'undefined') {
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
+  var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
+  var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
 updateTailwindConfig();
@@ -74,13 +76,17 @@ var tooltips = {
   'move-column': "Move this column to the ",
   'remove-column': "Remove this column forever (that\'s a long time!)",
   'add-column': "Add another column to this grid",
+  'add-container': "Add another container to this element",
   'add-content': "Add content to this column",
   'remove-content': "Remove this content forever (that\'s a long time!)",
   'move-content-up': "Move this content upward in the column",
   'move-content-down': "Move this content downward in the column",
   'remove-grid': "Remove this grid forever (that\'s a long time!)",
+  'remove-container': "Remove this container forever (that\'s a long time!)",
   'move-grid-up': "Move this grid upward in the document",
   'move-grid-down': "Move this grid downward in the document",
+  'move-container-up': "Move this container left or upward in the document",
+  'move-container-down': "Move this container right or downward in the document",
   'color-vision-impairement': "Please remember to make colors contrast well for people with vision impairments.",
   'text-alignment-justify': "Make text expand across the entire box. If you're not a professional designer, this option is a bad idea",
   'text-alignment-other': "Align text to the ",
@@ -88,6 +94,7 @@ var tooltips = {
   'border-style-other': "Change the border style to be a ",
   'background-size-cover': "Make your background image cover the entire box; cropping will occur",
   'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'background-position': "Align the position of the image to the element's ",
   'swatchboard': "TailwindCSS class name: ",
   'bg-icon': "Position your background image to the ",
   'italicize': "Italicize your text",
@@ -420,6 +427,15 @@ window.addEventListener('load', mergeFontsIntoTailwindConfig);
 window.addEventListener('load', function () {
   const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
   if (settings) advancedMode = settings.advancedMode;
+
+  if (advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
 });
 
 
@@ -662,7 +678,7 @@ document.addEventListener('DOMContentLoaded', showSettingsSavedModal);
 // DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-50 bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-slate-900">${message}</p>
@@ -691,10 +707,25 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function () {
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
-    delete appSageStorage.pages[page_id];
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
+
+    if (appSageStorage.pages && appSageStorage.pages[page_id]) {
+      delete appSageStorage.pages[page_id];
+    }
+
+    for (let title in titleIdMap) {
+      if (titleIdMap[title] === page_id) {
+        delete titleIdMap[title];
+        break;
+      }
+    }
+
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
     element.remove();
+
+    console.log(`Page with ID ${page_id} has been deleted successfully.`);
   });
 } // DATA OUT: null
 
@@ -721,7 +752,10 @@ function addGridOptions(grid) {
     moveButtons.id = 'moveGridButtons'
     sidebar.prepend(moveButtons);
 
-    const gridCount = document.getElementById('page').querySelectorAll('.grid').length
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    gridCount = gridCount + contentCount + flexCount;
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'up'));
     moveButtons.appendChild(addRemoveGridButton(grid, sidebar));
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
@@ -741,6 +775,7 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
     addManualClassEditor(sidebar, grid);
     addManualCssEditor(sidebar, grid);
   }
@@ -786,14 +821,14 @@ function createVerticalMoveGridButton(grid, direction) {
 } // DATA OUT: HTML Element, <button>
 
 // This function is intended to present the sidebar editing options when a grid
-// is clicked. Only the outer edges of the grid are clickable for this to work
-// due to columns and content overlapping it.
+// is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditGridOnClick(grid) {
   grid.addEventListener('click', function (event) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
   });
 } // DATA OUT: null
 
@@ -839,6 +874,174 @@ function addEditableColumns(sidebar, grid) {
 } // DATA OUT: null
 
 
+/* File: ./app/js/editor/container.js */
+/*
+
+  editor/container.js
+
+  This file is intended to be the primary location for anything related to adding, editing, and removing container box.
+
+*/
+
+// This function populates the sidebar with relevant editing options for container box.
+// DATA IN: HTML Element, <div>
+function addContainerOptions(container) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit Flexible Container</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
+
+  if (container) {
+    const moveButtons = document.createElement('div');
+    moveButtons.className = 'flex justify-between my-2'
+    moveButtons.id = 'moveContainerButtons'
+    sidebar.prepend(moveButtons);
+
+    let containerCount = document.getElementById('page').querySelectorAll('.pagecontainer').length
+    const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    containerCount = containerCount + contentCount + gridCount;
+    if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'up'));
+    moveButtons.appendChild(addRemoveContainerButton(container, sidebar));
+    if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
+
+    // Container-specific editing options
+    addContainerAlignmentOptions(sidebar, container);
+
+    // Standard editing options
+    addEditableBorders(sidebar, container);
+    addEditableOpacity(sidebar, container);
+    addEditableBackgroundColor(sidebar, container);
+    addEditableBackgroundImage(sidebar, container);
+    addEditableBackgroundImageURL(sidebar, container);
+    addEditableBackgroundFeatures(sidebar, container);
+    addEditableMarginAndPadding(sidebar, container);
+    addEditableDimensions(sidebar, container);
+    highlightEditingElement(container);
+    addIdAndClassToElements();
+    addManualClassEditor(sidebar, container);
+    addManualCssEditor(sidebar, container);
+  }
+} // DATA OUT: null
+
+function createAddContainerButton(containingBox) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['add-container']);
+  button.className = 'addContainer hidden w-48 h-12 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded';
+  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg><svg class="w-4 h-4 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>`;
+  button.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-auto min-w-auto max-w-auto min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0';
+
+    containingBox.appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    highlightEditingElement(containerContainer);
+    addIdAndClassToElements();
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    enableEditContainerOnClick(containerContainer);
+  });
+  containingBox.addEventListener('mouseover', function(event){
+    event.stopPropagation();
+    button.classList.add('block');
+    button.classList.remove('hidden');
+  });
+  containingBox.addEventListener('mouseout', function(event){
+    event.stopPropagation();
+    button.classList.add('hidden');
+    button.classList.remove('block');
+  });
+  return button;
+} 
+
+// This function creates the button for deleting the container currently being
+// edited. As the tooltip mentions, FOREVER. That's a long time!
+// Currently, this button lives at the topbar nestled between the 'move container'
+// buttons on its left and right.
+// DATA IN: ['HTML Element, <div>', 'HTML Element, <div id="sidebar-dynamic">']
+function addRemoveContainerButton(container, sidebar) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['remove-container'])
+  button.className = 'removeContainer bg-rose-500 hover:bg-rose-700 text-slate-50 font-bold p-2 rounded h-12 w-12 mx-auto';
+  button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="white" class="h-5 w-5 mx-auto"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 46.3 14.3 32 32 32l512 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64zm32 64l512 0L517.3 421.8c-3 33-30.6 58.2-63.7 58.2l-331.1 0c-33.1 0-60.7-25.2-63.7-58.2L32 128zm256 88c2.2 0 4.3 1.1 5.5 2.9l20.7 29.6c7.3 10.5 21.6 13.4 32.4 6.6c11.7-7.3 14.8-22.9 6.9-34.1l-20.7-29.6c-10.2-14.6-27-23.3-44.8-23.3s-34.6 8.7-44.8 23.3l-20.7 29.6c-7.9 11.3-4.7 26.8 6.9 34.1c10.8 6.8 25.1 3.9 32.4-6.6l20.7-29.6c1.3-1.8 3.3-2.9 5.5-2.9zm-88.3 77.1c-10.8-6.8-25.1-3.9-32.4 6.6l-21.5 30.7c-6.4 9.1-9.8 20-9.8 31.2c0 30.1 24.4 54.4 54.4 54.4l49.6 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-49.6 0c-3.5 0-6.4-2.9-6.4-6.4c0-1.3 .4-2.6 1.2-3.7l21.5-30.7c7.9-11.3 4.7-26.8-6.9-34.1zM312 392c0 13.3 10.7 24 24 24l49.6 0c30.1 0 54.4-24.4 54.4-54.4c0-11.2-3.4-22.1-9.8-31.2l-21.5-30.7c-7.3-10.5-21.6-13.4-32.4-6.6c-11.7 7.3-14.8 22.9-6.9 34.1l21.5 30.7c.8 1.1 1.2 2.4 1.2 3.7c0 3.5-2.9 6.4-6.4 6.4L336 368c-13.3 0-24 10.7-24 24z"/></svg>';
+  button.onclick = function () {
+    showConfirmationModal('Are you sure you want to delete this entire container?', () => {
+      container.parentNode.removeChild(container);
+      sidebar.innerHTML = '<p>Nothing to edit. Add a container by clicking the Plus (+) button.</p>';
+    });
+  };
+  return button;
+} // DATA OUT: HTML Element, <button>
+
+// This function creates the button for moving the element it belongs to upward
+// and downward in the DOM. Currently, these buttons live at the top of the
+// editor sidebar when the container is/has been selected for editing.
+// DATA IN: ['HTML Element, <div>', 'String:up/down']
+function createVerticalMoveContainerButton(container, direction) {
+  const button = document.createElement('button');
+  button.className = 'moveContainer inline ugc-discard bg-amber-500 hover:bg-amber-700 text-slate-50 font-bold pt-1 pb-1.5 rounded w-12';
+  if (direction == 'up') {
+    button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M246.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 109.3 192 320c0 17.7 14.3 32 32 32s32-14.3 32-32l0-210.7 73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 53 43 96 96 96l256 0c53 0 96-43 96-96l0-64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64c0 17.7-14.3 32-32 32L96 448c-17.7 0-32-14.3-32-32l0-64z"/></svg>';
+    button.setAttribute('data-extra-info', tooltips['move-container-up'])
+  } else {
+    button.innerHTML = ' <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M246.6 502.6c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 402.7 192 192c0-17.7 14.3-32 32-32s32 14.3 32 32l0 210.7 73.4-73.4c12.5-12.5 32.8-12.5 45.3 0s12.5 32.8 0 45.3l-128 128zM64 160c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 96C0 43 43 0 96 0L352 0c53 0 96 43 96 96l0 64c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-64c0-17.7-14.3-32-32-32L96 64C78.3 64 64 78.3 64 96l0 64z"/></svg>';
+    button.setAttribute('data-extra-info', tooltips['move-container-down'])
+  }
+  button.addEventListener('click', function () {
+    moveVertical(container, direction);
+  });
+  return button;
+} // DATA OUT: HTML Element, <button>
+
+// This function is intended to present the sidebar editing options when a container
+// is clicked.
+// DATA IN: HTML Element, <div>
+function enableEditContainerOnClick(container) {
+  container.addEventListener('click', function (event) {
+    event.stopPropagation();
+    addContainerOptions(container);
+    highlightEditingElement(container);
+    addIdAndClassToElements();
+  });
+} // DATA OUT: null
+
+
+/* File: ./app/js/editor/style/container.js */
+/*
+
+  editor/style/container.js
+
+  This file is intended to be the primary location for anything adding editor
+  options to the sidebar in a context primarily for container boxes & seldom
+  elsewhere. All functions here rely on `addDeviceTargetedOptions` which helps
+  segregate styles between targeted device sizes.
+
+*/
+
+// This function gives the container box editor sidebar the ability to use alignment
+// options from TailwindCSS.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
+function addContainerAlignmentOptions(sidebar, container) {
+  const justifyContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
+  const alignItemsOptions = ['start', 'end', 'center', 'baseline', 'stretch', 'reset'];
+  const alignSelfOptions = ['start', 'end', 'center', 'stretch', 'baseline', 'reset'];
+
+  // Justify Content - See: https://tailwindcss.com/docs/justify-content
+  addDeviceTargetedOptions(sidebar, container, 'Justify Content', 'justify', justifyContentOptions, 'icon-select');
+  // Align Items - See: https://tailwindcss.com/docs/align-items
+  addDeviceTargetedOptions(sidebar, container, 'Align Items', 'items', alignItemsOptions, 'icon-select');
+  // Align Self - See: https://tailwindcss.com/docs/place-items
+  addDeviceTargetedOptions(sidebar, container, 'Align Self', 'self', alignSelfOptions, 'icon-select');
+} // DATA OUT: null
+
+
 /* File: ./app/js/editor/column.js */
 /*
 
@@ -879,6 +1082,7 @@ function addColumnOptions(column) {
   sidebar.innerHTML = `<div><strong>Edit Column</strong></div>${generateSidebarTabs()}`;
   activateTabs();
   highlightEditingElement(column);
+  addIdAndClassToElements();
 
   const moveButtons = document.createElement('div');
   moveButtons.className = 'flex justify-between my-2'
@@ -975,6 +1179,7 @@ function createAddColumnButton(gridContainer) {
     addEditableMarginAndPadding(sidebar, newColumn);
 
     highlightEditingElement(newColumn);
+    addIdAndClassToElements();
   };
   return menuItem;
 } // DATA OUT: HTML Element, <button>
@@ -1058,7 +1263,7 @@ function addColumnAlignmentOptions(sidebar, column) {
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
+  contentContainer.className = 'content-container pagecontent w-auto'; // A new class specifically for content
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 
@@ -1086,13 +1291,24 @@ function enableEditContentOnClick(contentContainer) {
 function createAddContentButton(column) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-content']);
-  button.className = 'addContent ugc-discard z-50 hidden group-hover:block absolute bottom-2 left-[calc(50%-3rem)] bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-24';
+  button.className = `addContent ugc-discard z-50 absolute hidden bottom-2 left-[calc(50%-3rem)] bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-24`;
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
   button.addEventListener('click', function (event) {
     event.stopPropagation();
     const contentContainer = addContentContainer();
     column.appendChild(contentContainer);
     highlightEditingElement(column);
+    addIdAndClassToElements();
+  });
+  column.addEventListener('mouseover', function(event){
+    event.stopPropagation();
+    button.classList.add('block');
+    button.classList.remove('hidden');
+  });
+  column.addEventListener('mouseout', function(event){
+    event.stopPropagation();
+    button.classList.add('hidden');
+    button.classList.remove('block');
   });
   return button;
 } // DATA OUT: HTML Element, <button>
@@ -1150,13 +1366,24 @@ function addContentOptions(contentContainer) {
   moveButtons.id = 'moveContentButtons';
   sidebar.prepend(moveButtons);
 
+  let multipleContent;
+  let contentCount;
+  if (contentContainer.classList.contains('pastedHtmlContainer')) {
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    contentCount = gridCount + contentCount + flexCount;
+  } else {
   // Minus one to remove the 'Add Content' button from the count
-  const contentCount = contentContainer.children.length - 1
+    multipleContent = contentContainer.parentNode === null ? contentContainer.children : contentContainer.parentNode.children;
+    contentCount = multipleContent.length - 1;
+  }
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 
   highlightEditingElement(contentContainer);
+  addIdAndClassToElements();
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -1432,6 +1659,8 @@ function updateSidebarForTextElements(sidebar, container) {
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
+    { label: 'Line of text', value: 'span' },
+    { label: 'Block of text', value: 'div' },
     // { label: 'Form', value: 'form' },
     { label: 'Link / Button', value: 'a' },
     // { label: 'Button', value: 'button' },
@@ -1452,6 +1681,40 @@ function updateSidebarForTextElements(sidebar, container) {
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  const srOnly = document.createElement('input');
+  srOnly.placeholder = 'Text for screen readers';
+  srOnly.className = 'shadow border hidden rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  srOnly.setAttribute('data-extra-info', 'If your element relies on imagery or visual references to make sense, add text here to give more detail.');
+  if (advancedMode === true) srOnly.classList.remove('hidden');
+
+  srOnly.addEventListener('change', function () {
+    const selectedTag = tagDropdown.value;
+    let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
+
+    if (directEditing) {
+      // This predicates that an img/video/audio (media) tag already exists
+      element = contentContainer;
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
+
+    // If no element exists for the media tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
+      contentContainer.appendChild(element);
+    }
+
+    // If it's not a media tag, update the text
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
+    }
+  });
 
   const mediaUrlInput = document.createElement('input');
   mediaUrlInput.type = 'text';
@@ -1509,6 +1772,7 @@ function updateSidebarForTextElements(sidebar, container) {
     if (['a', 'button'].includes(selectedTag)) {
       // Reload tab to ensure proper editing options for targetting the tag itself
       addContentOptions(tempContentContainer);
+      tempContentContainer.addEventListener('click', function(e) { e.preventDefault(); });
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
@@ -1520,6 +1784,9 @@ function updateSidebarForTextElements(sidebar, container) {
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
     let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
 
     if (directEditing) {
       // This predicates that an img/video/audio (media) tag already exists
@@ -1531,12 +1798,14 @@ function updateSidebarForTextElements(sidebar, container) {
     // If no element exists for the media tag, create one
     if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
       contentContainer.appendChild(element);
     }
 
     // If it's not a media tag, update the text
     if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
     }
   });
 
@@ -1553,7 +1822,11 @@ function updateSidebarForTextElements(sidebar, container) {
     if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
       mediaUrlInput.value = targetElement.src;
     } else {
-      textInput.value = targetElement.textContent;
+      textInput.value = getTextWithoutSROnly(targetElement);
+      const srOnlySpan = targetElement.querySelector('.sr-only');
+      if (srOnlySpan) {
+        srOnly.value = srOnlySpan.textContent;
+      }
     }
     tagDropdown.value = targetElement.tagName.toLowerCase();
     toggleInputs(tagDropdown.value);
@@ -1569,6 +1842,7 @@ function updateSidebarForTextElements(sidebar, container) {
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
@@ -1578,6 +1852,7 @@ function updateSidebarForTextElements(sidebar, container) {
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(mediaUrlInput);
     formContainer.prepend(fileInput);
@@ -1597,6 +1872,16 @@ function updateSidebarForTextElements(sidebar, container) {
   addManualClassEditor(sidebar, contentContainer);
   addManualCssEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
+  addIdAndClassToElements();
+}
+
+function getTextWithoutSROnly(element) {
+  const clonedElement = element.cloneNode(true);
+  
+  // Remove all elements with the class 'sr-only'
+  clonedElement.querySelectorAll('.sr-only').forEach(el => el.remove());
+
+  return clonedElement.textContent.trim();
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {
@@ -2032,9 +2317,9 @@ function addEditableBackgroundImage(sidebar, grid) {
 // background images and the styles applicable to them.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditableBackgroundFeatures(sidebar, grid) {
-  const bgSizeOptions = ['cover', 'contain'];
-  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];
-  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
+  const bgSizeOptions = ['cover', 'contain', 'reset'];
+  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right', 'reset'];
+  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'reset'];
 
   // Function to update background image size
   function addBackgroundSizeOptions() {
@@ -2042,21 +2327,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'icon-select');
-
-    // Add Reset Button for Background Size
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetSizeElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Size`, `${bp}-bg-size`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetSizeElement);
-
-      // Add the handleReset call for background size
-      handleReset(bp, grid, ['cover', 'contain'], 'bg', resetSizeElement);
-      resetSizeElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background position
@@ -2065,21 +2335,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'icon-select');
-
-    // Add Reset Button for Background Position
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetPositionElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Position`, `${bp}-bg-position`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetPositionElement);
-
-      // Add the handleReset call for background position
-      handleReset(bp, grid, bgPositionOptions, 'bg', resetPositionElement);
-      resetPositionElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background repeat
@@ -2265,8 +2520,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
   const appSageSettingsButton = document.getElementById('appSageSettings');
-  const settingsSidebar = document.getElementById('settingsSidebar');
-  const sidebar = document.getElementById('sidebar');
 
   // Show/hide the drop-up menu
   editPageButton.addEventListener('click', function (event) {
@@ -2308,12 +2561,35 @@ document.addEventListener('DOMContentLoaded', function () {
 
     addGridOptions(gridContainer);
     highlightEditingElement(gridContainer);
+    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
+  });
+
+  const addContainerButton = document.getElementById('addContainer');
+  addContainerButton.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+    document.getElementById('page').appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    highlightEditingElement(containerContainer);
+    addIdAndClassToElements();
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    enableEditContainerOnClick(containerContainer);
   });
 
   const addHtmlButton = document.getElementById('addHtml');
@@ -2461,25 +2737,103 @@ function showHtmlModal(onConfirm = null) {
 
   document.getElementById('confirmHtml').addEventListener('click', function () {
     if (onConfirm) onConfirm();
-    const page = document.getElementById('page');
-    const content = document.getElementById('tailwindHtml');
-    const parentElement = document.createElement('div');
-    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep p-4'
-    page.appendChild(parentElement);
-    const element = document.createElement('div');
-    element.classList = 'pagecolumn col-span-1 p-4'
-    parentElement.appendChild(element);
-    const childElement = document.createElement('div');
-    childElement.classList = 'content-container pagecontent htmlContent p-4'
-    childElement.innerHTML = content.value;
-    element.appendChild(childElement);
+    const content = document.getElementById('tailwindHtml').value;
+    convertTailwindHtml(content);
     document.body.removeChild(modal);
   });
+
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
+
+function convertTailwindHtml(content) {
+  const page = document.getElementById('page');
+  // Create a container to hold the pasted content
+  const parentElement = document.createElement('div');
+  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep p-4';
+  parentElement.innerHTML = content;
+
+  wrapElements(parentElement);
+  page.appendChild(parentElement);
+}
+
+function wrapElements(container) {
+  const children = Array.from(container.childNodes);
+
+  const structureTags = ['ARTICLE', 'SECTION', 'DIV', 'NAV', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'];
+
+  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE', 
+    'IMG', 'VIDEO', 'AUDIO', 'FIGURE', 'IFRAME',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
+    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS', 
+    'PROGRESS', 'METER', 'DL', 'DT', 'DD'];
+
+  const tableTags = ['TH', 'TD', 'COL', 'COLGROUP'];
+
+  children.forEach((child) => {
+    if (child.nodeType === Node.ELEMENT_NODE) {
+      // Check if child is part of a grid structure by looking at its immediate parent
+      const isInGrid = container.classList.contains('grid');
+
+      // Check if the element is holding content children
+      const hasContentChildren = Array.from(child.children).some(el => 
+        contentTags.includes(el.tagName) || tableTags.includes(el.tagName)
+      );
+
+      // Apply grid-related classes
+      if (child.classList.contains('grid')) {
+        child.classList.add('pagegrid');
+      }
+
+      // If child is inside a grid, apply `pagecolumn` class
+      if (isInGrid) {
+        child.classList.add('pagecolumn');
+      }
+
+      // Handle structured elements like `th`, `td`, etc.
+      if (tableTags.includes(child.tagName)) {
+        child.classList.add('pagecontent', 'content-container');
+        const wrapper = document.createElement('div');
+        // Wrap the internal HTML content of `th`, `td`, etc.
+        wrapper.innerHTML = child.innerHTML;
+        child.innerHTML = ''; // Clear original content
+        child.appendChild(wrapper);
+        // Enable editing and observation for the element
+        enableEditContentOnClick(child);
+        observeClassManipulation(child);
+      } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
+        // For divs with single content elements, add classes directly without wrapping
+        child.classList.add('pagecontent', 'content-container');
+      } else if (contentTags.includes(child.tagName)) {
+        // Wrap content elements in a div with `pagecontent content-container` classes
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('pagecontent', 'content-container');
+        wrapper.appendChild(child.cloneNode(true));
+        container.replaceChild(wrapper, child);
+
+        // Enable editing and observation for the wrapper
+        enableEditContentOnClick(wrapper);
+        observeClassManipulation(wrapper);
+
+        // Recursively apply wrapping to the children of the new wrapper
+        wrapElements(wrapper.firstChild);
+      } else if (hasContentChildren) {
+        // If the element houses content, add `pagecontainer` class but don't wrap
+        child.classList.add('pagecontainer');
+
+        // Recursively apply wrapping to children
+        wrapElements(child);
+      } else {
+        // Recursively handle child elements for non-wrapped cases
+        child.classList.add('pagecontainer');
+        wrapElements(child);
+      }
+    }
+  });
+}
+
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
@@ -2574,9 +2928,14 @@ function resetCopyPageButton(element) {
 
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
+// This function creates the form input for changing the page's title.
+// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
+
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
   titleLabel.setAttribute('for', 'page-title');
@@ -2614,30 +2973,33 @@ function addEditablePageTitle(container, placement) {
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+  const currentPageId = params.get('config');
 
-  // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
+  // Retrieve the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
-  // Check if the currentTitle exists in the pages object
-  if (appSageStorage.pages[currentTitle]) {
-    // Clone the data from the current title
-    const pageData = appSageStorage.pages[currentTitle];
+  // Find the current title using the page ID
+  let currentTitle = null;
+  for (let [title, id] of Object.entries(titleIdMap)) {
+    if (id === currentPageId) {
+      currentTitle = title;
+      break;
+    }
+  }
 
-    // Assign the data to the new title
-    appSageStorage.pages[newTitle] = pageData;
+  if (currentTitle) {
+    // Update the mapping with the new title
+    delete titleIdMap[currentTitle];
+    titleIdMap[newTitle] = currentPageId;
 
-    // Delete the current title entry
-    delete appSageStorage.pages[currentTitle];
+    // Save the updated mapping back to localStorage
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
 
-    // Save the updated pages object back to localStorage
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
-    // Update the URL parameters
-    params.set('config', newTitle);
+    // Update the URL parameters (the page ID remains the same)
+    params.set('config', currentPageId);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   } else {
-    console.error(`Page with title "${currentTitle}" does not exist.`);
+    console.error(`Page with ID "${currentPageId}" does not exist.`);
   }
 } // DATA OUT: null
 
@@ -2670,7 +3032,7 @@ function addEditableMetadata(container, placement) {
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
-  if (settings) {
+  if (typeof settings.length !== 'undefined') {
     const metaTags = JSON.parse(settings).metaTags;
 
     if (metaTags) {
@@ -2756,11 +3118,13 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
-    if (json) {
+    if (json && json.length > 0) {
       loadChanges(json);
       loadPageSettings(config);
       loadPageBlobs(config);
@@ -2774,17 +3138,70 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function createNewConfigurationFile() {
-  let filename = 'Untitled';
+  const pageId = generateAlphanumericId();
+  let title = 'Untitled';
   let counter = 1;
-  while (loadPage(filename)) {
-    filename = `Untitled-${counter}`;
+  // Load or create the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  while (title in titleIdMap) {
+    title = `Untitled-${counter}`;
     counter++;
   }
+  // Save the mapping of title to ID
+  titleIdMap[title] = pageId;
+  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  savePage(filename, '[]'); // Initialize with an empty array
-  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
-  return filename;
+  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  return pageId;
 }
+
+function generateAlphanumericId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function addIdAndClassToElements() {
+  const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
+
+  // Helper function to generate a random alphanumeric string of a given length
+  function generateRandomId(length = 8) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  // Function to ensure the generated ID is unique on the page
+  function generateUniqueId() {
+    let the_id;
+    do {
+      the_id = generateRandomId();
+    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+    return the_id;
+  }
+
+  // Find elements that match the specified classes
+  const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
+
+  elements.forEach(element => {
+    // Check if the element already has a class like 'group/some_id'
+    const hasGroupClass = Array.from(element.classList).some(cls => cls.startsWith('group/'));
+
+    if (!hasGroupClass) { // Only add ID and class if no group/ID class exists
+      const newId = generateUniqueId();
+      element.classList.add(`group/[${newId}]`);
+    }
+  });
+}
+
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -2858,9 +3275,10 @@ function savePage(pageId, data) {
     appSageStorage.pages = {};
   }
   if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+    appSageStorage.pages[pageId] = { page_data: [], title: 'Untitled', settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].page_data = data;
+
   localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
@@ -2919,9 +3337,22 @@ function loadChanges(json) {
     element.innerHTML = item.content;
     pageContainer.appendChild(element);
 
-    if (element.classList.contains('grid')) {
+    if (element.classList.contains('pagegrid')) {
       restoreGridCapabilities(element);
     }
+
+    if (element.classList.contains('maincontainer')) {
+      restoreContainerCapabilities(element);
+    }
+  });
+
+  pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
+  });
+
+  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
+    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });
 
   const grid = document.querySelector('#page .grid');
@@ -2930,7 +3361,7 @@ function loadChanges(json) {
   }
 } // DATA OUT: null
 
-// This function makes it so that saved elements can be edited once more.
+// This function makes it so that saved elements related to grids can be edited once more.
 // DATA IN: HTML Element, <div>
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
@@ -2945,6 +3376,29 @@ function restoreGridCapabilities(grid) {
     });
   });
 } // DATA OUT: null
+
+// This function makes it so that saved elements related to container box can be edited once more.
+// DATA IN: HTML Element, <div>
+function restoreContainerCapabilities(container) {
+  const addContentButton = createAddContentButton(container);
+  container.appendChild(addContentButton);
+  const addContainerButton = createAddContainerButton(container);
+  container.appendChild(addContainerButton);
+  enableEditContainerOnClick(container);
+  Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+    const addChildContentButton = createAddContentButton(contentContainer);
+    contentContainer.appendChild(addChildContentButton);
+    const addChildContainerButton = createAddContainerButton(contentContainer);
+    contentContainer.appendChild(addChildContainerButton);
+  });
+  Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
+  });
+} // DATA OUT: null
+
+
+
 
 /* File: ./app/js/load.js */
 /*
@@ -3423,7 +3877,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     return;
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
-  const bgIcon = (labelPrefix === 'Background Position');
+  const bgIcon = (labelPrefix === 'Background Position' || labelPrefix === 'Background Repeat');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
@@ -3461,7 +3915,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${(bgIcon && option !== 'reset') ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
       iconButton.classList.remove('bg-slate-200');
       iconButton.classList.add('bg-sky-200');
@@ -3475,6 +3929,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else if (labelPrefix === 'Border Style') {
       iconButton.setAttribute('data-extra-info', option === 'none' ? tooltips['border-style-none'] : tooltips['border-style-other'] + option + ' line');
     } else if (labelPrefix === 'Background Size') {
+      iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
+    } else if (labelPrefix === 'Background Position') {
+      iconButton.setAttribute('data-extra-info', option === 'reset' ? tooltips['reset'] : `${tooltips['background-position']} ${option + '.'}`);
+    } else if (labelPrefix === 'Background Repeat') {
       iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
     } else if (swatchboard) {
       iconButton.setAttribute('data-extra-info', tooltips['swatchboard'] + `${cssClassBase}-${option}`);
