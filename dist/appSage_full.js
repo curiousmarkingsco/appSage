@@ -345,7 +345,7 @@ function restoreSettings() {
             <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${colorName}" placeholder="Enter color name (e.g., 'primary')">
           </div>
           <div class="shades-container space-y-2"></div>
-          <button type="button" class="addShade mt-2 py-2 px-4 bg-blue-500 text-white rounded shadow">Add Shade</button>
+          <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
         `;
 
         let shadesContainer = colorGroup.querySelector('.shades-container');
@@ -599,7 +599,7 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
         </div>
       </div>
-      <button type="button" class="addShade mt-2 py-2 px-4 bg-blue-500 text-white rounded shadow">Add Shade</button>
+      <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
     `;
     
     colorsContainer.appendChild(newColorGroup); // Append the new color group to the container
@@ -935,16 +935,15 @@ function addContainerOptions(container) {
 function createAddContainerButton(containingBox) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-container']);
-  button.className = 'addContainer highlightButton hidden w-16 h-12 absolute -bottom-12 left-0 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-bl z-50';
+  button.className = 'addContainer highlightButton hidden w-16 h-12 absolute -bottom-12 left-4 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg><svg class="w-4 h-4 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>`;
   button.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
-    containerContainer.className = 'group w-auto min-w-auto max-w-auto min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0';
+    containerContainer.className = 'group w-auto min-w-auto max-w-auto min-h-auto h-auto max-h-auto pagecontainer ml-0 mr-0 mt-0 mb-0 p-4';
 
     containingBox.appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
-    highlightEditingElement(containerContainer);
     addIdAndClassToElements();
 
     // Enable recursive boxes
@@ -956,6 +955,7 @@ function createAddContainerButton(containingBox) {
     containerContainer.appendChild(addContentButton);
 
     enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
   });
   // This creates a reliable hover effect for many nested elements
   // containingBox.addEventListener('mouseover', function(event){
@@ -1070,7 +1070,7 @@ function addContainerAlignmentOptions(sidebar, container) {
 // DATA IN: null
 function createColumn() {
   const column = document.createElement('div');
-  column.className = 'col-span-1 pagecolumn group';
+  column.className = 'col-span-1 pagecolumn group p-4';
   enableEditColumnOnClick(column);
   return column;
 } // DATA OUT: HTML Element, <div>
@@ -1173,7 +1173,7 @@ function createAddColumnButton(gridContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
   const menuItem = document.createElement('button');
   menuItem.setAttribute('data-extra-info', tooltips['add-column']);
-  menuItem.className = 'addColumn w-48 h-12 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded';
+  menuItem.className = 'addColumn highlightButton hidden w-16 h-12 absolute -bottom-12 left-4 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
   menuItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l512 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM192 96l0 320L64 416 64 96l128 0zm64 0l128 0 0 320-128 0 0-320zm320 0l0 320-128 0 0-320 128 0z"/></svg>`;
   menuItem.onclick = function () {
     const newColumn = createColumn();
@@ -1301,7 +1301,7 @@ function enableEditContentOnClick(contentContainer) {
 function createAddContentButton(column) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-content']);
-  button.className = `addContent highlightButton ugc-discard z-50 absolute hidden -bottom-12 left-16 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-br h-12 w-16`;
+  button.className = `addContent highlightButton ugc-discard z-50 absolute hidden -bottom-12 left-24 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b h-12 w-16`;
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
   button.addEventListener('click', function (event) {
     event.stopPropagation();
@@ -2567,7 +2567,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
@@ -2576,7 +2576,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    highlightEditingElement(gridContainer);
     addIdAndClassToElements();
 
     // Append add column button at the end
@@ -2584,17 +2583,17 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
+    highlightEditingElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');
   addContainerButton.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
-    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
 
     document.getElementById('page').appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
-    highlightEditingElement(containerContainer);
     addIdAndClassToElements();
 
     // Enable recursive boxes
@@ -2606,6 +2605,7 @@ document.addEventListener('DOMContentLoaded', function () {
     containerContainer.appendChild(addContentButton);
 
     enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
   });
 
   const addHtmlButton = document.getElementById('addHtml');
@@ -2757,6 +2757,8 @@ function showHtmlModal(onConfirm = null) {
     const page = document.getElementById('page');
     page.appendChild(convertTailwindHtml(content));
     document.body.removeChild(modal);
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = window.location.pathname + '?' + params.toString();
   });
 
 
