@@ -57,9 +57,7 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 If you find  yourself in a situation where you want to easily clear your localStorage, here's a quick and easy thing to copy/paste to your JS console:
 
 ```js
-localStorage.removeItem(appSageStorageString);
-localStorage.removeItem(appSageSettingsString);
-localStorage.removeItem(appSageTitleIdMapString);
+appSageLocalNuke();
 ```
 
 ## Using appSage as an integration

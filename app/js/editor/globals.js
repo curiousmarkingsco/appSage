@@ -440,3 +440,9 @@ window.addEventListener('load', function () {
     if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
   }
 });
+
+function appSageLocalNuke(){
+  localStorage.removeItem(appSageStorageString);
+  localStorage.removeItem(appSageSettingsString);
+  localStorage.removeItem(appSageTitleIdMapString);
+}
