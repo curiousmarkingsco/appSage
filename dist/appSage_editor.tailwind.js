@@ -2952,7 +2952,7 @@ function showHtmlModal(onConfirm = null) {
 function convertTailwindHtml(content) {
   // Create a container to hold the pasted content
   const parentElement = document.createElement('div');
-  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep p-4';
+  parentElement.classList = 'pastedHtmlContainer maincontainer ugc-keep';
   parentElement.innerHTML = content;
 
   wrapElements(parentElement);
@@ -3336,7 +3336,7 @@ document.addEventListener('DOMContentLoaded', function () {
       loadChanges(json);
       loadPageSettings(config);
       loadPageBlobs(config);
-      loadPageMetadata(config)
+      loadPageMetadata(config);
     }
     setupAutoSave(config);
   } else {
