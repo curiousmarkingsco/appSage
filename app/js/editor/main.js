@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
@@ -55,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    highlightEditingElement(gridContainer);
     addIdAndClassToElements();
 
     // Append add column button at the end
@@ -63,17 +62,17 @@ document.addEventListener('DOMContentLoaded', function () {
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
+    highlightEditingElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');
   addContainerButton.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
-    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
 
     document.getElementById('page').appendChild(containerContainer);
 
     addContainerOptions(containerContainer);
-    highlightEditingElement(containerContainer);
     addIdAndClassToElements();
 
     // Enable recursive boxes
@@ -85,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
     containerContainer.appendChild(addContentButton);
 
     enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
   });
 
   const addHtmlButton = document.getElementById('addHtml');
@@ -236,6 +236,8 @@ function showHtmlModal(onConfirm = null) {
     const page = document.getElementById('page');
     page.appendChild(convertTailwindHtml(content));
     document.body.removeChild(modal);
+    const params = new URLSearchParams(window.location.search);
+    window.location.href = window.location.pathname + '?' + params.toString();
   });
 
 
