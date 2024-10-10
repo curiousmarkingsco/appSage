@@ -626,6 +626,11 @@ window.addEventListener('load', function () {
   }
 });
 
+function appSageLocalNuke(){
+  localStorage.removeItem(appSageStorageString);
+  localStorage.removeItem(appSageSettingsString);
+  localStorage.removeItem(appSageTitleIdMapString);
+}
 
 /* File: ./app/js/load.js */
 /*

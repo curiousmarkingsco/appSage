@@ -626,6 +626,11 @@ window.addEventListener('load', function () {
   }
 });
 
+function appSageLocalNuke(){
+  localStorage.removeItem(appSageStorageString);
+  localStorage.removeItem(appSageSettingsString);
+  localStorage.removeItem(appSageTitleIdMapString);
+}
 
 /* File: ./app/js/editor/settings.js */
 // editor/settings.js
@@ -3584,6 +3589,7 @@ function restoreContainerCapabilities(container) {
     contentContainer.appendChild(addChildContentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
+    enableEditContainerOnClick(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
     enableEditContentOnClick(contentContainer);

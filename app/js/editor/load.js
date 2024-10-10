@@ -74,6 +74,7 @@ function restoreContainerCapabilities(container) {
     contentContainer.appendChild(addChildContentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
+    enableEditContainerOnClick(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
     enableEditContentOnClick(contentContainer);
