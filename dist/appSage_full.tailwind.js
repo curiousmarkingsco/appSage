@@ -4340,6 +4340,15 @@ function saveDataToServer(url, page_id, css_content = null) {
     .catch((error) => console.error('Error:', error));
 } // DATA OUT: null
 
+function generateHTMLString() {
+  const params = new URLSearchParams(window.location.search);
+  const page_id = params.get('config');
+  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
+  const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
+  return finalHtml
+}
+
 // This function is to support the copyPageHTML function.
 // DATA IN: ['String', 'HTML Element, <div>']
 function flattenJSONToHTML(jsonString, parentInfo) {
