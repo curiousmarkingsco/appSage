@@ -15,21 +15,19 @@ function loadChanges(json) {
   pageContainer.innerHTML = '';
   const data = JSON.parse(json);
   data.forEach(item => {
-    const element = document.createElement(item.tagName);
-    element.className = item.className;
-    element.innerHTML = item.content;
-    pageContainer.appendChild(element);
+    pageContainer.innerHTML += item.content;
+  });
 
-    if (element.classList.contains('pagegrid')) {
-      restoreGridCapabilities(element);
-    }
+  pageContainer.querySelectorAll('.pagegrid').forEach(grid => {
+    restoreGridCapabilities(grid);
+  });
 
-    if (element.classList.contains('maincontainer')) {
-      restoreContainerCapabilities(element);
-    }
+  pageContainer.querySelectorAll('.maincontainer').forEach(maincontainer => {
+    restoreContainerCapabilities(maincontainer);
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    displayMediaFromIndexedDB(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -50,10 +48,13 @@ function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
   enableEditGridOnClick(grid);
+  displayMediaFromIndexedDB(grid);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     enableEditColumnOnClick(column);
+    displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+      displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
     });
@@ -72,6 +73,7 @@ function restoreContainerCapabilities(container) {
     container.appendChild(addHtmlButton);
   }
   enableEditContainerOnClick(container);
+  displayMediaFromIndexedDB(container);
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
@@ -82,8 +84,10 @@ function restoreContainerCapabilities(container) {
       contentContainer.appendChild(addChildHtmlButton);
     }
     enableEditContainerOnClick(contentContainer);
+    displayMediaFromIndexedDB(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    displayMediaFromIndexedDB(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });

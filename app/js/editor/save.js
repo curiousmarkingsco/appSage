@@ -14,7 +14,9 @@ function getCleanInnerHTML(element) {
   const clone = element.cloneNode(true);
   const discardElements = clone.querySelectorAll('.ugc-discard');
   discardElements.forEach(el => el.parentNode.removeChild(el));
-  return clone.innerHTML;
+  const cloneBox = document.createElement('div');
+  cloneBox.appendChild(clone);
+  return cloneBox.innerHTML;
 } // DATA OUT: HTML Element, <div>
 
 // This mutation observer ensures that the majority, if not all, changes
@@ -50,8 +52,8 @@ function saveChanges(page) {
   // Query only elements with 'ugc-keep' that are meant to be saved
   const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
   const data = Array.from(elements).map(element => ({
-    tagName: element.tagName,
-    className: element.className,
+    tagName: element.tagName, // in the future, this could be a section name
+    className: element.className, // deprecated
     content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);

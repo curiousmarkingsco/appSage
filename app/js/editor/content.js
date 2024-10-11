@@ -20,10 +20,10 @@ function addContentContainer() {
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 
+  displayMediaFromIndexedDB(contentContainer.firstElementChild);
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
   addContentOptions(contentContainer);
-  displayMediaFromIndexedDB(contentContainer);
 
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
@@ -280,52 +280,27 @@ function createLabelAllDevices() {
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
-function generateMediaSrc(event, contentContainer, isPlaceholder) {
+function generateMediaUrl(event, contentContainer, background) {
   const file = event.target.files ? event.target.files[0] : null;
 
-  if (file || isPlaceholder) {
+  if (file) {
     const reader = new FileReader();
 
     reader.onload = async function (e) {
-      let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file ? file.type.split('/')[0] : null;
 
-      if (!isPlaceholder) {
-        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          mediaElement.remove();
-          mediaElement = null;
-        }
+      // Store the media file in IndexedDB
+      const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+      await saveMediaToIndexedDB(file, mediaId);
+      contentContainer.setAttribute('data-media-id', mediaId);
 
-        if (!mediaElement) {
-          if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-          } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            mediaElement.controls = true;
-          } else if (mediaType === 'audio') {
-            mediaElement = document.createElement('audio');
-            mediaElement.controls = true;
-          }
-          contentContainer.appendChild(mediaElement);
-        }
-
-        mediaElement.src = e.target.result;
-
-        // Store the media file in IndexedDB
-        const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
-        await saveMediaToIndexedDB(file, mediaId);
-        contentContainer.setAttribute('data-media-id', mediaId);
-      } else {
+      if (background) {
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
-        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
+      } else {
+        contentContainer.src = e.target.result;
       }
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      contentContainer.style.backgroundImage = `url(${event.target.value})`;
-    }
+    reader.readAsDataURL(file);
   }
 } // DATA OUT: null
 
@@ -355,8 +330,7 @@ async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
   const transaction = db.transaction(['mediaStore'], 'readwrite');
   const store = transaction.objectStore('mediaStore');
-  const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
-  const mediaEntry = { id: mediaId, blob: mediaBlob, url: mediaUrl };
+  const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
   store.put(mediaEntry);
 }
 
@@ -372,17 +346,23 @@ async function getMediaFromIndexedDB(mediaId) {
   });
 }
 
-function displayMediaFromIndexedDB(contentContainer) {
-  const mediaId = contentContainer.getAttribute('data-media-id');
+function displayMediaFromIndexedDB(targetElement) {
+  const mediaId = targetElement.getAttribute('data-media-id');
+
   if (mediaId) {
     getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
       if (mediaEntry) {
-        const mediaElement = contentContainer.querySelector('img, video, audio');
-        const mediaUrl = mediaEntry.url;
+        const mediaElement = ['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName);
+        const mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
+        mediaEntry.url = mediaUrl;
         if (mediaElement) {
-          mediaElement.src = mediaUrl;
+          targetElement.src = mediaUrl;
         } else {
-          contentContainer.style.backgroundImage = `url(${mediaUrl})`;
+          if (targetElement.classList.contains('pagecontainer') || targetElement.classList.contains('pagegrid') || targetElement.classList.contains('pagecolumn')){
+            targetElement.style.backgroundImage = `url(${mediaUrl})`;
+          } else {
+            targetElement.parent.style.backgroundImage = `url(${mediaUrl})`;
+          }
         }
       }
     }).catch((error) => {
@@ -485,7 +465,7 @@ function updateSidebarForTextElements(sidebar, container) {
   fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
   fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   fileInput.onchange = function (event) {
-    generateMediaSrc(event, contentContainer, false);
+    generateMediaUrl(event, targetElement, false);
   }
 
   function toggleInputs(selectedTag) {
@@ -521,6 +501,13 @@ function updateSidebarForTextElements(sidebar, container) {
 
     toggleInputs(selectedTag);
 
+
+    // if (targetElement.classList.contains('pagecontent')) {
+    //   contentContainer.style.backgroundImage = `url(${event.target.value})`;
+    // } else {
+    // targetElement.style.backgroundImage = `url(${e.target.result})`;
+    // targetElement.classList.add(`bg-[url('${e.target.result}')]`);
+
     if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
       element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
     } else {
@@ -530,13 +517,12 @@ function updateSidebarForTextElements(sidebar, container) {
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
       // Reload tab to ensure proper editing options for targetting the tag itself
-      addContentOptions(tempContentContainer);
       tempContentContainer.addEventListener('click', function(e) { e.preventDefault(); });
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
     }
-
+    addContentOptions(tempContentContainer);
     // if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, tempContentContainer, true);
   });
 
