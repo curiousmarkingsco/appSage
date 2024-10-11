@@ -1479,9 +1479,11 @@ function addContentContainer() {
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 
+  displayMediaFromIndexedDB(contentContainer.firstElementChild);
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
   addContentOptions(contentContainer);
+
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
 
@@ -1737,52 +1739,27 @@ function createLabelAllDevices() {
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
 // DATA IN: ['HTML Element Event', 'HTML Element, <div>', 'String']
-function generateMediaSrc(event, contentContainer, isPlaceholder) {
+function generateMediaUrl(event, contentContainer, background) {
   const file = event.target.files ? event.target.files[0] : null;
 
-  if (file || isPlaceholder) {
+  if (file) {
     const reader = new FileReader();
 
     reader.onload = async function (e) {
-      let mediaElement = contentContainer.querySelector('img, video, audio');
-      const mediaType = file ? file.type.split('/')[0] : null;
 
-      if (!isPlaceholder) {
-        if (mediaElement && mediaElement.tagName.toLowerCase() !== mediaType) {
-          mediaElement.remove();
-          mediaElement = null;
-        }
+      // Store the media file in IndexedDB
+      const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+      await saveMediaToIndexedDB(file, mediaId);
+      contentContainer.setAttribute('data-media-id', mediaId);
 
-        if (!mediaElement) {
-          if (mediaType === 'image') {
-            mediaElement = document.createElement('img');
-          } else if (mediaType === 'video') {
-            mediaElement = document.createElement('video');
-            mediaElement.controls = true;
-          } else if (mediaType === 'audio') {
-            mediaElement = document.createElement('audio');
-            mediaElement.controls = true;
-          }
-          contentContainer.appendChild(mediaElement);
-        }
-
-        mediaElement.src = e.target.result;
-
-        // Store the media file in IndexedDB
-        const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
-        await saveMediaToIndexedDB(file, mediaId);
-        contentContainer.setAttribute('data-media-id', mediaId);
-      } else {
+      if (background) {
         contentContainer.style.backgroundImage = `url(${e.target.result})`;
-        contentContainer.classList.add(`bg-[url('${e.target.result}')]`);
+      } else {
+        contentContainer.src = e.target.result;
       }
     };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    } else {
-      contentContainer.style.backgroundImage = `url(${event.target.value})`;
-    }
+    reader.readAsDataURL(file);
   }
 } // DATA OUT: null
 
@@ -1794,6 +1771,8 @@ function openDatabase() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       db.createObjectStore('mediaStore', { keyPath: 'id' });
+      db.createObjectStore('mediaStore', { keyPath: 'blob' });
+      db.createObjectStore('mediaStore', { keyPath: 'url' });
     };
 
     request.onsuccess = (event) => {
@@ -1810,7 +1789,7 @@ async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
   const transaction = db.transaction(['mediaStore'], 'readwrite');
   const store = transaction.objectStore('mediaStore');
-  const mediaEntry = { id: mediaId, mediaBlob };
+  const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
   store.put(mediaEntry);
 }
 
@@ -1826,17 +1805,23 @@ async function getMediaFromIndexedDB(mediaId) {
   });
 }
 
-function displayMediaFromIndexedDB(contentContainer) {
-  const mediaId = contentContainer.getAttribute('data-media-id');
+function displayMediaFromIndexedDB(targetElement) {
+  const mediaId = targetElement.getAttribute('data-media-id');
+
   if (mediaId) {
     getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
       if (mediaEntry) {
-        const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
-        const mediaElement = contentContainer.querySelector('img, video, audio');
+        const mediaElement = ['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName);
+        const mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
+        mediaEntry.url = mediaUrl;
         if (mediaElement) {
-          mediaElement.src = mediaUrl;
+          targetElement.src = mediaUrl;
         } else {
-          contentContainer.style.backgroundImage = `url(${mediaUrl})`;
+          if (targetElement.classList.contains('pagecontainer') || targetElement.classList.contains('pagegrid') || targetElement.classList.contains('pagecolumn')){
+            targetElement.style.backgroundImage = `url(${mediaUrl})`;
+          } else {
+            targetElement.parent.style.backgroundImage = `url(${mediaUrl})`;
+          }
         }
       }
     }).catch((error) => {
@@ -1939,7 +1924,7 @@ function updateSidebarForTextElements(sidebar, container) {
   fileInput.accept = 'image/*, video/*, audio/*'; // Accept multiple media types
   fileInput.className = 'shadow border rounded py-2 bg-[#ffffff] px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
   fileInput.onchange = function (event) {
-    generateMediaSrc(event, contentContainer, false);
+    generateMediaUrl(event, targetElement, false);
   }
 
   function toggleInputs(selectedTag) {
@@ -1975,6 +1960,13 @@ function updateSidebarForTextElements(sidebar, container) {
 
     toggleInputs(selectedTag);
 
+
+    // if (targetElement.classList.contains('pagecontent')) {
+    //   contentContainer.style.backgroundImage = `url(${event.target.value})`;
+    // } else {
+    // targetElement.style.backgroundImage = `url(${e.target.result})`;
+    // targetElement.classList.add(`bg-[url('${e.target.result}')]`);
+
     if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
       element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
     } else {
@@ -1984,13 +1976,12 @@ function updateSidebarForTextElements(sidebar, container) {
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
       // Reload tab to ensure proper editing options for targetting the tag itself
-      addContentOptions(tempContentContainer);
       tempContentContainer.addEventListener('click', function(e) { e.preventDefault(); });
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
     }
-
+    addContentOptions(tempContentContainer);
     // if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, tempContentContainer, true);
   });
 
@@ -3021,6 +3012,7 @@ function wrapElements(container) {
         child.innerHTML = ''; // Clear original content
         child.appendChild(wrapper);
         // Enable editing and observation for the element
+        displayMediaFromIndexedDB(child.firstElementChild);
         enableEditContentOnClick(child);
         observeClassManipulation(child);
       } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
@@ -3034,6 +3026,7 @@ function wrapElements(container) {
         container.replaceChild(wrapper, child);
 
         // Enable editing and observation for the wrapper
+        displayMediaFromIndexedDB(wrapper.firstElementChild);
         enableEditContentOnClick(wrapper);
         observeClassManipulation(wrapper);
 
@@ -3447,7 +3440,9 @@ function getCleanInnerHTML(element) {
   const clone = element.cloneNode(true);
   const discardElements = clone.querySelectorAll('.ugc-discard');
   discardElements.forEach(el => el.parentNode.removeChild(el));
-  return clone.innerHTML;
+  const cloneBox = document.createElement('div');
+  cloneBox.appendChild(clone);
+  return cloneBox.innerHTML;
 } // DATA OUT: HTML Element, <div>
 
 // This mutation observer ensures that the majority, if not all, changes
@@ -3483,8 +3478,8 @@ function saveChanges(page) {
   // Query only elements with 'ugc-keep' that are meant to be saved
   const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
   const data = Array.from(elements).map(element => ({
-    tagName: element.tagName,
-    className: element.className,
+    tagName: element.tagName, // in the future, this could be a section name
+    className: element.className, // deprecated
     content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
@@ -3559,21 +3554,19 @@ function loadChanges(json) {
   pageContainer.innerHTML = '';
   const data = JSON.parse(json);
   data.forEach(item => {
-    const element = document.createElement(item.tagName);
-    element.className = item.className;
-    element.innerHTML = item.content;
-    pageContainer.appendChild(element);
+    pageContainer.innerHTML += item.content;
+  });
 
-    if (element.classList.contains('pagegrid')) {
-      restoreGridCapabilities(element);
-    }
+  pageContainer.querySelectorAll('.pagegrid').forEach(grid => {
+    restoreGridCapabilities(grid);
+  });
 
-    if (element.classList.contains('maincontainer')) {
-      restoreContainerCapabilities(element);
-    }
+  pageContainer.querySelectorAll('.maincontainer').forEach(maincontainer => {
+    restoreContainerCapabilities(maincontainer);
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    displayMediaFromIndexedDB(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -3594,10 +3587,13 @@ function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
   enableEditGridOnClick(grid);
+  displayMediaFromIndexedDB(grid);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     enableEditColumnOnClick(column);
+    displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+      displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
     });
@@ -3616,6 +3612,7 @@ function restoreContainerCapabilities(container) {
     container.appendChild(addHtmlButton);
   }
   enableEditContainerOnClick(container);
+  displayMediaFromIndexedDB(container);
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
@@ -3626,8 +3623,10 @@ function restoreContainerCapabilities(container) {
       contentContainer.appendChild(addChildHtmlButton);
     }
     enableEditContainerOnClick(contentContainer);
+    displayMediaFromIndexedDB(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    displayMediaFromIndexedDB(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -3663,19 +3662,28 @@ function loadPage(pageId) {
 // text in the document (and consequently, storage). To keep things a bit
 // tidier, these blobs are stored in an object separate from the HTML content.
 // DATA IN: String
-function loadPageBlobs(config) {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  const page = document.getElementById('page');
+async function loadPageBlobs(config) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
+  
+  const blobsRequest = store.get(config);
 
-  if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].blobs) {
-    const blobs = appSageStorage.pages[config].blobs;
+  blobsRequest.onsuccess = function(event) {
+    const blobs = event.target.result ? event.target.result.blobs : null;
+    const page = document.getElementById('page');
+    
     if (blobs) {
       Object.keys(blobs).forEach(key => {
         const element = page.querySelector(`.bg-local-${key}`);
-        if (element) element.style.backgroundImage = `url(${blobs[key]})`;
+        if (element) element.style.backgroundImage = `url(${URL.createObjectURL(blobs[key])})`;
       });
     }
-  }
+  };
+
+  blobsRequest.onerror = function(event) {
+    console.error('Error fetching blobs from IndexedDB:', event.target.error);
+  };
 } // DATA OUT: null
 
 // Because metadata needs to be added to the <head> tag rather than the
@@ -4010,7 +4018,8 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
       grid.style.backgroundImage = '';
-      generateMediaSrc(event, grid, true);
+      generateMediaUrl(event, grid, true);
+      displayMediaFromIndexedDB(grid);
     }
   };
 } // DATA OUT: null

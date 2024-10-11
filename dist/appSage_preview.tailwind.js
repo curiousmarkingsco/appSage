@@ -660,19 +660,28 @@ function loadPage(pageId) {
 // text in the document (and consequently, storage). To keep things a bit
 // tidier, these blobs are stored in an object separate from the HTML content.
 // DATA IN: String
-function loadPageBlobs(config) {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  const page = document.getElementById('page');
+async function loadPageBlobs(config) {
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
+  
+  const blobsRequest = store.get(config);
 
-  if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].blobs) {
-    const blobs = appSageStorage.pages[config].blobs;
+  blobsRequest.onsuccess = function(event) {
+    const blobs = event.target.result ? event.target.result.blobs : null;
+    const page = document.getElementById('page');
+    
     if (blobs) {
       Object.keys(blobs).forEach(key => {
         const element = page.querySelector(`.bg-local-${key}`);
-        if (element) element.style.backgroundImage = `url(${blobs[key]})`;
+        if (element) element.style.backgroundImage = `url(${URL.createObjectURL(blobs[key])})`;
       });
     }
-  }
+  };
+
+  blobsRequest.onerror = function(event) {
+    console.error('Error fetching blobs from IndexedDB:', event.target.error);
+  };
 } // DATA OUT: null
 
 // Because metadata needs to be added to the <head> tag rather than the
