@@ -16,7 +16,7 @@
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
-  contentContainer.className = 'content-container pagecontent text-base'; // A new class specifically for content
+  contentContainer.className = 'content-container pagecontent w-auto'; // A new class specifically for content
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 
@@ -46,14 +46,26 @@ function enableEditContentOnClick(contentContainer) {
 function createAddContentButton(column) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['add-content']);
-  button.className = 'addContent ugc-discard z-50 hidden group-hover:block absolute bottom-2 left-[calc(50%-3rem)] bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-24';
+  button.className = `addContent highlightButton ugc-discard z-50 absolute hidden -bottom-12 left-24 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b h-12 w-16`;
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1 0 32c0 8.8 7.2 16 16 16l32 0zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"/></svg>`;
   button.addEventListener('click', function (event) {
     event.stopPropagation();
     const contentContainer = addContentContainer();
     column.appendChild(contentContainer);
     highlightEditingElement(column);
+    addIdAndClassToElements();
   });
+  // This creates a reliable hover effect for many nested elements
+  // column.addEventListener('mouseover', function(event){
+  //   event.stopPropagation();
+  //   button.classList.add('block');
+  //   button.classList.remove('hidden');
+  // });
+  // column.addEventListener('mouseout', function(event){
+  //   event.stopPropagation();
+  //   button.classList.add('hidden');
+  //   button.classList.remove('block');
+  // });
   return button;
 } // DATA OUT: HTML Element, <button>
 
@@ -103,8 +115,6 @@ function createVerticalMoveContentButton(contentContainer, direction) {
 // DATA IN: HTML Element, <div>
 function addContentOptions(contentContainer) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit Content</strong></div>${generateSidebarTabs()}`;
-  activateTabs();
   updateSidebarForTextElements(sidebar, contentContainer);
 
   const moveButtons = document.createElement('div');
@@ -112,13 +122,24 @@ function addContentOptions(contentContainer) {
   moveButtons.id = 'moveContentButtons';
   sidebar.prepend(moveButtons);
 
+  let multipleContent;
+  let contentCount;
+  if (contentContainer.classList.contains('pastedHtmlContainer')) {
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    contentCount = gridCount + contentCount + flexCount;
+  } else {
   // Minus one to remove the 'Add Content' button from the count
-  const contentCount = contentContainer.children.length - 1
+    multipleContent = contentContainer.parentNode === null ? contentContainer.children : contentContainer.parentNode.children;
+    contentCount = multipleContent.length - 1;
+  }
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'up'));
   moveButtons.appendChild(createRemoveContentButton(contentContainer));
   if (contentCount > 1) moveButtons.appendChild(createVerticalMoveContentButton(contentContainer, 'down'));
 
   highlightEditingElement(contentContainer);
+  addIdAndClassToElements();
 } // DATA OUT: null
 
 // This cobbles together all the needed bits for adding/editing form fields.
@@ -373,10 +394,10 @@ function displayMediaFromIndexedDB(contentContainer) {
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
 // DATA IN: HTML Element, <div>
-function updateSidebarForTextElements(sidebar, container, isNewContent = false) {
+function updateSidebarForTextElements(sidebar, container) {
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
-  const targetElement = container.firstChild;
+  const targetElement = container.firstElementChild;
   let directEditing = false;
 
   let contentContainer;
@@ -397,9 +418,11 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     { label: 'Heading 4', value: 'h4' },
     { label: 'Heading 5', value: 'h5' },
     { label: 'Heading 6', value: 'h6' },
+    { label: 'Line of text', value: 'span' },
+    { label: 'Block of text', value: 'div' },
     // { label: 'Form', value: 'form' },
     { label: 'Link / Button', value: 'a' },
-    // { label: 'Button', value: 'button' },
+    { label: 'Button', value: 'button' },
     { label: 'Image', value: 'img' },
     { label: 'Video', value: 'video' },
     { label: 'Audio', value: 'audio' }
@@ -417,6 +440,40 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   const textInput = document.createElement('textarea');
   textInput.placeholder = 'Enter content here...';
   textInput.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+
+  const srOnly = document.createElement('input');
+  srOnly.placeholder = 'Text for screen readers';
+  srOnly.className = 'shadow border hidden rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline';
+  srOnly.setAttribute('data-extra-info', 'If your element relies on imagery or visual references to make sense, add text here to give more detail.');
+  if (advancedMode === true) srOnly.classList.remove('hidden');
+
+  srOnly.addEventListener('change', function () {
+    const selectedTag = tagDropdown.value;
+    let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
+
+    if (directEditing) {
+      // This predicates that an img/video/audio (media) tag already exists
+      element = contentContainer;
+    } else {
+      element = contentContainer.querySelector(selectedTag);
+    }
+
+    // If no element exists for the media tag, create one
+    if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
+      contentContainer.appendChild(element);
+    }
+
+    // If it's not a media tag, update the text
+    if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
+      element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
+    }
+  });
 
   const mediaUrlInput = document.createElement('input');
   mediaUrlInput.type = 'text';
@@ -472,7 +529,9 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     // Call handleButtonFields for 'Link' selection
     if (['a', 'button'].includes(selectedTag)) {
-      handleButtonFields(formContainer, tempContentContainer, element);
+      // Reload tab to ensure proper editing options for targetting the tag itself
+      addContentOptions(tempContentContainer);
+      tempContentContainer.addEventListener('click', function(e) { e.preventDefault(); });
     } else {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
@@ -484,6 +543,9 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
   textInput.addEventListener('input', function () {
     const selectedTag = tagDropdown.value;
     let element;
+    const srOnlyElement = document.createElement('span')
+    srOnlyElement.className = 'sr-only';
+    srOnlyElement.textContent = srOnly.value;
 
     if (directEditing) {
       // This predicates that an img/video/audio (media) tag already exists
@@ -495,12 +557,14 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     // If no element exists for the media tag, create one
     if (!element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element = document.createElement(selectedTag);
+      element.appendChild(srOnlyElement);
       contentContainer.appendChild(element);
     }
 
     // If it's not a media tag, update the text
     if (element && !['img', 'video', 'audio'].includes(selectedTag)) {
       element.textContent = textInput.value;
+      element.appendChild(srOnlyElement);
     }
   });
 
@@ -517,14 +581,20 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
     if (['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName)) {
       mediaUrlInput.value = targetElement.src;
     } else {
-      textInput.value = targetElement.textContent;
+      textInput.value = getTextWithoutSROnly(targetElement);
+      if (typeof targetElement.children !== 'undefined') {
+        const srOnlySpan = targetElement.querySelector('.sr-only');
+        if (srOnlySpan) {
+          srOnly.value = srOnlySpan.textContent;
+        }
+      }
     }
     tagDropdown.value = targetElement.tagName.toLowerCase();
     toggleInputs(tagDropdown.value);
   }
 
   const titleElement = document.createElement('h2');
-  titleElement.textContent = 'Editing Element';
+  titleElement.textContent = 'Editing Content';
   titleElement.className = 'font-bold text-xl';
 
 
@@ -533,35 +603,49 @@ function updateSidebarForTextElements(sidebar, container, isNewContent = false) 
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, targetElement);
-    addManualClassEditor(sidebar, targetElement);
-    addManualCssEditor(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
 
     sidebar.prepend(formContainer);
     formContainer.prepend(tagDropdown);
+    formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(mediaUrlInput);
     formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
     addTextOptions(sidebar, contentContainer);
-    addManualClassEditor(sidebar, contentContainer);
-    addManualCssEditor(sidebar, contentContainer);
   }
 
   // Standard editing options
   addEditableBorders(sidebar, contentContainer);
+  addEditableOpacity(sidebar, contentContainer);
   addEditableBackgroundColor(sidebar, contentContainer);
   addEditableBackgroundImage(sidebar, contentContainer);
   addEditableBackgroundImageURL(sidebar, contentContainer);
   addEditableBackgroundFeatures(sidebar, contentContainer);
   addEditableMarginAndPadding(sidebar, contentContainer);
   addEditableDimensions(sidebar, contentContainer);
+  addManualClassEditor(sidebar, contentContainer);
+  addManualCssEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
+  addIdAndClassToElements();
+}
+
+function getTextWithoutSROnly(element) {
+  const clonedElement = element.cloneNode(true);
+  if (typeof clonedElement.children === 'undefined') {
+    return '';
+  } else {
+    // Remove all elements with the class 'sr-only'
+    clonedElement.querySelectorAll('.sr-only').forEach(el => el.remove());
+
+    return clonedElement.textContent.trim();
+  }
 }
 
 function handleButtonFields(formContainer, contentContainer, button) {

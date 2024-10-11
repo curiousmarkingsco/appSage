@@ -19,13 +19,33 @@ if (typeof customAppSageStorage !== 'undefined') {
   // bogged down or confused. This was originally made to support dashSage.
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
+  var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
+  var appSageTitleIdMapString = 'appSageTitleIdMap'
 }
 
-var tailwindColors = tailwind.config.theme.colors;
+var advancedMode = false;
+const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
+if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
+
+window.addEventListener('load', function () {
+  if (advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
+});
+
+updateTailwindConfig();
+var tailwindColors = mergeTailwindColors(tailwind.config.theme);
+
 var colorArray = extractColorNames(tailwindColors);
+colorArray.push('reset');
 var interactivityState = '';
 var interactivityStates = {
   "default": ['', 'Default'],
@@ -70,13 +90,17 @@ var tooltips = {
   'move-column': "Move this column to the ",
   'remove-column': "Remove this column forever (that\'s a long time!)",
   'add-column': "Add another column to this grid",
-  'add-content': "Add content to this column",
+  'add-container': "Add another container to this element",
+  'add-content': "Add content to this element",
   'remove-content': "Remove this content forever (that\'s a long time!)",
   'move-content-up': "Move this content upward in the column",
   'move-content-down': "Move this content downward in the column",
   'remove-grid': "Remove this grid forever (that\'s a long time!)",
+  'remove-container': "Remove this container forever (that\'s a long time!)",
   'move-grid-up': "Move this grid upward in the document",
   'move-grid-down': "Move this grid downward in the document",
+  'move-container-up': "Move this container left or upward in the document",
+  'move-container-down': "Move this container right or downward in the document",
   'color-vision-impairement': "Please remember to make colors contrast well for people with vision impairments.",
   'text-alignment-justify': "Make text expand across the entire box. If you're not a professional designer, this option is a bad idea",
   'text-alignment-other': "Align text to the ",
@@ -84,12 +108,14 @@ var tooltips = {
   'border-style-other': "Change the border style to be a ",
   'background-size-cover': "Make your background image cover the entire box; cropping will occur",
   'background-size-contain': "Make your background image stay contained inside the box, empty space may become seen",
+  'background-position': "Align the position of the image to the element's ",
   'swatchboard': "TailwindCSS class name: ",
   'bg-icon': "Position your background image to the ",
   'italicize': "Italicize your text",
   'underline': "Underline your text",
   'padding': "Create space between the edge of the box and content inside of it.",
   'margin': "Create space between the edge of the box and content inside of it.",
+  'opacity': "Change how transparent the element is. Careful! This changes the opacity of everything inside the element.",
   'reset': "Reset to default settings."
 }
 
@@ -192,7 +218,8 @@ var appSageEditorIcons = {
   "maximum-width": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M32 64c17.7 0 32 14.3 32 32l0 320c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 96C0 78.3 14.3 64 32 64zm214.6 73.4c12.5 12.5 12.5 32.8 0 45.3L205.3 224l229.5 0-41.4-41.4c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l96 96c12.5 12.5 12.5 32.8 0 45.3l-96 96c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L434.7 288l-229.5 0 41.4 41.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0l-96-96c-12.5-12.5-12.5-32.8 0-45.3l96-96c12.5-12.5 32.8-12.5 45.3 0zM640 96l0 320c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-320c0-17.7 14.3-32 32-32s32 14.3 32 32z"/></svg>',
   "gap-x": '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>',
   "gap-y": '<svg class="h-full w-full rotate-90" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M406.6 374.6l96-96c12.5-12.5 12.5-32.8 0-45.3l-96-96c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224l-293.5 0 41.4-41.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-96 96c-12.5 12.5-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 288l293.5 0-41.4 41.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>',
-  "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>'
+  "gap-all": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="cls-1" d="M505,239.1l-72-72c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7s-7,10.8-7,17c0,6.2,2.3,12.3,7,17l31,31h-59.8s-90.1,0-90.1,0V81.9l31,31c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7s7-10.8,7-16.9c0-6.2-2.3-12.4-7-17.1h0c0,0-72-71.9-72-71.9-9.4-9.4-24.6-9.4-34,0l-72,72c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.8,7,17,7,6.2,0,12.3-2.3,17-7l31-31v150H81.9l31-31c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-16.9-7c-6.2,0-12.4,2.3-17.1,7h0c0,0-72,72.1-72,72.1-9.4,9.4-9.4,24.6,0,34l72,72c4.7,4.7,10.8,7,16.9,7,6.2,0,12.3-2.3,17-7,4.7-4.7,7-10.8,7-17,0-6.2-2.3-12.3-7-17l-31-31h150.1v64h0v86.1l-31-31c-4.7-4.7-10.8-7-16.9-7-6.2,0-12.3,2.3-17,7-4.7,4.7-7,10.9-7,17,0,6.1,2.4,12.3,7,16.9l72,72c9.4,9.4,24.6,9.4,34,0l72-72c4.7-4.7,7-10.8,7-16.9,0-6.2-2.3-12.3-7-17s-10.8-7-17-7c-6.2,0-12.3,2.3-17,7l-31,31v-59.8h0v-90.1h64s86.1,0,86.1,0l-31,31c-4.7,4.7-7,10.8-7,16.9,0,6.2,2.3,12.3,7,17,4.7,4.7,10.9,7,17,7,6.1,0,12.3-2.4,16.9-7l72-72c9.4-9.4,9.4-24.6,0-34Z"/></svg>',
+  "opacity": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M448 256c0-106-86-192-192-192l0 384c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>'
 }
 
 // This function is for supporting any editor capabilities that involve color.
@@ -202,9 +229,221 @@ var appSageEditorIcons = {
 function extractColorNames(colorObject) {
   let colorArray = [];
   for (const colorFamily in colorObject) {
-    for (const shade in colorObject[colorFamily]) {
-      colorArray.push(`${colorFamily}-${shade}`);
+    if (typeof colorObject[colorFamily] == 'string') {
+      colorArray.push(colorFamily);
+    } else {
+      for (const shade in colorObject[colorFamily]) {
+        colorArray.push(`${colorFamily}-${shade}`);
+      }
     }
   }
   return colorArray;
 } // DATA OUT: Array
+
+function mergeFontsIntoTailwindConfig() {
+  // Retrieve the fonts from localStorage
+  let appSageSettings = JSON.parse(localStorage.getItem('appSageSettings'));
+  let storedFonts = appSageSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
+
+  // Ensure tailwind.config exists and has the theme and fontFamily objects
+  if (!tailwind.config) {
+    tailwind.config = {};
+  }
+
+  if (!tailwind.config.theme) {
+    tailwind.config.theme = {};
+  }
+
+  if (!tailwind.config.theme.fontFamily) {
+    tailwind.config.theme.fontFamily = {};
+  }
+
+  // Merge each stored font into tailwind.config.theme.fontFamily
+  Object.keys(storedFonts).forEach(fontKey => {
+    tailwind.config.theme.fontFamily[fontKey] = [storedFonts[fontKey].replace(/\+/g, ' ')];
+  });
+
+  // The tailwind.config.theme.fontFamily now contains the merged fonts
+}
+
+function mergeTailwindColors(theme) {
+  // Check if `theme.extend.colors` exists
+  if (theme.extend && theme.extend.colors) {
+    // Merge `theme.colors` and `theme.extend.colors`, maintaining structure
+    return {
+      ...theme.extend.colors,
+      ...theme.colors
+    };
+  }
+
+  // Return `theme.colors` if no `theme.extend.colors` exists
+  return theme.colors;
+}
+
+// Function to dynamically update Tailwind config with multiple fonts/colors
+function updateTailwindConfig() {
+  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (settings !== null) {
+    // Handle custom fonts
+    if (settings.fonts.length > 0) {
+      if (!tailwind.config.theme.fontFamily) {
+        tailwind.config.theme.fontFamily = {};
+      }
+      tailwind.config.theme.fontFamily.custom = settings.fonts;
+    }
+
+    // Handle custom colors
+    if (Object.keys(settings.colors).length > 0) {
+      if (!tailwind.config.theme.extend) {
+        tailwind.config.theme.extend = {};
+      }
+      if (!tailwind.config.theme.extend.colors) {
+        tailwind.config.theme.extend.colors = {};
+      }
+
+      Object.keys(settings.colors).forEach(function (customColor) {
+        tailwind.config.theme.extend.colors[customColor] = settings.colors[customColor];
+      });
+    }
+  }
+}
+
+// Restore settings from localStorage
+function restoreSettings() {
+  let storedData = localStorage.getItem(appSageSettingsString);
+  if (storedData) {
+    let settings = JSON.parse(storedData);
+
+    // Restore fonts: dynamically add any manually entered fonts to the <select> options
+    let fonts = document.getElementById('fonts');
+    if (fonts && settings.fonts) {
+      // Loop through the keys of the fonts object
+      Object.keys(settings.fonts).forEach(fontKey => {
+        let font = settings.fonts[fontKey]; // Get the font value from the object
+
+        // Check if the font already exists in the <select>
+        let optionExists = Array.from(fonts.options).some(option => option.value === font);
+        if (!optionExists) {
+          let newOption = document.createElement('option');
+          newOption.value = font;
+          newOption.textContent = font;
+          newOption.selected = true;
+          fonts.appendChild(newOption);
+        } else {
+          // Select existing option if it's already present
+          Array.from(fonts.options).forEach(option => {
+            if (option.value === font) {
+              option.selected = true;
+            }
+          });
+        }
+      });
+    }
+
+    // Restore colors
+    let colorsContainer = document.getElementById('colorsContainer');
+    if (colorsContainer && settings.colors) {
+      colorsContainer.innerHTML = ''; // Clear existing entries
+
+      Object.keys(settings.colors).forEach(colorName => {
+        let shades = settings.colors[colorName];
+
+        // Create color group container
+        let colorGroup = document.createElement('div');
+        colorGroup.classList.add('color-group', 'space-y-4');
+
+        // Color name input
+        colorGroup.innerHTML = `
+          <div class="color-name-section">
+            <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
+            <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${colorName}" placeholder="Enter color name (e.g., 'primary')">
+          </div>
+          <div class="shades-container space-y-2"></div>
+          <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
+        `;
+
+        let shadesContainer = colorGroup.querySelector('.shades-container');
+
+        // Add each shade to the color group
+        Object.keys(shades).forEach(shade => {
+          let shadeEntry = document.createElement('div');
+          shadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
+
+          shadeEntry.innerHTML = `
+            <div>
+              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+              <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <option value="50" ${shade === '50' ? 'selected' : ''}>50</option>
+                <option value="100" ${shade === '100' ? 'selected' : ''}>100</option>
+                <option value="200" ${shade === '200' ? 'selected' : ''}>200</option>
+                <option value="300" ${shade === '300' ? 'selected' : ''}>300</option>
+                <option value="400" ${shade === '400' ? 'selected' : ''}>400</option>
+                <option value="500" ${shade === '500' ? 'selected' : ''}>500</option>
+                <option value="600" ${shade === '600' ? 'selected' : ''}>600</option>
+                <option value="700" ${shade === '700' ? 'selected' : ''}>700</option>
+                <option value="800" ${shade === '800' ? 'selected' : ''}>800</option>
+                <option value="900" ${shade === '900' ? 'selected' : ''}>900</option>
+                <option value="950" ${shade === '950' ? 'selected' : ''}>950</option>
+              </select>
+            </div>
+            <div>
+              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+              <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]" value="${shades[shade]}">
+            </div>
+          `;
+
+          shadesContainer.appendChild(shadeEntry);
+        });
+
+        // Append the color group to the container
+        colorsContainer.appendChild(colorGroup);
+
+        // Add event listener to add shades dynamically to each color group
+        colorGroup.querySelector('.addShade').addEventListener('click', function () {
+          let newShadeEntry = document.createElement('div');
+          newShadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
+
+          newShadeEntry.innerHTML = `
+            <div>
+              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+              <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+                <option value="600">600</option>
+                <option value="700">700</option>
+                <option value="800">800</option>
+                <option value="900">900</option>
+                <option value="950">950</option>
+              </select>
+            </div>
+            <div>
+              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+              <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
+            </div>
+          `;
+
+          shadesContainer.appendChild(newShadeEntry);
+        });
+      });
+    }
+
+    // Restore advanced mode
+    if (fonts && colorsContainer) {
+      document.getElementById('advancedMode').checked = settings.advancedMode || false;
+    }
+  }
+}
+
+// Call restoreSettings when the page loads
+window.addEventListener('load', restoreSettings);
+window.addEventListener('load', mergeFontsIntoTailwindConfig);
+
+function appSageLocalNuke(){
+  localStorage.removeItem(appSageStorageString);
+  localStorage.removeItem(appSageSettingsString);
+  localStorage.removeItem(appSageTitleIdMapString);
+}

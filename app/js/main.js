@@ -11,7 +11,7 @@
 // DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-slate-900">${message}</p>
@@ -40,11 +40,24 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function () {
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
-    delete appSageStorage.pages[page_id];
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
+
+    if (appSageStorage.pages && appSageStorage.pages[page_id]) {
+      delete appSageStorage.pages[page_id];
+    }
+
+    for (let title in titleIdMap) {
+      if (titleIdMap[title] === page_id) {
+        delete titleIdMap[title];
+        break;
+      }
+    }
+
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
     element.remove();
+
+    console.log(`Page with ID ${page_id} has been deleted successfully.`);
   });
 } // DATA OUT: null
-
-// This used to be in an inline script on the page.

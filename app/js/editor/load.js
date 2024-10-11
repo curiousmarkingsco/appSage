@@ -20,18 +20,31 @@ function loadChanges(json) {
     element.innerHTML = item.content;
     pageContainer.appendChild(element);
 
-    if (element.classList.contains('grid')) {
+    if (element.classList.contains('pagegrid')) {
       restoreGridCapabilities(element);
     }
+
+    if (element.classList.contains('maincontainer')) {
+      restoreContainerCapabilities(element);
+    }
+  });
+
+  pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
   });
 
   const grid = document.querySelector('#page .grid');
   if (grid) {
     addGridOptions(grid);
   }
+
+  document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
+    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
+  });
 } // DATA OUT: null
 
-// This function makes it so that saved elements can be edited once more.
+// This function makes it so that saved elements related to grids can be edited once more.
 // DATA IN: HTML Element, <div>
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
@@ -46,3 +59,34 @@ function restoreGridCapabilities(grid) {
     });
   });
 } // DATA OUT: null
+
+// This function makes it so that saved elements related to container box can be edited once more.
+// DATA IN: HTML Element, <div>
+function restoreContainerCapabilities(container) {
+  const addContentButton = createAddContentButton(container);
+  container.appendChild(addContentButton);
+  const addContainerButton = createAddContainerButton(container);
+  container.appendChild(addContainerButton);
+  if (advancedMode === true){
+    const addHtmlButton = createAddHtmlButton(container);
+    container.appendChild(addHtmlButton);
+  }
+  enableEditContainerOnClick(container);
+  Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+    const addChildContentButton = createAddContentButton(contentContainer);
+    contentContainer.appendChild(addChildContentButton);
+    const addChildContainerButton = createAddContainerButton(contentContainer);
+    contentContainer.appendChild(addChildContainerButton);
+    if (advancedMode === true){
+      const addChildHtmlButton = createAddHtmlButton(contentContainer);
+      contentContainer.appendChild(addChildHtmlButton);
+    }
+    enableEditContainerOnClick(contentContainer);
+  });
+  Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    enableEditContentOnClick(contentContainer);
+    observeClassManipulation(contentContainer);
+  });
+} // DATA OUT: null
+
+

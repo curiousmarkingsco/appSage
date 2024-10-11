@@ -52,25 +52,35 @@ async function loadPageBlobs(config) {
 // expected '#page' div, metadata is stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
-function loadPageMetadata(page_id, element) {
+function loadPageMetadata(page_id) {
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = storedData.pages[page_id].settings;
-  if (settings) {
-    const metaTags = settings.metaTags;
-    if (metaTags) {
-      if (element) {
-        return metaTags;
-      } else {
-        const element = document.querySelector('head');
+  const metaTags = storedData.pages[page_id].settings.metaTags;
+  const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  if (metaTags && metaTags !== '') {
+    const element = document.querySelector('head');
 
-        metaTags.forEach(tag => {
-          const metaTag = document.createElement('meta');
-          metaTag.setAttribute(tag.type, tag.name);
-          metaTag.setAttribute('content', tag.content);
-          element.appendChild(metaTag);
-        });
+    metaTags.forEach(tag => {
+      if (tag.type === 'link') {
+        const metaTag = document.createElement('link');
+        metaTag.setAttribute('href', tag.content);
+        metaTag.setAttribute('rel', tag.name);
+        element.appendChild(metaTag);
+      } else {
+        const metaTag = document.createElement('meta');
+        metaTag.setAttribute(tag.type, tag.name);
+        metaTag.setAttribute('content', tag.content);
+        element.appendChild(metaTag);
       }
-    }
+    });
+  }
+
+  if (fontSettings) {
+    const element = document.querySelector('head');
+    let fonts = Object.values(fontSettings.fonts).join('&family=');
+    const metaTag = document.createElement('link');
+    metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
+    metaTag.setAttribute('rel', 'stylesheet');
+    element.appendChild(metaTag);
   }
 } // DATA OUT: String || null
 
@@ -118,3 +128,34 @@ function loadPageSettings(config, view = false) {
     console.log('Settings for the specified page do not exist.');
   }
 } // DATA OUT: null
+
+function addMetasToHead() {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config') || params.get('page');
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  let settings;
+
+  if (storedData && storedData.pages && storedData.pages[config]){
+    settings = storedData.pages[config].settings;
+    const metaTags = settings.metaTags;
+    if (typeof metaTags !== 'undefined') {
+      const headTag = document.getElementsByTagName('head')[0];
+    
+      if (metaTags !== '') metaTags.forEach(tag => {
+        if (tag.type === 'link') {
+          const metatag = document.createElement('link');
+          metatag.setAttribute('rel', tag.name);
+          metatag.setAttribute('href', tag.content);
+          headTag.appendChild(metatag);
+        } else {
+          const metatag = document.createElement('meta');
+          metatag.setAttribute(tag.type, tag.name);
+          metatag.setAttribute('content', tag.content);
+          headTag.appendChild(metatag);
+        }
+      });
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', addMetasToHead);
