@@ -316,6 +316,8 @@ function openDatabase() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
       db.createObjectStore('mediaStore', { keyPath: 'id' });
+      db.createObjectStore('mediaStore', { keyPath: 'blob' });
+      db.createObjectStore('mediaStore', { keyPath: 'url' });
     };
 
     request.onsuccess = (event) => {
@@ -332,7 +334,8 @@ async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
   const transaction = db.transaction(['mediaStore'], 'readwrite');
   const store = transaction.objectStore('mediaStore');
-  const mediaEntry = { id: mediaId, mediaBlob };
+  const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
+  const mediaEntry = { id: mediaId, blob: mediaBlob, url: mediaUrl };
   store.put(mediaEntry);
 }
 
@@ -353,8 +356,8 @@ function displayMediaFromIndexedDB(contentContainer) {
   if (mediaId) {
     getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
       if (mediaEntry) {
-        const mediaUrl = URL.createObjectURL(mediaEntry.mediaBlob);
         const mediaElement = contentContainer.querySelector('img, video, audio');
+        const mediaUrl = mediaEntry.url;
         if (mediaElement) {
           mediaElement.src = mediaUrl;
         } else {
