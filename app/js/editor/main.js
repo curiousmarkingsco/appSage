@@ -11,13 +11,10 @@
 // functions that show up in the sidebar.
 // DATA IN: null
 document.addEventListener('DOMContentLoaded', function () {
-
   const editPageButton = document.getElementById('editPageSettings');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
   const appSageSettingsButton = document.getElementById('appSageSettings');
-  const settingsSidebar = document.getElementById('settingsSidebar');
-  const sidebar = document.getElementById('sidebar');
 
   // Show/hide the drop-up menu
   editPageButton.addEventListener('click', function (event) {
@@ -43,15 +40,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Handle appSage Settings button click
   appSageSettingsButton.addEventListener('click', function () {
-    settingsSidebar.classList.remove('hidden');
-    sidebar.classList.add('hidden');
-    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+    showSettingsModal();
   });
 
   const addGridButton = document.getElementById('addGrid');
   addGridButton.addEventListener('click', function () {
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
@@ -60,18 +55,41 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    highlightEditingElement(gridContainer);
+    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
+    highlightEditingElement(gridContainer);
   });
 
-  const addHtmlButton = document.getElementById('addHtml');
-  addHtmlButton.addEventListener('click', function () {
-    showHtmlModal(() => { });
+  const addContainerButton = document.getElementById('addContainer');
+  addContainerButton.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
+    const page = document.getElementById('page');
+    page.appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    addIdAndClassToElements();
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
   });
 
   // Mouse enter event
@@ -88,6 +106,37 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }, true);
 }); // DATA OUT: null
+
+// Function to save metadata to localStorage, ensuring no duplicate tags
+function saveMetadataToLocalStorage(page_id, newMetaTags) {
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const settings = JSON.parse(storedData.pages[page_id].settings);
+
+  if (!settings.metaTags) {
+    settings.metaTags = [];
+  }
+
+  // Helper function to check if the meta tag already exists
+  function tagExists(newTag) {
+    return settings.metaTags.some(tag => tag.type === newTag.type && tag.name === newTag.name);
+  }
+
+  // Iterate over the newMetaTags and add them if they don't already exist
+  newMetaTags.forEach(newTag => {
+    if (!tagExists(newTag)) {
+      settings.metaTags.push(newTag); // Add new meta tag only if it doesn't exist
+    } else {
+      console.warn(`Meta tag with type: "${newTag.type}" and name: "${newTag.name}" already exists.`);
+    }
+  });
+
+  // Save updated settings back to localStorage
+  storedData.pages[page_id].settings = JSON.stringify(settings);
+  localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
+
+  console.log('Metadata saved successfully!');
+}
+
 
 // This function is for adding to the sidebar all the options available for
 // styles that impact the entire page, or metadata like page titles, og:image
@@ -165,36 +214,30 @@ function updateTooltip(e, show) {
 // the page/page editor with the markup. Or... do we just ignore the fact that
 // it isn't Tailwind-y and let them edit it anyway? In which case, nothing to do here.
 // DATA IN: Optional function()
-function showHtmlModal(onConfirm = null) {
+function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
           <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
-          <div class="flex justify-between mt-4">
-              <button id="confirmHtml" class="bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded">Add HTML</button>
-              <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+          <div class="flex justify-between mt-4" id="btnContainer">
+            <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
 
   document.body.appendChild(modal);
 
-  document.getElementById('confirmHtml').addEventListener('click', function () {
+  const btnContainer = document.getElementById('btnContainer');
+  const confButton = document.createElement('button');
+  confButton.className = 'bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded';
+  confButton.textContent = 'Add HTML';
+  btnContainer.prepend(confButton);
+  confButton.addEventListener('click', function () {
     if (onConfirm) onConfirm();
-    const page = document.getElementById('page');
-    const content = document.getElementById('tailwindHtml');
-    const parentElement = document.createElement('div');
-    parentElement.classList = 'pagegrid grid grid-cols-1 ugc-keep p-4'
-    page.appendChild(parentElement);
-    const element = document.createElement('div');
-    element.classList = 'pagecolumn col-span-1 p-4'
-    parentElement.appendChild(element);
-    const childElement = document.createElement('div');
-    childElement.classList = 'content-container pagecontent htmlContent p-4'
-    childElement.innerHTML = content.value;
-    element.appendChild(childElement);
+    const content = document.getElementById('tailwindHtml').value;
+    convertTailwindHtml(content, element);
     document.body.removeChild(modal);
   });
 
@@ -203,14 +246,107 @@ function showHtmlModal(onConfirm = null) {
   });
 } // DATA OUT: null
 
+function convertTailwindHtml(content, element) {
+  // Create a container to hold the pasted content
+  const parentElement = document.createElement('div');
+  parentElement.classList = 'pastedHtmlContainer pagecontainer';
+  parentElement.innerHTML = content;
+  element.appendChild(parentElement);
+
+  wrapElements(parentElement);
+}
+
+function wrapElements(container) {
+  const children = Array.from(container.childNodes);
+
+  const structureTags = ['ARTICLE', 'SECTION', 'DIV', 'NAV', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'];
+
+  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE', 
+    'IMG', 'VIDEO', 'AUDIO', 'FIGURE', 'IFRAME',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
+    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS', 
+    'PROGRESS', 'METER', 'DL', 'DT', 'DD'];
+
+  const tableTags = ['TH', 'TD', 'COL', 'COLGROUP'];
+
+  children.forEach((child) => {
+    if (child.nodeType === Node.ELEMENT_NODE) {
+      // Check if child is part of a grid structure by looking at its immediate parent
+      const isInGrid = container.classList.contains('grid');
+
+      // Check if the element is holding content children
+      const hasContentChildren = Array.from(child.children).some(el => 
+        contentTags.includes(el.tagName) || tableTags.includes(el.tagName)
+      );
+
+      // Apply grid-related classes
+      if (child.classList.contains('grid')) {
+        child.classList.add('pagegrid');
+      }
+
+      // If child is inside a grid, apply `pagecolumn` class
+      if (isInGrid) {
+        child.classList.add('pagecolumn');
+      }
+
+      // Handle structured elements like `th`, `td`, etc.
+      if (tableTags.includes(child.tagName)) {
+        child.classList.add('pagecontent', 'content-container');
+        const wrapper = document.createElement('div');
+        // Wrap the internal HTML content of `th`, `td`, etc.
+        wrapper.innerHTML = child.innerHTML;
+        child.innerHTML = ''; // Clear original content
+        child.appendChild(wrapper);
+        // Enable editing and observation for the element
+        enableEditContentOnClick(child);
+        observeClassManipulation(child);
+      } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
+        // For divs with single content elements, add classes directly without wrapping
+        child.classList.add('pagecontent', 'content-container');
+      } else if (contentTags.includes(child.tagName)) {
+        // Wrap content elements in a div with `pagecontent content-container` classes
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('pagecontent', 'content-container');
+        wrapper.appendChild(child.cloneNode(true));
+        container.replaceChild(wrapper, child);
+
+        // Enable editing and observation for the wrapper
+        enableEditContentOnClick(wrapper);
+        observeClassManipulation(wrapper);
+
+        // Recursively apply wrapping to the children of the new wrapper
+        wrapElements(wrapper.firstChild);
+      } else if (hasContentChildren) {
+        // If the element houses content, add `pagecontainer` class but don't wrap
+        child.classList.add('pagecontainer');
+
+        // Recursively apply wrapping to children
+        wrapElements(child);
+      } else {
+        // Recursively handle child elements for non-wrapped cases
+        child.classList.add('pagecontainer');
+        wrapElements(child);
+      }
+    }
+  });
+}
+
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
 // made from the sidebar.
 // DATA IN: null
 function highlightEditingElement(element) {
   removeEditingHighlights(); // Clear existing highlights
+  document.getElementById('page').querySelectorAll('.highlightButton').forEach(btn => {
+    btn.classList.add('hidden');
+    btn.classList.remove('block');
+  });
   if (element) {
     element.id = 'editing-highlight'; // Highlight the current element
+    element.querySelectorAll(':scope > .highlightButton').forEach(btn => {
+      btn.classList.add('block');
+      btn.classList.remove('hidden');
+    });
   }
 } // DATA OUT: null
 
@@ -262,7 +398,11 @@ function copyMetadata(element) {
   let metaTagsString = '';
 
   metaTags.forEach(tag => {
-    metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    if (tag.type === 'link') {
+      metaTagsString += `<link rel="${tag.name}" href="${tag.content}">`;
+    } else {
+      metaTagsString += `<meta ${tag.type}="${tag.name}" content="${tag.content}">`;
+    }
   });
 
   copyText(metaTagsString, element);
@@ -292,9 +432,14 @@ function resetCopyPageButton(element) {
 
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
+// This function creates the form input for changing the page's title.
+// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
+
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
   titleLabel.setAttribute('for', 'page-title');
@@ -332,30 +477,33 @@ function addEditablePageTitle(container, placement) {
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
-  const currentTitle = params.get('config');
+  const currentPageId = params.get('config');
 
-  // Retrieve the pages object from localStorage
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString));
+  // Retrieve the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
-  // Check if the currentTitle exists in the pages object
-  if (appSageStorage.pages[currentTitle]) {
-    // Clone the data from the current title
-    const pageData = appSageStorage.pages[currentTitle];
+  // Find the current title using the page ID
+  let currentTitle = null;
+  for (let [title, id] of Object.entries(titleIdMap)) {
+    if (id === currentPageId) {
+      currentTitle = title;
+      break;
+    }
+  }
 
-    // Assign the data to the new title
-    appSageStorage.pages[newTitle] = pageData;
+  if (currentTitle) {
+    // Update the mapping with the new title
+    delete titleIdMap[currentTitle];
+    titleIdMap[newTitle] = currentPageId;
 
-    // Delete the current title entry
-    delete appSageStorage.pages[currentTitle];
+    // Save the updated mapping back to localStorage
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
 
-    // Save the updated pages object back to localStorage
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
-    // Update the URL parameters
-    params.set('config', newTitle);
+    // Update the URL parameters (the page ID remains the same)
+    params.set('config', currentPageId);
     window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   } else {
-    console.error(`Page with title "${currentTitle}" does not exist.`);
+    console.error(`Page with ID "${currentPageId}" does not exist.`);
   }
 } // DATA OUT: null
 
@@ -383,12 +531,12 @@ function addEditableMetadata(container, placement) {
   const page_id = params.get('config');
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48'
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
   const settings = storedData.pages[page_id].settings;
-  if (settings) {
+  if (typeof settings.length !== 'undefined') {
     const metaTags = JSON.parse(settings).metaTags;
 
     if (metaTags) {
@@ -397,6 +545,8 @@ function addEditableMetadata(container, placement) {
       });
     }
   }
+
+
 
   // Add initial empty metadata pair
   function addMetadataPair(meta_type, meta_name, meta_content) {
@@ -413,8 +563,13 @@ function addEditableMetadata(container, placement) {
     optionProperty.value = 'property';
     optionName.selected = 'property' === meta_type;
     optionProperty.text = 'Property';
+    const optionLink = document.createElement('option');
+    optionLink.value = 'link';
+    optionLink.selected = 'link' === meta_type;
+    optionLink.text = 'Link';
     select.appendChild(optionName);
     select.appendChild(optionProperty);
+    select.appendChild(optionLink);
 
     const nameInput = document.createElement('input');
     nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -448,12 +603,7 @@ function addEditableMetadata(container, placement) {
 
   document.querySelectorAll('.metadata').forEach(input => {
     input.addEventListener('change', function () {
-      const params = new URLSearchParams(window.location.search);
-      const page_id = params.get('config');
-      const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-      const settings = JSON.parse(storedData.pages[page_id].settings);
       const metaTags = [];
-
       document.querySelectorAll('.metadata-pair').forEach(pair => {
         const type = pair.querySelector('.meta-type').value;
         const name = pair.querySelector('.meta-name').value;
@@ -463,10 +613,7 @@ function addEditableMetadata(container, placement) {
         }
       });
 
-      settings.metaTags = metaTags;
-      storedData.pages[page_id].settings = JSON.stringify(settings);
-      localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
-      console.log('Metadata saved successfully!');
+      saveMetadataToLocalStorage(page_id, metaTags);
     });
   });
 } // DATA OUT: null
@@ -475,15 +622,17 @@ function addEditableMetadata(container, placement) {
 document.addEventListener('DOMContentLoaded', function () {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  document.querySelector('title').textContent = `Editing: ${config} | appSage`;
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
   if (config) {
     const json = loadPage(config);
-    if (json) {
+    if (json && json.length > 0) {
       loadChanges(json);
       loadPageSettings(config);
       loadPageBlobs(config);
-      loadPageMetadata(config)
+      loadPageMetadata(config);
     }
     setupAutoSave(config);
   } else {
@@ -493,14 +642,66 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function createNewConfigurationFile() {
-  let filename = 'Untitled';
+  const pageId = generateAlphanumericId();
+  let title = 'Untitled';
   let counter = 1;
-  while (loadPage(filename)) {
-    filename = `Untitled-${counter}`;
+  // Load or create the title-ID mapping from localStorage
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  while (title in titleIdMap) {
+    title = `Untitled-${counter}`;
     counter++;
   }
+  // Save the mapping of title to ID
+  titleIdMap[title] = pageId;
+  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  savePage(filename, '[]'); // Initialize with an empty array
-  window.location.search = `?config=${filename}`; // Redirect with the new file as a parameter
-  return filename;
+  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  return pageId;
+}
+
+function generateAlphanumericId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+function addIdAndClassToElements() {
+  const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
+
+  // Helper function to generate a random alphanumeric string of a given length
+  function generateRandomId(length = 8) {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+  }
+
+  // Function to ensure the generated ID is unique on the page
+  function generateUniqueId() {
+    let the_id;
+    do {
+      the_id = generateRandomId();
+    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+    return the_id;
+  }
+
+  // Find elements that match the specified classes
+  const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
+
+  elements.forEach(element => {
+    // Check if the element already has a class like 'group/some_id'
+    const hasGroupClass = Array.from(element.classList).some(cls => cls.startsWith('group/'));
+
+    if (!hasGroupClass) { // Only add ID and class if no group/ID class exists
+      const newId = generateUniqueId();
+      element.classList.add(`group/[${newId}]`);
+    }
+  });
 }

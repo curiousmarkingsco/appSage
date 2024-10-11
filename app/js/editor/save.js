@@ -69,9 +69,10 @@ function savePage(pageId, data) {
     appSageStorage.pages = {};
   }
   if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+    appSageStorage.pages[pageId] = { page_data: [], title: 'Untitled', settings: {}, blobs: {} };
   }
   appSageStorage.pages[pageId].page_data = data;
+
   localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 

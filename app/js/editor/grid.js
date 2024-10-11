@@ -19,7 +19,10 @@ function addGridOptions(grid) {
     moveButtons.id = 'moveGridButtons'
     sidebar.prepend(moveButtons);
 
-    const gridCount = document.getElementById('page').querySelectorAll('.grid').length
+    let gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+    const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+    const flexCount = document.getElementById('page').querySelectorAll('.pageflex').length
+    gridCount = gridCount + contentCount + flexCount;
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'up'));
     moveButtons.appendChild(addRemoveGridButton(grid, sidebar));
     if (gridCount > 1) moveButtons.appendChild(createVerticalMoveGridButton(grid, 'down'));
@@ -31,6 +34,7 @@ function addGridOptions(grid) {
 
     // Standard editing options
     addEditableBorders(sidebar, grid);
+    addEditableOpacity(sidebar, grid);
     addEditableBackgroundColor(sidebar, grid);
     addEditableBackgroundImage(sidebar, grid);
     addEditableBackgroundImageURL(sidebar, grid);
@@ -38,6 +42,9 @@ function addGridOptions(grid) {
     addEditableMarginAndPadding(sidebar, grid);
     addEditableDimensions(sidebar, grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
+    addManualClassEditor(sidebar, grid);
+    addManualCssEditor(sidebar, grid);
   }
 } // DATA OUT: null
 
@@ -81,13 +88,13 @@ function createVerticalMoveGridButton(grid, direction) {
 } // DATA OUT: HTML Element, <button>
 
 // This function is intended to present the sidebar editing options when a grid
-// is clicked. Only the outer edges of the grid are clickable for this to work
-// due to columns and content overlapping it.
+// is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditGridOnClick(grid) {
   grid.addEventListener('click', function (event) {
     event.stopPropagation();
     addGridOptions(grid);
     highlightEditingElement(grid);
+    addIdAndClassToElements();
   });
 } // DATA OUT: null

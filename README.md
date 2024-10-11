@@ -52,6 +52,14 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 2. Make page building accessible to laymens (reduce skill barriers)
 3. Make page building easy and fun (reduce emotional barriers)
 
+## Daily Setup
+
+If you find  yourself in a situation where you want to easily clear your localStorage, here's a quick and easy thing to copy/paste to your JS console:
+
+```js
+appSageLocalNuke();
+```
+
 ## Using appSage as an integration
 
 ### Make your storage unique

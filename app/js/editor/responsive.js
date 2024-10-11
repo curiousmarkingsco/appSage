@@ -69,7 +69,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
         control = document.createElement('select');
         container.appendChild(label);
         container.appendChild(control);
-        handleSelect(bp, grid, control, options, cssClassBase);
+        handleSelect(bp, grid, control, options, cssClassBase, labelPrefix);
         control.classList.add('col-span-5');
         break;
       default:
@@ -157,7 +157,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
 function getCurrentStyle(bp, options, cssClassBase, grid) {
   if (options) {
     return options.find(option => {
-      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
+      const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}${cssClassBase !== '' ? '-': ''}${option}`;
       return grid.classList.contains(className);
     }) || '';
   }
@@ -171,7 +171,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
 // DATA IN: ['String:Breakpoint class name', 'String', 'String']
 function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
-  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Size' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
+  let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Family' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
   let advanced = false;
   if (labelPrefix === 'class' || labelPrefix === 'css') {
     advanced = true;
@@ -183,7 +183,7 @@ function createLabel(bp, labelPrefix, forAttr) {
   } else {
     keepLabel = labelPrefix.replace(' (t)', '');
     keepLabel = labelPrefix.replace('Minimum ', '');
-    keepLabel = keepLabel.includes('Font Size') ? 'Font Styles' : keepLabel;
+    keepLabel = keepLabel.includes('Font Family') ? 'Font Styles' : keepLabel;
     keepLabel = keepLabel.includes('Border Width') ? 'Border Width & Radius' : keepLabel;
     keepLabel = keepLabel.includes('Gap') ? 'Gaps Between Columns' : keepLabel;
     const label = document.createElement('label');
@@ -269,6 +269,8 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
     extraInfo = tooltips['padding']
   } else if (labelPrefix.includes('Margin')) {
     extraInfo = tooltips['margin']
+  } else if (labelPrefix.includes('Opacity')) {
+    extraInfo = tooltips['opacity']
   } else {
     const attribute = labelPrefix.replace('Border ', '').replace('Font ', '').toLowerCase();
     extraInfo = `Change the <span class="${attribute === 'size' ? 'text-base' : ''}${attribute === 'weight' ? 'font-bold' : ''}">${attribute}</span>${borderOption ? ' of this element\'s border' : ''}${fontSize ? ' of your text' : ''}${attribute === 'weight' ? '<br>Nothing happening when making weight a selection? Not all fonts support these options' : ''}`;
@@ -317,7 +319,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     return;
   }
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
-  const bgIcon = (labelPrefix === 'Background Position');
+  const bgIcon = (labelPrefix === 'Background Position' || labelPrefix === 'Background Repeat');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
   if (swatchboard) {
     const toggleButton = document.createElement('button')
@@ -355,7 +357,11 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${labelPrefix === 'Background Repeat' ? 'p-1' : (bgIcon ? 'p-0' : 'p-2')} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-slate-100 hover:bg-slate-200 ' : (swatchboard ? 'border-2 hover:border-sky-200 ' : 'bg-slate-200 hover:bg-slate-300 ')}${(bgIcon && option !== 'reset') ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
+      iconButton.classList.remove('bg-slate-200');
+      iconButton.classList.add('bg-sky-200');
+    }
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
     const iconTarget = appSageEditorIcons[iconTextCandidate1] || appSageEditorIcons[iconTextCandidate2] || appSageEditorIcons[option];
@@ -365,6 +371,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     } else if (labelPrefix === 'Border Style') {
       iconButton.setAttribute('data-extra-info', option === 'none' ? tooltips['border-style-none'] : tooltips['border-style-other'] + option + ' line');
     } else if (labelPrefix === 'Background Size') {
+      iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
+    } else if (labelPrefix === 'Background Position') {
+      iconButton.setAttribute('data-extra-info', option === 'reset' ? tooltips['reset'] : `${tooltips['background-position']} ${option + '.'}`);
+    } else if (labelPrefix === 'Background Repeat') {
       iconButton.setAttribute('data-extra-info', option === 'cover' ? tooltips['background-size-cover'] : tooltips['background-size-contain']);
     } else if (swatchboard) {
       iconButton.setAttribute('data-extra-info', tooltips['swatchboard'] + `${cssClassBase}-${option}`);
@@ -384,7 +394,8 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       options.forEach(opt => {
         grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
-          if (!swatchboard) b.classList.remove('bg-sky-200')
+          if (!swatchboard) b.classList.remove('bg-sky-200');
+          if (!swatchboard) b.classList.add('bg-slate-200');
           if (swatchboard) b.classList.remove('border-sky-300');
         });
         if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
@@ -393,6 +404,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
         if (swatchboard) iconButton.classList.add('border-sky-300');
         if (!swatchboard) iconButton.classList.add('bg-sky-200');
+        if (!swatchboard) iconButton.classList.remove('bg-slate-200');
         // column justification requires flex to work as expected
         if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
@@ -434,7 +446,8 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   const checkbox = document.createElement('input')
   checkbox.type = 'checkbox';
   checkbox.className = 'rounded py-2 px-3 h-full w-full appearance-none checked:bg-sky-200';
-  checkbox.checked = getCurrentStyle(bp, options, cssClassBase, grid) === cssClassBase;
+  // In this particular case, cssClassBase needs to not get passed due to Tailwind class syntax
+  checkbox.checked = getCurrentStyle(bp, options, '', grid) === cssClassBase;
   checkbox.onchange = () => {
     const className = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}`;
     grid.classList.toggle(className);
@@ -446,18 +459,25 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
 // This function messily handles all the nuance thus far encountered from
 // supporting select elements for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
-function handleSelect(bp, grid, control, options, cssClassBase) {
+function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
   if (!options) {
     console.error('No options provided for select input type.');
     return;
   }
   control.className = 'shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   options.forEach(option => {
-    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`;
     const optionElement = document.createElement('option');
+    let option_key = null;
+    if (labelPrefix === 'Font Family') {
+      option_key = option.replace(/\+/g, '').toLowerCase();
+      optionElement.textContent = option.replace(/\+/g, ' ');
+      optionElement.selected = getCurrentStyle(bp, [option_key], cssClassBase, grid) === option_key;
+    } else {
+      optionElement.textContent = option;
+      optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
+    }
+    const value = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option_key ? option_key : option}`;
     optionElement.value = value;
-    optionElement.textContent = option;
-    optionElement.selected = getCurrentStyle(bp, options, cssClassBase, grid) === option;
     control.appendChild(optionElement);
   });
   control.onchange = () => {
@@ -526,16 +546,8 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
 // Function to handle the dropdown for selecting placeholder images
 function addPlaceholderDropdown(fileInput, grid) {
   const placeholderDropdown = document.createElement('select');
-  placeholderDropdown.className = 'background-file-input';
-  placeholderDropdown.style.width = '100%';
-  placeholderDropdown.classList.add('col-span-5');
-  placeholderDropdown.style.padding = '8px';
-  placeholderDropdown.style.border = '1px solid #ccc';
-  placeholderDropdown.style.borderRadius = '4px';
-  placeholderDropdown.style.marginTop = '8px';
-  placeholderDropdown.style.boxSizing = 'border-box';
+  placeholderDropdown.className = 'background-file-input shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline col-span-5';
 
-  fileInput.parentElement.style.width = '100%';
   fileInput.parentElement.appendChild(placeholderDropdown);
 
   const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {

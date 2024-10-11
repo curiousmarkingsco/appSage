@@ -145,9 +145,9 @@ function addEditableBackgroundImage(sidebar, grid) {
 // background images and the styles applicable to them.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addEditableBackgroundFeatures(sidebar, grid) {
-  const bgSizeOptions = ['cover', 'contain'];
-  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right'];
-  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
+  const bgSizeOptions = ['cover', 'contain', 'reset'];
+  const bgPositionOptions = ['center', 'top', 'bottom', 'left', 'right', 'reset'];
+  const bgRepeatOptions = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y', 'reset'];
 
   // Function to update background image size
   function addBackgroundSizeOptions() {
@@ -155,21 +155,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgSizeOptions, 'icon-select');
-
-    // Add Reset Button for Background Size
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetSizeElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Size`, `${bp}-bg-size`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetSizeElement);
-
-      // Add the handleReset call for background size
-      handleReset(bp, grid, ['cover', 'contain'], 'bg', resetSizeElement);
-      resetSizeElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background position
@@ -178,21 +163,6 @@ function addEditableBackgroundFeatures(sidebar, grid) {
     const cssClassBase = 'bg';
 
     addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, bgPositionOptions, 'icon-select');
-
-    // Add Reset Button for Background Position
-    const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-    breakpoints.forEach(bp => {
-      const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-      const resetPositionElement = document.createElement('div');
-      const label = createLabel(bp, `Reset Background Position`, `${bp}-bg-position`);
-      label.className = 'hidden';
-      container.appendChild(label);
-      container.appendChild(resetPositionElement);
-
-      // Add the handleReset call for background position
-      handleReset(bp, grid, bgPositionOptions, 'bg', resetPositionElement);
-      resetPositionElement.classList.add('col-span-1');
-    });
   }
 
   // Function to update background repeat
@@ -212,30 +182,31 @@ function addEditableBackgroundFeatures(sidebar, grid) {
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
+function addEditableOpacity(sidebar, element) {
+  const labelPrefix = 'Opacity';
+  const cssClassBase = 'opacity';
+  const opacityOptions = ['0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
+
+  addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, opacityOptions, 'single-icon-select');
+}// DATA OUT: null
+
+// This funciton is dedicated to adding the editing elements relevant to the
+// suite of expected editing options for stylizing text and its placement.
+// DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
 function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
+  let fontOptions = ['sans-serif', 'serif']
+  if (localStorage.getItem(appSageSettingsString)) {
+    fontOptions = Object.values(JSON.parse(localStorage.getItem(appSageSettingsString)).fonts).map(font => font);
+  }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
   const fontStyleOptions = ['italic', 'not-italic'];
   const fontUnderlineOptions = ['underline', 'not-underline'];
 
   addDeviceTargetedOptions(sidebar, element, 'Text Color', 'text', textColorOptions, 'icon-select');
-  // Add Reset Button for Text Color
-  const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl', '2xl'];
-  breakpoints.forEach(bp => {
-    const container = sidebar.querySelector(`#mobileTabContent .tab-content-${bp}`);
-    const resetTextColorElement = document.createElement('div');
-    const label = createLabel(bp, `Reset Text Color`, `${bp}-text-color`);
-    label.className = 'hidden';
-    container.appendChild(label);
-    container.appendChild(resetTextColorElement);
-
-    // Add the handleReset call for text color
-    handleReset(bp, element, textColorOptions, 'text', resetTextColorElement);
-    resetTextColorElement.classList.add('col-span-1');
-  });
-
+  addDeviceTargetedOptions(sidebar, element, 'Font Family', 'font', fontOptions, 'select');
   addDeviceTargetedOptions(sidebar, element, 'Font Size', 'text', textSizeOptions, 'single-icon-select');
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'italic', fontStyleOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Font Weight', 'font', fontWeightOptions, 'single-icon-select');
@@ -247,7 +218,7 @@ function addTextOptions(sidebar, element) {
 // This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
   }
@@ -255,7 +226,7 @@ function addManualHtmlElement(sidebar, element) {
 
 function addManualClassEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
   }
@@ -263,7 +234,7 @@ function addManualClassEditor(sidebar, element) {
 
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
-    if (JSON.parse(localStorage.appSageSettings).advancedMode) {
+    if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
     }
   }
