@@ -298,6 +298,7 @@ function wrapElements(container) {
         child.innerHTML = ''; // Clear original content
         child.appendChild(wrapper);
         // Enable editing and observation for the element
+        displayMediaFromIndexedDB(child.firstElementChild);
         enableEditContentOnClick(child);
         observeClassManipulation(child);
       } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
@@ -311,6 +312,7 @@ function wrapElements(container) {
         container.replaceChild(wrapper, child);
 
         // Enable editing and observation for the wrapper
+        displayMediaFromIndexedDB(wrapper.firstElementChild);
         enableEditContentOnClick(wrapper);
         observeClassManipulation(wrapper);
 

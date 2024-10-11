@@ -216,7 +216,8 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
       grid.className = grid.className.replace(classRegex, '').trim() + ` ${newValue}`;
     } else if (labelPrefix === 'Background Image File') {
       grid.style.backgroundImage = '';
-      generateMediaSrc(event, grid, true);
+      generateMediaUrl(event, grid, true);
+      displayMediaFromIndexedDB(grid);
     }
   };
 } // DATA OUT: null
