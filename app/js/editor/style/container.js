@@ -15,7 +15,7 @@
 function addContainerAlignmentOptions(sidebar, container) {
   const justifyContentOptions = ['start', 'end', 'center', 'stretch', 'between', 'around', 'evenly', 'reset'];
   const alignItemsOptions = ['start', 'end', 'center', 'baseline', 'stretch', 'reset'];
-  const alignSelfOptions = ['start', 'end', 'center', 'stretch', 'baseline', 'reset'];
+  const alignSelfOptions = ['start', 'end', 'center', 'stretch', 'reset'];
 
   // Justify Content - See: https://tailwindcss.com/docs/justify-content
   addDeviceTargetedOptions(sidebar, container, 'Justify Content', 'justify', justifyContentOptions, 'icon-select');
