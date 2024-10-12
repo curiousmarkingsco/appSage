@@ -20,10 +20,12 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
   var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
+  var appSageDatabaseString = `${customAppSageStorage}Database`;
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
-  var appSageTitleIdMapString = 'appSageTitleIdMap'
+  var appSageTitleIdMapString = 'appSageTitleIdMap';
+  var appSageDatabaseString = 'appSageDatabase';
 }
 
 var advancedMode = false;
