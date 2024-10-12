@@ -307,7 +307,7 @@ function generateMediaUrl(event, contentContainer, background) {
 // Helper functions for IndexedDB storage
 function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('mediaDatabase', 1);
+    const request = indexedDB.open(appSageDatabaseString, 1);
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
