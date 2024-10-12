@@ -116,7 +116,25 @@ var tooltips = {
   'padding': "Create space between the edge of the box and content inside of it.",
   'margin': "Create space between the edge of the box and content inside of it.",
   'opacity': "Change how transparent the element is. Careful! This changes the opacity of everything inside the element.",
-  'reset': "Reset to default settings."
+  'reset': "Reset to default settings.",
+  'items-start': "Shrink inside boxes toward the beginning of the box.",
+  'items-end': "Shrink inside boxes toward the end of the box.",
+  'items-center': "Shrink inside boxes toward the middle of the box.",
+  'items-stretch': "Stretch inside boxes along the whole of the box.",
+  'items-reset': "Reset items' alignment rules.",
+  'self-start': "Shrink this box toward the top of the box containing it.",
+  'self-end': "Shrink this box toward the bottom of the box containing it.",
+  'self-center': "Shrink this box toward the middle of the box containing it.",
+  'self-stretch': "Stretch this box toward along the whole of the box containing it.",
+  'self-reset': "Reset self alignment rules.",
+  'justify-start': "Move all items toward the beginning of the box.",
+  'justify-end': "Move all items toward the end of the box.",
+  'justify-center': "Move all items toward the middle of the box.",
+  'justify-stretch': "Stretch all items to fill along the whole of the box.",
+  'justify-between': "Move all items to be evenly spaced from the beginning to end of the box.",
+  'justify-around': "Move all items to have an equal amount of space around them.",
+  'justify-evenly': "Move all items to be evenly spaced from the edge of the box and each other.",
+  'justify-reset': "Reset justification rules."
 }
 
 // global variable
