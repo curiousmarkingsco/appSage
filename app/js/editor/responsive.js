@@ -203,13 +203,19 @@ function createLabel(bp, labelPrefix, forAttr) {
 // DATA IN: See `addDeviceTargetedOptions`
 function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   const isFile = labelPrefix.includes('File');
+  const isUrl = (labelPrefix === 'Background Image URL');
   control.type = isFile ? 'file' : 'text';
   if (isFile) control.setAttribute('accept', 'image/*');
-  if (!isFile) control.value = getCurrentStyle(bp, options, cssClassBase, grid);
+  if (isUrl) {
+    const url = String(grid.classList).match(/bg-\[url\('([^']*)'\)\]/);
+    if (url) control.value = url[1] || '';
+  } else if (!isFile) { 
+    control.value = getCurrentStyle(bp, options, cssClassBase, grid);
+  }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   let newValue;
   control.onchange = (event) => {
-    if (labelPrefix === 'Background Image URL') {
+    if (isUrl) {
       // assumes 'bg' is URL
       newValue = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
