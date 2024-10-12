@@ -1,6 +1,10 @@
 # app**Sage**
+app**Sage** is in preview stages and should not be used in projects where you want to avoid pain.
 
-## Getting started
+## Getting started: Non-coders
+Go to [app**Sage**.io](https://appSage.io/) and start building!
+
+## Getting started: Coders
 
 ### 1. Clone the repository
 ```sh
