@@ -1,6 +1,26 @@
 {
+  "name": "appSage",
+  "version": "1.0.0",
+  "description": "app**Sage** is a no-code web document builder.",
+  "icon": "path/to/icon.png",
+  "win32": {
+    "icon": "path/to/icon.ico"
+  },
+  "main": "index.js",
+  "devDependencies": {
+    "electron": "^32.2.0",
+    "electron-packager": "^17.1.2",
+    "http-server": "^14.1.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "package": "electron-packager . appSage --platform=win32 --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=darwin --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=linux --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "http-server": "^14.1.1",
     "tailwindsjs": "^1.0.0"
   }
 }

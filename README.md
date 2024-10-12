@@ -1,5 +1,7 @@
 # app**Sage**
-app**Sage** is in preview stages and should not be used in projects where you want to avoid pain.
+app**Sage** is a no-code web document builder. Coming soon: integration into macro**Sage** to turn app**Sage** into a no-code app builder!
+
+**Note: we are in preview stages and should not be used in projects where you want to avoid pain.**
 
 ## Getting started: Non-coders
 Go to [app**Sage**.io](https://appSage.io/) and start building!
@@ -56,9 +58,19 @@ appSage is built by [Curious Markings Co.](https://curiousmarkings.com) with our
 2. Make page building accessible to laymens (reduce skill barriers)
 3. Make page building easy and fun (reduce emotional barriers)
 
-## Daily Setup
+## Daily Development
 
-If you find  yourself in a situation where you want to easily clear your localStorage, here's a quick and easy thing to copy/paste to your JS console:
+Run appSage as a user of the distributable packaged desktop application:
+```sh
+npm start
+```
+
+Create distributable executables for people to download:
+```sh
+npm run package
+```
+
+If you find  yourself in a situation where you want to easily clear your localStorage, here's a quick and easy thing to copy/paste to your JS developer tools console:
 
 ```js
 appSageLocalNuke();
