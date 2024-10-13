@@ -59,13 +59,13 @@ function generateFormData(formStructure) {
   store.set(`formData.${generateFormId()}`, formData);
 }
 
-function generateFormId() {
+function generateFormId(form = null) {
   const length = 8; // Desired length of the ID
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let newId;
 
-  // Function to get existing IDs from the store
-  const existingIds = getFormDataIds();
+  // Retrieve existing IDs for the specified form
+  const existingIds = form !== null ? generateFormFieldDataIds(form) : getFormDataIds();
 
   do {
       newId = '';
@@ -78,8 +78,20 @@ function generateFormId() {
 }
 
 function getFormDataIds() {
+  // Get all top-level form IDs
   return Object.keys(store.get('formData') || {}).map(key => key.split('.')[1]);
 }
+
+function generateFormFieldDataIds(form) {
+  // Get field IDs for a specific form
+  const formData = store.get(`formData.${form}`) || [];
+  return formData.map(field => field.id); // Assuming each field has an 'id' property
+}
+
+// Example usage
+// const uniqueFormId = generateFormId(); // For form IDs
+// const uniqueFieldId = generateFormId('form1', true); // For field IDs in form1
+
 
 // // Example: Call the function with the user-defined form structure
 // const userDefinedForm = [
@@ -101,3 +113,67 @@ function getFormDataIds() {
 //   }
 // ];
 // generateFormData(userDefinedForm);
+
+function processFormData(form_id, method, field_id = null, payload = null) {
+    // Retrieve existing form data
+    const formData = store.get(`formData.${form_id}`) || [];
+
+    switch (method) {
+        case 'create':
+            if (!payload) {
+                throw new Error('Payload is required for create method.');
+            }
+            // Add the new data to the form data
+            formData.push(payload);
+            store.set(`formData.${form_id}`, formData);
+            return payload; // Return the created data
+
+        case 'read':
+            if (field_id) {
+                // Find specific field data by field_id
+                const fieldData = formData.find(item => item.id === field_id);
+                return fieldData || null; // Return the found field data or null
+            }
+            return formData; // Return the entire form data
+
+        case 'update':
+            if (!field_id || !payload) {
+                throw new Error('Both field_id and payload are required for update method.');
+            }
+            // Find the index of the field data to update
+            const index = formData.findIndex(item => item.id === field_id);
+            if (index === -1) {
+                throw new Error('Field ID not found.');
+            }
+            // Update the field data with the payload
+            formData[index] = { ...formData[index], ...payload };
+            store.set(`formData.${form_id}`, formData);
+            return formData[index]; // Return the updated field data
+
+        case 'delete':
+            if (!field_id) {
+                throw new Error('Field ID is required for delete method.');
+            }
+            // Remove the field data by field_id
+            const updatedData = formData.filter(item => item.id !== field_id);
+            store.set(`formData.${form_id}`, updatedData);
+            return updatedData; // Return the remaining data after deletion
+
+        default:
+            throw new Error('Invalid method. Supported methods: create, read, update, delete.');
+    }
+}
+
+// // Example usage
+// // Create new form data
+// const newField = { id: 'field1', name: 'Field One', value: 'Example' };
+// processFormData('form1', 'create', null, newField);
+
+// // Read entire form data
+// const formData = processFormData('form1', 'read');
+
+// // Update a specific field
+// processFormData('form1', 'update', 'field1', { value: 'Updated Example' });
+
+// // Delete a specific field
+// processFormData('form1', 'delete', 'field1');
