@@ -311,9 +311,13 @@ function openDatabase() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      db.createObjectStore('mediaStore', { keyPath: 'id' });
-      db.createObjectStore('mediaStore', { keyPath: 'blob' });
-      db.createObjectStore('mediaStore', { keyPath: 'url' });
+
+      if (!db.objectStoreNames.contains('mediaStore')) {
+        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
+        mediaStore.createIndex('blob', 'blob', { unique: false });
+        mediaStore.createIndex('url', 'url', { unique: false });
+      }
+
     };
 
     request.onsuccess = (event) => {

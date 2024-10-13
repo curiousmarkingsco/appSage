@@ -72,6 +72,9 @@ function createAddContainerButton(containingBox) {
     addContainerOptions(containerContainer);
     addIdAndClassToElements();
 
+    enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
+
     // Enable recursive boxes
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
@@ -85,8 +88,8 @@ function createAddContainerButton(containingBox) {
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
-    enableEditContainerOnClick(containerContainer);
-    highlightEditingElement(containerContainer);
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
   });
   // This creates a reliable hover effect for many nested elements
   // containingBox.addEventListener('mouseover', function(event){

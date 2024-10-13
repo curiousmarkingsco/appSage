@@ -53,6 +53,7 @@ function restoreGridCapabilities(grid) {
     enableEditColumnOnClick(column);
     displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
+    // column.appendChild(createAddConmponentButton(column));
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
       displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
@@ -66,6 +67,8 @@ function restoreGridCapabilities(grid) {
 function restoreContainerCapabilities(container) {
   const addContentButton = createAddContentButton(container);
   container.appendChild(addContentButton);
+  const addComponentButton = createAddComponentButton(container);
+  container.appendChild(addComponentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
   if (advancedMode === true){
@@ -77,6 +80,8 @@ function restoreContainerCapabilities(container) {
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
+    const addChildComponentButton = createAddComponentButton(contentContainer);
+    contentContainer.appendChild(addChildComponentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
