@@ -18,7 +18,7 @@
     "package": "electron-packager . appSage --platform=win32 --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=darwin --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=linux --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite"
   },
   "keywords": [],
-  "author": "",
+  "author": "Curious Markings, Co.",
   "license": "ISC",
   "dependencies": {
     "crypto": "^1.0.1",
