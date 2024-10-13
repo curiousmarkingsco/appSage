@@ -25,9 +25,20 @@ function createWindow () {
           height: 680,
           webPreferences: {
               nodeIntegration: true,
+              contextIsolation: true,
+              preload: path.join(__dirname, 'preload.js') // Use a preload script for secure access
           }
       });
       mainWindow.loadFile('index.html');
+
+      // Set CSP header
+      mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+            details.responseHeaders['Content-Security-Policy'] = ["default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"];
+            callback({ cancel: false, responseHeaders: details.responseHeaders });
+        });
+      });
+
       splash.close();
   }, 3000); // Match the duration of splash.js
 }
