@@ -15,6 +15,9 @@ if (appSagePremium === true) {
   loadScript('./js/editor/premium/components/international_clocks.js');
 }
 
-function initializeComponentForm(container, componentName) {
-  if (componentName === 'internationalClocks') initializeClockDataFromForm(container);
+function initializeComponentForm(container, componentName, form) {
+  if (componentName === 'internationalClocks') {
+    initializeClockDataFromForm(container);
+    form.setAttribute('data-initialized', true);
+  }
 }
