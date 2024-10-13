@@ -4,16 +4,6 @@
 
 */
 
-// This function used to be more complex, but has been simplified over time.
-// It is still here under a "don't fix it if it ain't broke" line of thinking.
-// DATA IN: null
-function createComponent() {
-  const component = document.createElement('div');
-  component.className = 'col-span-1 pagecomponent group p-4';
-  enableEditComponentOnClick(component);
-  return component;
-} // DATA OUT: HTML Element, <div>
-
 // This function makes it so that when you click on a component, the editing options
 // will be revealed in the sidebar to the left of the screen. It does this by
 // first making the label and supporting elements for moving and removing the
@@ -70,7 +60,7 @@ function addComponentLibraryOptions(container) {
     componentsList.appendChild(menuItem);
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
-      componentContainer.className = 'pagecomponent';
+      componentContainer.className = 'pagecontainer pagecomponent group';
       const componentTemplate = appSagePremiumComponents[component].html_template;
       convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
       container.appendChild(componentContainer);
@@ -80,7 +70,11 @@ function addComponentLibraryOptions(container) {
     });
   });
 }
-function addComponentOptions(container, componentName) {
+
+function addComponentOptions(container, componentName = null) {
+  if (!componentName) {
+    componentName = container.querySelector('[data-component-name]').getAttribute('data-component-name');
+  }
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div><strong>Edit ${appSagePremiumComponents[componentName].name}</strong></div>${generateSidebarTabs()}`;
   activateTabs();
@@ -106,7 +100,7 @@ function addComponentOptions(container, componentName) {
   sidebar.prepend(formContainer);
   const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
   htmlComponentForm.setAttribute('data-component-id', componentId);
-  initializeComponentForm(componentContainer, componentName);
+  initializeComponentForm(componentContainer, componentName, htmlComponentForm);
 
   // Container-specific editing options
   addContainerAlignmentOptions(sidebar, container);

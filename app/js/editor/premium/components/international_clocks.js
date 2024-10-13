@@ -90,7 +90,7 @@ var timezones = [
 ]
 
 var internationalClocksTemplate = `
-  <div class="internationalClocks-container" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
+  <div class="internationalClocks-container" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
     <div class="clock-display text-3xl font-bold text-center"></div>
 
     <div class="circle-design relative hidden mx-auto">
@@ -105,7 +105,7 @@ var internationalClocksTemplate = `
 `;
 
 var internationalClocksFormTemplate = `
-  <form class="internationalClocks-form space-y-2" data-component-id="{{internationalClocks.id}}">
+  <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
     <div>
       <label class="block font-medium text-gray-700">Timezone:</label>
       <select
@@ -144,11 +144,10 @@ function getClockContainers() {
 }
 
 // Function to initialize the clock data from the form inputs, if available
-// Function to initialize the clock data from the form inputs, if available
 function initializeClockDataFromForm(clockContainer) {
   const clockId = clockContainer.getAttribute('data-component-id');
   const form = document.querySelector(`.internationalClocks-form[data-component-id="${clockId}"]`);
-  
+
   if (!form) return;
 
   // Populate the timezone select field with available timezones
@@ -157,20 +156,46 @@ function initializeClockDataFromForm(clockContainer) {
   // Update clock data attributes based on form inputs
   function updateClockDataFromForm() {
     const timezoneInput = form.querySelector('.timezone-select');
+    const initialized = form.getAttribute('data-initialized');
+
     if (timezoneInput) {
-      const timezone = timezoneInput.value || 'UTC';
-      clockContainer.setAttribute('data-timezone', timezone);
+      if (!initialized) {
+        const timezone = (clockContainer.getAttribute('data-timezone'));
+        timezoneInput.value = timezone;
+      } else {
+        const timezone = timezoneInput.value || 'UTC';
+        clockContainer.setAttribute('data-timezone', timezone);
+      }
     }
 
     const showSecondsInput = form.querySelector('.show-seconds-checkbox');
     if (showSecondsInput) {
-      const showSeconds = showSecondsInput.checked ? 'true' : 'false';
-      clockContainer.setAttribute('data-show-seconds', showSeconds);
+      if (!initialized) {
+        const showSeconds = (clockContainer.getAttribute('data-show-seconds'));
+        showSecondsInput.setAttribute('checked', showSeconds ? 'checked' : '');
+      } else {
+        const showSeconds = showSecondsInput.checked ? 'true' : 'false';
+        clockContainer.setAttribute('data-show-seconds', showSeconds);
+      }
     }
 
-    const designInput = form.querySelector('input[name="design"]:checked');
-    if (designInput) {
-      clockContainer.setAttribute('data-design', designInput.value);
+    if (!initialized) {
+      const design = (clockContainer.getAttribute('data-design'));
+      console.log(design)
+      const designInputAll = form.querySelectorAll('input[name="design"]');
+      designInputAll.forEach(designInput => {
+        console.log(designInput)
+        if (designInput.value !== design) return;
+        designInput.setAttribute('checked', 'checked');
+      });
+    } else {
+      const designInput = form.querySelector('input[name="design"]:checked');
+      if (designInput) {
+        console.log(designInput)
+        console.log(designInput.value)
+        designInput.setAttribute('checked', 'checked');
+        clockContainer.setAttribute('data-design', designInput.value);
+      }
     }
   }
 
@@ -180,7 +205,7 @@ function initializeClockDataFromForm(clockContainer) {
   // Add event listeners to update the clock data dynamically when the form changes
   form.querySelector('.timezone-select').addEventListener('change', updateClockDataFromForm);
   form.querySelector('.show-seconds-checkbox').addEventListener('change', updateClockDataFromForm);
-  
+
   form.querySelectorAll('input[name="design"]').forEach((designRadio) => {
     designRadio.addEventListener('change', updateClockDataFromForm);
   });
