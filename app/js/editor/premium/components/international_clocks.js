@@ -90,7 +90,7 @@ var timezones = [
 ]
 
 var internationalClocksTemplate = `
-  <div class="clock-container" data-clock-id="{{clock.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
+  <div class="internationalClocks-container" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
     <div class="clock-display text-3xl font-bold text-center"></div>
 
     <div class="circle-design relative hidden mx-auto">
@@ -102,65 +102,107 @@ var internationalClocksTemplate = `
       </div>
     </div>
   </div>
-`
+`;
 
 var internationalClocksFormTemplate = `
-<form class="clock-form space-y-2" data-clock-id="{{clock.id}}">
-  <div>
-    <label class="block font-medium text-gray-700">Timezone:</label>
-    <select
-      class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      name="timezone" placeholder="e.g., UTC, America/New_York">
-    </select>
-  </div>
-
-  <div>
-    <label class="block font-medium text-gray-700">Display Seconds:</label>
-    <input type="checkbox" name="show-seconds" class="show-seconds-checkbox mt-1">
-  </div>
-
-  <div>
-    <label class="block font-medium text-gray-700">Design:</label>
-    <div class="flex items-center space-x-4">
-      <label>
-        <input type="radio" name="design" value="digits" checked class="form-radio design-radio text-indigo-600">
-        Digits
-      </label>
-      <label>
-        <input type="radio" name="design" value="circle" class="form-radio design-radio text-indigo-600">
-        Circle
-      </label>
+  <form class="internationalClocks-form space-y-2" data-component-id="{{internationalClocks.id}}">
+    <div>
+      <label class="block font-medium text-gray-700">Timezone:</label>
+      <select
+        class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        name="timezone" placeholder="e.g., UTC, America/New_York">
+      </select>
     </div>
-  </div>
-</form>
-`
+
+    <div>
+      <label class="block font-medium text-gray-700">Display Seconds:</label>
+      <input type="checkbox" name="show-seconds" class="show-seconds-checkbox mt-1">
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-700">Design:</label>
+      <div class="flex items-center space-x-4">
+        <label>
+          <input type="radio" name="design" value="digits" checked class="form-radio design-radio text-indigo-600">
+          Digits
+        </label>
+        <label>
+          <input type="radio" name="design" value="circle" class="form-radio design-radio text-indigo-600">
+          Circle
+        </label>
+      </div>
+    </div>
+  </form>
+`;
+
+appSagePremiumComponents['internationalClocks'].html_template = internationalClocksTemplate;
+appSagePremiumComponents['internationalClocks'].form_template = internationalClocksFormTemplate;
 
 // Function to get all clock containers
 function getClockContainers() {
-  return document.querySelectorAll('.clock-container');
+  return document.querySelectorAll('.internationalClocks-container');
 }
 
 // Function to initialize the clock data from the form inputs, if available
+// Function to initialize the clock data from the form inputs, if available
 function initializeClockDataFromForm(clockContainer) {
-  const clockId = clockContainer.getAttribute('data-clock-id');
-  const form = document.querySelector(`.clock-form[data-clock-id="${clockId}"]`);
+  const clockId = clockContainer.getAttribute('data-component-id');
+  const form = document.querySelector(`.internationalClocks-form[data-component-id="${clockId}"]`);
+  
+  if (!form) return;
 
-  const timezoneInput = form.querySelector('.timezone-select');
-  if (timezoneInput) {
-    const timezone = timezoneInput.value || 'UTC';
-    clockContainer.setAttribute('data-timezone', timezone);
+  // Populate the timezone select field with available timezones
+  populateTimezoneSelects();
+
+  // Update clock data attributes based on form inputs
+  function updateClockDataFromForm() {
+    const timezoneInput = form.querySelector('.timezone-select');
+    if (timezoneInput) {
+      const timezone = timezoneInput.value || 'UTC';
+      clockContainer.setAttribute('data-timezone', timezone);
+    }
+
+    const showSecondsInput = form.querySelector('.show-seconds-checkbox');
+    if (showSecondsInput) {
+      const showSeconds = showSecondsInput.checked ? 'true' : 'false';
+      clockContainer.setAttribute('data-show-seconds', showSeconds);
+    }
+
+    const designInput = form.querySelector('input[name="design"]:checked');
+    if (designInput) {
+      clockContainer.setAttribute('data-design', designInput.value);
+    }
   }
 
-  const showSecondsInput = form.querySelector('.show-seconds-checkbox');
-  if (showSecondsInput) {
-    const showSeconds = showSecondsInput.checked ? 'true' : 'false';
-    clockContainer.setAttribute('data-show-seconds', showSeconds);
-  }
+  // Call the function to set the initial data
+  updateClockDataFromForm();
 
-  const designInput = form.querySelector('input[name="design"]:checked');
-  if (designInput) {
-    clockContainer.setAttribute('data-design', designInput.value);
-  }
+  // Add event listeners to update the clock data dynamically when the form changes
+  form.querySelector('.timezone-select').addEventListener('change', updateClockDataFromForm);
+  form.querySelector('.show-seconds-checkbox').addEventListener('change', updateClockDataFromForm);
+  
+  form.querySelectorAll('input[name="design"]').forEach((designRadio) => {
+    designRadio.addEventListener('change', updateClockDataFromForm);
+  });
+}
+
+function populateTimezoneSelects() {
+  // Select all elements with the class 'timezone-select'
+  const timezoneSelectElements = document.querySelectorAll('.timezone-select');
+
+  // Iterate over each timezone-select element and populate the options
+  timezoneSelectElements.forEach(selectElement => {
+    // Clear the select before populating (optional)
+    selectElement.innerHTML = '';
+
+    // Create an option for each timezone
+    timezones.forEach(timezone => {
+      const option = document.createElement('option');
+      option.text = timezone.label;
+      option.value = timezone.value;
+      selectElement.appendChild(option);
+    });
+  });
 }
 
 // Function to update the clock based purely on data- attributes
