@@ -13,5 +13,8 @@ function loadScript(url) {
 
 if (appSagePremium === true) {
   loadScript('./js/editor/premium/components/international_clocks.js');
-  console.log('international_clocks loaded.');
+}
+
+function initializeComponentForm(container, componentName) {
+  if (componentName === 'internationalClocks') initializeClockDataFromForm(container);
 }

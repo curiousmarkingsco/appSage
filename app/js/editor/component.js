@@ -71,10 +71,57 @@ function addComponentLibraryOptions(container) {
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
       componentContainer.className = 'pagecomponent';
-      convertTailwindHtml(internationalClocksTemplate.replace('{{clock.id}}', generateUniqueId()), componentContainer);
+      const componentTemplate = appSagePremiumComponents[component].html_template;
+      convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
       container.appendChild(componentContainer);
-      startClock(componentContainer.querySelector('.clock-container'));
+      startClock(componentContainer.querySelector(`.${component}-container`));
+      enableEditComponentOnClick(componentContainer);
+      addComponentOptions(componentContainer, component);
     });
   });
 }
+function addComponentOptions(container, componentName) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div><strong>Edit ${appSagePremiumComponents[componentName].name}</strong></div>${generateSidebarTabs()}`;
+  activateTabs();
 
+  const moveButtons = document.createElement('div');
+  moveButtons.className = 'flex justify-between my-2'
+  moveButtons.id = 'moveContainerButtons'
+  sidebar.prepend(moveButtons);
+
+  let containerCount = document.getElementById('page').querySelectorAll('.pagecontainer').length
+  const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+  const gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+  containerCount = containerCount + contentCount + gridCount;
+  if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'up'));
+  moveButtons.appendChild(addRemoveContainerButton(container, sidebar));
+  if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
+
+  const componentContainer = container.querySelector(`.${componentName}-container`)
+  const componentId = componentContainer.getAttribute('data-component-id');
+  const componentFormTemplate = appSagePremiumComponents[componentName].form_template;
+  const formContainer = document.createElement('div');
+  formContainer.innerHTML = componentFormTemplate;
+  sidebar.prepend(formContainer);
+  const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
+  htmlComponentForm.setAttribute('data-component-id', componentId);
+  initializeComponentForm(componentContainer, componentName);
+
+  // Container-specific editing options
+  addContainerAlignmentOptions(sidebar, container);
+
+  // Standard editing options
+  addEditableBorders(sidebar, container);
+  addEditableOpacity(sidebar, container);
+  addEditableBackgroundColor(sidebar, container);
+  addEditableBackgroundImage(sidebar, container);
+  addEditableBackgroundImageURL(sidebar, container);
+  addEditableBackgroundFeatures(sidebar, container);
+  addEditableMarginAndPadding(sidebar, container);
+  addEditableDimensions(sidebar, container);
+  highlightEditingElement(container);
+  addIdAndClassToElements();
+  addManualClassEditor(sidebar, container);
+  addManualCssEditor(sidebar, container);
+}
