@@ -5,9 +5,6 @@
   This file is intended to be the primary location for anything related to
   adding, editing, and removing columns.
 
-  TODO: Currently, if a column has no margins, padding, or content inside of
-        it, it can be extremely hard to click. How do we resolve this?
-
 */
 
 // This function used to be more complex, but has been simplified over time.

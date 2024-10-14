@@ -473,13 +473,6 @@ function addEditablePageTitle(container, placement) {
 // This function changes the page's title. Because localStorage data for the
 // page is identified by the page's title, we have to copy the data over to a
 // new object, then delete the old one.
-// TODO: On page creation, generate an alphanumeric ID and store the object
-//       that way instead. We will then need to update how localStorage loads
-//       the page, perhaps by creating a new key-value object in the
-//       localStorage like { page-title: 'thea-lpha-nume-rici-d123-4567'}
-//       That way, we only have to replace that object and no longer risk
-//       losing the entire page data like we potentially could with this
-//       implementation as it exists now.
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
