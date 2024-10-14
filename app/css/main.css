@@ -5,7 +5,7 @@
 /*                                                     */
 
 /* Ensures the column layout and visibility rules */
-.pagecontent, .pagecolumn, .pagegrid, .pagecontainer, .maincontainer {
+.pagecontent, .pagecolumn, .pagegrid, .pagecontainer, .maincontainer, .pagecomponent {
   position: relative;
 }
 
