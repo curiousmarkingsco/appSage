@@ -60,7 +60,7 @@ function addComponentLibraryOptions(container) {
     componentsList.appendChild(menuItem);
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
-      componentContainer.className = 'pagecontainer pagecomponent group';
+      componentContainer.className = 'pagecomponent pagecontainer p-4 group';
       const componentTemplate = appSagePremiumComponents[component].html_template;
       convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
       container.appendChild(componentContainer);
@@ -76,7 +76,7 @@ function addComponentOptions(container, componentName = null) {
     componentName = container.querySelector('[data-component-name]').getAttribute('data-component-name');
   }
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div><strong>Edit ${appSagePremiumComponents[componentName].name}</strong></div>${generateSidebarTabs()}`;
+  sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
 
   const moveButtons = document.createElement('div');
@@ -92,14 +92,18 @@ function addComponentOptions(container, componentName = null) {
   moveButtons.appendChild(addRemoveContainerButton(container, sidebar));
   if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
 
+  const componentTitle = document.createElement('div');
+  componentTitle.innerHTML = `<strong>Edit ${appSagePremiumComponents[componentName].name}</strong></div>`;
+
   const componentContainer = container.querySelector(`.${componentName}-container`)
   const componentId = componentContainer.getAttribute('data-component-id');
   const componentFormTemplate = appSagePremiumComponents[componentName].form_template;
   const formContainer = document.createElement('div');
   formContainer.innerHTML = componentFormTemplate;
-  sidebar.prepend(formContainer);
   const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
   htmlComponentForm.setAttribute('data-component-id', componentId);
+  sidebar.prepend(formContainer);
+  sidebar.prepend(componentTitle);
   initializeComponentForm(componentContainer, componentName, htmlComponentForm);
 
   // Container-specific editing options
@@ -118,4 +122,6 @@ function addComponentOptions(container, componentName = null) {
   addIdAndClassToElements();
   addManualClassEditor(sidebar, container);
   addManualCssEditor(sidebar, container);
+
+  enableEditComponentOnClick(container);
 }
