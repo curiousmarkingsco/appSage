@@ -5,7 +5,7 @@
 /*                                                     */
 
 /* Ensures the column layout and visibility rules */
-.pagecontent, .pagecolumn, .pagegrid, .pagecontainer, .maincontainer {
+.pagecontent, .pagecolumn, .pagegrid, .pagecontainer, .maincontainer, .pagecomponent {
   position: relative;
 }
 
@@ -16,6 +16,10 @@
 /* Visual indicator of the element being currently edited */
 #editing-highlight {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75);
+}
+
+.pagecomponent:hover {
+  border: 1px solid cyan;
 }
 
 /* keeping for later if needed */

@@ -101,10 +101,14 @@ function activateTabs() {
 
       const currentlyEditingElement = document.getElementById('editing-highlight');
 
-      if (currentlyEditingElement.classList.contains('pagegrid')) {
+      if (currentlyEditingElement.classList.contains('pagecomponent')) {
+        addComponentOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('pagegrid')) {
         addGridOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecolumn')) {
         addColumnOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('container')) {
+        addContainerOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecontent')) {
         addContentOptions(currentlyEditingElement);
       }
