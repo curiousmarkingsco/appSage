@@ -9,10 +9,6 @@
 // elements through the DOM and to be able to do things like add background
 // images while still being able to give the actual element a background color
 // so that legibility is still possible.
-// TODO: Additionally, adding a background color to a button, for example,
-//       creates confusing results since clicking that background doesn't
-//       actually result in clicking the link. This needs to be fixed and
-//       crafted more intentionally for certain elements.
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
