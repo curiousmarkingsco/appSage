@@ -157,7 +157,6 @@ function initializeClockDataFromForm(clockContainer) {
   function updateClockDataFromForm() {
     const timezoneInput = form.querySelector('.timezone-select');
     const initialized = form.getAttribute('data-initialized');
-    console.log(typeof initialized)
 
     if (timezoneInput) {
       if (initialized === 'false') {
@@ -182,10 +181,8 @@ function initializeClockDataFromForm(clockContainer) {
 
     if (initialized === 'false') {
       const design = (clockContainer.getAttribute('data-design'));
-      console.log(design)
       const designInputAll = form.querySelectorAll('input[name="design"]');
       designInputAll.forEach(designInput => {
-        console.log(designInput)
         if (designInput.value !== design) return;
         designInput.setAttribute('checked', 'checked');
       });

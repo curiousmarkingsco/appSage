@@ -53,11 +53,28 @@ function restoreGridCapabilities(grid) {
     enableEditColumnOnClick(column);
     displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
-    // column.appendChild(createAddConmponentButton(column));
+    const addComponentButton = createAddComponentButton(column);
+    column.appendChild(addComponentButton);
+    const addContainerButton = createAddContainerButton(column);
+    column.appendChild(addContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(column);
+      column.appendChild(addHtmlButton);
+    }
+    enableEditContainerOnClick(column);
+    displayMediaFromIndexedDB(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
       displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
+    });
+    Array.from(column.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+      const addChildContentButton = createAddContentButton(contentContainer);
+      contentContainer.appendChild(addChildContentButton);
+      const addChildContainerButton = createAddContainerButton(contentContainer);
+      contentContainer.appendChild(addChildContainerButton);
+      enableEditContainerOnClick(contentContainer);
+      displayMediaFromIndexedDB(contentContainer);
     });
   });
 } // DATA OUT: null

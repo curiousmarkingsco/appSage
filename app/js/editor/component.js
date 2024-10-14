@@ -122,6 +122,4 @@ function addComponentOptions(container, componentName = null) {
   addIdAndClassToElements();
   addManualClassEditor(sidebar, container);
   addManualCssEditor(sidebar, container);
-
-  enableEditComponentOnClick(container);
 }
