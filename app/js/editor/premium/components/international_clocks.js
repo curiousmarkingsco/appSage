@@ -157,9 +157,10 @@ function initializeClockDataFromForm(clockContainer) {
   function updateClockDataFromForm() {
     const timezoneInput = form.querySelector('.timezone-select');
     const initialized = form.getAttribute('data-initialized');
+    console.log(typeof initialized)
 
     if (timezoneInput) {
-      if (!initialized) {
+      if (initialized === 'false') {
         const timezone = (clockContainer.getAttribute('data-timezone'));
         timezoneInput.value = timezone;
       } else {
@@ -170,7 +171,7 @@ function initializeClockDataFromForm(clockContainer) {
 
     const showSecondsInput = form.querySelector('.show-seconds-checkbox');
     if (showSecondsInput) {
-      if (!initialized) {
+      if (initialized === 'false') {
         const showSeconds = (clockContainer.getAttribute('data-show-seconds'));
         showSecondsInput.setAttribute('checked', showSeconds ? 'checked' : '');
       } else {
@@ -179,7 +180,7 @@ function initializeClockDataFromForm(clockContainer) {
       }
     }
 
-    if (!initialized) {
+    if (initialized === 'false') {
       const design = (clockContainer.getAttribute('data-design'));
       console.log(design)
       const designInputAll = form.querySelectorAll('input[name="design"]');
@@ -191,8 +192,6 @@ function initializeClockDataFromForm(clockContainer) {
     } else {
       const designInput = form.querySelector('input[name="design"]:checked');
       if (designInput) {
-        console.log(designInput)
-        console.log(designInput.value)
         designInput.setAttribute('checked', 'checked');
         clockContainer.setAttribute('data-design', designInput.value);
       }

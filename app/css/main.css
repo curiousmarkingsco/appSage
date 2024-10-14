@@ -18,6 +18,10 @@
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.75);
 }
 
+.pagecomponent:hover {
+  border: 1px solid cyan;
+}
+
 /* keeping for later if needed */
 .pageflex:hover {
   border: 1px solid cyan;
