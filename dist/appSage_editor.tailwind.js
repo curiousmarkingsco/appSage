@@ -77,9 +77,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
   tailwind.config.js
 
-  TODO: Make this editable from the (as of yet created) app/settings.html page
-  Then, update these comments with any contextually relevant information.
-
 */
 tailwind.config = {
   theme: {
@@ -213,6 +210,14 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageDatabaseString = 'appSageDatabase';
 }
 
+// Requires paid license
+var appSagePremium = true;
+
+// Templates are loaded in the JS file dedicated to the component.
+var appSagePremiumComponents = {
+  "internationalClocks": { name: 'International Clocks', html_template: '', form_template: '', icon: '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path class="fa-secondary" opacity=".4" d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120c.1-13.4 10.8-24 24-24c6.6 0 12.6 2.7 17 7c2.2 2.2 3.9 4.8 5.1 7.6c.6 1.4 1.1 2.9 1.4 4.5c.2 .8 .3 1.6 .4 2.4s.1 1.6 .1 2.5c0 41 0 82.1 0 123.2L365.3 300c6.9 4.6 10.7 12.2 10.7 20c0 4.6-1.3 9.2-4 13.3c-4.6 6.9-12.2 10.7-20 10.7c-4.6 0-9.2-1.3-13.3-4c-32-21.3-64-42.7-96-64C236 271.5 232 264 232 256c0-45.3 0-90.7 0-136z"/><path class="fa-primary" d="M256 96c-13.3 0-24 10.7-24 24l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24z"/></svg>' }
+}
+
 var advancedMode = false;
 const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
 if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
@@ -252,6 +257,7 @@ var plainEnglishBreakpointNames = {
 }
 
 var tooltips = {
+  'add-component': "Add a new component (appSage premium only)",
   'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
   'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
   'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",
@@ -1185,6 +1191,9 @@ function createAddContainerButton(containingBox) {
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
+
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
   });
@@ -1245,12 +1254,16 @@ function createVerticalMoveContainerButton(container, direction) {
 // is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditContainerOnClick(container) {
-  container.addEventListener('click', function (event) {
-    event.stopPropagation();
-    addContainerOptions(container);
-    highlightEditingElement(container);
-    addIdAndClassToElements();
-  });
+  if (container.classList.contains('pagecomponent')) {
+    enableEditComponentOnClick(container);
+  } else {
+    container.addEventListener('click', function (event) {
+      event.stopPropagation();
+      addContainerOptions(container);
+      highlightEditingElement(container);
+      addIdAndClassToElements();
+    });
+  }
 } // DATA OUT: null
 
 
@@ -1289,9 +1302,6 @@ function addContainerAlignmentOptions(sidebar, container) {
 
   This file is intended to be the primary location for anything related to
   adding, editing, and removing columns.
-
-  TODO: Currently, if a column has no margins, padding, or content inside of
-        it, it can be extremely hard to click. How do we resolve this?
 
 */
 
@@ -1409,6 +1419,7 @@ function createAddColumnButton(gridContainer) {
     const newColumn = createColumn();
     gridContainer.insertBefore(newColumn, this);
     newColumn.appendChild(createAddContentButton(newColumn));
+    newColumn.appendChild(createAddComponentButton(newColumn));
 
     addColumnAlignmentOptions(sidebar, newColumn);
     addEditableBorders(sidebar, newColumn);
@@ -1496,10 +1507,6 @@ function addColumnAlignmentOptions(sidebar, column) {
 // elements through the DOM and to be able to do things like add background
 // images while still being able to give the actual element a background color
 // so that legibility is still possible.
-// TODO: Additionally, adding a background color to a button, for example,
-//       creates confusing results since clicking that background doesn't
-//       actually result in clicking the link. This needs to be fixed and
-//       crafted more intentionally for certain elements.
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
@@ -1798,9 +1805,13 @@ function openDatabase() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      db.createObjectStore('mediaStore', { keyPath: 'id' });
-      db.createObjectStore('mediaStore', { keyPath: 'blob' });
-      db.createObjectStore('mediaStore', { keyPath: 'url' });
+
+      if (!db.objectStoreNames.contains('mediaStore')) {
+        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
+        mediaStore.createIndex('blob', 'blob', { unique: false });
+        mediaStore.createIndex('url', 'url', { unique: false });
+      }
+
     };
 
     request.onsuccess = (event) => {
@@ -2388,10 +2399,14 @@ function activateTabs() {
 
       const currentlyEditingElement = document.getElementById('editing-highlight');
 
-      if (currentlyEditingElement.classList.contains('pagegrid')) {
+      if (currentlyEditingElement.classList.contains('pagecomponent')) {
+        addComponentOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('pagegrid')) {
         addGridOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecolumn')) {
         addColumnOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('container')) {
+        addContainerOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecontent')) {
         addContentOptions(currentlyEditingElement);
       }
@@ -2793,6 +2808,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
     initialColumn.appendChild(createAddContentButton(initialColumn));
+    initialColumn.appendChild(createAddComponentButton(initialColumn));
 
     document.getElementById('page').appendChild(gridContainer);
 
@@ -2829,6 +2845,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
+
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
@@ -3211,13 +3230,6 @@ function addEditablePageTitle(container, placement) {
 // This function changes the page's title. Because localStorage data for the
 // page is identified by the page's title, we have to copy the data over to a
 // new object, then delete the old one.
-// TODO: On page creation, generate an alphanumeric ID and store the object
-//       that way instead. We will then need to update how localStorage loads
-//       the page, perhaps by creating a new key-value object in the
-//       localStorage like { page-title: 'thea-lpha-nume-rici-d123-4567'}
-//       That way, we only have to replace that object and no longer risk
-//       losing the entire page data like we potentially could with this
-//       implementation as it exists now.
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
@@ -3279,17 +3291,18 @@ function addEditableMetadata(container, placement) {
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = storedData.pages[page_id].settings;
-  if (typeof settings.length !== 'undefined') {
-    const metaTags = JSON.parse(settings).metaTags;
+  if (storedData) {
+    const settings = storedData.pages[page_id].settings;
+    if (typeof settings.length !== 'undefined') {
+      const metaTags = JSON.parse(settings).metaTags;
 
-    if (metaTags) {
-      metaTags.forEach(tag => {
-        addMetadataPair(tag.type, tag.name, tag.content);
-      });
+      if (metaTags) {
+        metaTags.forEach(tag => {
+          addMetadataPair(tag.type, tag.name, tag.content);
+        });
+      }
     }
   }
-
 
 
   // Add initial empty metadata pair
@@ -3417,25 +3430,6 @@ function generateAlphanumericId() {
 function addIdAndClassToElements() {
   const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
 
-  // Helper function to generate a random alphanumeric string of a given length
-  function generateRandomId(length = 8) {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
-
-  // Function to ensure the generated ID is unique on the page
-  function generateUniqueId() {
-    let the_id;
-    do {
-      the_id = generateRandomId();
-    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
-    return the_id;
-  }
-
   // Find elements that match the specified classes
   const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
 
@@ -3450,6 +3444,24 @@ function addIdAndClassToElements() {
   });
 }
 
+// Function to ensure the generated ID is unique on the page
+function generateUniqueId() {
+  let the_id;
+  do {
+    the_id = generateRandomId();
+  } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+  return the_id;
+}
+
+// Helper function to generate a random alphanumeric string of a given length
+function generateRandomId(length = 8) {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -3620,10 +3632,28 @@ function restoreGridCapabilities(grid) {
     enableEditColumnOnClick(column);
     displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
+    const addComponentButton = createAddComponentButton(column);
+    column.appendChild(addComponentButton);
+    const addContainerButton = createAddContainerButton(column);
+    column.appendChild(addContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(column);
+      column.appendChild(addHtmlButton);
+    }
+    enableEditContainerOnClick(column);
+    displayMediaFromIndexedDB(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
       displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
+    });
+    Array.from(column.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+      const addChildContentButton = createAddContentButton(contentContainer);
+      contentContainer.appendChild(addChildContentButton);
+      const addChildContainerButton = createAddContainerButton(contentContainer);
+      contentContainer.appendChild(addChildContainerButton);
+      enableEditContainerOnClick(contentContainer);
+      displayMediaFromIndexedDB(contentContainer);
     });
   });
 } // DATA OUT: null
@@ -3633,6 +3663,8 @@ function restoreGridCapabilities(grid) {
 function restoreContainerCapabilities(container) {
   const addContentButton = createAddContentButton(container);
   container.appendChild(addContentButton);
+  const addComponentButton = createAddComponentButton(container);
+  container.appendChild(addComponentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
   if (advancedMode === true){
@@ -3644,6 +3676,8 @@ function restoreContainerCapabilities(container) {
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
+    const addChildComponentButton = createAddComponentButton(contentContainer);
+    contentContainer.appendChild(addChildComponentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
