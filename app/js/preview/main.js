@@ -22,7 +22,7 @@ function loadPreview(pageId) {
 
     const data = JSON.parse(json);
     data.forEach(item => {
-      pageContainer.innerHTML = item.content;
+      pageContainer.innerHTML += item.content;
     });
 
     loadPageSettings(pageId, true);
