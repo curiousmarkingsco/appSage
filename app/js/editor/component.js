@@ -49,7 +49,7 @@ function createAddComponentButton(container) {
 
 function addComponentLibraryOptions(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div id="appSageComponentsLibrary"><strong>Components Library</strong></div>`;
+  sidebar.innerHTML = `<div class="-mt-12 py-4 w-full"><strong>Components Library</strong></div><div id="appSageComponentsLibrary" class="grid gap-y-8 grid-cols-2"></div>`;
   const components = Object.keys(appSageComponents);
   components.forEach(component => {
     const menuItem = document.createElement('div');

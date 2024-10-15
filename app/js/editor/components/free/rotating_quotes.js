@@ -13,7 +13,8 @@ const myHtmlTemplate = `
 `;
 appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 
-const myFormTemplate = `<form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
+const myFormTemplate = `
+<form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
   <div>
     <label class="block font-medium text-gray-700">Quote:</label>
     <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -23,7 +24,8 @@ const myFormTemplate = `<form class="rotatingQuotes-form space-y-2" data-initial
     <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
   </div>
   <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Quote</button>
-</form>`;
+</form>
+`;
 appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
 
 function initializeQuoteDataFromForm(container) {
@@ -33,7 +35,7 @@ function initializeQuoteDataFromForm(container) {
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
-
+    
     const newQuote = form.querySelector('input[name="quote"]').value;
     const newSource = form.querySelector('input[name="source"]').value;
 
@@ -54,6 +56,7 @@ function initializeQuoteDataFromForm(container) {
 function initializeRotatingQuotes(container) {
   let quotes = [];
   let quotesObject = getCurrentPage().rotatingQuotes;
+
   if (quotesObject) {
     quotesObject = JSON.parse(quotesObject);
     quotes = Object.keys(quotesObject).map(key => quotesObject[key]);
