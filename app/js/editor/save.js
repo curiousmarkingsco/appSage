@@ -81,8 +81,6 @@ function saveComponentObjectToPage(componentName, object) {
     const appSageStorage = getAppSageStorage();
     const currentPage = appSageStorage.pages[pageId];
     currentPage[componentName] = object;
-    console.log(appSageStorage)
-    
 
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } catch { console.error('Something went wrong saving component data.') }
