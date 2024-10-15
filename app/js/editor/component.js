@@ -50,21 +50,21 @@ function createAddComponentButton(container) {
 function addComponentLibraryOptions(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `<div id="appSageComponentsLibrary"><strong>Components Library</strong></div>`;
-  const components = Object.keys(appSagePremiumComponents);
+  const components = Object.keys(appSageComponents);
   components.forEach(component => {
     const menuItem = document.createElement('div');
     menuItem.className = 'w-24 h-24 cursor-pointer bg-sky-500 hover:bg-sky-700 rounded-lg p-8 text-white';
-    menuItem.setAttribute('data-extra-info', appSagePremiumComponents['internationalClocks'].name)
-    menuItem.innerHTML = `${appSagePremiumComponents[component].icon}`;
+    menuItem.setAttribute('data-extra-info', appSageComponents[component].name)
+    menuItem.innerHTML = `${appSageComponents[component].icon}`;
+    menuItem.setAttribute('data-extra-info', appSageComponents[component].description.slice(0, 72));
     const componentsList = document.getElementById('appSageComponentsLibrary');
     componentsList.appendChild(menuItem);
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
       componentContainer.className = 'pagecomponent pagecontainer p-4 group';
-      const componentTemplate = appSagePremiumComponents[component].html_template;
+      const componentTemplate = appSageComponents[component].html_template;
       convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
       container.appendChild(componentContainer);
-      startClock(componentContainer.querySelector(`.${component}-container`));
       enableEditComponentOnClick(componentContainer);
       addComponentOptions(componentContainer, component);
     });
@@ -93,17 +93,18 @@ function addComponentOptions(container, componentName = null) {
   if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
 
   const componentTitle = document.createElement('div');
-  componentTitle.innerHTML = `<strong>Edit ${appSagePremiumComponents[componentName].name}</strong></div>`;
+  componentTitle.innerHTML = `<strong>Edit ${appSageComponents[componentName].name}</strong></div>`;
 
   const componentContainer = container.querySelector(`.${componentName}-container`)
   const componentId = componentContainer.getAttribute('data-component-id');
-  const componentFormTemplate = appSagePremiumComponents[componentName].form_template;
+  const componentFormTemplate = appSageComponents[componentName].form_template;
   const formContainer = document.createElement('div');
   formContainer.innerHTML = componentFormTemplate;
   const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
   htmlComponentForm.setAttribute('data-component-id', componentId);
   sidebar.prepend(formContainer);
   sidebar.prepend(componentTitle);
+  initializeExistingComponents(componentContainer, componentName);
   initializeComponentForm(componentContainer, componentName, htmlComponentForm);
 
   // Container-specific editing options
