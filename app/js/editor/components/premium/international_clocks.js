@@ -4,7 +4,7 @@
 
 */
 
-var timezones = [
+const timezones = [
   { "label": "(GMT-12:00) International Date Line West", "value": "Etc/GMT+12" },
   { "label": "(GMT-11:00) Midway Island, Samoa", "value": "Pacific/Midway" },
   { "label": "(GMT-10:00) Hawaii", "value": "Pacific/Honolulu" },
@@ -89,7 +89,7 @@ var timezones = [
   { "label": "(GMT+13:00) Nuku'alofa", "value": "Pacific/Tongatapu" }
 ]
 
-var internationalClocksTemplate = `
+const internationalClocksTemplate = `
   <div class="internationalClocks-container" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
     <div class="clock-display text-3xl font-bold text-center"></div>
 
@@ -104,7 +104,7 @@ var internationalClocksTemplate = `
   </div>
 `;
 
-var internationalClocksFormTemplate = `
+const internationalClocksFormTemplate = `
   <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
     <div>
       <label class="block font-medium text-gray-700">Timezone:</label>
@@ -135,8 +135,8 @@ var internationalClocksFormTemplate = `
   </form>
 `;
 
-appSagePremiumComponents['internationalClocks'].html_template = internationalClocksTemplate;
-appSagePremiumComponents['internationalClocks'].form_template = internationalClocksFormTemplate;
+appSageComponents['internationalClocks'].html_template = internationalClocksTemplate;
+appSageComponents['internationalClocks'].form_template = internationalClocksFormTemplate;
 
 // Function to get all clock containers
 function getClockContainers() {
@@ -287,7 +287,6 @@ function startClock(clockContainer) {
   setInterval(() => updateClock(clockContainer), 1000);
 }
 
-// Initialize all clocks on the page
-getClockContainers().forEach(clockContainer => {
-  startClock(clockContainer);
-});
+function initializeInternationalClocks(componentContainer) {
+  startClock(componentContainer);
+}

@@ -300,32 +300,6 @@ function generateMediaUrl(event, contentContainer, background) {
   }
 } // DATA OUT: null
 
-// Helper functions for IndexedDB storage
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(appSageDatabaseString, 1);
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      if (!db.objectStoreNames.contains('mediaStore')) {
-        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
-        mediaStore.createIndex('blob', 'blob', { unique: false });
-        mediaStore.createIndex('url', 'url', { unique: false });
-      }
-
-    };
-
-    request.onsuccess = (event) => {
-      resolve(event.target.result);
-    };
-
-    request.onerror = (event) => {
-      reject('Error opening database');
-    };
-  });
-}
-
 async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
   const transaction = db.transaction(['mediaStore'], 'readwrite');
