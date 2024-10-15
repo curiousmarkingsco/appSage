@@ -76,9 +76,6 @@ For example:
 var customAppSageStorage = 'dashSageStorage';
 ```
 
-## Coming soon / please help!
-Search this repository for the text `TODO: `
-
 ## Compiling the JS
 
 1. Give the shell script appropriate permissions:
