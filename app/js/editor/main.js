@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const addGridButton = document.getElementById('addGrid');
-  addGridButton.addEventListener('click', function () {
+  addGridButton.addEventListener('click', function (e) {
+    e.stopPropagation();
     const gridContainer = document.createElement('div');
     gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
@@ -56,14 +57,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
-    highlightEditingElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');

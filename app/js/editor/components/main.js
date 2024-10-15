@@ -42,7 +42,7 @@ async function loadScript(url) {
   });
 }
 
-function initializeComponentForm(container, componentName, form, callbackFunction) {
+function initializeComponentForm(container, componentName, form) {
   if (componentName === 'internationalClocks') {
     initializeClockDataFromForm(container);
     form.setAttribute('data-initialized', true);
@@ -51,8 +51,9 @@ function initializeComponentForm(container, componentName, form, callbackFunctio
     initializeQuoteDataFromForm(container);
     form.setAttribute('data-initialized', true);
   }
-  if (typeof callbackFunction === "function") {
-    callbackFunction(container, componentName, form);
+  if (componentName === 'calculator') {
+    initializeCalculatorForm(container);
+    form.setAttribute('data-initialized', true);
   }
 }
 
@@ -62,5 +63,8 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'rotatingQuotes') {
     initializeRotatingQuotes(container);
+  }
+  if (componentName === 'calculator') {
+    initializeCalculator(container);
   }
 }
