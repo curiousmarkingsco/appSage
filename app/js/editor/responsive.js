@@ -347,14 +347,30 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 
     colorPicker.addEventListener('input', () => {
       const selectedColor = colorPicker.value;
-      const tailwindColorClass = `${labelPrefix === 'Text Color' ? 'text' : labelPrefix === 'Background Color' ? 'bg' : 'border'}-[${selectedColor}]`;
+      let tailwindColorClass;
 
-      // Remove any existing Tailwind color classes
-      grid.classList.forEach(cls => {
-        if (/^text-\[.*\]$|^bg-\[.*\]$|^border-\[.*\]$/.test(cls)) {
-          grid.classList.remove(cls);
-        }
-      });
+      if (labelPrefix === 'Text Color') {
+        tailwindColorClass = `text-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^text-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      } else if (labelPrefix === 'Background Color') {
+        tailwindColorClass = `bg-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^bg-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      } else if (labelPrefix === 'Border Color') {
+        tailwindColorClass = `border-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^border-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      }
 
       // Add the new Tailwind color class
       grid.classList.add(tailwindColorClass);
