@@ -59,13 +59,13 @@ function generateFormData(formStructure) {
   store.set(`formData.${generateFormId()}`, formData);
 }
 
-function generateFormId(form = null) {
+function generateFormId(form, field = false) {
   const length = 8; // Desired length of the ID
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let newId;
 
   // Retrieve existing IDs for the specified form
-  const existingIds = form !== null ? generateFormFieldDataIds(form) : getFormDataIds();
+  const existingIds = field ? generateFormFieldDataIds(form) : getFormDataIds();
 
   do {
       newId = '';
@@ -92,6 +92,8 @@ function generateFormFieldDataIds(form) {
 // const uniqueFormId = generateFormId(); // For form IDs
 // const uniqueFieldId = generateFormId('form1', true); // For field IDs in form1
 
+// console.log(`Generated unique form ID: ${uniqueFormId}`);
+// console.log(`Generated unique field ID for form1: ${uniqueFieldId}`);
 
 // // Example: Call the function with the user-defined form structure
 // const userDefinedForm = [
