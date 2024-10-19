@@ -101,7 +101,7 @@ function addComponentOptions(container, componentName = null) {
   const formContainer = document.createElement('div');
   formContainer.innerHTML = componentFormTemplate;
   const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
-  htmlComponentForm.setAttribute('data-component-id', componentId);
+  if (htmlComponentForm) htmlComponentForm.setAttribute('data-component-id', componentId);
   sidebar.prepend(formContainer);
   sidebar.prepend(componentTitle);
   initializeExistingComponents(componentContainer, componentName);
