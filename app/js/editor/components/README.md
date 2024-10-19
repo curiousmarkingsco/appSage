@@ -80,7 +80,7 @@ var appSagePremiumComponents = {
 
 ### 3. Declare your HTML to be added to the page
 
-Write your HTML, declare it as a string, then add it to your JS file:
+Seen in both the editor and the live view: write your HTML, declare it as a string, then add it to your JS file:
 
 ```js
 const myHtmlTemplate = `
@@ -92,10 +92,13 @@ const myHtmlTemplate = `
   </div>
 `;
 
+// Free and premium components are flattened into the `appSageComponents` object
 appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 ```
 
 ### 4. Declare your form to be added to the editor sidebar
+
+Seen in exclusively the editor:
 
 **Recommended**: Add the data-attribute `data-initialized="false"` that is then set to `true` once the form has loaded on the sidebar. This is because the component may be in a state that has diverged from the original state. Your form initializer will need to know whether or not it is doing a fresh setup, or needs to pull existing data from the page.
 
@@ -123,7 +126,7 @@ Add your form and HTML initializers to `app/js/editor/components/main.js`
 
 #### 5.1 Form Initializers
 
-Note that your quote form will be inside the `#sidebar` element of the editor.
+Seen in exclusively the editor: Note that your quote form will be inside the `#sidebar` element of the editor.
 
 ```js
 function initializeComponentForm(container, componentName, form) {
@@ -149,7 +152,7 @@ function initializeQuoteDataFromForm(container) {
 
 #### 5.2 HTML Initializers
 
-Utilize the built-in initializer that is called both on the editor and the live page where the form does not and will not exist.
+Seen in both the editor and more importantly standing alone in the live view: Utilize the built-in initializer that is called both on the editor and the live page where the form does not and will not exist.
 
 ```js
 function initializeExistingComponents(container, componentName) {
@@ -162,7 +165,7 @@ function initializeExistingComponents(container, componentName) {
 
 ### 6. Storing Data
 
-In most cases, your component should store data on a page-by-page basis. You can access the object like so:
+In most cases, your component should store data on a page-by-page basis. This may occur in the editor mode, or be a critical piece of user interactions in the live view. You can access the object like so:
 
 ```js
 // Create a new object for your component's settings or store-able data
