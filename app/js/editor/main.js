@@ -6,6 +6,8 @@
 
 */
 
+var editorMode = true;
+
 // This big chunk does everything necessary for initial page setup which is
 // largely comprised of setting up all the listeners that allow various editing
 // functions that show up in the sidebar.
@@ -170,9 +172,10 @@ function addPageOptions() {
 // DATA IN: ['HTML Element', 'Boolean']
 function updateTooltip(e, show) {
   const tooltip = document.getElementById('tooltip');
-  const extraClasses = e.target.getAttribute('data-extra-info-class') || '';
+  let extraClasses = '';
 
   if (show) {
+    extraClasses = e.target.getAttribute('data-extra-info-class') || '';
     const targetRect = e.target.getBoundingClientRect();
     tooltip.innerHTML = e.target.getAttribute('data-extra-info') || '';
     let tooltipX = targetRect.left + (targetRect.width / 2) - (tooltip.offsetWidth / 2);
