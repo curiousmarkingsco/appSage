@@ -55,6 +55,10 @@ function initializeComponentForm(container, componentName, form) {
     initializeCalculatorForm(container);
     form.setAttribute('data-initialized', true);
   }
+  if (componentName === 'dialogToast') {
+    initializeDialogToastForm(container);
+    form.setAttribute('data-initialized', true);
+  }
 }
 
 function initializeExistingComponents(container, componentName) {
@@ -66,5 +70,8 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'calculator') {
     initializeCalculator(container);
+  }
+  if (componentName === 'dialogToast') {
+    initializeDialogToast(container);
   }
 }
