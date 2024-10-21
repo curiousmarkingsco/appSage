@@ -59,6 +59,9 @@ function initializeComponentForm(container, componentName, form) {
     initializeDialogToastForm(container);
     form.setAttribute('data-initialized', true);
   }
+  if (componentName === 'currencyPicker') {
+    initializeCurrencyPickerForm(container, componentName, form);
+  }
 }
 
 function initializeExistingComponents(container, componentName) {
@@ -73,5 +76,8 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'dialogToast') {
     initializeDialogToast(container);
+  }
+  if (componentName === 'currencyPicker') {
+    initializeCurrencyPicker(container);
   }
 }
