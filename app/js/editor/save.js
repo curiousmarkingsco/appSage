@@ -57,7 +57,7 @@ function saveChanges(page) {
     content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
-  savePage(page, json);
+  savePageData(page, json);
   console.log('Changes saved successfully!');
 } // DATA OUT: null
 
@@ -65,24 +65,32 @@ function saveChanges(page) {
 // for subsequent content to be stored. If this objects already exists, it
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
-function savePage(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
-  }
-  if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: [], title: 'Untitled', settings: {}, blobs: {} };
-  }
-  appSageStorage.pages[pageId].page_data = data;
+function savePageData(pageId, data) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  if (pageObject){
+    pageObject.page_data = data;
 
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  }
 } // DATA OUT: null
+
+function saveComponentObjectToPage(componentName, object) {
+  try {
+    const pageId = getPageId();
+    const appSageStorage = getAppSageStorage();
+    const currentPage = appSageStorage.pages[pageId];
+    currentPage[componentName] = object;
+
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } catch { console.error('Something went wrong saving component data.') }
+}
 
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
 // from the dedicated Page Settings sidebar.
 // DATA IN: ['String', 'JSON Object']
-function savePageSettings(pageId, data) {
+function savePageDataSettings(pageId, data) {
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
@@ -106,5 +114,5 @@ function savePageSettingsChanges(pageId) {
     metaTags: ''
   }
   const json = JSON.stringify(settings);
-  savePageSettings(pageId, json);
+  savePageDataSettings(pageId, json);
 } // DATA OUT: null

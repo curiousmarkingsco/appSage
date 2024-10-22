@@ -6,6 +6,8 @@
 
 */
 
+var editorMode = true;
+
 // This big chunk does everything necessary for initial page setup which is
 // largely comprised of setting up all the listeners that allow various editing
 // functions that show up in the sidebar.
@@ -44,25 +46,25 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const addGridButton = document.getElementById('addGrid');
-  addGridButton.addEventListener('click', function () {
+  addGridButton.addEventListener('click', function (e) {
+    e.stopPropagation();
     const gridContainer = document.createElement('div');
     gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
     initialColumn.appendChild(createAddContentButton(initialColumn));
+    initialColumn.appendChild(createAddComponentButton(initialColumn));
 
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
-    highlightEditingElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');
@@ -87,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
+
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
@@ -167,9 +172,10 @@ function addPageOptions() {
 // DATA IN: ['HTML Element', 'Boolean']
 function updateTooltip(e, show) {
   const tooltip = document.getElementById('tooltip');
-  const extraClasses = e.target.getAttribute('data-extra-info-class') || '';
+  let extraClasses = '';
 
   if (show) {
+    extraClasses = e.target.getAttribute('data-extra-info-class') || '';
     const targetRect = e.target.getBoundingClientRect();
     tooltip.innerHTML = e.target.getAttribute('data-extra-info') || '';
     let tooltipX = targetRect.left + (targetRect.width / 2) - (tooltip.offsetWidth / 2);
@@ -469,13 +475,6 @@ function addEditablePageTitle(container, placement) {
 // This function changes the page's title. Because localStorage data for the
 // page is identified by the page's title, we have to copy the data over to a
 // new object, then delete the old one.
-// TODO: On page creation, generate an alphanumeric ID and store the object
-//       that way instead. We will then need to update how localStorage loads
-//       the page, perhaps by creating a new key-value object in the
-//       localStorage like { page-title: 'thea-lpha-nume-rici-d123-4567'}
-//       That way, we only have to replace that object and no longer risk
-//       losing the entire page data like we potentially could with this
-//       implementation as it exists now.
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
@@ -537,17 +536,18 @@ function addEditableMetadata(container, placement) {
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = storedData.pages[page_id].settings;
-  if (typeof settings.length !== 'undefined') {
-    const metaTags = JSON.parse(settings).metaTags;
+  if (storedData) {
+    const settings = storedData.pages[page_id].settings;
+    if (typeof settings.length !== 'undefined') {
+      const metaTags = JSON.parse(settings).metaTags;
 
-    if (metaTags) {
-      metaTags.forEach(tag => {
-        addMetadataPair(tag.type, tag.name, tag.content);
-      });
+      if (metaTags) {
+        metaTags.forEach(tag => {
+          addMetadataPair(tag.type, tag.name, tag.content);
+        });
+      }
     }
   }
-
 
 
   // Add initial empty metadata pair
@@ -675,25 +675,6 @@ function generateAlphanumericId() {
 function addIdAndClassToElements() {
   const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
 
-  // Helper function to generate a random alphanumeric string of a given length
-  function generateRandomId(length = 8) {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
-
-  // Function to ensure the generated ID is unique on the page
-  function generateUniqueId() {
-    let the_id;
-    do {
-      the_id = generateRandomId();
-    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
-    return the_id;
-  }
-
   // Find elements that match the specified classes
   const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
 
@@ -706,4 +687,23 @@ function addIdAndClassToElements() {
       element.classList.add(`group/[${newId}]`);
     }
   });
+}
+
+// Function to ensure the generated ID is unique on the page
+function generateUniqueId() {
+  let the_id;
+  do {
+    the_id = generateRandomId();
+  } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+  return the_id;
+}
+
+// Helper function to generate a random alphanumeric string of a given length
+function generateRandomId(length = 8) {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
 }

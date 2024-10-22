@@ -77,9 +77,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
   tailwind.config.js
 
-  TODO: Make this editable from the (as of yet created) app/settings.html page
-  Then, update these comments with any contextually relevant information.
-
 */
 tailwind.config = {
   theme: {
@@ -205,11 +202,33 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
   var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
+  var appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
-  var appSageTitleIdMapString = 'appSageTitleIdMap'
+  var appSageTitleIdMapString = 'appSageTitleIdMap';
+  var appSageDatabaseString = 'appSageDatabase';
 }
+
+// Requires paid license
+var appSagePremium = true;
+
+function combineComponentsLists() {
+  // Templates are loaded in the JS file dedicated to the component.
+  const appSagePremiumComponents = {
+    "internationalClocks": { name: 'International Clocks', license: 'premium', file: 'international_clocks.js', description: 'Display a clock on your page in any timezone you like.', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path class="fa-secondary" opacity=".4" d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120c.1-13.4 10.8-24 24-24c6.6 0 12.6 2.7 17 7c2.2 2.2 3.9 4.8 5.1 7.6c.6 1.4 1.1 2.9 1.4 4.5c.2 .8 .3 1.6 .4 2.4s.1 1.6 .1 2.5c0 41 0 82.1 0 123.2L365.3 300c6.9 4.6 10.7 12.2 10.7 20c0 4.6-1.3 9.2-4 13.3c-4.6 6.9-12.2 10.7-20 10.7c-4.6 0-9.2-1.3-13.3-4c-32-21.3-64-42.7-96-64C236 271.5 232 264 232 256c0-45.3 0-90.7 0-136z"/><path class="fa-primary" d="M256 96c-13.3 0-24 10.7-24 24l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24z"/></svg>' }
+  }
+
+  const appSageFreeComponents = {
+    "rotatingQuotes": { name: 'Rotating Quotes', license: 'free', file: 'rotating_quotes.js', description: 'A box with a quote that displays a new quote on each page load!', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L185.6 508.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-80-96 0c-35.3 0-64-28.7-64-64L0 64zm160 48c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3 0-24 0-24c0-17.7-14.3-32-32-32l-48 0zm224 80l0-24 0-24c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3z"/></svg>' },
+    "calculator": { name: 'Simple Calculator', license: 'free', file: 'calculator.js', description: 'A basic calculator with simple arithmetic functionality', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>', html_template: '', form_template: '' }
+  }
+
+  const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
+  return combinedComponents;
+}
+
+var appSageComponents = combineComponentsLists();
 
 var advancedMode = false;
 const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
@@ -250,6 +269,7 @@ var plainEnglishBreakpointNames = {
 }
 
 var tooltips = {
+  'add-component': "Add a new component (appSage premium only)",
   'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
   'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
   'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",
@@ -660,6 +680,127 @@ function appSageLocalNuke(){
   localStorage.removeItem(appSageTitleIdMapString);
 }
 
+/* File: ./app/js/editor/save.js */
+/*
+
+  editor/save.js
+
+  This file is intended to be the primary location for functions that save
+  content from active/previous edits. This saving happens on the editor page.
+
+*/
+
+// Remove editor elements so that localStorage is not cluttered with unneeded
+// elements making them production-ready for app/js/load.js
+// DATA IN: HTML Element, <div>
+function getCleanInnerHTML(element) {
+  const clone = element.cloneNode(true);
+  const discardElements = clone.querySelectorAll('.ugc-discard');
+  discardElements.forEach(el => el.parentNode.removeChild(el));
+  const cloneBox = document.createElement('div');
+  cloneBox.appendChild(clone);
+  return cloneBox.innerHTML;
+} // DATA OUT: HTML Element, <div>
+
+// This mutation observer ensures that the majority, if not all, changes
+// occuring in #page will be saved to localStorage.
+// DATA IN: String
+function setupAutoSave(page) {
+  const targetNode = document.getElementById('page');
+  const config = {
+    childList: true,
+    attributes: true,
+    subtree: true,
+    characterData: true
+  };
+  const callback = function (mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
+        saveChanges(page);
+        savePageSettingsChanges(page);
+        break;
+      }
+    }
+  };
+  const observer = new MutationObserver(callback);
+  observer.observe(targetNode, config);
+  console.log('Auto-save setup complete.');
+} // DATA OUT: null
+
+// This function saves all active element and style additions/changes/removals
+// during the designer's traditional editor workflow.
+// DATA IN: String
+function saveChanges(page) {
+  const pageContainer = document.getElementById('page');
+  // Query only elements with 'ugc-keep' that are meant to be saved
+  const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
+  const data = Array.from(elements).map(element => ({
+    tagName: element.tagName, // in the future, this could be a section name
+    className: element.className, // deprecated
+    content: getCleanInnerHTML(element)
+  }));
+  const json = JSON.stringify(data);
+  savePageData(page, json);
+  console.log('Changes saved successfully!');
+} // DATA OUT: null
+
+// This function creates or prepares the necessary localStorage object in order
+// for subsequent content to be stored. If this objects already exists, it
+// proceeds by properly setting existing content to these objects.
+// DATA IN: ['String', 'JSON Object']
+function savePageData(pageId, data) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  if (pageObject){
+    pageObject.page_data = data;
+
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  }
+} // DATA OUT: null
+
+function saveComponentObjectToPage(componentName, object) {
+  try {
+    const pageId = getPageId();
+    const appSageStorage = getAppSageStorage();
+    const currentPage = appSageStorage.pages[pageId];
+    currentPage[componentName] = object;
+
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } catch { console.error('Something went wrong saving component data.') }
+}
+
+// This function saves all page's settings from the designer's additions,
+// changes, and removals during the designer's traditional editor workflow
+// from the dedicated Page Settings sidebar.
+// DATA IN: ['String', 'JSON Object']
+function savePageDataSettings(pageId, data) {
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  if (!appSageStorage.pages[pageId]) {
+    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+  }
+  appSageStorage.pages[pageId].settings = data;
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+} // DATA OUT: null
+
+// This function creates or prepares the necessary localStorage object in order
+// for subsequent settings to be stored. If this objects already exists, it
+// proceeds by properly setting existing settings to these objects.
+// DATA IN: String
+function savePageSettingsChanges(pageId) {
+  const page = document.getElementById('page');
+  const settings = {
+    id: page.id,
+    className: page.className,
+    metaTags: ''
+  }
+  const json = JSON.stringify(settings);
+  savePageDataSettings(pageId, json);
+} // DATA OUT: null
+
+
 /* File: ./app/js/load.js */
 /*
 
@@ -821,7 +962,73 @@ function addMetasToHead() {
   }
 }
 
+
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(appSageDatabaseString, 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains('mediaStore')) {
+        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
+        mediaStore.createIndex('blob', 'blob', { unique: false });
+        mediaStore.createIndex('url', 'url', { unique: false });
+      }
+
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
 document.addEventListener('DOMContentLoaded', addMetasToHead);
+ 
+// Call the loadComponentFiles function and wait for all scripts to load
+loadComponentFiles().then(() => {
+  // Initialize all components that load to the page
+  document.querySelectorAll('.pagecomponent').forEach(container => {
+    const componentContainer = container.querySelector('[data-component-name]');
+    const componentName = componentContainer.getAttribute('data-component-name');
+    initializeExistingComponents(componentContainer, componentName);
+  });
+}).catch(err => {
+  console.error('Failed to load component files:', err);
+});
+
+function getCurrentPage() {
+  const pageId = getPageId();
+  const currentPage = getPageObject(pageId);
+  return currentPage;
+}
+
+function getPageId() {
+  const params = new URLSearchParams(window.location.search);
+  const pageId = params.get('config') || params.get('page');
+  return pageId;
+}
+
+function getAppSageStorage() {
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  return appSageStorage;
+}
+
+function getPageObject(pageId) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  return pageObject;
+}
 
 
 /* File: ./app/js/preview/main.js */
@@ -849,10 +1056,7 @@ function loadPreview(pageId) {
 
     const data = JSON.parse(json);
     data.forEach(item => {
-      const element = document.createElement(item.tagName);
-      element.className = item.className;
-      element.innerHTML = item.content;
-      pageContainer.appendChild(element);
+      pageContainer.innerHTML += item.content;
     });
 
     loadPageSettings(pageId, true);
@@ -872,4 +1076,5 @@ document.addEventListener('DOMContentLoaded', function () {
     loadPreview(previewPageId);
   }
 });
+
 

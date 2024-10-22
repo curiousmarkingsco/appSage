@@ -77,9 +77,6 @@ Check your Browserslist config to be sure that your targets are set up correctly
 
   tailwind.config.js
 
-  TODO: Make this editable from the (as of yet created) app/settings.html page
-  Then, update these comments with any contextually relevant information.
-
 */
 tailwind.config = {
   theme: {
@@ -205,11 +202,33 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageStorageString = customAppSageStorage;
   var appSageSettingsString = `${customAppSageStorage}Settings`;
   var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
+  var appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
 } else {
   var appSageStorageString = 'appSageStorage';
   var appSageSettingsString = 'appSageSettings';
-  var appSageTitleIdMapString = 'appSageTitleIdMap'
+  var appSageTitleIdMapString = 'appSageTitleIdMap';
+  var appSageDatabaseString = 'appSageDatabase';
 }
+
+// Requires paid license
+var appSagePremium = true;
+
+function combineComponentsLists() {
+  // Templates are loaded in the JS file dedicated to the component.
+  const appSagePremiumComponents = {
+    "internationalClocks": { name: 'International Clocks', license: 'premium', file: 'international_clocks.js', description: 'Display a clock on your page in any timezone you like.', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path class="fa-secondary" opacity=".4" d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120c.1-13.4 10.8-24 24-24c6.6 0 12.6 2.7 17 7c2.2 2.2 3.9 4.8 5.1 7.6c.6 1.4 1.1 2.9 1.4 4.5c.2 .8 .3 1.6 .4 2.4s.1 1.6 .1 2.5c0 41 0 82.1 0 123.2L365.3 300c6.9 4.6 10.7 12.2 10.7 20c0 4.6-1.3 9.2-4 13.3c-4.6 6.9-12.2 10.7-20 10.7c-4.6 0-9.2-1.3-13.3-4c-32-21.3-64-42.7-96-64C236 271.5 232 264 232 256c0-45.3 0-90.7 0-136z"/><path class="fa-primary" d="M256 96c-13.3 0-24 10.7-24 24l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24z"/></svg>' }
+  }
+
+  const appSageFreeComponents = {
+    "rotatingQuotes": { name: 'Rotating Quotes', license: 'free', file: 'rotating_quotes.js', description: 'A box with a quote that displays a new quote on each page load!', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L185.6 508.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-80-96 0c-35.3 0-64-28.7-64-64L0 64zm160 48c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3 0-24 0-24c0-17.7-14.3-32-32-32l-48 0zm224 80l0-24 0-24c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3z"/></svg>' },
+    "calculator": { name: 'Simple Calculator', license: 'free', file: 'calculator.js', description: 'A basic calculator with simple arithmetic functionality', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>', html_template: '', form_template: '' }
+  }
+
+  const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
+  return combinedComponents;
+}
+
+var appSageComponents = combineComponentsLists();
 
 var advancedMode = false;
 const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
@@ -250,6 +269,7 @@ var plainEnglishBreakpointNames = {
 }
 
 var tooltips = {
+  'add-component': "Add a new component (appSage premium only)",
   'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
   'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
   'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",
@@ -1183,6 +1203,9 @@ function createAddContainerButton(containingBox) {
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
+
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
   });
@@ -1243,12 +1266,16 @@ function createVerticalMoveContainerButton(container, direction) {
 // is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditContainerOnClick(container) {
-  container.addEventListener('click', function (event) {
-    event.stopPropagation();
-    addContainerOptions(container);
-    highlightEditingElement(container);
-    addIdAndClassToElements();
-  });
+  if (container.classList.contains('pagecomponent')) {
+    enableEditComponentOnClick(container);
+  } else {
+    container.addEventListener('click', function (event) {
+      event.stopPropagation();
+      addContainerOptions(container);
+      highlightEditingElement(container);
+      addIdAndClassToElements();
+    });
+  }
 } // DATA OUT: null
 
 
@@ -1280,6 +1307,134 @@ function addContainerAlignmentOptions(sidebar, container) {
 } // DATA OUT: null
 
 
+/* File: ./app/js/editor/component.js */
+/*
+
+  editor/component.js
+
+*/
+
+// This function makes it so that when you click on a component, the editing options
+// will be revealed in the sidebar to the left of the screen. It does this by
+// first making the label and supporting elements for moving and removing the
+// component, and then adding the editor buttons, dropdowns, etc.
+// DATA IN: HTML Element, <div>
+function enableEditComponentOnClick(component) {
+  component.addEventListener('click', function (event) {
+    event.stopPropagation();
+    addComponentOptions(component);
+  });
+} // DATA OUT: null
+
+function createRemoveComponentButton(component, gridContainer) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['remove-component'])
+  button.className = 'removeComponent ugc-discard  bg-rose-500 top-2 hover:bg-rose-700 text-slate-50 font-bold p-2 rounded h-12 w-12 mx-auto';
+  button.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="white" class="h-5 w-5 mx-auto"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 46.3 14.3 32 32 32l512 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64zm32 64l512 0L517.3 421.8c-3 33-30.6 58.2-63.7 58.2l-331.1 0c-33.1 0-60.7-25.2-63.7-58.2L32 128zm256 88c2.2 0 4.3 1.1 5.5 2.9l20.7 29.6c7.3 10.5 21.6 13.4 32.4 6.6c11.7-7.3 14.8-22.9 6.9-34.1l-20.7-29.6c-10.2-14.6-27-23.3-44.8-23.3s-34.6 8.7-44.8 23.3l-20.7 29.6c-7.9 11.3-4.7 26.8 6.9 34.1c10.8 6.8 25.1 3.9 32.4-6.6l20.7-29.6c1.3-1.8 3.3-2.9 5.5-2.9zm-88.3 77.1c-10.8-6.8-25.1-3.9-32.4 6.6l-21.5 30.7c-6.4 9.1-9.8 20-9.8 31.2c0 30.1 24.4 54.4 54.4 54.4l49.6 0c13.3 0 24-10.7 24-24s-10.7-24-24-24l-49.6 0c-3.5 0-6.4-2.9-6.4-6.4c0-1.3 .4-2.6 1.2-3.7l21.5-30.7c7.9-11.3 4.7-26.8-6.9-34.1zM312 392c0 13.3 10.7 24 24 24l49.6 0c30.1 0 54.4-24.4 54.4-54.4c0-11.2-3.4-22.1-9.8-31.2l-21.5-30.7c-7.3-10.5-21.6-13.4-32.4-6.6c-11.7 7.3-14.8 22.9-6.9 34.1l21.5 30.7c.8 1.1 1.2 2.4 1.2 3.7c0 3.5-2.9 6.4-6.4 6.4L336 368c-13.3 0-24 10.7-24 24z"/></svg>';
+  button.addEventListener('click', function () {
+    if (componentHasContent(component)) {
+      showConfirmationModal('Are you sure you want to delete this component?', () => {
+        gridContainer.removeChild(component);
+      });
+    } else {
+      gridContainer.removeChild(component);
+    }
+  });
+  return button;
+} // DATA OUT: HTML Element, <button>
+
+function createAddComponentButton(container) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['add-component']);
+  button.className = 'addComponent highlightButton hidden w-16 h-12 absolute -bottom-12 left-64 ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
+  button.innerHTML = `<svg fill="white" class="h-5 w-5 inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path class="fa-secondary" opacity=".4" d="M153.7 85.8c-12.5 12.5-12.5 32.8 0 45.3l79.7 79.7c12.5 12.5 32.8 12.5 45.3 0L358.3 131c12.5-12.5 12.5-32.8 0-45.3L284.3 11.7C276.5 3.9 266.2 0 256 0s-20.5 3.9-28.3 11.7L153.7 85.8zm0 295.2c-12.5 12.5-12.5 32.8 0 45.3l74.1 74.1c7.8 7.8 18 11.7 28.3 11.7s20.5-3.9 28.3-11.7l74.1-74.1c6.2-6.2 9.4-14.4 9.4-22.6s-3.1-16.4-9.4-22.6l-79.7-79.7c-12.5-12.5-32.8-12.5-45.3 0L153.7 381z"/><path class="fa-primary" d="M131 153.7c-12.5-12.5-32.8-12.5-45.3 0L11.7 227.7c-15.6 15.6-15.6 40.9 0 56.6l74.1 74.1c12.5 12.5 32.8 12.5 45.3 0l79.7-79.7c12.5-12.5 12.5-32.8 0-45.3L131 153.7zM381 358.3c12.5 12.5 32.8 12.5 45.3 0l74.1-74.1c15.6-15.6 15.6-40.9 0-56.6l-74.1-74.1c-12.5-12.5-32.8-12.5-45.3 0l-79.7 79.7c-12.5 12.5-12.5 32.8 0 45.3L381 358.3z"/></svg>`;
+  button.addEventListener('click', function(e) {
+    event.stopPropagation();
+    addComponentLibraryOptions(container);
+    highlightEditingElement(container);
+    addIdAndClassToElements();
+  })
+  return button;
+} // DATA OUT: HTML Element, <button>
+
+function addComponentLibraryOptions(container) {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `<div class="-mt-12 py-4 w-full"><strong>Components Library</strong></div><div id="appSageComponentsLibrary" class="grid gap-y-8 grid-cols-2"></div>`;
+  const components = Object.keys(appSageComponents);
+  components.forEach(component => {
+    const menuItem = document.createElement('div');
+    menuItem.className = 'w-24 h-24 cursor-pointer bg-sky-500 hover:bg-sky-700 rounded-lg p-8 text-white';
+    menuItem.setAttribute('data-extra-info', appSageComponents[component].name)
+    menuItem.innerHTML = `${appSageComponents[component].icon}`;
+    menuItem.setAttribute('data-extra-info', appSageComponents[component].description.slice(0, 72));
+    const componentsList = document.getElementById('appSageComponentsLibrary');
+    componentsList.appendChild(menuItem);
+    menuItem.addEventListener('click', function () {
+      const componentContainer = document.createElement('div');
+      componentContainer.className = 'pagecomponent pagecontainer p-4 group';
+      const componentTemplate = appSageComponents[component].html_template;
+      convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
+      container.appendChild(componentContainer);
+      enableEditComponentOnClick(componentContainer);
+      addComponentOptions(componentContainer, component);
+    });
+  });
+}
+
+function addComponentOptions(container, componentName = null) {
+  if (!componentName) {
+    componentName = container.querySelector('[data-component-name]').getAttribute('data-component-name');
+  }
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = `${generateSidebarTabs()}`;
+  activateTabs();
+
+  const moveButtons = document.createElement('div');
+  moveButtons.className = 'flex justify-between my-2'
+  moveButtons.id = 'moveContainerButtons'
+  sidebar.prepend(moveButtons);
+
+  let containerCount = document.getElementById('page').querySelectorAll('.pagecontainer').length
+  const contentCount = document.getElementById('page').querySelectorAll('.pastedHtmlContainer').length
+  const gridCount = document.getElementById('page').querySelectorAll('.pagegrid').length
+  containerCount = containerCount + contentCount + gridCount;
+  if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'up'));
+  moveButtons.appendChild(addRemoveContainerButton(container, sidebar));
+  if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
+
+  const componentTitle = document.createElement('div');
+  componentTitle.innerHTML = `<strong>Edit ${appSageComponents[componentName].name}</strong></div>`;
+
+  const componentContainer = container.querySelector(`.${componentName}-container`)
+  const componentId = componentContainer.getAttribute('data-component-id');
+  const componentFormTemplate = appSageComponents[componentName].form_template;
+  const formContainer = document.createElement('div');
+  formContainer.innerHTML = componentFormTemplate;
+  const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)
+  if (htmlComponentForm) htmlComponentForm.setAttribute('data-component-id', componentId);
+  sidebar.prepend(formContainer);
+  sidebar.prepend(componentTitle);
+  initializeExistingComponents(componentContainer, componentName);
+  initializeComponentForm(componentContainer, componentName, htmlComponentForm);
+
+  // Container-specific editing options
+  addContainerAlignmentOptions(sidebar, container);
+
+  // Standard editing options
+  addEditableBorders(sidebar, container);
+  addEditableOpacity(sidebar, container);
+  addEditableBackgroundColor(sidebar, container);
+  addEditableBackgroundImage(sidebar, container);
+  addEditableBackgroundImageURL(sidebar, container);
+  addEditableBackgroundFeatures(sidebar, container);
+  addEditableMarginAndPadding(sidebar, container);
+  addEditableDimensions(sidebar, container);
+  highlightEditingElement(container);
+  addIdAndClassToElements();
+  addManualClassEditor(sidebar, container);
+  addManualCssEditor(sidebar, container);
+}
+
 /* File: ./app/js/editor/column.js */
 /*
 
@@ -1287,9 +1442,6 @@ function addContainerAlignmentOptions(sidebar, container) {
 
   This file is intended to be the primary location for anything related to
   adding, editing, and removing columns.
-
-  TODO: Currently, if a column has no margins, padding, or content inside of
-        it, it can be extremely hard to click. How do we resolve this?
 
 */
 
@@ -1407,6 +1559,7 @@ function createAddColumnButton(gridContainer) {
     const newColumn = createColumn();
     gridContainer.insertBefore(newColumn, this);
     newColumn.appendChild(createAddContentButton(newColumn));
+    newColumn.appendChild(createAddComponentButton(newColumn));
 
     addColumnAlignmentOptions(sidebar, newColumn);
     addEditableBorders(sidebar, newColumn);
@@ -1494,10 +1647,6 @@ function addColumnAlignmentOptions(sidebar, column) {
 // elements through the DOM and to be able to do things like add background
 // images while still being able to give the actual element a background color
 // so that legibility is still possible.
-// TODO: Additionally, adding a background color to a button, for example,
-//       creates confusing results since clicking that background doesn't
-//       actually result in clicking the link. This needs to be fixed and
-//       crafted more intentionally for certain elements.
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
@@ -1788,28 +1937,6 @@ function generateMediaUrl(event, contentContainer, background) {
     reader.readAsDataURL(file);
   }
 } // DATA OUT: null
-
-// Helper functions for IndexedDB storage
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('mediaDatabase', 1);
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      db.createObjectStore('mediaStore', { keyPath: 'id' });
-      db.createObjectStore('mediaStore', { keyPath: 'blob' });
-      db.createObjectStore('mediaStore', { keyPath: 'url' });
-    };
-
-    request.onsuccess = (event) => {
-      resolve(event.target.result);
-    };
-
-    request.onerror = (event) => {
-      reject('Error opening database');
-    };
-  });
-}
 
 async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
@@ -2386,10 +2513,14 @@ function activateTabs() {
 
       const currentlyEditingElement = document.getElementById('editing-highlight');
 
-      if (currentlyEditingElement.classList.contains('pagegrid')) {
+      if (currentlyEditingElement.classList.contains('pagecomponent')) {
+        addComponentOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('pagegrid')) {
         addGridOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecolumn')) {
         addColumnOptions(currentlyEditingElement);
+      } else if (currentlyEditingElement.classList.contains('container')) {
+        addContainerOptions(currentlyEditingElement);
       } else if (currentlyEditingElement.classList.contains('pagecontent')) {
         addContentOptions(currentlyEditingElement);
       }
@@ -2784,25 +2915,25 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   const addGridButton = document.getElementById('addGrid');
-  addGridButton.addEventListener('click', function () {
+  addGridButton.addEventListener('click', function (e) {
+    e.stopPropagation();
     const gridContainer = document.createElement('div');
     gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
 
     const initialColumn = createColumn();
     gridContainer.appendChild(initialColumn);
     initialColumn.appendChild(createAddContentButton(initialColumn));
+    initialColumn.appendChild(createAddComponentButton(initialColumn));
 
     document.getElementById('page').appendChild(gridContainer);
 
     addGridOptions(gridContainer);
-    addIdAndClassToElements();
 
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
 
     enableEditGridOnClick(gridContainer);
-    highlightEditingElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');
@@ -2827,6 +2958,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
+
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
@@ -3209,13 +3343,6 @@ function addEditablePageTitle(container, placement) {
 // This function changes the page's title. Because localStorage data for the
 // page is identified by the page's title, we have to copy the data over to a
 // new object, then delete the old one.
-// TODO: On page creation, generate an alphanumeric ID and store the object
-//       that way instead. We will then need to update how localStorage loads
-//       the page, perhaps by creating a new key-value object in the
-//       localStorage like { page-title: 'thea-lpha-nume-rici-d123-4567'}
-//       That way, we only have to replace that object and no longer risk
-//       losing the entire page data like we potentially could with this
-//       implementation as it exists now.
 // DATA IN: String
 function changeLocalStoragePageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
@@ -3277,17 +3404,18 @@ function addEditableMetadata(container, placement) {
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const settings = storedData.pages[page_id].settings;
-  if (typeof settings.length !== 'undefined') {
-    const metaTags = JSON.parse(settings).metaTags;
+  if (storedData) {
+    const settings = storedData.pages[page_id].settings;
+    if (typeof settings.length !== 'undefined') {
+      const metaTags = JSON.parse(settings).metaTags;
 
-    if (metaTags) {
-      metaTags.forEach(tag => {
-        addMetadataPair(tag.type, tag.name, tag.content);
-      });
+      if (metaTags) {
+        metaTags.forEach(tag => {
+          addMetadataPair(tag.type, tag.name, tag.content);
+        });
+      }
     }
   }
-
 
 
   // Add initial empty metadata pair
@@ -3415,25 +3543,6 @@ function generateAlphanumericId() {
 function addIdAndClassToElements() {
   const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
 
-  // Helper function to generate a random alphanumeric string of a given length
-  function generateRandomId(length = 8) {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  }
-
-  // Function to ensure the generated ID is unique on the page
-  function generateUniqueId() {
-    let the_id;
-    do {
-      the_id = generateRandomId();
-    } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
-    return the_id;
-  }
-
   // Find elements that match the specified classes
   const elements = document.querySelectorAll(targetClasses.map(cls => `.${cls}`).join(','));
 
@@ -3448,6 +3557,24 @@ function addIdAndClassToElements() {
   });
 }
 
+// Function to ensure the generated ID is unique on the page
+function generateUniqueId() {
+  let the_id;
+  do {
+    the_id = generateRandomId();
+  } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
+  return the_id;
+}
+
+// Helper function to generate a random alphanumeric string of a given length
+function generateRandomId(length = 8) {
+  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
 /* File: ./app/js/editor/save.js */
 /*
@@ -3509,7 +3636,7 @@ function saveChanges(page) {
     content: getCleanInnerHTML(element)
   }));
   const json = JSON.stringify(data);
-  savePage(page, json);
+  savePageData(page, json);
   console.log('Changes saved successfully!');
 } // DATA OUT: null
 
@@ -3517,24 +3644,32 @@ function saveChanges(page) {
 // for subsequent content to be stored. If this objects already exists, it
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
-function savePage(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
-  }
-  if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: [], title: 'Untitled', settings: {}, blobs: {} };
-  }
-  appSageStorage.pages[pageId].page_data = data;
+function savePageData(pageId, data) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  if (pageObject){
+    pageObject.page_data = data;
 
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  }
 } // DATA OUT: null
+
+function saveComponentObjectToPage(componentName, object) {
+  try {
+    const pageId = getPageId();
+    const appSageStorage = getAppSageStorage();
+    const currentPage = appSageStorage.pages[pageId];
+    currentPage[componentName] = object;
+
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } catch { console.error('Something went wrong saving component data.') }
+}
 
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
 // from the dedicated Page Settings sidebar.
 // DATA IN: ['String', 'JSON Object']
-function savePageSettings(pageId, data) {
+function savePageDataSettings(pageId, data) {
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
   if (!appSageStorage.pages) {
     appSageStorage.pages = {};
@@ -3558,7 +3693,7 @@ function savePageSettingsChanges(pageId) {
     metaTags: ''
   }
   const json = JSON.stringify(settings);
-  savePageSettings(pageId, json);
+  savePageDataSettings(pageId, json);
 } // DATA OUT: null
 
 
@@ -3618,10 +3753,28 @@ function restoreGridCapabilities(grid) {
     enableEditColumnOnClick(column);
     displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
+    const addComponentButton = createAddComponentButton(column);
+    column.appendChild(addComponentButton);
+    const addContainerButton = createAddContainerButton(column);
+    column.appendChild(addContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(column);
+      column.appendChild(addHtmlButton);
+    }
+    enableEditContainerOnClick(column);
+    displayMediaFromIndexedDB(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
       displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
+    });
+    Array.from(column.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+      const addChildContentButton = createAddContentButton(contentContainer);
+      contentContainer.appendChild(addChildContentButton);
+      const addChildContainerButton = createAddContainerButton(contentContainer);
+      contentContainer.appendChild(addChildContainerButton);
+      enableEditContainerOnClick(contentContainer);
+      displayMediaFromIndexedDB(contentContainer);
     });
   });
 } // DATA OUT: null
@@ -3631,6 +3784,8 @@ function restoreGridCapabilities(grid) {
 function restoreContainerCapabilities(container) {
   const addContentButton = createAddContentButton(container);
   container.appendChild(addContentButton);
+  const addComponentButton = createAddComponentButton(container);
+  container.appendChild(addComponentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
   if (advancedMode === true){
@@ -3642,6 +3797,8 @@ function restoreContainerCapabilities(container) {
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
+    const addChildComponentButton = createAddComponentButton(contentContainer);
+    contentContainer.appendChild(addChildComponentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
@@ -3659,6 +3816,79 @@ function restoreContainerCapabilities(container) {
 } // DATA OUT: null
 
 
+
+
+/* File: ./app/js/editor/components/main.js */
+/*
+
+  editor/components/main.js
+
+*/
+
+/* Begin component loading */
+async function loadComponentFiles() {
+  return new Promise((resolve, reject) => {
+    const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
+
+    const loadPromises = components.map(component => {
+      if (component.license === 'premium' && appSagePremium === false) {
+        return Promise.resolve(); // Skip loading for non-premium users
+      }
+
+      const path = component.license === 'premium'
+        ? `./js/editor/components/premium/${component.file}`
+        : `./js/editor/components/free/${component.file}`;
+
+      return loadScript(path);
+    });
+
+    // Wait for all scripts to load before resolving
+    Promise.all(loadPromises)
+      .then(() => resolve())
+      .catch(err => reject(err));
+  });
+} /* End component loading */
+
+async function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+
+    // Resolve when the script loads, reject if there is an error
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+
+    document.head.appendChild(script);
+  });
+}
+
+function initializeComponentForm(container, componentName, form) {
+  if (componentName === 'internationalClocks') {
+    initializeClockDataFromForm(container);
+    form.setAttribute('data-initialized', true);
+  }
+  if (componentName === 'rotatingQuotes') {
+    initializeQuoteDataFromForm(container);
+    form.setAttribute('data-initialized', true);
+  }
+  if (componentName === 'calculator') {
+    initializeCalculatorForm(container);
+    form.setAttribute('data-initialized', true);
+  }
+}
+
+function initializeExistingComponents(container, componentName) {
+  if (componentName === 'internationalClocks') {
+    initializeInternationalClocks(container);
+  }
+  if (componentName === 'rotatingQuotes') {
+    initializeRotatingQuotes(container);
+  }
+  if (componentName === 'calculator') {
+    initializeCalculator(container);
+  }
+}
 
 
 /* File: ./app/js/load.js */
@@ -3822,7 +4052,73 @@ function addMetasToHead() {
   }
 }
 
+
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(appSageDatabaseString, 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains('mediaStore')) {
+        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
+        mediaStore.createIndex('blob', 'blob', { unique: false });
+        mediaStore.createIndex('url', 'url', { unique: false });
+      }
+
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
 document.addEventListener('DOMContentLoaded', addMetasToHead);
+ 
+// Call the loadComponentFiles function and wait for all scripts to load
+loadComponentFiles().then(() => {
+  // Initialize all components that load to the page
+  document.querySelectorAll('.pagecomponent').forEach(container => {
+    const componentContainer = container.querySelector('[data-component-name]');
+    const componentName = componentContainer.getAttribute('data-component-name');
+    initializeExistingComponents(componentContainer, componentName);
+  });
+}).catch(err => {
+  console.error('Failed to load component files:', err);
+});
+
+function getCurrentPage() {
+  const pageId = getPageId();
+  const currentPage = getPageObject(pageId);
+  return currentPage;
+}
+
+function getPageId() {
+  const params = new URLSearchParams(window.location.search);
+  const pageId = params.get('config') || params.get('page');
+  return pageId;
+}
+
+function getAppSageStorage() {
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  return appSageStorage;
+}
+
+function getPageObject(pageId) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  return pageObject;
+}
 
 
 /* File: ./app/js/editor/responsive.js */
@@ -4031,13 +4327,19 @@ function createLabel(bp, labelPrefix, forAttr) {
 // DATA IN: See `addDeviceTargetedOptions`
 function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   const isFile = labelPrefix.includes('File');
+  const isUrl = (labelPrefix === 'Background Image URL');
   control.type = isFile ? 'file' : 'text';
   if (isFile) control.setAttribute('accept', 'image/*');
-  if (!isFile) control.value = getCurrentStyle(bp, options, cssClassBase, grid);
+  if (isUrl) {
+    const url = String(grid.classList).match(/bg-\[url\('([^']*)'\)\]/);
+    if (url) control.value = url[1] || '';
+  } else if (!isFile) { 
+    control.value = getCurrentStyle(bp, options, cssClassBase, grid);
+  }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   let newValue;
   control.onchange = (event) => {
-    if (labelPrefix === 'Background Image URL') {
+    if (isUrl) {
       // assumes 'bg' is URL
       newValue = `${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${cssClassBase === 'bg' ? '[url(\'' : ''}${control.value}${cssClassBase === 'bg' ? '\')]' : ''}`;
       const classRegex = new RegExp(`\\b${bp === 'xs' ? ' ' : bp + ':'}${cssClassBase}-\\d+\\b`, 'g');
@@ -4671,10 +4973,7 @@ function loadPreview(pageId) {
 
     const data = JSON.parse(json);
     data.forEach(item => {
-      const element = document.createElement(item.tagName);
-      element.className = item.className;
-      element.innerHTML = item.content;
-      pageContainer.appendChild(element);
+      pageContainer.innerHTML += item.content;
     });
 
     loadPageSettings(pageId, true);
@@ -4694,4 +4993,5 @@ document.addEventListener('DOMContentLoaded', function () {
     loadPreview(previewPageId);
   }
 });
+
 

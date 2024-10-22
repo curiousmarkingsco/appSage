@@ -53,10 +53,28 @@ function restoreGridCapabilities(grid) {
     enableEditColumnOnClick(column);
     displayMediaFromIndexedDB(column);
     column.appendChild(createAddContentButton(column));
+    const addComponentButton = createAddComponentButton(column);
+    column.appendChild(addComponentButton);
+    const addContainerButton = createAddContainerButton(column);
+    column.appendChild(addContainerButton);
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(column);
+      column.appendChild(addHtmlButton);
+    }
+    enableEditContainerOnClick(column);
+    displayMediaFromIndexedDB(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
       displayMediaFromIndexedDB(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
+    });
+    Array.from(column.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
+      const addChildContentButton = createAddContentButton(contentContainer);
+      contentContainer.appendChild(addChildContentButton);
+      const addChildContainerButton = createAddContainerButton(contentContainer);
+      contentContainer.appendChild(addChildContainerButton);
+      enableEditContainerOnClick(contentContainer);
+      displayMediaFromIndexedDB(contentContainer);
     });
   });
 } // DATA OUT: null
@@ -66,6 +84,8 @@ function restoreGridCapabilities(grid) {
 function restoreContainerCapabilities(container) {
   const addContentButton = createAddContentButton(container);
   container.appendChild(addContentButton);
+  const addComponentButton = createAddComponentButton(container);
+  container.appendChild(addComponentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
   if (advancedMode === true){
@@ -77,6 +97,8 @@ function restoreContainerCapabilities(container) {
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
+    const addChildComponentButton = createAddComponentButton(contentContainer);
+    contentContainer.appendChild(addChildComponentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
     if (advancedMode === true){
