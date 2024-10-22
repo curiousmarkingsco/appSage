@@ -20,6 +20,8 @@ cd appSage
 Open the repository folder and double-click `index.html`
 
 #### Option 2, start a localhost http server
+
+##### 2.1 Install Node Package Manager
 If you don't already have `npm` installed:
 1.	Visit the Node.js website.
 2.	Download the LTS (Long-Term Support) version, which is recommended for most users.
@@ -33,15 +35,47 @@ npm -v
 ```
 This should output the versions of Node.js and npm, confirming that they are installed.
 
-Install `http-server`:
+Install packages:
 ```sh
 npm install
 ```
 
+##### 2.2 Run the localhost server
 Then, get it started up:
 ```sh
 npx http-server
 ```
+
+#### Option 3, using Electron
+
+##### 3.1 Initial setup
+
+See [Install Node Package Manager](##### 2.1 Install Node Package Manager)
+
+##### 3.2 Start the server  
+
+```sh
+npm start
+```
+
+##### 3.3 Package up a release
+1. Increment the version number in `package-json` in the root folder of this project.
+  * MAJOR for incompatible API changes
+  * MINOR for backward-compatible functionality
+  * PATCH for backward-compatible bug fixes.
+  ```sh
+    npm version [major|minor|patch]
+  ```
+2. Run the test suite (which currently does not exist, hey it's an aspirational how-to document)
+  ```sh
+    npm test
+  ```
+3. Package up the executables for release
+   (You may need to run `brew install --cask wine-stable` for Linux distribution on a non-Linux machine)
+  ```sh
+    npm run package
+  ```
+
 
 ##### Begin page building
 Navigate to: [http://localhost:8080](http://localhost:8080) and make a new page.
