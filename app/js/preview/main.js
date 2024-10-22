@@ -22,10 +22,7 @@ function loadPreview(pageId) {
 
     const data = JSON.parse(json);
     data.forEach(item => {
-      const element = document.createElement(item.tagName);
-      element.className = item.className;
-      element.innerHTML = item.content;
-      pageContainer.appendChild(element);
+      pageContainer.innerHTML += item.content;
     });
 
     loadPageSettings(pageId, true);

@@ -85,6 +85,9 @@ function createAddContainerButton(containingBox) {
     const addContentButton = createAddContentButton(containerContainer);
     containerContainer.appendChild(addContentButton);
 
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
+
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
   });
@@ -145,10 +148,14 @@ function createVerticalMoveContainerButton(container, direction) {
 // is clicked.
 // DATA IN: HTML Element, <div>
 function enableEditContainerOnClick(container) {
-  container.addEventListener('click', function (event) {
-    event.stopPropagation();
-    addContainerOptions(container);
-    highlightEditingElement(container);
-    addIdAndClassToElements();
-  });
+  if (container.classList.contains('pagecomponent')) {
+    enableEditComponentOnClick(container);
+  } else {
+    container.addEventListener('click', function (event) {
+      event.stopPropagation();
+      addContainerOptions(container);
+      highlightEditingElement(container);
+      addIdAndClassToElements();
+    });
+  }
 } // DATA OUT: null

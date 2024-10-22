@@ -9,10 +9,6 @@
 // elements through the DOM and to be able to do things like add background
 // images while still being able to give the actual element a background color
 // so that legibility is still possible.
-// TODO: Additionally, adding a background color to a button, for example,
-//       creates confusing results since clicking that background doesn't
-//       actually result in clicking the link. This needs to be fixed and
-//       crafted more intentionally for certain elements.
 // DATA IN: null
 function addContentContainer() {
   const contentContainer = document.createElement('div');
@@ -303,28 +299,6 @@ function generateMediaUrl(event, contentContainer, background) {
     reader.readAsDataURL(file);
   }
 } // DATA OUT: null
-
-// Helper functions for IndexedDB storage
-function openDatabase() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('mediaDatabase', 1);
-
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      db.createObjectStore('mediaStore', { keyPath: 'id' });
-      db.createObjectStore('mediaStore', { keyPath: 'blob' });
-      db.createObjectStore('mediaStore', { keyPath: 'url' });
-    };
-
-    request.onsuccess = (event) => {
-      resolve(event.target.result);
-    };
-
-    request.onerror = (event) => {
-      reject('Error opening database');
-    };
-  });
-}
 
 async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();

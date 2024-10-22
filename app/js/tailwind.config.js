@@ -2,9 +2,6 @@
 
   tailwind.config.js
 
-  TODO: Make this editable from the (as of yet created) app/settings.html page
-  Then, update these comments with any contextually relevant information.
-
 */
 tailwind.config = {
   theme: {

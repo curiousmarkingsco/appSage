@@ -158,4 +158,70 @@ function addMetasToHead() {
   }
 }
 
+
+
+// Helper functions for IndexedDB storage
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(appSageDatabaseString, 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains('mediaStore')) {
+        const mediaStore = db.createObjectStore('mediaStore', { keyPath: 'id' });
+        mediaStore.createIndex('blob', 'blob', { unique: false });
+        mediaStore.createIndex('url', 'url', { unique: false });
+      }
+
+    };
+
+    request.onsuccess = (event) => {
+      resolve(event.target.result);
+    };
+
+    request.onerror = (event) => {
+      reject('Error opening database');
+    };
+  });
+}
+
 document.addEventListener('DOMContentLoaded', addMetasToHead);
+ 
+// Call the loadComponentFiles function and wait for all scripts to load
+loadComponentFiles().then(() => {
+  // Initialize all components that load to the page
+  document.querySelectorAll('.pagecomponent').forEach(container => {
+    const componentContainer = container.querySelector('[data-component-name]');
+    const componentName = componentContainer.getAttribute('data-component-name');
+    initializeExistingComponents(componentContainer, componentName);
+  });
+}).catch(err => {
+  console.error('Failed to load component files:', err);
+});
+
+function getCurrentPage() {
+  const pageId = getPageId();
+  const currentPage = getPageObject(pageId);
+  return currentPage;
+}
+
+function getPageId() {
+  const params = new URLSearchParams(window.location.search);
+  const pageId = params.get('config') || params.get('page');
+  return pageId;
+}
+
+function getAppSageStorage() {
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  return appSageStorage;
+}
+
+function getPageObject(pageId) {
+  const appSageStorage = getAppSageStorage();
+  const pageObject = appSageStorage.pages[pageId];
+  return pageObject;
+}

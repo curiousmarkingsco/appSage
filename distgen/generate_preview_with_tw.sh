@@ -16,6 +16,8 @@ declare -a js_files=(
     "./app/js/tailwind.js"
     "./app/js/tailwind.config.js"
     "./app/js/editor/globals.js"
+    ".app//js/editor/components/main.js"
+    "./app/js/editor/save.js"
     "./app/js/load.js"
     "./app/js/preview/main.js"
 )
