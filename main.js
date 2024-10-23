@@ -12,7 +12,7 @@ function createWindow () {
       }
   });
 
-  splash.loadFile('./electron_app/splash.html');
+  splash.loadFile('./src/electron_app/splash.html');
 
   splash.on('closed', () => {
       splash = null;
@@ -26,10 +26,11 @@ function createWindow () {
           webPreferences: {
               nodeIntegration: true,
               contextIsolation: true,
-              preload: path.join(__dirname, 'preload.js') // Use a preload script for secure access
+              preload: path.join(__dirname, './src/electron_app/preload.js') // Use a preload script for secure access
           }
       });
-      mainWindow.loadFile('index.html');
+
+      mainWindow.loadFile('dist/index.html');
 
       // Set CSP header
       mainWindow.webContents.on('did-finish-load', () => {
