@@ -2,37 +2,43 @@
   "name": "appsage",
   "version": "1.0.0",
   "description": "appSage is a no-code web document builder.",
-  "icon": "src/app/assets/favicons/android-chrome-512x512.png",
-  "win32": {
-    "icon": "src/app/assets/favicons/favicon.ico"
-  },
-  "main": "main.js",
-  "source": "src/index.html",
+  "main": "src/main.js",
   "devDependencies": {
-    "@parcel/packager-raw-url": "^2.12.0",
-    "@parcel/transformer-webmanifest": "^2.12.0",
+    "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-deb": "^7.5.0",
+    "@electron-forge/maker-rpm": "^7.5.0",
+    "@electron-forge/maker-squirrel": "^7.5.0",
+    "@electron-forge/maker-zip": "^7.5.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
+    "@electron-forge/plugin-fuses": "^7.5.0",
+    "@electron/fuses": "^1.8.0",
     "autoprefixer": "^10.4.20",
     "electron": "^32.2.0",
+    "electron-builder": "^25.1.8",
     "electron-packager": "^17.1.2",
     "eslint": "^9.13.0",
     "eslint-plugin-electron": "^7.0.0",
-    "http-server": "^14.1.1",
     "lighthouse": "^12.2.1",
-    "parcel": "^2.12.0",
     "postcss": "^8.4.47",
     "prettier": "^3.3.3",
     "tailwindcss": "^3.4.14"
   },
   "scripts": {
+    "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel src/index.html && electron .",
-    "package": "electron-packager . appSage --platform=win32 --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=darwin --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=linux --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && npm run build:web"
+    "build:css": "npx tailwindcss -i ./src/style.css -o ./src/tailwind-output.css --watch",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "config": {
+    "forge": "./forge.config.js"
   },
   "keywords": [],
   "author": "Curious Markings, Co.",
   "license": "ISC",
   "dependencies": {
     "crypto": "^1.0.1",
+    "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.0.0",
     "tailwindsjs": "^1.0.0"
   },
