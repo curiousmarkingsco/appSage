@@ -1,7 +1,25 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, nativeImage, Tray } = require('electron')
 const path = require('path');
 
+
+
 function createWindow () {
+  // Example: Tray icon creation
+  // const trayIcon = nativeImage.createFromPath(path.join(__dirname, '/app/assets/appicons/icon.png'));
+  // const tray = new Tray(trayIcon);
+  const appIcon = nativeImage.createFromPath(path.join(__dirname, 'app/assets/appicons/icon.png'));
+
+  if (process.platform === 'darwin') {
+    const appIconPath = path.resolve(__dirname, 'app/assets/appicons/icon.png');
+    const appIcon = nativeImage.createFromPath(appIconPath);
+    if (!appIcon.isEmpty()) {
+      app.dock.setIcon(appIcon);
+    } else {
+      console.error('App icon is empty or not loaded correctly:', appIconPath);
+    }
+    app.dock.setIcon(nativeImage.createFromPath(path.resolve(__dirname, 'app/assets/appicons/icon.png')));
+  }
+
   let splash = new BrowserWindow({
       width: 400,
       height: 300,
@@ -9,7 +27,8 @@ function createWindow () {
       alwaysOnTop: true,
       webPreferences: {
           nodeIntegration: true,
-      }
+      },
+      icon: appIcon
   });
 
   splash.loadFile('./src/electron_app/splash.html');
@@ -26,16 +45,17 @@ function createWindow () {
           webPreferences: {
               nodeIntegration: true,
               contextIsolation: true,
-              preload: path.join(__dirname, './src/electron_app/preload.js') // Use a preload script for secure access
-          }
+              preload: path.join(__dirname, 'electron_app/preload.js') // Use a preload script for secure access
+          },
+          icon: appIcon
       });
 
-      mainWindow.loadFile('dist/index.html');
+      mainWindow.loadFile('./src/index.html');
 
       // Set CSP header
       mainWindow.webContents.on('did-finish-load', () => {
         mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-            details.responseHeaders['Content-Security-Policy'] = ["default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"];
+            details.responseHeaders['Content-Security-Policy'] = ["default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';"];
             callback({ cancel: false, responseHeaders: details.responseHeaders });
         });
       });
