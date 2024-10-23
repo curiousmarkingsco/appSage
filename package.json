@@ -1,23 +1,32 @@
 {
-  "name": "appSage",
+  "name": "appsage",
   "version": "1.0.0",
-  "description": "app**Sage** is a no-code web document builder.",
-  "icon": "path/to/icon.png",
+  "description": "appSage is a no-code web document builder.",
+  "icon": "src/app/assets/favicons/android-chrome-512x512.png",
   "win32": {
-    "icon": "path/to/icon.ico"
+    "icon": "src/app/assets/favicons/favicon.ico"
   },
-  "main": "index.js",
+  "main": "main.js",
+  "source": "src/index.html",
   "devDependencies": {
+    "@parcel/packager-raw-url": "^2.12.0",
+    "@parcel/transformer-webmanifest": "^2.12.0",
+    "autoprefixer": "^10.4.20",
     "electron": "^32.2.0",
     "electron-packager": "^17.1.2",
+    "eslint": "^9.13.0",
+    "eslint-plugin-electron": "^7.0.0",
     "http-server": "^14.1.1",
-    "parcel": "^2.12.0"
+    "lighthouse": "^12.2.1",
+    "parcel": "^2.12.0",
+    "postcss": "^8.4.47",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.14"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron .",
-    "package": "electron-packager . appSage --platform=win32 --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=darwin --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=linux --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && npm run build:web",
-    "build:web": "parcel build ./index.html --dist-dir release/${npm_package_version}/web --public-url ./"
+    "start": "parcel src/index.html && electron .",
+    "package": "electron-packager . appSage --platform=win32 --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=darwin --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && electron-packager . appSage --platform=linux --arch=x64,arm64 --out=release/${npm_package_version}/ --overwrite && npm run build:web"
   },
   "keywords": [],
   "author": "Curious Markings, Co.",
@@ -26,5 +35,21 @@
     "crypto": "^1.0.1",
     "electron-store": "^10.0.0",
     "tailwindsjs": "^1.0.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:prettier/recommended"
+    ],
+    "plugins": [
+      "tailwindcss",
+      "electron"
+    ],
+    "rules": {
+      "tailwindcss/classnames-order": "warn",
+      "tailwindcss/no-custom-classname": "off"
+    },
+    "env": {
+      "browser": true
+    }
   }
 }
