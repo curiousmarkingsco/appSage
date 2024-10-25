@@ -1,23 +1,3 @@
-const crypto = require('crypto');
-
-function deriveKey(password) {
-    const salt = crypto.randomBytes(16).toString('hex'); // Generate a random salt
-    const iterations = 100000;
-    const keyLength = 32; // 256 bits
-    return crypto.pbkdf2Sync(password, salt, iterations, keyLength, 'sha512');
-}
-
-const Store = require('electron-store');
-
-function createStore(password) {
-    const encryptionKey = deriveKey(password); // Derive the key from the password
-    const store = new Store({ encryptionKey });
-
-    return store;
-}
-
-const store = createStore(userPassword); // userPassword should come from the user input
-
 // Function to generate and store form data
 function generateFormData(formStructure) {
   const formData = []; // Initialize an array to hold the form data
