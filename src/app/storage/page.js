@@ -1,3 +1,5 @@
+// electron_app/page.js
+
 
 // Create & Update Storage
 function storePageHtml(pageId, pageHTML) {

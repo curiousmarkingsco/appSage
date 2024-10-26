@@ -1,8 +1,6 @@
 const { app, BrowserWindow, nativeImage, Tray } = require('electron')
 const path = require('path');
 
-
-
 function createWindow () {
   // Example: Tray icon creation
   // const trayIcon = nativeImage.createFromPath(path.join(__dirname, '/app/assets/appicons/icon.png'));
@@ -25,9 +23,6 @@ function createWindow () {
       height: 300,
       frame: false,
       alwaysOnTop: true,
-      webPreferences: {
-          nodeIntegration: true,
-      },
       icon: appIcon
   });
 
@@ -42,23 +37,23 @@ function createWindow () {
       const mainWindow = new BrowserWindow({
           width: 1024,
           height: 680,
+          icon: appIcon,
           webPreferences: {
-              nodeIntegration: true,
-              contextIsolation: true,
-              preload: path.join(__dirname, 'electron_app/preload.js') // Use a preload script for secure access
-          },
-          icon: appIcon
+            preload: path.join(__dirname, 'preload.js'),  // Optional
+            // nodeIntegration: true,                        // Allows using Node.js in the renderer
+            contextIsolation: false                       // Allows interaction between the main and renderer
+          }
       });
 
       mainWindow.loadFile('./src/index.html');
 
       // Set CSP header
-      mainWindow.webContents.on('did-finish-load', () => {
-        mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-            details.responseHeaders['Content-Security-Policy'] = ["default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';"];
-            callback({ cancel: false, responseHeaders: details.responseHeaders });
-        });
-      });
+      // mainWindow.webContents.on('did-finish-load', () => {
+      //   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+      //       details.responseHeaders['Content-Security-Policy'] = ["default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';"];
+      //       callback({ cancel: false, responseHeaders: details.responseHeaders });
+      //   });
+      // });
 
       splash.close();
   }, 3000); // Match the duration of splash.js

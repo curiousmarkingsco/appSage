@@ -7,6 +7,8 @@
 
 */
 
+const store = require('../../electron_app/storage/storage.js');
+
 // Remove editor elements so that localStorage is not cluttered with unneeded
 // elements making them production-ready for app/js/load.js
 // DATA IN: HTML Element, <div>
@@ -66,40 +68,53 @@ function saveChanges(page) {
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
 function savePageData(pageId, data) {
-  const appSageStorage = getAppSageStorage();
-  const pageObject = appSageStorage.pages[pageId];
-  if (pageObject){
-    pageObject.page_data = data;
-
+  if (storageMethodLegacy) {
+    const appSageStorage = getAppSageStorage();
+    appSageStorage.pages[pageId] = { ...appSageStorage.pages[pageId], page_data: data };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } else {
+    // Use electron-store for saving page HTML
+    store.set(`appSage.pages.${pageId}.html`, data);
   }
 } // DATA OUT: null
 
 function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
-    const appSageStorage = getAppSageStorage();
-    const currentPage = appSageStorage.pages[pageId];
-    currentPage[componentName] = object;
-
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-  } catch { console.error('Something went wrong saving component data.') }
+    if (storageMethodLegacy) {
+      const appSageStorage = getAppSageStorage();
+      const currentPage = appSageStorage.pages[pageId];
+      currentPage[componentName] = object;
+      localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    } else {
+      // Use electron-store to save components
+      store.set(`appSage.pages.${pageId}.components.${componentName}`, object);
+    }
+  } catch (error) {
+    console.error('Something went wrong saving component data.', error);
+  }
 }
 
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
 // from the dedicated Page Settings sidebar.
 // DATA IN: ['String', 'JSON Object']
+// Save page settings (renamed to savePageDataSettings)
 function savePageDataSettings(pageId, data) {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
+  if (storageMethodLegacy) {
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    if (!appSageStorage.pages) {
+      appSageStorage.pages = {};
+    }
+    if (!appSageStorage.pages[pageId]) {
+      appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+    }
+    appSageStorage.pages[pageId].settings = data;
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } else {
+    // Use electron-store to save settings
+    store.set(`appSage.pages.${pageId}.settings`, data);
   }
-  if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
-  }
-  appSageStorage.pages[pageId].settings = data;
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 
 // This function creates or prepares the necessary localStorage object in order
@@ -113,6 +128,11 @@ function savePageSettingsChanges(pageId) {
     className: page.className,
     metaTags: ''
   }
-  const json = JSON.stringify(settings);
-  savePageDataSettings(pageId, json);
+  if (storageMethodLegacy) {
+    const appSageStorage = getAppSageStorage();
+    appSageStorage.pages[pageId].settings = JSON.stringify(settings);
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  } else {
+    store.set(`appSage.pages.${pageId}.settings`, settings);
+  }
 } // DATA OUT: null

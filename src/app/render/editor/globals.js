@@ -28,6 +28,8 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageDatabaseString = 'appSageDatabase';
 }
 
+var storageMethodLegacy = false;
+
 // Requires paid license
 var appSagePremium = true;
 
