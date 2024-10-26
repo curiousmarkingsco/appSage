@@ -1,3 +1,5 @@
+// electron_app/storage.js
+
 // temporary credentials until authentication/authorization designed and implemented
 const username = '1234';
 const userPassword = '1234';

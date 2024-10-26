@@ -1,3 +1,5 @@
+// electron_app/settings.js
+
 const store = require('./storage');
 
 function storeGlobalSettings(globalSettings) {

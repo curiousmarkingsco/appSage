@@ -1,3 +1,5 @@
+// electron_app/revisions.js
+
 const MAX_REVISIONS = 50;
 
 // Function to save a new revision of the page data
