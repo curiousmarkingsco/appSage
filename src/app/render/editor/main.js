@@ -56,7 +56,7 @@ function initializeEditor() {
     </div>
   `;
 
-  loadEditorScripts();
+  if (window.api) loadEditorScripts();
   // Load additional editor-specific scripts
   async function loadEditorScripts() {
     await loadScript('./render/tailwind.js').then(() => {
@@ -67,7 +67,7 @@ function initializeEditor() {
         './render/tailwind.js',
         './render/tailwind.config.js',
         './render/editor/settings.js',
-        './render/editor/globals.js',
+        './render/editor/_globals.js',
         './render/editor/grid.js',
         './render/editor/style/grid.js',
         './render/editor/container.js',
@@ -103,15 +103,10 @@ function initializeEditor() {
       document.body.appendChild(script);
     });
   }
-};
 
-var editorMode = true;
-
-// This big chunk does everything necessary for initial page setup which is
-// largely comprised of setting up all the listeners that allow various editing
-// functions that show up in the sidebar.
-// DATA IN: null
-document.addEventListener('DOMContentLoaded', function () {
+  // This big chunk does everything necessary for initial page setup which is
+  // largely comprised of setting up all the listeners that allow various editing
+  // functions that show up in the sidebar.
   const editPageButton = document.getElementById('editPageSettings');
   const dropdownMenu = document.getElementById('dropdownMenu');
   const pageSettingsButton = document.getElementById('pageSettings');
@@ -209,7 +204,30 @@ document.addEventListener('DOMContentLoaded', function () {
       updateTooltip(e, false);
     }
   }, true);
-}); // DATA OUT: null
+
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+
+  if (config) {
+    const json = loadPage(config);
+    if (json && json.length > 0) {
+      loadChanges(json);
+      loadPageSettings(config);
+      loadPageBlobs(config);
+      loadPageMetadata(config);
+    }
+    setupAutoSave(config);
+  } else {
+    let pageId = createNewConfigurationFile();
+    setupAutoSave(pageId);
+  }
+  initializeSettings();
+};
+
+var editorMode = true;
 
 // Function to save metadata to localStorage, ensuring no duplicate tags
 function saveMetadataToLocalStorage(page_id, newMetaTags) {
@@ -719,29 +737,6 @@ function addEditableMetadata(container, placement) {
   });
 } // DATA OUT: null
 
-// This used to be in an inline script on the page:
-document.addEventListener('DOMContentLoaded', function () {
-  const params = new URLSearchParams(window.location.search);
-  const config = params.get('config');
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-
-  if (config) {
-    const json = loadPage(config);
-    if (json && json.length > 0) {
-      loadChanges(json);
-      loadPageSettings(config);
-      loadPageBlobs(config);
-      loadPageMetadata(config);
-    }
-    setupAutoSave(config);
-  } else {
-    let pageId = createNewConfigurationFile();
-    setupAutoSave(pageId);
-  }
-});
-
 function createNewConfigurationFile() {
   const pageId = generateAlphanumericId();
   let title = 'Untitled';
@@ -807,10 +802,12 @@ function generateRandomId(length = 8) {
   return result;
 }
 
-if (document.readyState === 'loading') {
-  // Document is still loading, attach event listener
-  document.addEventListener('DOMContentLoaded', initializeEditor);
-} else {
-  // Document is already fully loaded, run initialization immediately
-  initializeEditor();
+if (window.api) {
+  if (document.readyState === 'loading') {
+    // Document is still loading, attach event listener
+    document.addEventListener('DOMContentLoaded', initializeEditor);
+  } else {
+    // Document is already fully loaded, run initialization immediately
+    initializeEditor();
+  }
 }

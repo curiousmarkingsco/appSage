@@ -1,11 +1,11 @@
-// index.js
+// index/main.js
 
-function initializeDashboard() {
+async function initializeDashboard() {
   // Inject head content like meta tags and links for favicons and CSS
   document.head.innerHTML = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+    <!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">-->
     <link rel="apple-touch-icon" sizes="180x180" href="../app/assets/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="../app/assets/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../app/assets/favicons/favicon-16x16.png">
@@ -52,11 +52,6 @@ function initializeDashboard() {
     </div>
   `;
 
-  // Add event listener to "New Page" button
-  document.getElementById('newPageButton').addEventListener('click', () => {
-    loadEditor();
-  });
-
   // Load pages from localStorage and populate the page list
   const container = document.getElementById('pageList');
   try {
@@ -90,7 +85,16 @@ function initializeDashboard() {
       </div>
     `;
   }
-};
+
+  // Add event listener to "New Page" button
+  document.getElementById('newPageButton').addEventListener('click', () => {
+    if (window.api){
+      loadEditor();
+    } else {
+      initializeEditor();
+    }
+  });
+}
 
 // Functions to dynamically load the editor or preview logic (replace these with actual logic)
 function loadEditor(pageId = null) {
@@ -114,8 +118,8 @@ function deletePage(pageId, element) {
 }
 
 // Event listener for DOMContentLoaded
-if (document.readyState === 'loading') {
+try {
   document.addEventListener('DOMContentLoaded', initializeDashboard);
-} else {
+} catch {
   initializeDashboard();
 }

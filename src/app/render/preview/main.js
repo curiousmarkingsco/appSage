@@ -29,7 +29,7 @@ function initializePreview() {
   
   // Dynamically load scripts necessary for preview functionality
   loadScripts([
-    './app/render/editor/globals.js',
+    './app/render/editor/_globals.js',
     './app/render/editor/components/main.js',
     './app/render/editor/save.js',
     './app/render/load.js',
@@ -48,9 +48,14 @@ function initializePreview() {
       document.body.appendChild(script);
     });
   }
-};
 
-const store = require('../../storage/index.js');
+  const urlParams = new URLSearchParams(window.location.search);
+  const previewPageId = urlParams.get('page');
+
+  if (previewPageId) {
+    loadPreview(previewPageId);
+  }
+};
 
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
@@ -93,20 +98,12 @@ function loadPreview(pageId) {
   }
 } // DATA OUT: null
 
-// This used to be in an inline script on the page:
-document.addEventListener('DOMContentLoaded', function () {
-  const urlParams = new URLSearchParams(window.location.search);
-  const previewPageId = urlParams.get('page');
-
-  if (previewPageId) {
-    loadPreview(previewPageId);
+if (window.api) {
+  if (document.readyState === 'loading') {
+    // Document is still loading, attach event listener
+    document.addEventListener('DOMContentLoaded', initializePreview);
+  } else {
+    // Document is already fully loaded, run initialization immediately
+    initializePreview();
   }
-});
-
-if (document.readyState === 'loading') {
-  // Document is still loading, attach event listener
-  document.addEventListener('DOMContentLoaded', initializePreview);
-} else {
-  // Document is already fully loaded, run initialization immediately
-  initializePreview();
 }

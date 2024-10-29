@@ -651,26 +651,6 @@ function handleButtonFields(formContainer, contentContainer, button) {
   formContainer.append(linkOpts);
 }
 
-function adjustClassesForInteractiveElements(container) {
-  const excludedClasses = ['content-container', 'pagecontent'];
-  const interactiveElements = container.querySelectorAll('a, button, input, textarea, select, label, iframe, details, summary');
-
-  if (interactiveElements.length === 0) {
-    return;
-  }
-
-  const containerClasses = Array.from(container.classList);
-  const classesToTransfer = containerClasses.filter(cls => !excludedClasses.includes(cls));
-
-  if (classesToTransfer.length > 0) {
-    interactiveElements.forEach(element => {
-      element.classList.add(...classesToTransfer);
-    });
-    container.classList.remove(...classesToTransfer);
-  }
-}
-
-
 // Map to track transferred classes from container to child elements
 const classTransferMap = new Map();
 

@@ -9,8 +9,6 @@
 
 */
 
-const store = require('../app/storage/index.js');
-
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 function loadPage(pageId) {
@@ -242,17 +240,24 @@ function openDatabase() {
 document.addEventListener('DOMContentLoaded', addMetasToHead);
  
 // Call the loadComponentFiles function and wait for all scripts to load
-loadComponentFiles().then(() => {
-  // Initialize all components that load to the page
+if (window.api) {
+  loadComponentFiles().then(() => {
+    // Initialize all components that load to the page
+    document.querySelectorAll('.pagecomponent').forEach(container => {
+      const componentContainer = container.querySelector('[data-component-name]');
+      const componentName = componentContainer.getAttribute('data-component-name');
+      initializeExistingComponents(componentContainer, componentName);
+    });
+  }).catch(err => {
+    console.error('Failed to load component files:', err);
+  });
+} else {
   document.querySelectorAll('.pagecomponent').forEach(container => {
     const componentContainer = container.querySelector('[data-component-name]');
     const componentName = componentContainer.getAttribute('data-component-name');
     initializeExistingComponents(componentContainer, componentName);
   });
-}).catch(err => {
-  console.error('Failed to load component files:', err);
-});
-
+}
 function getCurrentPage() {
   const pageId = getPageId();
   const currentPage = getPageObject(pageId);

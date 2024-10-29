@@ -28,8 +28,6 @@ if (typeof customAppSageStorage !== 'undefined') {
   var appSageDatabaseString = 'appSageDatabase';
 }
 
-var storageMethodLegacy = false;
-
 // Requires paid license
 var appSagePremium = true;
 
@@ -502,3 +500,5 @@ function appSageLocalNuke(){
   localStorage.removeItem(appSageSettingsString);
   localStorage.removeItem(appSageTitleIdMapString);
 }
+
+window._globalsLoaded = true;

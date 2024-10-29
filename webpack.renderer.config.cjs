@@ -1,10 +1,41 @@
 const path = require('path');
+const glob = require('glob');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './src/app/renderer.js', // Entry point for the renderer process
+  entry: {
+    renderer: {
+      import: [
+        './src/app/render/tailwind.js',
+        './src/app/render/tailwind.config.js',
+        './src/app/render/_globals.js',
+        ...glob.sync('./src/app/render/editor/components/**/*.js').map(file => path.resolve(__dirname, file)),
+        './src/app/render/editor/components/main.js',
+        './src/app/render/editor/grid.js',
+        './src/app/render/editor/style/grid.js',
+        './src/app/render/editor/container.js',
+        './src/app/render/editor/style/container.js',
+        './src/app/render/editor/component.js',
+        './src/app/render/editor/column.js',
+        './src/app/render/editor/style/column.js',
+        './src/app/render/editor/content.js',
+        './src/app/render/editor/sidebar.js',
+        './src/app/render/editor/style.js',
+        './src/app/render/editor/save.js',
+        './src/app/render/editor/load.js',
+        './src/app/render/editor/settings.js',
+        './src/app/render/editor/media.js',
+        './src/app/render/editor/responsive.js',
+        './src/app/render/main.js',
+        './src/app/render/preview/main.js',
+        './src/app/render/editor/main.js',
+        './src/app/render/index/main.js',
+        './src/app/renderer.js'
+      ]
+    }
+  },
   output: {
     path: path.resolve(__dirname, 'dist'), // Output bundled files into the dist folder
     filename: 'renderer.js', // Output filename for the renderer process
@@ -26,20 +57,20 @@ module.exports = {
         test: /\.css$/, // Handle CSS files
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
-      {
-        test: /\.(png|jpe?g|svg|gif|ico|mp3|mp4|webmanifest)$/, // Handle images and media
-        type: 'asset/resource',
-        generator: {
-          filename: 'assets/[name][ext]', // Output to assets folder
-        },
-      },
-      {
-        test: /\.(woff|woff2|ttf|eot)$/, // Handle font files
-        type: 'asset/resource',
-        generator: {
-          filename: 'assets/fonts/[name][ext]', // Output to assets/fonts folder
-        },
-      },
+      // {
+      //   test: /\.(png|jpe?g|svg|gif|ico|mp3|mp4|webmanifest)$/, // Handle images and media
+      //   type: 'asset/resource',
+      //   generator: {
+      //     filename: 'assets/[name][ext]', // Output to assets folder
+      //   },
+      // },
+      // {
+      //   test: /\.(woff|woff2|ttf|eot)$/, // Handle font files
+      //   type: 'asset/resource',
+      //   generator: {
+      //     filename: 'assets/fonts/[name][ext]', // Output to assets/fonts folder
+      //   },
+      // },
     ],
   },
   plugins: [
@@ -51,7 +82,6 @@ module.exports = {
       patterns: [
         { from: './src/app/assets', to: 'assets' }, // Copy assets (icons, images, etc.)
         { from: './src/app/placeholder_media', to: 'placeholder_media' }, // Copy placeholder media
-        { from: './src/app/preload.js', to: 'preload.js' }, // Copy preload.js
         { from: './src/app/styles.css', to: 'styles.css' }, // Copy CSS file
       ],
     }),
@@ -61,5 +91,5 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.js', '.css'], // Resolve these file extensions
-  },
+  }
 };

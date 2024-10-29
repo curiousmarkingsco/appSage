@@ -1,6 +1,6 @@
 // editor/settings.js
 
-document.addEventListener("DOMContentLoaded", function () {
+function initializeSettings() {
   const advancedModeCheckbox = document.getElementById("advancedMode");
   const storedSettings = JSON.parse(localStorage.getItem(appSageSettingsString)) || {};
 
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     colorsContainer.appendChild(newColorGroup); // Append the new color group to the container
   });
-});
+};
 
 function generateGfontsEmbedCode(fonts) {
   const selectedFonts = fonts || Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value).join('&family=');

@@ -62,6 +62,19 @@ function initializeComponentForm(container, componentName, form) {
 }
 
 function initializeExistingComponents(container, componentName) {
+  if (editorMode) {
+    if (window._globalsLoaded) {
+      initializeComponent(componentName);
+    } else {
+      // Poll or wait for the global to be defined
+      const checkGlobals = setInterval(() => {
+        if (window._globalsLoaded) {
+          clearInterval(checkGlobals);
+          initializeComponent(componentName);
+        }
+      }, 50);  // Check every 50ms
+    }
+  }
   if (componentName === 'internationalClocks') {
     initializeInternationalClocks(container);
   }
@@ -73,5 +86,20 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'dialogToast') {
     initializeDialogToast(container);
+  }
+}
+
+function initializeComponent(componentName) {
+  if (componentName === 'internationalClocks') {
+    initializeInternationalClocksObjects();
+  }
+  if (componentName === 'rotatingQuotes') {
+    initializeRotatingQuotesObjects();
+  }
+  if (componentName === 'calculator') {
+    initializeCalculatorObjects();
+  }
+  if (componentName === 'dialogToast') {
+    initializeDialogToastObjects();
   }
 }

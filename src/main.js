@@ -11,12 +11,9 @@ import { storePageHtml,
          getPageCSS,
          getPageSettings,
          getPageComponent } from './app/storage/page.js';
-import { fileURLToPath } from 'url';  // To handle __dirname in ESM
-import { dirname } from 'path';
 
-// Handling __dirname in ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+
+const __dirname = path.resolve();
 
 // Check if in development mode and use require() to load CommonJS module
 if (isDev) {
@@ -29,10 +26,10 @@ let sessionKey;
 
 function createWindow() {
   // Example: Tray icon creation
-  const appIcon = nativeImage.createFromPath(path.join(__dirname, 'app/assets/appicons/icon.png'));
+  const appIcon = nativeImage.createFromPath(path.join(__dirname, 'assets/appicons/icon.png'));
 
   if (process.platform === 'darwin') {
-    const appIconPath = path.resolve(__dirname, 'app/assets/appicons/icon.png');
+    const appIconPath = path.resolve(__dirname, 'assets/appicons/icon.png');
     const appIcon = nativeImage.createFromPath(appIconPath);
     if (!appIcon.isEmpty()) {
       app.dock.setIcon(appIcon);
