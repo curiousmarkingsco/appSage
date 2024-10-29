@@ -1,5 +1,6 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
+const path = require('path');
 
 module.exports = {
   packagerConfig: {
@@ -47,5 +48,14 @@ module.exports = {
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
+    [
+      '@electron-forge/plugin-webpack',
+      {
+        mainConfig: path.resolve(__dirname, 'webpack.main.config.js'),
+        renderer: {
+          config: path.resolve(__dirname, 'webpack.renderer.config.js'),
+        },
+      },
+    ],
   ],
 };
