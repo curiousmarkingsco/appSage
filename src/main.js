@@ -2,7 +2,15 @@
 import isDev from 'electron-is-dev';
 import { app, BrowserWindow, nativeImage, ipcMain, Tray } from 'electron';
 import path from 'path';
-import { createStore } from './app/storage/index.js';
+import { getOrSetEncryptionKey, createOrFindStore, readStore, updateStore, deleteStore  } from './app/storage/index.js';
+import { storePageHtml,
+         storePageCSS,
+         storePageSettings,
+         storePageComponent,
+         getPageHTML,
+         getPageCSS,
+         getPageSettings,
+         getPageComponent } from './app/storage/page.js';
 import { fileURLToPath } from 'url';  // To handle __dirname in ESM
 import { dirname } from 'path';
 
@@ -16,6 +24,8 @@ if (isDev) {
     require('electron-reloader')(module);
   } catch {}
 }
+
+let sessionKey;
 
 function createWindow() {
   // Example: Tray icon creation
@@ -90,13 +100,54 @@ app.on('activate', () => {
   }
 });
 
-// IPC handler for initializing store
+// IPC handler for storage access
 ipcMain.handle('initialize-store', async (event, { username, userPassword }) => {
   try {
-    const store = await createStore(username, userPassword);
+    sessionKey = await getOrSetEncryptionKey(username, userPassword);
+    const store = await createOrFindStore(sessionKey);
     return store;
   } catch (error) {
     console.error('Error creating store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-store', async (event, {}) => {
+  try {
+    const store = await readStore(sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error reading store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('update-store', async (event, { sessionKey }) => {
+  try {
+    const store = await updateStore(sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error updating store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('delete-store', async (event, { sessionKey }) => {
+  try {
+    const store = await deleteStore(sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('store-html', async (event, { pageId, pageHtml }) => {
+  try {
+    const store = await storePageHtml(pageId, pageHtml, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
     throw error;
   }
 });

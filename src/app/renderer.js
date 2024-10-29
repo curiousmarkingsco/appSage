@@ -5,14 +5,27 @@ if (typeof global === 'undefined') {
   var global = window;  // In the browser, `global` is mapped to `window`
 }
 
+var appSageStore;
+
 document.addEventListener('DOMContentLoaded', function () {
   const username = 'jojfsfweffwfe';
   const userPassword = 'aaafewfwefewaav';
 
   // Initialize the store and log the result or error
-  window.api.createStore(username, userPassword)
+  window.api.createOrFindStore(username, userPassword)
     .then(store => {
+      appSageStore = store;
       console.log('Store initialized:', store);
+    })
+    .catch(error => {
+      console.error('Error initializing store:', error.stack || error);
+    });
+
+  
+  window.api.readStore()
+    .then(store => {
+      appSageStore = store;
+      console.log('Store read:', store);
     })
     .catch(error => {
       console.error('Error initializing store:', error.stack || error);
