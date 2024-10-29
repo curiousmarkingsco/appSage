@@ -1,14 +1,16 @@
 // app/storage/page.js
-
+import { readStore } from './index.js'
 
 // Create & Update Storage
-function storePageHtml(pageId, pageHTML) {
+export async function storePageHtml(pageId, pageHTML, sessionKey) {
+  const store = readStore(sessionKey);
 
   // Store HTML for the page with unique ID
   store.set(`appSage.pages.${pageId}.html`, pageHTML);
 }
 
-function storePageCSS(pageId, tailwindCSS) {
+export async function storePageCSS(pageId, tailwindCSS, sessionKey) {
+  const store = readStore(sessionKey);
   // Example:
   // const tailwindCSS = '<style>/* Tailwind generated CSS */</style>';
 
@@ -16,11 +18,13 @@ function storePageCSS(pageId, tailwindCSS) {
   store.set(`appSage.pages.${pageId}.styles.css`, tailwindCSS);
 }
 
-function storePageSettings(pageId, settings){
+export async function storePageSettings(pageId, settings){
+  const store = readStore(sessionKey);
   store.set(`appSage.pages.${pageId}.settings`, settings);
 }
 
-function storePageComponent(pageId) {
+export async function storePageComponent(pageId, sessionKey) {
+  const store = readStore(sessionKey);
     // Retrieve the existing components for the page (or initialize if undefined)
     const components = store.get(`appSage.pages.${pageId}.components`) || {};
 
@@ -32,22 +36,26 @@ function storePageComponent(pageId) {
 }
 
 // Retrieve Storage
-function getPageHTML(pageId) {
+export async function getPageHTML(pageId, sessionKey) {
+  const store = readStore(sessionKey);
   const storedHTML = store.get(`appSage.pages.${pageId}.html`);
   return storedHTML;
 }
 
-function getPageCSS(pageId) {
+export async function getPageCSS(pageId, sessionKey) {
+  const store = readStore(sessionKey);
   const storedCSS = store.get(`appSage.pages.${pageId}.styles.css`);
   return storedCSS;
 }
 
-function getPageSettings(pageId) {
+export async function getPageSettings(pageId, sessionKey) {
+  const store = readStore(sessionKey);
   const storedSettings = store.get(`appSage.pages.${pageId}.settings`);
   return storedSettings;
 }
 
-function getPageComponent(pageId, componentName) {
+export async function getPageComponent(pageId, componentName, sessionKey) {
+  const store = readStore(sessionKey);
   // Retrieve all components for the specified page
   const components = store.get(`appSage.pages.${pageId}.components`) || {};
   
