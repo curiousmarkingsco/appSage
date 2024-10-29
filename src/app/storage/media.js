@@ -1,4 +1,4 @@
-// electron_app/media.js
+// app/storage/media.js
 
 const fs = require('fs');
 const path = require('path');

@@ -9,7 +9,7 @@
 
 */
 
-const store = require('../../electron_app/storage/storage.js');
+const store = require('../app/storage/index.js');
 
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String

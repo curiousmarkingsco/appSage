@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "appSage is a no-code web document builder.",
   "main": "src/main.js",
+  "type": "module",
   "devDependencies": {
     "@electron-forge/cli": "^7.5.0",
     "@electron-forge/maker-deb": "^7.5.0",
@@ -15,7 +16,9 @@
     "autoprefixer": "^10.4.20",
     "electron": "^32.2.0",
     "electron-builder": "^25.1.8",
+    "electron-is-dev": "^3.0.1",
     "electron-packager": "^17.1.2",
+    "electron-reloader": "^1.2.3",
     "eslint": "^9.13.0",
     "eslint-plugin-electron": "^7.0.0",
     "lighthouse": "^12.2.1",
@@ -26,7 +29,7 @@
   "scripts": {
     "start": "electron-forge start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./src/style.css -o ./src/tailwind-output.css --watch",
+    "build:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
@@ -37,9 +40,9 @@
   "author": "Curious Markings, Co.",
   "license": "ISC",
   "dependencies": {
-    "crypto": "^1.0.1",
     "electron-squirrel-startup": "^1.0.1",
     "electron-store": "^10.0.0",
+    "postcss-loader": "^8.1.1",
     "tailwindsjs": "^1.0.0"
   },
   "eslintConfig": {

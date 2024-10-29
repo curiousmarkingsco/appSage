@@ -9,7 +9,48 @@
 
 */
 
-const store = require('../../electron_app/storage/storage.js');
+// app/render/preview/main.js
+
+function initializePreview() {
+  // Dynamically inject the required head resources like Tailwind and fonts
+  document.head.innerHTML = `
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script src="./app/render/tailwind.js"></script>
+    <script src="./app/render/tailwind.config.js"></script>
+  `;
+
+  // Inject body content (if any static content is necessary) or leave it for dynamic use
+  const pageElement = document.getElementById('page');
+  
+  // Dynamically load scripts necessary for preview functionality
+  loadScripts([
+    './app/render/editor/globals.js',
+    './app/render/editor/components/main.js',
+    './app/render/editor/save.js',
+    './app/render/load.js',
+    './app/render/preview/main.js'
+  ]);
+
+  /**
+   * Helper function to dynamically load scripts
+   * @param {Array} scriptUrls - An array of script URLs to load
+   */
+  function loadScripts(scriptUrls) {
+    scriptUrls.forEach(src => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      document.body.appendChild(script);
+    });
+  }
+};
+
+const store = require('../../storage/index.js');
 
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
@@ -61,3 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
     loadPreview(previewPageId);
   }
 });
+
+if (document.readyState === 'loading') {
+  // Document is still loading, attach event listener
+  document.addEventListener('DOMContentLoaded', initializePreview);
+} else {
+  // Document is already fully loaded, run initialization immediately
+  initializePreview();
+}

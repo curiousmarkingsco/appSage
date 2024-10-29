@@ -7,7 +7,7 @@
 
 */
 
-const store = require('../../electron_app/storage/storage.js');
+const store = require('../../storage/index.js');
 
 // Remove editor elements so that localStorage is not cluttered with unneeded
 // elements making them production-ready for app/js/load.js

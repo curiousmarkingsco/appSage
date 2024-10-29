@@ -1,10 +1,24 @@
-const { app, BrowserWindow, nativeImage, Tray } = require('electron')
-const path = require('path');
+// Import required modules
+import isDev from 'electron-is-dev';
+import { app, BrowserWindow, nativeImage, ipcMain, Tray } from 'electron';
+import path from 'path';
+import { createStore } from './app/storage/index.js';
+import { fileURLToPath } from 'url';  // To handle __dirname in ESM
+import { dirname } from 'path';
 
-function createWindow () {
+// Handling __dirname in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Check if in development mode and use require() to load CommonJS module
+if (isDev) {
+  try {
+    require('electron-reloader')(module);
+  } catch {}
+}
+
+function createWindow() {
   // Example: Tray icon creation
-  // const trayIcon = nativeImage.createFromPath(path.join(__dirname, '/app/assets/appicons/icon.png'));
-  // const tray = new Tray(trayIcon);
   const appIcon = nativeImage.createFromPath(path.join(__dirname, 'app/assets/appicons/icon.png'));
 
   if (process.platform === 'darwin') {
@@ -15,60 +29,76 @@ function createWindow () {
     } else {
       console.error('App icon is empty or not loaded correctly:', appIconPath);
     }
-    app.dock.setIcon(nativeImage.createFromPath(path.resolve(__dirname, 'app/assets/appicons/icon.png')));
   }
 
   let splash = new BrowserWindow({
-      width: 400,
-      height: 300,
-      frame: false,
-      alwaysOnTop: true,
-      icon: appIcon
+    width: 400,
+    height: 300,
+    frame: false,
+    alwaysOnTop: true,
+    icon: appIcon,
   });
 
-  splash.loadFile('./src/electron_app/splash.html');
+  splash.loadFile('./src/app/splash.html');
 
   splash.on('closed', () => {
-      splash = null;
+    splash = null;
   });
 
   // Load main application after the splash screen is done
   setTimeout(() => {
-      const mainWindow = new BrowserWindow({
-          width: 1024,
-          height: 680,
-          icon: appIcon,
-          webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),  // Optional
-            // nodeIntegration: true,                        // Allows using Node.js in the renderer
-            contextIsolation: false                       // Allows interaction between the main and renderer
-          }
+    const mainWindow = new BrowserWindow({
+      width: 1536,
+      height: 1024,
+      icon: appIcon,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        preload: path.join(__dirname, 'app/preload.js'),
+      },
+    });
+
+    mainWindow.loadFile('./src/app/index.html');
+
+    // Open DevTools in development mode
+    if (isDev) {
+      mainWindow.webContents.openDevTools();
+    }
+
+    // Set CSP header
+    mainWindow.webContents.on('did-finish-load', () => {
+      mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        details.responseHeaders['Content-Security-Policy'] = [
+          "default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';",
+        ];
+        callback({ cancel: false, responseHeaders: details.responseHeaders });
       });
-
-      mainWindow.loadFile('./src/index.html');
-
-      // Set CSP header
-      // mainWindow.webContents.on('did-finish-load', () => {
-      //   mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-      //       details.responseHeaders['Content-Security-Policy'] = ["default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';"];
-      //       callback({ cancel: false, responseHeaders: details.responseHeaders });
-      //   });
-      // });
-
-      splash.close();
+    });
   }, 3000); // Match the duration of splash.js
+  splash.close();
 }
 
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
 });
 
 app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-    }
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});
+
+// IPC handler for initializing store
+ipcMain.handle('initialize-store', async (event, { username, userPassword }) => {
+  try {
+    const store = await createStore(username, userPassword);
+    return store;
+  } catch (error) {
+    console.error('Error creating store:', error);
+    throw error;
+  }
 });

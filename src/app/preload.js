@@ -1,10 +1,12 @@
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector);
-    if (element) element.innerText = text;
-  };
+// preload.js
 
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type]);
-  }
-});
+// try {
+  const { contextBridge, ipcRenderer } = require('electron');
+  // Expose the store API to the renderer process
+  contextBridge.exposeInMainWorld('api', {
+    createStore: (username, userPassword) => ipcRenderer.invoke('initialize-store', { username, userPassword })
+  });
+  console.log('Preload script is running, and store module has been loaded.');
+// } catch (error) {
+//   console.error('Error in preload script:', error); // Catch and log errors
+// }

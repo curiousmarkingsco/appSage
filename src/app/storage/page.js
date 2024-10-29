@@ -1,9 +1,8 @@
-// electron_app/page.js
+// app/storage/page.js
 
 
 // Create & Update Storage
 function storePageHtml(pageId, pageHTML) {
-  const store = require('./storage');
 
   // Store HTML for the page with unique ID
   store.set(`appSage.pages.${pageId}.html`, pageHTML);

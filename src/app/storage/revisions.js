@@ -1,4 +1,4 @@
-// electron_app/revisions.js
+// app/storage/revisions.js
 
 const MAX_REVISIONS = 50;
 
