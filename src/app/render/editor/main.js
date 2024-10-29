@@ -6,6 +6,93 @@
 
 */
 
+// app/render/editor/main.js
+
+function initializeEditor() {
+  // Inject the head content dynamically
+  document.head.innerHTML = `
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="manifest" href="./assets/favicons/site.webmanifest">
+    <link rel="mask-icon" href="./assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
+    <meta name="msapplication-TileColor" content="#f2f0e9">
+    <meta name="theme-color" content="#f2f0e9">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="./style.css">
+  `;
+
+  // Dynamic body content (initial structure)
+  document.body.innerHTML = `
+    <div class="h-screen lg:hidden bg-slate-100 p-4">
+      <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
+      <p class="mx-auto max-w-96 mt-4">
+        If you feel like it, 
+        <a class="text-sky-600 hover:text-sky-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a>
+        if you are determined to design apps on your mobile phone. Your designs might not look great on larger devices.
+      </p>
+    </div>
+    <div class="lg:flex hidden">
+      <div id="tooltip" class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300"></div>
+      <div id="sidebar" class="w-72 z-[1000] bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
+        <div id="sidebar-dynamic" class="p-4">
+          <p>No content to edit. Add content by making a grid or column.</p>
+        </div>
+      </div>
+      <div id="page" class="min-h-screen w-[calc(100%-18rem)] ml-72 mb-24">
+        <!-- The designer's page content goes here -->
+      </div>
+    </div>
+    <div class="hidden lg:block mt-20"></div>
+    <div class="lg:block z-[1000] hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50" id="gridButtonsBottombar">
+      <button id="addGrid" class="pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline"></svg>
+        Add Grid
+      </button>
+    </div>
+  `;
+
+  // Load additional editor-specific scripts
+  loadScripts([
+    './render/tailwind.js',
+    './render/tailwind.config.js',
+    './render/editor/settings.js',
+    './render/editor/globals.js',
+    './render/editor/grid.js',
+    './render/editor/style/grid.js',
+    './render/editor/container.js',
+    './render/editor/style/container.js',
+    './render/editor/component.js',
+    './render/editor/column.js',
+    './render/editor/style/column.js',
+    './render/editor/content.js',
+    './render/editor/sidebar.js',
+    './render/editor/style.js',
+    './render/editor/save.js',
+    './render/editor/load.js',
+    './render/editor/components/main.js',
+    './render/editor/responsive.js',
+    './render/remote_save.js',
+    './render/editor/media.js'
+  ]);
+
+  /**
+   * Helper function to dynamically load scripts
+   * @param {Array} scriptUrls - An array of script URLs to load
+   */
+  function loadScripts(scriptUrls) {
+    scriptUrls.forEach(src => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      document.body.appendChild(script);
+    });
+  }
+};
+
 var editorMode = true;
 
 // This big chunk does everything necessary for initial page setup which is
@@ -706,4 +793,12 @@ function generateRandomId(length = 8) {
     result += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return result;
+}
+
+if (document.readyState === 'loading') {
+  // Document is still loading, attach event listener
+  document.addEventListener('DOMContentLoaded', initializeEditor);
+} else {
+  // Document is already fully loaded, run initialization immediately
+  initializeEditor();
 }

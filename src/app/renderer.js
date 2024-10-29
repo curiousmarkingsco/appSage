@@ -1,41 +1,38 @@
 // renderer.js
 
+// Define `global` in the renderer process to mimic Node.js behavior
+if (typeof global === 'undefined') {
+  var global = window;  // In the browser, `global` is mapped to `window`
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  // Parse the current URL to determine the route
-  const currentPath = window.location.pathname;
+  const username = 'jojfsfweffwfe';
+  const userPassword = 'aaafewfwefewaav';
+
+  window.api.createStore(username, userPassword).then(store => {
+    console.log('Store initialized:', store);
+  })
+  .catch(error => {
+    console.error('Error initializing store:', error.stack || error);
+  });
+  // Initial route loading logic
+  const currentPath = window.location.pathname.split('/').pop() || 'index.html';
 
   // Map routes to HTML files and their corresponding JS files
   const routes = {
-    '/': {
-      html: 'app/index.html',  // Main page
-      js: 'app/index/main.js'  // Renamed from index.js
+    'index.html': {
+      html: './index.html',  // Dashboard - create pages, manage existing pages
+      js: './render/index/main.js'
     },
-    '/editor': {
-      html: 'app/editor.html', // Editor page
-      js: 'app/editor/main.js', // Editor JS
-      loadAdditionalFiles: loadEditorScripts  // Function to load all files in app/js/editor/*
+    'editor.html': {
+      html: './editor.html', // Edit page by ?config=id
+      js: './render/editor/main.js'
     },
-    '/preview': {
-      html: 'app/preview.html', // Preview page
-      js: 'app/js/preview/main.js'  // Preview JS
+    'preview.html': {
+      html: './preview.html', // Preview page by ?page=id
+      js: './render/preview/main.js'
     }
   };
-
-  // Function to load additional editor-specific scripts
-  function loadEditorScripts() {
-    const editorScripts = [
-      './app/js/editor/file1.js',
-      './app/js/editor/file2.js',
-      // Add more scripts as needed
-    ];
-
-    editorScripts.forEach(src => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true; // Optional: Loads scripts asynchronously
-      document.body.appendChild(script);
-    });
-  }
 
   // Helper to load HTML content
   function loadHTMLContent(htmlFilePath) {
@@ -55,25 +52,63 @@ document.addEventListener('DOMContentLoaded', function () {
     document.body.appendChild(script);
   }
 
-  // Route handling logic
-  if (routes[currentPath]) {
-    const route = routes[currentPath];
+  // Function to navigate between views
+  function navigate(routeKey) {
+    const route = routes[routeKey];
 
-    // Load the appropriate HTML
-    loadHTMLContent(route.html);
-
-    // Load the associated JavaScript file
-    loadJavaScript(route.js);
-
-    // If there are additional files to load (like in the editor), load them
-    if (route.loadAdditionalFiles) {
-      route.loadAdditionalFiles();
+    if (route) {
+      // Use history.pushState to change the URL and add the route to the history stack
+      history.pushState({ routeKey }, '', routeKey);
+      loadRoute(routeKey);
+    } else {
+      console.error('Route not found:', routeKey);
+      document.body.innerHTML = '<h1>404 - Page Not Found</h1>';
     }
-  } else {
-    // Default behavior if the route doesn't exist (optional)
-    console.error('Route not found:', currentPath);
-    document.body.innerHTML = '<h1>404 - Page Not Found</h1>';
   }
+
+  // Function to load both HTML and JS for a route
+  function loadRoute(routeKey) {
+    const route = routes[routeKey];
+    if (route) {
+      if (route.html !== 'index.html') {
+        loadHTMLContent(route.html); // Load HTML content
+      }
+      loadJavaScript(route.js); // Load JS content
+    }
+  }
+
+  // Handle back/forward navigation using the onpopstate event
+  window.onpopstate = function (event) {
+    if (event.state && event.state.routeKey) {
+      loadRoute(event.state.routeKey);
+    }
+  };
+
+  // Initial load: load the current route
+  loadRoute(currentPath);
+
+  // Example Back and Forward Button Logic
+  // document.getElementById('backButton').addEventListener('click', function () {
+  //   history.back(); // Go to the previous entry in the history stack
+  // });
+
+  // document.getElementById('forwardButton').addEventListener('click', function () {
+  //   history.forward(); // Go to the next entry in the history stack
+  // });
+
+  console.log('Renderer process running');
 });
 
-console.log('Renderer process running');
+/*
+
+Example Navigation:
+
+<!-- Back and Forward Buttons -->
+<button id="backButton">Back</button>
+<button id="forwardButton">Forward</button>
+
+<!-- Navigation Links -->
+<button onclick="navigate('editor.html')">Go to Editor</button>
+<button onclick="navigate('preview.html')">Go to Preview</button>
+
+*/

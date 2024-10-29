@@ -1,16 +1,16 @@
 // index.js
 
-document.addEventListener('DOMContentLoaded', function () {
+function initializeDashboard() {
   // Inject head content like meta tags and links for favicons and CSS
   document.head.innerHTML = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-    <link rel="apple-touch-icon" sizes="180x180" href="./app/assets/favicons/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./app/assets/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./app/assets/favicons/favicon-16x16.png">
-    <link rel="manifest" href="./app/assets/favicons/site.webmanifest">
-    <link rel="mask-icon" href="./app/assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
+    <link rel="apple-touch-icon" sizes="180x180" href="../app/assets/favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../app/assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../app/assets/favicons/favicon-16x16.png">
+    <link rel="manifest" href="../app/assets/favicons/site.webmanifest">
+    <link rel="mask-icon" href="../app/assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
     <meta name="msapplication-TileColor" content="#f2f0e9">
     <meta name="theme-color" content="#f2f0e9">
     <link href="tailwind-output.css" rel="stylesheet">
@@ -27,15 +27,15 @@ document.addEventListener('DOMContentLoaded', function () {
       <div
         class="w-full min-w-full max-w-full pagegrid grid pl-0 pr-0 pt-0 pb-0 ml-0 mr-0 mt-0 mb-0 ugc-keep grid-cols-3 max-h-16 h-16 min-h-16 justify-items-center place-items-center border-slate-50 border-none bg-slate-200">
         <div class="col-span-1 pagecolumn group mt-1 justify-start flex">
-          <div class="content-container text-base w-12 h-12"><img src="./app/assets/logo_icon.svg"></div>
-          <div class="content-container text-base w-36 h-8 ml-2 mt-2 pt-1"><img src="./app/assets/logo_wordmark.svg"></div>
+          <div class="content-container text-base w-12 h-12"><img src="../app/assets/logo_icon.svg"></div>
+          <div class="content-container text-base w-36 h-8 ml-2 mt-2 pt-1"><img src="../app/assets/logo_wordmark.svg"></div>
         </div>
         <div class="col-span-1 pagecolumn group"></div>
         <div class="col-span-1 pagecolumn group">
           <div
             class="content-container text-base text-slate-50 rounded-md border-1 border-sky-600 mr-4 pb-2 min-w-52 max-w-36 text-center bg-slate-600 pt-2 mt-0">
             <a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded"
-              href="./app/editor.html" target="_blank">New Page</a>
+              href="../app/editor.html" target="_blank">New Page</a>
           </div>
         </div>
       </div>
@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
           <h2>${pageTitle}</h2>
         </div>
         <div class="flex justify-around mb-4 mt-2">
-          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="./app/editor.html?config=${pageId}" target="_blank">Edit</a>
-          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="./app/preview.html?page=${pageId}" target="_blank">Preview</a>
+          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="../app/editor.html?config=${pageId}" target="_blank">Edit</a>
+          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="../app/preview.html?page=${pageId}" target="_blank">Preview</a>
           <a class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)" href="javascript:void(0)">Delete</a>
         </div>`;
       container.appendChild(column);
@@ -81,8 +81,16 @@ document.addEventListener('DOMContentLoaded', function () {
     container.innerHTML = `
       <div class="text-center col-span-3">
         <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
-        <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="./app/editor.html">Start building a page</a>
+        <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="../app/editor.html">Start building a page</a>
       </div>
     `;
   }
-});
+};
+
+if (document.readyState === 'loading') {
+  // Document is still loading, attach event listener
+  document.addEventListener('DOMContentLoaded', initializeDashboard);
+} else {
+  // Document is already fully loaded, run initialization immediately
+  initializeDashboard();
+}
