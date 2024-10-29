@@ -12,6 +12,7 @@ function initializeEditor() {
   // Inject the head content dynamically
   document.head.innerHTML = `
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
@@ -22,7 +23,7 @@ function initializeEditor() {
     <meta name="theme-color" content="#f2f0e9">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./styles.css">
   `;
 
   // Dynamic body content (initial structure)
@@ -55,30 +56,41 @@ function initializeEditor() {
     </div>
   `;
 
+  loadEditorScripts();
   // Load additional editor-specific scripts
-  loadScripts([
-    './render/tailwind.js',
-    './render/tailwind.config.js',
-    './render/editor/settings.js',
-    './render/editor/globals.js',
-    './render/editor/grid.js',
-    './render/editor/style/grid.js',
-    './render/editor/container.js',
-    './render/editor/style/container.js',
-    './render/editor/component.js',
-    './render/editor/column.js',
-    './render/editor/style/column.js',
-    './render/editor/content.js',
-    './render/editor/sidebar.js',
-    './render/editor/style.js',
-    './render/editor/save.js',
-    './render/editor/load.js',
-    './render/editor/components/main.js',
-    './render/editor/responsive.js',
-    './render/remote_save.js',
-    './render/editor/media.js'
-  ]);
+  async function loadEditorScripts() {
+    await loadScript('./render/tailwind.js').then(() => {
+        loadScript('./render/tailwind.config.js');
+    }).then(() => {
 
+      loadScripts([
+        './render/tailwind.js',
+        './render/tailwind.config.js',
+        './render/editor/settings.js',
+        './render/editor/globals.js',
+        './render/editor/grid.js',
+        './render/editor/style/grid.js',
+        './render/editor/container.js',
+        './render/editor/style/container.js',
+        './render/editor/component.js',
+        './render/editor/column.js',
+        './render/editor/style/column.js',
+        './render/editor/content.js',
+        './render/editor/sidebar.js',
+        './render/editor/style.js',
+        './render/editor/save.js',
+        './render/editor/load.js',
+        './render/editor/components/main.js',
+        './render/editor/responsive.js',
+        './render/remote_save.js',
+        './render/editor/media.js'
+      ])
+      console.log('All scripts loaded');
+    }).catch(error => {
+      console.error('Error loading scripts:', error);
+    });
+  }
+  
   /**
    * Helper function to dynamically load scripts
    * @param {Array} scriptUrls - An array of script URLs to load

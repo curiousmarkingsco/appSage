@@ -66,13 +66,11 @@ function createWindow() {
     }
 
     // Set CSP header
-    mainWindow.webContents.on('did-finish-load', () => {
-      mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-        details.responseHeaders['Content-Security-Policy'] = [
-          "default 'self'; img 'self' data:; script 'self' 'unsafe-inline'; style 'self' 'unsafe-inline';",
-        ];
-        callback({ cancel: false, responseHeaders: details.responseHeaders });
-      });
+    mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+      details.responseHeaders['Content-Security-Policy'] = [
+        "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+      ];
+      callback({ cancel: false, responseHeaders: details.responseHeaders });
     });
   }, 3000); // Match the duration of splash.js
   splash.close();

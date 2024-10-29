@@ -35,7 +35,7 @@ function initializeDashboard() {
           <div
             class="content-container text-base text-slate-50 rounded-md border-1 border-sky-600 mr-4 pb-2 min-w-52 max-w-36 text-center bg-slate-600 pt-2 mt-0">
             <a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded"
-              href="../app/editor.html" target="_blank">New Page</a>
+              id="newPageButton">New Page</a>
           </div>
         </div>
       </div>
@@ -51,6 +51,11 @@ function initializeDashboard() {
       </div>
     </div>
   `;
+
+  // Add event listener to "New Page" button
+  document.getElementById('newPageButton').addEventListener('click', () => {
+    loadEditor();
+  });
 
   // Load pages from localStorage and populate the page list
   const container = document.getElementById('pageList');
@@ -71,9 +76,9 @@ function initializeDashboard() {
           <h2>${pageTitle}</h2>
         </div>
         <div class="flex justify-around mb-4 mt-2">
-          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="../app/editor.html?config=${pageId}" target="_blank">Edit</a>
-          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="../app/preview.html?page=${pageId}" target="_blank">Preview</a>
-          <a class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)" href="javascript:void(0)">Delete</a>
+          <button class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" data-id="${pageId}" onclick="loadEditor('${pageId}')">Edit</button>
+          <button class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" data-id="${pageId}" onclick="loadPreview('${pageId}')">Preview</button>
+          <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
         </div>`;
       container.appendChild(column);
     });
@@ -81,16 +86,36 @@ function initializeDashboard() {
     container.innerHTML = `
       <div class="text-center col-span-3">
         <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
-        <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="../app/editor.html">Start building a page</a>
+        <button class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" onclick="loadEditor()">Start building a page</button>
       </div>
     `;
   }
 };
 
+// Functions to dynamically load the editor or preview logic (replace these with actual logic)
+function loadEditor(pageId = null) {
+  if (pageId) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('config', pageId);
+  }
+  loadScript('./render/editor/main.js');
+}
+
+function loadPreview(pageId) {
+  const params = new URLSearchParams(window.location.search);
+  params.set('page', pageId);
+  loadScript('./render/preview/main.js');
+}
+
+function deletePage(pageId, element) {
+  console.log(`Deleting page: ${pageId}`);
+  element.remove(); // Remove page from UI
+  // Add logic to delete the page from localStorage or backend
+}
+
+// Event listener for DOMContentLoaded
 if (document.readyState === 'loading') {
-  // Document is still loading, attach event listener
   document.addEventListener('DOMContentLoaded', initializeDashboard);
 } else {
-  // Document is already fully loaded, run initialization immediately
   initializeDashboard();
 }

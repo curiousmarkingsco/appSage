@@ -7,8 +7,6 @@
 
 */
 
-const store = require('../../storage/index.js');
-
 // Remove editor elements so that localStorage is not cluttered with unneeded
 // elements making them production-ready for app/js/load.js
 // DATA IN: HTML Element, <div>

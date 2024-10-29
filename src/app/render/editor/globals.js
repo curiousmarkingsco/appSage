@@ -320,17 +320,19 @@ function mergeFontsIntoTailwindConfig() {
 }
 
 function mergeTailwindColors(theme) {
-  // Check if `theme.extend.colors` exists
-  if (theme.extend && theme.extend.colors) {
-    // Merge `theme.colors` and `theme.extend.colors`, maintaining structure
-    return {
-      ...theme.extend.colors,
-      ...theme.colors
-    };
-  }
+  if (theme) {
+    // Check if `theme.extend.colors` exists
+    if (theme.extend && theme.extend.colors) {
+      // Merge `theme.colors` and `theme.extend.colors`, maintaining structure
+      return {
+        ...theme.extend.colors,
+        ...theme.colors
+      };
+    }
 
-  // Return `theme.colors` if no `theme.extend.colors` exists
-  return theme.colors;
+    // Return `theme.colors` if no `theme.extend.colors` exists
+    return theme.colors;
+  }
 }
 
 // Function to dynamically update Tailwind config with multiple fonts/colors

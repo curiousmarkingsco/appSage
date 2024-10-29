@@ -10,7 +10,7 @@
 // export { media, page, revisions, settings };
 
 import { ipcMain } from 'electron';  // Electron module import
-import crypto from 'crypto';  // Node.js crypto module import
+import crypto from 'crypto'; // Node.js crypto module import
 
 let store;  // Store will be initialized when data is received
 
