@@ -23,6 +23,7 @@ function addContentContainer() {
 
   return contentContainer;
 } // DATA OUT: HTML Element, <div class="pagecontent">
+window.addContentContainer = addContentContainer;
 
 // This function adds a lot of the standard editing options that should be
 // available for all elements. This listens for any clicks on editable content
@@ -35,6 +36,7 @@ function enableEditContentOnClick(contentContainer) {
     addContentOptions(contentContainer);
   });
 } // DATA OUT: null
+window.enableEditContentOnClick = enableEditContentOnClick;
 
 // This function creates the button for adding content to the column currently
 // being hovered over by the designer.
@@ -64,6 +66,7 @@ function createAddContentButton(column) {
   // });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createAddContentButton = createAddContentButton;
 
 // This function creates the button for deleting the content currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
@@ -83,6 +86,7 @@ function createRemoveContentButton(contentContainer) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createRemoveContentButton = createRemoveContentButton;
 
 // This function creates the button for moving the element the content belongs
 // to upward and downward in the column. Currently, these buttons live at the
@@ -105,6 +109,7 @@ function createVerticalMoveContentButton(contentContainer, direction) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createVerticalMoveContentButton = createVerticalMoveContentButton;
 
 // This function and the one below it creates various buttons to choose from
 // available elements that can be created.
@@ -137,6 +142,7 @@ function addContentOptions(contentContainer) {
   highlightEditingElement(contentContainer);
   addIdAndClassToElements();
 } // DATA OUT: null
+window.addContentOptions = addContentOptions;
 
 // This cobbles together all the needed bits for adding/editing form fields.
 // DATA IN: ['HTML Element, <div>', 'HTML Element, <div>']
@@ -236,6 +242,7 @@ function updateSidebarFields(form, sidebarForm, submitButton, inputTypes) {
     sidebarForm.appendChild(fieldEditor);
   });
 } // DATA OUT: null
+window.updateSidebarFields = updateSidebarFields;
 
 // This function is the operational bits of the "Move Grid" and "Move Content"
 // buttons.
@@ -256,6 +263,7 @@ function moveVertical(element, direction) {
     }
   }
 } // DATA OUT: null
+window.moveVertical = moveVertical;
 
 // This function makes those all-caps labels with the icon to the left of them.
 // DATA IN: null
@@ -272,6 +280,7 @@ function createLabelAllDevices() {
   });
   return label;
 } // DATA OUT: HTML Element, <span>
+window.createLabelAllDevices = createLabelAllDevices;
 
 // This function helps media tags generate the correct text needed for the
 // value of their `src` attribute.
@@ -299,6 +308,7 @@ function generateMediaUrl(event, contentContainer, background) {
     reader.readAsDataURL(file);
   }
 } // DATA OUT: null
+window.generateMediaUrl = generateMediaUrl;
 
 async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const db = await openDatabase();
@@ -344,6 +354,7 @@ function displayMediaFromIndexedDB(targetElement) {
     });
   }
 }
+window.displayMediaFromIndexedDB = displayMediaFromIndexedDB;
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.
@@ -595,6 +606,7 @@ function updateSidebarForTextElements(sidebar, container) {
   highlightEditingElement(contentContainer);
   addIdAndClassToElements();
 }
+window.updateSidebarForTextElements = updateSidebarForTextElements;
 
 function getTextWithoutSROnly(element) {
   const clonedElement = element.cloneNode(true);
@@ -607,6 +619,7 @@ function getTextWithoutSROnly(element) {
     return clonedElement.textContent.trim();
   }
 }
+window.getTextWithoutSROnly = getTextWithoutSROnly;
 
 function handleButtonFields(formContainer, contentContainer, button) {
   const urlInput = document.createElement('input');
@@ -650,6 +663,7 @@ function handleButtonFields(formContainer, contentContainer, button) {
   linkOpts.append(checkboxLabel);
   formContainer.append(linkOpts);
 }
+window.handleButtonFields = handleButtonFields;
 
 // Map to track transferred classes from container to child elements
 const classTransferMap = new Map();
@@ -665,6 +679,7 @@ function transferClassToChild(container, className, childElement) {
   const containerMap = classTransferMap.get(container);
   containerMap.set(className, childElement);
 }
+window.transferClassToChild = transferClassToChild;
 
 // Function to adjust classes for interactive elements
 function adjustClassesForInteractiveElements(container) {
@@ -686,6 +701,7 @@ function adjustClassesForInteractiveElements(container) {
     });
   }
 }
+window.adjustClassesForInteractiveElements = adjustClassesForInteractiveElements;
 
 // Function to dispatch a custom event when a class is added
 function dispatchClassAdded(container, className) {
@@ -694,6 +710,7 @@ function dispatchClassAdded(container, className) {
   });
   container.dispatchEvent(event);
 }
+window.dispatchClassAdded = dispatchClassAdded;
 
 // Function to dispatch a custom event when a class is removed
 function dispatchClassRemoved(container, className) {
@@ -702,6 +719,7 @@ function dispatchClassRemoved(container, className) {
   });
   container.dispatchEvent(event);
 }
+window.dispatchClassRemoved = dispatchClassRemoved;
 
 // Modify class manipulation to dispatch events
 function addClassToContainer(container, ...classNames) {
@@ -712,6 +730,7 @@ function addClassToContainer(container, ...classNames) {
     }
   });
 }
+window.addClassToContainer = addClassToContainer;
 
 function removeClassFromContainer(container, ...classNames) {
   classNames.forEach(className => {
@@ -721,6 +740,7 @@ function removeClassFromContainer(container, ...classNames) {
     }
   });
 }
+window.removeClassFromContainer = removeClassFromContainer;
 
 // Handle custom event for class added
 function handleClassAddedEvent(event) {
@@ -730,6 +750,7 @@ function handleClassAddedEvent(event) {
   // Logic to handle the class added to the container
   adjustClassesForInteractiveElements(container);
 }
+window.handleClassAddedEvent = handleClassAddedEvent;
 
 // Handle custom event for class removed
 function handleClassRemovedEvent(event) {
@@ -744,9 +765,11 @@ function handleClassRemovedEvent(event) {
     containerMap.delete(className);  // Clean up the mapping
   }
 }
+window.handleClassRemovedEvent = handleClassRemovedEvent;
 
 // Setup listeners for custom events on the container
 function observeClassManipulation(container) {
   container.addEventListener('classAdded', handleClassAddedEvent);
   container.addEventListener('classRemoved', handleClassRemovedEvent);
 }
+window.observeClassManipulation = observeClassManipulation;

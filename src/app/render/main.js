@@ -33,6 +33,7 @@ function showConfirmationModal(message, onConfirm) {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
+window.showConfirmationModal = showConfirmationModal;
 
 // This function is for permanently deleting a page from localStorage.
 // DATA IN: ['String', 'HTML Element, <div>']
@@ -61,3 +62,4 @@ function deletePage(page_id, element) {
     console.log(`Page with ID ${page_id} has been deleted successfully.`);
   });
 } // DATA OUT: null
+window.deletePage = deletePage;

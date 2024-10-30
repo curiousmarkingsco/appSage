@@ -15,6 +15,7 @@ function enableEditComponentOnClick(component) {
     addComponentOptions(component);
   });
 } // DATA OUT: null
+window.enableEditComponentOnClick = enableEditComponentOnClick;
 
 function createRemoveComponentButton(component, gridContainer) {
   const button = document.createElement('button');
@@ -32,6 +33,7 @@ function createRemoveComponentButton(component, gridContainer) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createRemoveComponentButton = createRemoveComponentButton;
 
 function createAddComponentButton(container) {
   const button = document.createElement('button');
@@ -46,6 +48,7 @@ function createAddComponentButton(container) {
   })
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createAddComponentButton = createAddComponentButton;
 
 function addComponentLibraryOptions(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -70,6 +73,7 @@ function addComponentLibraryOptions(container) {
     });
   });
 }
+window.addComponentLibraryOptions = addComponentLibraryOptions;
 
 function addComponentOptions(container, componentName = null) {
   if (!componentName) {
@@ -126,3 +130,4 @@ function addComponentOptions(container, componentName = null) {
   // Hide tooltips lingering
   updateTooltip(null, false);
 }
+window.addComponentOptions = addComponentOptions;

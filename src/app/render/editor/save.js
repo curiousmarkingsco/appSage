@@ -18,6 +18,7 @@ function getCleanInnerHTML(element) {
   cloneBox.appendChild(clone);
   return cloneBox.innerHTML;
 } // DATA OUT: HTML Element, <div>
+window.getCleanInnerHTML = getCleanInnerHTML;
 
 // This mutation observer ensures that the majority, if not all, changes
 // occuring in #page will be saved to localStorage.
@@ -43,6 +44,7 @@ function setupAutoSave(page) {
   observer.observe(targetNode, config);
   console.log('Auto-save setup complete.');
 } // DATA OUT: null
+window.setupAutoSave = setupAutoSave;
 
 // This function saves all active element and style additions/changes/removals
 // during the designer's traditional editor workflow.
@@ -60,6 +62,7 @@ function saveChanges(page) {
   savePageData(page, json);
   console.log('Changes saved successfully!');
 } // DATA OUT: null
+window.saveChanges = saveChanges;
 
 // This function creates or prepares the necessary localStorage object in order
 // for subsequent content to be stored. If this objects already exists, it
@@ -77,6 +80,7 @@ function savePageData(pageId, data) {
     store.set(`appSage.pages.${pageId}.html`, data);
   }
 } // DATA OUT: null
+window.savePageData = savePageData;
 
 function saveComponentObjectToPage(componentName, object) {
   try {
@@ -94,6 +98,7 @@ function saveComponentObjectToPage(componentName, object) {
     console.error('Something went wrong saving component data.', error);
   }
 }
+window.saveComponentObjectToPage = saveComponentObjectToPage;
 
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
@@ -116,6 +121,7 @@ function savePageDataSettings(pageId, data) {
     store.set(`appSage.pages.${pageId}.settings`, data);
   }
 } // DATA OUT: null
+window.savePageDataSettings = savePageDataSettings;
 
 // This function creates or prepares the necessary localStorage object in order
 // for subsequent settings to be stored. If this objects already exists, it
@@ -136,3 +142,4 @@ function savePageSettingsChanges(pageId) {
     store.set(`appSage.pages.${pageId}.settings`, settings);
   }
 } // DATA OUT: null
+window.savePageSettingsChanges = savePageSettingsChanges;

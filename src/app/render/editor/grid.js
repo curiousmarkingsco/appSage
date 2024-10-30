@@ -47,6 +47,7 @@ function addGridOptions(grid) {
     addManualCssEditor(sidebar, grid);
   }
 } // DATA OUT: null
+window.addGridOptions = addGridOptions;
 
 // This function creates the button for deleting the grid currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
@@ -66,6 +67,7 @@ function addRemoveGridButton(grid, sidebar) {
   };
   return button;
 } // DATA OUT: HTML Element, <button>
+window.addRemoveGridButton = addRemoveGridButton;
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Currently, these buttons live at the top of the
@@ -86,6 +88,7 @@ function createVerticalMoveGridButton(grid, direction) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createVerticalMoveGridButton = createVerticalMoveGridButton;
 
 // This function is intended to present the sidebar editing options when a grid
 // is clicked.
@@ -98,3 +101,4 @@ function enableEditGridOnClick(grid) {
     addIdAndClassToElements();
   });
 } // DATA OUT: null
+window.enableEditGridOnClick = enableEditGridOnClick;

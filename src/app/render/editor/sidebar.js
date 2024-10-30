@@ -45,6 +45,7 @@ function generateSidebarTabs() {
   </div>
   `;
 } // DATA OUT: String (of HTML)
+window.generateSidebarTabs = generateSidebarTabs;
 
 // This function creates listeners for swapping out the sidebar with the
 // editing options relevant to the designer's selected device target:
@@ -122,3 +123,4 @@ function activateTabs() {
     });
   });
 } // DATA OUT: null
+window.activateTabs = activateTabs;

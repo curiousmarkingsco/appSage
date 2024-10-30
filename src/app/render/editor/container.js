@@ -45,6 +45,7 @@ function addContainerOptions(container) {
     addManualCssEditor(sidebar, container);
   }
 } // DATA OUT: null
+window.addContainerOptions = addContainerOptions;
 
 function createAddHtmlButton(containingBox) {
   const button = document.createElement('button');
@@ -57,6 +58,7 @@ function createAddHtmlButton(containingBox) {
   });
   return button;
 }
+window.createAddHtmlButton = createAddHtmlButton;
 
 function createAddContainerButton(containingBox) {
   const button = document.createElement('button');
@@ -104,6 +106,7 @@ function createAddContainerButton(containingBox) {
   // });
   return button;
 } 
+window.createAddContainerButton = createAddContainerButton;
 
 // This function creates the button for deleting the container currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
@@ -123,6 +126,7 @@ function addRemoveContainerButton(container, sidebar) {
   };
   return button;
 } // DATA OUT: HTML Element, <button>
+window.addRemoveContainerButton = addRemoveContainerButton;
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Currently, these buttons live at the top of the
@@ -143,6 +147,7 @@ function createVerticalMoveContainerButton(container, direction) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createVerticalMoveContainerButton = createVerticalMoveContainerButton;
 
 // This function is intended to present the sidebar editing options when a container
 // is clicked.
@@ -159,3 +164,4 @@ function enableEditContainerOnClick(container) {
     });
   }
 } // DATA OUT: null
+window.enableEditContainerOnClick = enableEditContainerOnClick;

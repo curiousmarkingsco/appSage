@@ -78,6 +78,7 @@ function addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, opti
     }
   });
 } // DATA OUT: null
+window.addDeviceTargetedOptions = addDeviceTargetedOptions;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting resetting styles for the sidebar editor controls.
@@ -112,6 +113,7 @@ function handleReset(bp, grid, options, cssClassBase, control) {
     });
   };
 } // DATA OUT: null
+window.handleReset = handleReset;
 
 // This function is intended to facilitate manual CSS styling for the textarea
 // field dedicated for this activity.
@@ -149,6 +151,7 @@ function handleStyles(element, controlValue, mode = 'apply') {
     }
   }
 }
+window.handleStyles = handleStyles;
 // DATA OUT: null
 
 // This function attempts to find existing styles so that other functions know
@@ -162,6 +165,7 @@ function getCurrentStyle(bp, options, cssClassBase, grid) {
     }) || '';
   }
 } // DATA OUT: String
+window.getCurrentStyle = getCurrentStyle;
 
 // This function is the catch-all for handling labels of the sidebar editor
 // elements. Its primary purpose is to reduce label clutter by narrowing
@@ -197,6 +201,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     return label;
   }
 } // DATA OUT: HTML Element, <label>
+window.createLabel = createLabel;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting file-based input elements for sidebar editor controls.
@@ -227,6 +232,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
     }
   };
 } // DATA OUT: null
+window.handleInput = handleInput;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting textarea elements for sidebar editor controls.
@@ -252,6 +258,7 @@ function handleTextareaType(labelPrefix, grid, control) {
     }
   };
 } // DATA OUT: null
+window.handleTextareaType = handleTextareaType;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting select elements using icons for each option in sidebar controls.
@@ -316,6 +323,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
   control.appendChild(selectControl);
   control.appendChild(iconButton);
 }// DATA OUT: null
+window.handleSingleIconSelect = handleSingleIconSelect;
 
 // This function messily handles all the nuance thus far encountered from 
 // supporting icon styled select dropdowns for sidebar editor controls.
@@ -433,6 +441,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     control.appendChild(iconButton);
   });
 } // DATA OUT: null
+window.handleIconSelect = handleIconSelect;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting toggle elements for sidebar editor controls.
@@ -462,6 +471,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
   control.appendChild(checkbox);
   control.appendChild(iconButton);
 } // DATA OUT: null
+window.handleToggle = handleToggle;
 
 // This function messily handles all the nuance thus far encountered from
 // supporting select elements for sidebar editor controls.
@@ -495,6 +505,7 @@ function handleSelect(bp, grid, control, options, cssClassBase, labelPrefix) {
   };
 
 } // DATA OUT: null
+window.handleSelect = handleSelect;
 
 // This function is an all-in-one place for any and all tooltips necessary for
 // the functions in this file.
@@ -503,6 +514,7 @@ function handleTooltips(cssClassToEvaluate, control) {
   const tooltipText = tooltips[cssClassToEvaluate] || "This tooltip is missing, tell the dev to fix it!";
   control.setAttribute('data-extra-info', tooltipText);
 } // DATA OUT: null
+window.handleTooltips = handleTooltips;
 
 function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBackgroundImage = false) {
   // Populate the dropdown with placeholder media options
@@ -549,6 +561,7 @@ function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBack
     }
   });
 }
+window.handlePlaceholderMedia = handlePlaceholderMedia;
 
 // Function to handle the dropdown for selecting placeholder images
 function addPlaceholderDropdown(fileInput, grid) {
@@ -599,3 +612,4 @@ function addPlaceholderDropdown(fileInput, grid) {
     }
   });
 }
+window.addPlaceholderDropdown = addPlaceholderDropdown;

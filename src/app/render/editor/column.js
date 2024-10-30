@@ -16,6 +16,7 @@ function createColumn() {
   enableEditColumnOnClick(column);
   return column;
 } // DATA OUT: HTML Element, <div>
+window.createColumn = createColumn;
 
 // This function makes it so that when you click on a column, the editing options
 // will be revealed in the sidebar to the left of the screen. It does this by
@@ -28,6 +29,7 @@ function enableEditColumnOnClick(column) {
     addColumnOptions(column);
   });
 } // DATA OUT: null
+window.enableEditColumnOnClick = enableEditColumnOnClick;
 
 function addColumnOptions(column) {
   const sidebar = document.getElementById('sidebar-dynamic');
@@ -59,6 +61,7 @@ function addColumnOptions(column) {
   addManualClassEditor(sidebar, column);
   addManualCssEditor(sidebar, column);
 }
+window.addColumnOptions = addColumnOptions;
 
 // This function creates the button for moving the element it belongs to upward
 // and downward in the DOM. Because it is a column, this sometimes or often
@@ -82,6 +85,7 @@ function createHorizontalMoveColumnButton(column, direction) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createHorizontalMoveColumnButton = createHorizontalMoveColumnButton;
 
 // This function creates the button for deleting the column currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!
@@ -104,6 +108,7 @@ function createRemoveColumnButton(column, gridContainer) {
   });
   return button;
 } // DATA OUT: HTML Element, <button>
+window.createRemoveColumnButton = createRemoveColumnButton;
 
 // This function creates the button for making a new column. This button exists
 // inside an already existing grid. You are able to see this button when
@@ -136,6 +141,7 @@ function createAddColumnButton(gridContainer) {
   };
   return menuItem;
 } // DATA OUT: HTML Element, <button>
+window.createAddColumnButton = createAddColumnButton;
 
 // This function checks if content exists in a column so that the designer
 // is warned when they click the 'delete column' button.
@@ -155,6 +161,7 @@ function columnHasContent(column) {
     });
   }
 } // DATA OUT: null
+window.columnHasContent = columnHasContent;
 
 // This function is the ...function...al bit of the 'move column' buttons.
 // DATA IN: ['HTML Element, <div>', 'String:left/right']
@@ -168,3 +175,4 @@ function moveColumnHorizontal(column, direction) {
     parent.insertBefore(targetSibling, column);
   }
 } // DATA OUT: null
+window.moveColumnHorizontal = moveColumnHorizontal;

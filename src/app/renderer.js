@@ -6,7 +6,6 @@ if (typeof global === 'undefined') {
 }
 
 var appSageStore;
-var storageMethodLegacy = false;
 
 async function loadScripts(scripts) {
   const promises = scripts.map(script => loadScript(script));
@@ -57,7 +56,14 @@ document.addEventListener('DOMContentLoaded', function () {
   } else {
     storageMethodLegacy = true;
   }
+  const params = new URLSearchParams(window.location.search);
 
-  loadScript('./render/index/main.js').then(() => {initializeDashboard()});
+  const config = params.get('config');
+  if (config) loadScript('./render/editor/main.js').then(() => {initializeEditor()});
+  
+  const pageConfig = params.get('page');
+  // if (pageConfig) loadScript('./render/preview/main.js').then(() => {initializePreview()});
+  
+  if (!config && !pageConfig) loadScript('./render/index/main.js').then(() => {initializeDashboard()});
   console.log('Renderer process for index.html running');
 });

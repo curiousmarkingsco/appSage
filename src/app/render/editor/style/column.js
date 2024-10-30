@@ -22,3 +22,4 @@ function addColumnAlignmentOptions(sidebar, column) {
   // Add 'Column Span' as an icon-select or select
   addDeviceTargetedOptions(sidebar, column, 'Column Span', 'col-span', colSpanOptions, 'select'); // 'icon-select' is also possible
 }  // DATA OUT: null
+window.addColumnAlignmentOptions = addColumnAlignmentOptions;

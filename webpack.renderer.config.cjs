@@ -11,7 +11,7 @@ module.exports = {
         './src/app/render/tailwind.js',
         './src/app/render/tailwind.config.js',
         './src/app/render/_globals.js',
-        ...glob.sync('./src/app/render/editor/components/**/*.js').map(file => path.resolve(__dirname, file)),
+        './src/app/render/load.js',
         './src/app/render/editor/components/main.js',
         './src/app/render/editor/grid.js',
         './src/app/render/editor/style/grid.js',
@@ -32,7 +32,8 @@ module.exports = {
         './src/app/render/preview/main.js',
         './src/app/render/editor/main.js',
         './src/app/render/index/main.js',
-        './src/app/renderer.js'
+        './src/app/renderer.js',
+        ...glob.sync('./src/app/render/editor/components/**/*.js').map(file => path.resolve(__dirname, file))
       ]
     }
   },

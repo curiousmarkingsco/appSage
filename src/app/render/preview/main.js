@@ -56,6 +56,7 @@ function initializePreview() {
     loadPreview(previewPageId);
   }
 };
+window.initializePreview = initializePreview;
 
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
@@ -97,6 +98,7 @@ function loadPreview(pageId) {
     }
   }
 } // DATA OUT: null
+window.loadPreview = loadPreview;
 
 if (typeof window.api !== 'undefined') {
   if (document.readyState === 'loading') {

@@ -4,11 +4,11 @@ function initializeSettings() {
   const advancedModeCheckbox = document.getElementById("advancedMode");
   if (storageMethodLegacy) {
     const storedSettings = JSON.parse(localStorage.getItem(appSageSettingsString)) || {};
-  }
 
-  // Set advanced mode state if previously stored
-  if (storedSettings.advancedMode) {
-    advancedModeCheckbox.checked = true;
+    // Set advanced mode state if previously stored
+    if (storedSettings.advancedMode) {
+      advancedModeCheckbox.checked = true;
+    }
   }
 
   // Add event listener for adding new font fields
@@ -155,7 +155,8 @@ function initializeSettings() {
     
     colorsContainer.appendChild(newColorGroup); // Append the new color group to the container
   });
-};
+}
+window.initializeSettings = initializeSettings;
 
 function generateGfontsEmbedCode(fonts) {
   const selectedFonts = fonts || Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value).join('&family=');
@@ -171,6 +172,7 @@ function generateGfontsEmbedCode(fonts) {
   }
   console.log('Fonts saved to metadata.')
 }
+window.generateGfontsEmbedCode = generateGfontsEmbedCode;
 
 function showSettingsModal() {
   const settingsModal = document.getElementById('settingsModal');
@@ -184,6 +186,7 @@ function showSettingsModal() {
     settingsModal.classList.add('hidden');
   });
 }
+window.showSettingsModal = showSettingsModal;
 
 
 function showSettingsSavedModal() {
@@ -220,6 +223,7 @@ function showSettingsSavedModal() {
       window.history.replaceState({}, '', newUrl);
   }
 }
+window.showSettingsSavedModal = showSettingsSavedModal;
 
 document.addEventListener('DOMContentLoaded', showSettingsSavedModal);
 

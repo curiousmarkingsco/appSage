@@ -1,70 +1,70 @@
-function initializeDialogToastObjects() {
-  const dialogToastHtmlTemplate = `
-    <div class="dialogToast-container fixed z-20 top-4 right-4 max-w-xs bg-white border border-white-500 shadow-lg rounded-lg p-4 transition-transform transform translate-y-full"
-        data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false">
-      <div class="flex justify-between items-center">
-        <p class="dialogToast-message text-sm pr-4">This sample text.</p>
-        <button class="dialogToast-close-button hover:opacity-50" aria-label="Close">
-          &times;
-        </button>
-      </div>
+
+const dialogToastHtmlTemplate = `
+  <div class="dialogToast-container fixed z-20 top-4 right-4 max-w-xs bg-white border border-white-500 shadow-lg rounded-lg p-4 transition-transform transform translate-y-full"
+      data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false">
+    <div class="flex justify-between items-center">
+      <p class="dialogToast-message text-sm pr-4">This sample text.</p>
+      <button class="dialogToast-close-button hover:opacity-50" aria-label="Close">
+        &times;
+      </button>
     </div>
-  `;
+  </div>
+`;
 
-  appSageComponents['dialogToast'].html_template = dialogToastHtmlTemplate;
+appSageComponents['dialogToast'].html_template = dialogToastHtmlTemplate;
 
-  const dialogToastFormTemplate = `
-    <form class="dialogToast-form space-y-2" data-initialized="false" data-component-name="dialogToast" data-component-id="{{dialogToast.id}}">
-      <div>
-        <label class="block font-medium text-slate-700">Message:</label>
-        <input type="text" name="message" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
-      </div>
+const dialogToastFormTemplate = `
+  <form class="dialogToast-form space-y-2" data-initialized="false" data-component-name="dialogToast" data-component-id="{{dialogToast.id}}">
+    <div>
+      <label class="block font-medium text-slate-700">Message:</label>
+      <input type="text" name="message" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+    </div>
 
-      <div>
-        <label class="block font-medium text-slate-700">Notification Type:</label>
-        <select name="type" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
-          <option value="success">Success</option>
-          <option value="error">Error</option>
-          <option value="warning">Warning</option>
-          <option value="info">Info</option>
-        </select>
-      </div>
+    <div>
+      <label class="block font-medium text-slate-700">Notification Type:</label>
+      <select name="type" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+        <option value="success">Success</option>
+        <option value="error">Error</option>
+        <option value="warning">Warning</option>
+        <option value="info">Info</option>
+      </select>
+    </div>
 
-      <div>
-        <label class="block font-medium text-slate-700">Timeout (seconds):</label>
-        <input type="number" name="timeout" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" value="3">
-      </div>
+    <div>
+      <label class="block font-medium text-slate-700">Timeout (seconds):</label>
+      <input type="number" name="timeout" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" value="3">
+    </div>
 
-      <div class="flex items-center">
-        <input type="checkbox" name="autoDismiss" class="mr-2 leading-tight">
-        <label class="text-sm">Auto-dismiss</label>
-      </div>
+    <div class="flex items-center">
+      <input type="checkbox" name="autoDismiss" class="mr-2 leading-tight">
+      <label class="text-sm">Auto-dismiss</label>
+    </div>
 
-      <div class="flex items-center" id="useProgrammaticallyWrapper" style="display: none;">
-        <input type="checkbox" name="useProgrammatically" class="mr-2 leading-tight">
-        <label class="text-sm">Use programmatically</label>
-      </div>
+    <div class="flex items-center" id="useProgrammaticallyWrapper" style="display: none;">
+      <input type="checkbox" name="useProgrammatically" class="mr-2 leading-tight">
+      <label class="text-sm">Use programmatically</label>
+    </div>
 
-      <div id="codeSampleWrapper" style="display: none;">
-        <label class="block font-medium text-slate-700">Code sample:</label>
-  <pre class="bg-gray-100 p-4 rounded text-sm">
-  revealDialogToast({
-    message: 'Your changes have been saved successfully!',
-    type: 'success',
-    autoDismiss: true,
-    timeout: 2 // 2 seconds
-  }, () => {
-    console.log('Toast notification revealed successfully!');
-  });
-  </pre>
-      </div>
+    <div id="codeSampleWrapper" style="display: none;">
+      <label class="block font-medium text-slate-700">Code sample:</label>
+<pre class="bg-gray-100 p-4 rounded text-sm">
+revealDialogToast({
+  message: 'Your changes have been saved successfully!',
+  type: 'success',
+  autoDismiss: true,
+  timeout: 2 // 2 seconds
+}, () => {
+  console.log('Toast notification revealed successfully!');
+});
+</pre>
+    </div>
 
-      <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Notification</button>
-    </form>
-  `;
+    <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Notification</button>
+  </form>
+`;
 
-  appSageComponents['dialogToast'].form_template = dialogToastFormTemplate;
-}
+appSageComponents['dialogToast'].form_template = dialogToastFormTemplate;
+
 
 function initializeDialogToastForm(container) {
   const sidebar = document.getElementById('sidebar');
@@ -158,6 +158,7 @@ function initializeDialogToastForm(container) {
     saveDialogToastData(message, type, timeout, autoDismiss);
   });
 }
+window.initializeDialogToastForm = initializeDialogToastForm;
 
 function initializeDialogToast(container) {
   const closeButton = container.querySelector('.dialogToast-close-button');
@@ -207,6 +208,7 @@ function initializeDialogToast(container) {
     }, timeout);
   }
 }
+window.initializeDialogToast = initializeDialogToast;
 
 function saveDialogToastData(message, type, timeout, autoDismiss) {
   const toastId = `user-created-toast-${Date.now()}`;
@@ -216,11 +218,13 @@ function saveDialogToastData(message, type, timeout, autoDismiss) {
 
   saveComponentObjectToPage('dialogToast', JSON.stringify(toastData));
 }
+window.saveDialogToastData = saveDialogToastData;
 
 function getDialogToastData() {
   const currentPage = getCurrentPage();
   return currentPage.dialogToast ? JSON.parse(currentPage.dialogToast) : null;
 }
+window.getDialogToastData = getDialogToastData;
 
 function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
   const toastContainer = document.querySelector('.dialogToast-container');
@@ -278,4 +282,5 @@ function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
     callback();
   }
 }
+window.revealDialogToast = revealDialogToast;
 

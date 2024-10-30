@@ -89,61 +89,60 @@ const timezones = [
   { "label": "(GMT+13:00) Nuku'alofa", "value": "Pacific/Tongatapu" }
 ]
 
-function initializeInternationalClocksObjects() {
-  const internationalClocksTemplate = `
-    <div class="internationalClocks-container" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
-      <div class="clock-display text-3xl font-bold text-center"></div>
+const internationalClocksTemplate = `
+  <div class="internationalClocks-container" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
+    <div class="clock-display text-3xl font-bold text-center"></div>
 
-      <div class="circle-design relative hidden mx-auto">
-        <div class="-rotate-90 w-48 h-48 border-4 border-black rounded-full">
-          <div class="hour-hand absolute w-[32%] h-[3px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
-          <div class="minute-hand absolute w-[42%] h-[2px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
-          <div class="second-hand absolute w-[46%] hidden h-0 border-t border-rose-500 top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
-          <div class="absolute w-2.5 h-2.5 bg-black rounded-full top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%]"></div>
-        </div>
+    <div class="circle-design relative hidden mx-auto">
+      <div class="-rotate-90 w-48 h-48 border-4 border-black rounded-full">
+        <div class="hour-hand absolute w-[32%] h-[3px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
+        <div class="minute-hand absolute w-[42%] h-[2px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
+        <div class="second-hand absolute w-[46%] hidden h-0 border-t border-rose-500 top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
+        <div class="absolute w-2.5 h-2.5 bg-black rounded-full top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%]"></div>
       </div>
     </div>
-  `;
+  </div>
+`;
+appSageComponents['internationalClocks'].html_template = internationalClocksTemplate;
 
-  const internationalClocksFormTemplate = `
-    <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
-      <div>
-        <label class="block font-medium text-gray-700">Timezone:</label>
-        <select
-          class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          name="timezone" placeholder="e.g., UTC, America/New_York">
-        </select>
+const internationalClocksFormTemplate = `
+  <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
+    <div>
+      <label class="block font-medium text-gray-700">Timezone:</label>
+      <select
+        class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        name="timezone" placeholder="e.g., UTC, America/New_York">
+      </select>
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-700">Display Seconds:</label>
+      <input type="checkbox" name="show-seconds" class="show-seconds-checkbox mt-1">
+    </div>
+
+    <div>
+      <label class="block font-medium text-gray-700">Design:</label>
+      <div class="flex items-center space-x-4">
+        <label>
+          <input type="radio" name="design" value="digits" checked class="form-radio design-radio text-indigo-600">
+          Digits
+        </label>
+        <label>
+          <input type="radio" name="design" value="circle" class="form-radio design-radio text-indigo-600">
+          Circle
+        </label>
       </div>
+    </div>
+  </form>
+`;
+appSageComponents['internationalClocks'].form_template = internationalClocksFormTemplate;
 
-      <div>
-        <label class="block font-medium text-gray-700">Display Seconds:</label>
-        <input type="checkbox" name="show-seconds" class="show-seconds-checkbox mt-1">
-      </div>
-
-      <div>
-        <label class="block font-medium text-gray-700">Design:</label>
-        <div class="flex items-center space-x-4">
-          <label>
-            <input type="radio" name="design" value="digits" checked class="form-radio design-radio text-indigo-600">
-            Digits
-          </label>
-          <label>
-            <input type="radio" name="design" value="circle" class="form-radio design-radio text-indigo-600">
-            Circle
-          </label>
-        </div>
-      </div>
-    </form>
-  `;
-
-  appSageComponents['internationalClocks'].html_template = internationalClocksTemplate;
-  appSageComponents['internationalClocks'].form_template = internationalClocksFormTemplate;
-}
 
 // Function to get all clock containers
 function getClockContainers() {
   return document.querySelectorAll('.internationalClocks-container');
 }
+window.getClockContainers = getClockContainers;
 
 // Function to initialize the clock data from the form inputs, if available
 function initializeClockDataFromForm(clockContainer) {
@@ -208,6 +207,7 @@ function initializeClockDataFromForm(clockContainer) {
     designRadio.addEventListener('change', updateClockDataFromForm);
   });
 }
+window.initializeClockDataFromForm = initializeClockDataFromForm;
 
 function populateTimezoneSelects() {
   // Select all elements with the class 'timezone-select'
@@ -227,6 +227,7 @@ function populateTimezoneSelects() {
     });
   });
 }
+window.populateTimezoneSelects = populateTimezoneSelects;
 
 // Function to update the clock based purely on data- attributes
 function updateClock(clockContainer) {
@@ -260,6 +261,7 @@ function updateClock(clockContainer) {
     clockContainer.querySelector('.clock-display').classList.add('hidden');
   }
 }
+window.updateClock = updateClock;
 
 // Function to update the clock hands for circle design
 function updateCircleDesign(clockContainer, hours, minutes, seconds) {
@@ -283,12 +285,15 @@ function updateCircleDesign(clockContainer, hours, minutes, seconds) {
     secondHand.classList.remove('block');
   }
 }
+window.updateCircleDesign = updateCircleDesign;
 
 // Function to start the clock for a given clock container
 function startClock(clockContainer) {
   setInterval(() => updateClock(clockContainer), 1000);
 }
+window.startClock = startClock;
 
 function initializeInternationalClocks(componentContainer) {
   startClock(componentContainer);
 }
+window.initializeInternationalClocks = initializeInternationalClocks;

@@ -25,6 +25,7 @@ function loadPage(pageId) {
     return storedData || null;
   }
 } // DATA OUT: String || null
+window.loadPage = loadPage;
 
 // Currently, media added through the file selector is stored as base64 plain
 // text in the document (and consequently, storage). To keep things a bit
@@ -120,6 +121,7 @@ function loadPageMetadata(pageId) {
     }
   }
 } // DATA OUT: String || null
+window.loadPageMetadata = loadPageMetadata;
 
 // Because page settings need to be added to various locations other than the
 // expected '#page' div, page settings are stored in a separate object and,
@@ -179,6 +181,7 @@ function loadPageSettings(config, view = false) {
     }
   }
 } // DATA OUT: null
+window.loadPageSettings = loadPageSettings;
 
 function addMetasToHead() {
   const params = new URLSearchParams(window.location.search);
@@ -208,6 +211,7 @@ function addMetasToHead() {
     }
   }
 }
+window.addMetasToHead = addMetasToHead;
 
 
 
@@ -236,6 +240,7 @@ function openDatabase() {
     };
   });
 }
+window.openDatabase = openDatabase;
 
 document.addEventListener('DOMContentLoaded', addMetasToHead);
  
@@ -258,17 +263,20 @@ if (typeof window.api !== 'undefined') {
     initializeExistingComponents(componentContainer, componentName);
   });
 }
+
 function getCurrentPage() {
   const pageId = getPageId();
   const currentPage = getPageObject(pageId);
   return currentPage;
 }
+window.getCurrentPage = getCurrentPage;
 
 function getPageId() {
   const params = new URLSearchParams(window.location.search);
   const pageId = params.get('config') || params.get('page');
   return pageId;
 }
+window.getPageId = getPageId;
 
 function getAppSageStorage() {
   const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
@@ -277,9 +285,11 @@ function getAppSageStorage() {
   }
   return appSageStorage;
 }
+window.getAppSageStorage = getAppSageStorage;
 
 function getPageObject(pageId) {
   const appSageStorage = getAppSageStorage();
   const pageObject = appSageStorage.pages[pageId];
   return pageObject;
 }
+window.getPageObject = getPageObject;

@@ -13,6 +13,7 @@ function addEditableBackgroundColor(sidebar, element) {
 
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, colors, 'icon-select');
 } // DATA OUT: null
+window.addEditableBackgroundColor = addEditableBackgroundColor;
 
 // This function gives all the bits needed for changing border colors & styles.
 // Like background color, it is in a handy little scrollable box.
@@ -34,6 +35,7 @@ function addEditableBorders(sidebar, element) {
     addDeviceTargetedOptions(sidebar, element, labels[index], cssClassBase, options[prop], options.input_type[index]);
   });
 } // DATA OUT: null
+window.addEditableBorders = addEditableBorders;
 
 // This function adds brevity to sidebar populating functions since if one is
 // being added, I can't think of a scenario where the other wouldn't be as well
@@ -42,6 +44,7 @@ function addEditableMarginAndPadding(sidebar, element) {
   addEditableMargin(sidebar, element);
   addEditablePadding(sidebar, element);
 } // DATA OUT: null
+window.addEditableMarginAndPadding = addEditableMarginAndPadding;
 
 // This function gives all the necessary bits for editing paddings.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
@@ -83,6 +86,7 @@ function addEditablePadding(sidebar, element) {
     resetPaddingElement.classList.add('col-span-1');
   });
 } // DATA OUT: null
+window.addEditablePadding = addEditablePadding;
 
 // This function gives all the necessary bits for editing margins.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
@@ -117,6 +121,7 @@ function addEditableMargin(sidebar, element) {
     resetMarginElement.classList.add('col-span-1');
   });
 } // DATA OUT: null
+window.addEditableMargin = addEditableMargin;
 
 // This function allows the laoding of a background image via remote URL.
 // See `addEditableBackgroundFeatures` for the styling specific editing options.
@@ -127,6 +132,7 @@ function addEditableBackgroundImageURL(sidebar, grid) {
 
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 } // DATA OUT: null
+window.addEditableBackgroundImageURL = addEditableBackgroundImageURL;
 
 // This function is for adding the background image itself via direct "upload".
 // The word "upload" is in quotes because the attachment is simply being put
@@ -140,6 +146,7 @@ function addEditableBackgroundImage(sidebar, grid) {
   // Add file input for direct image selection
   addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
 } // DATA OUT: null
+window.addEditableBackgroundImage = addEditableBackgroundImage;
 
 // This function is dedicated for adding the necessary editing options for
 // background images and the styles applicable to them.
@@ -178,6 +185,7 @@ function addEditableBackgroundFeatures(sidebar, grid) {
   addBackgroundPositionOptions();
   addBackgroundRepeatOptions();
 }// DATA OUT: null
+window.addEditableBackgroundFeatures = addEditableBackgroundFeatures;
 
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
@@ -189,6 +197,7 @@ function addEditableOpacity(sidebar, element) {
 
   addDeviceTargetedOptions(sidebar, element, labelPrefix, cssClassBase, opacityOptions, 'single-icon-select');
 }// DATA OUT: null
+window.addEditableOpacity = addEditableOpacity;
 
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
@@ -213,6 +222,7 @@ function addTextOptions(sidebar, element) {
   addDeviceTargetedOptions(sidebar, element, 'Font Style', 'underline', fontUnderlineOptions, 'toggle');
   addDeviceTargetedOptions(sidebar, element, 'Text Alignment', 'text', textAlignOptions, 'icon-select');
 } // DATA OUT: null
+window.addTextOptions = addTextOptions;
 
 // TODO: This doesn't quite work properly yet
 // This particular HTML function should most likely be a dedicated content.js content feature
@@ -223,6 +233,7 @@ function addManualHtmlElement(sidebar, element) {
     }
   }
 } // DATA OUT: null
+window.addManualHtmlElement = addManualHtmlElement;
 
 function addManualClassEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
@@ -231,6 +242,7 @@ function addManualClassEditor(sidebar, element) {
     }
   }
 } // DATA OUT: null
+window.addManualClassEditor = addManualClassEditor;
 
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
@@ -239,6 +251,7 @@ function addManualCssEditor(sidebar, element) {
     }
   }
 } // DATA OUT: null
+window.addManualCssEditor = addManualCssEditor;
 
 function addEditableDimensions(sidebar, element) {
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
@@ -255,13 +268,13 @@ function addEditableDimensions(sidebar, element) {
       // 0 = class prefix, e.g. `min-w`
       // 1 = Plain English, e.g. 'Minimum Width'
       const label = createLabel(bp, widthOpt[1], `${bp}-${widthOpt[0]}`);
-      control = document.createElement('div');
+      const control = document.createElement('div');
       sizeContainer.appendChild(label);
       sizeContainer.appendChild(control);
       handleSingleIconSelect(bp, widthOpt[1], lengthOptions, widthOpt[0], element, control);
     });
 
-    resetHeightElement = document.createElement('div');
+    const resetHeightElement = document.createElement('div');
     const label = createLabel(bp, `Reset`, `${bp}-min-w,max-w,w`);
     label.className = 'hidden';
     sizeContainer.appendChild(label);
@@ -281,13 +294,13 @@ function addEditableDimensions(sidebar, element) {
       // 0 = class prefix, e.g. `min-h`
       // 1 = Plain English, e.g. 'Minimum Height'
       const label = createLabel(bp, heightOpt[1], `${bp}-${heightOpt[0]}`);
-      control = document.createElement('div');
+      const control = document.createElement('div');
       sizeContainer.appendChild(label);
       sizeContainer.appendChild(control);
       handleSingleIconSelect(bp, heightOpt[1], lengthOptions, heightOpt[0], element, control);
     });
 
-    resetHeightElement = document.createElement('div');
+    const resetHeightElement = document.createElement('div');
     const label = createLabel(bp, `Reset`, `${bp}-min-h,max-h,h`);
     label.className = 'hidden';
     sizeContainer.appendChild(label);
@@ -298,6 +311,7 @@ function addEditableDimensions(sidebar, element) {
     container.appendChild(sizeContainer);
   });
 } // DATA OUT: null
+window.addEditableDimensions = addEditableDimensions;
 
 function addEditableColumnGaps(sidebar, element) {
   const axis = ['x', 'y', 'all'];
@@ -312,13 +326,13 @@ function addEditableColumnGaps(sidebar, element) {
     axis.forEach(axisOpt => {
       const cssClassBase = `gap-${axisOpt}`;
       const label = createLabel(bp, `Gap (${axisOpt})`, `${bp}-${`Gap (${axisOpt})`.replace(' ', '-')}-${cssClassBase}`);
-      control = document.createElement('div');
+      const control = document.createElement('div');
       gapContainer.appendChild(label);
       gapContainer.appendChild(control);
       handleSingleIconSelect(bp, `Gap (${axisOpt})`, lengthOptions, cssClassBase, element, control);
     });
 
-    resetElement = document.createElement('div');
+    const resetElement = document.createElement('div');
     const label = createLabel(bp, `Reset`, `${bp}-gap-x,gap-y,gap`);
     label.className = 'hidden';
     gapContainer.appendChild(label);
@@ -329,3 +343,4 @@ function addEditableColumnGaps(sidebar, element) {
     container.appendChild(gapContainer);
   });
 } // DATA OUT: null
+window.addEditableColumnGaps = addEditableColumnGaps;

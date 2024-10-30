@@ -24,6 +24,7 @@ function addGridAlignmentOptions(sidebar, grid) {
   // Place Items - See: https://tailwindcss.com/docs/place-items
   addDeviceTargetedOptions(sidebar, grid, 'Place Items', 'place-items', placeItemsOptions, 'icon-select');
 } // DATA OUT: null
+window.addGridAlignmentOptions = addGridAlignmentOptions;
 
 // This function is for chooding the number of columns (vertical) that exist
 // within the grid.
@@ -36,3 +37,4 @@ function addEditableColumns(sidebar, grid) {
   // See: https://tailwindcss.com/docs/grid-template-columns
   addDeviceTargetedOptions(sidebar, grid, 'Number of Columns', 'grid-cols', columns, 'select');
 } // DATA OUT: null
+window.addEditableColumns = addEditableColumns;

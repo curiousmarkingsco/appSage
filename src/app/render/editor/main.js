@@ -380,12 +380,16 @@ function loadScripts(scriptUrls) {
 window.loadScripts = loadScripts;
 
 function initializeConfig() {
-  if (typeof window.api !== 'undefined') return;
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-  let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-  document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+
+  if (storageMethodLegacy) {
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+    let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+    document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+  } else {
+    // STORAGE // TODO
+  }
 
   if (config) {
     const json = loadPage(config);
@@ -403,7 +407,7 @@ function initializeConfig() {
 }
 window.initializeConfig = initializeConfig;
 
-var editorMode = true;
+window.editorMode = true;
 
 // Function to save metadata to localStorage, ensuring no duplicate tags
 function saveMetadataToLocalStorage(page_id, newMetaTags) {
@@ -932,23 +936,27 @@ function createNewConfigurationFile() {
   const pageId = generateAlphanumericId();
   let title = 'Untitled';
   let counter = 1;
-  // Load or create the title-ID mapping from localStorage
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-  while (title in titleIdMap) {
-    title = `Untitled-${counter}`;
-    counter++;
-  }
-  // Save the mapping of title to ID
-  titleIdMap[title] = pageId;
-  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
-  }
-  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  if (storageMethodLegacy){
+    // Load or create the title-ID mapping from localStorage
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+    while (title in titleIdMap) {
+      title = `Untitled-${counter}`;
+      counter++;
+    }
+    // Save the mapping of title to ID
+    titleIdMap[title] = pageId;
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    if (!appSageStorage.pages) {
+      appSageStorage.pages = {};
+    }
+    appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+    window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  } else {
+    // STORAGE // TODO
+  }
   return pageId;
 }
 window.createNewConfigurationFile = createNewConfigurationFile;

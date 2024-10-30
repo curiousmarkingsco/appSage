@@ -41,6 +41,7 @@ function loadChanges(json) {
     linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });
 } // DATA OUT: null
+window.loadChanges = loadChanges;
 
 // This function makes it so that saved elements related to grids can be edited once more.
 // DATA IN: HTML Element, <div>
@@ -78,6 +79,7 @@ function restoreGridCapabilities(grid) {
     });
   });
 } // DATA OUT: null
+window.restoreGridCapabilities = restoreGridCapabilities;
 
 // This function makes it so that saved elements related to container box can be edited once more.
 // DATA IN: HTML Element, <div>
@@ -114,5 +116,6 @@ function restoreContainerCapabilities(container) {
     observeClassManipulation(contentContainer);
   });
 } // DATA OUT: null
+window.restoreContainerCapabilities = restoreContainerCapabilities;
 
 

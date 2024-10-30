@@ -27,6 +27,7 @@ async function loadComponentFiles() {
       .catch(err => reject(err));
   });
 } /* End component loading */
+window.loadComponentFiles = loadComponentFiles;
 
 async function loadScript(url) {
   return new Promise((resolve, reject) => {
@@ -41,6 +42,7 @@ async function loadScript(url) {
     document.head.appendChild(script);
   });
 }
+window.loadScript = loadScript;
 
 function initializeComponentForm(container, componentName, form) {
   if (componentName === 'internationalClocks') {
@@ -60,21 +62,9 @@ function initializeComponentForm(container, componentName, form) {
     form.setAttribute('data-initialized', true);
   }
 }
+window.initializeComponentForm = initializeComponentForm;
 
 function initializeExistingComponents(container, componentName) {
-  if (editorMode) {
-    if (window._globalsLoaded) {
-      initializeComponent(componentName);
-    } else {
-      // Poll or wait for the global to be defined
-      const checkGlobals = setInterval(() => {
-        if (window._globalsLoaded) {
-          clearInterval(checkGlobals);
-          initializeComponent(componentName);
-        }
-      }, 50);  // Check every 50ms
-    }
-  }
   if (componentName === 'internationalClocks') {
     initializeInternationalClocks(container);
   }
@@ -88,18 +78,4 @@ function initializeExistingComponents(container, componentName) {
     initializeDialogToast(container);
   }
 }
-
-function initializeComponent(componentName) {
-  if (componentName === 'internationalClocks') {
-    initializeInternationalClocksObjects();
-  }
-  if (componentName === 'rotatingQuotes') {
-    initializeRotatingQuotesObjects();
-  }
-  if (componentName === 'calculator') {
-    initializeCalculatorObjects();
-  }
-  if (componentName === 'dialogToast') {
-    initializeDialogToastObjects();
-  }
-}
+window.initializeExistingComponents = initializeExistingComponents;

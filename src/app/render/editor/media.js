@@ -26,7 +26,7 @@ Examples:
 */
 
 // Global variable — These paths are relative to the HTML page loading them, not this file.
-var appSagePlaceholderMedia = {
+window.appSagePlaceholderMedia = {
   "audio": './placeholder_media/audio.mp3',
   "video": './placeholder_media/video.mp4',
   "photo_avatar_darkmode_jpg": './placeholder_media/darkmode_jpg/avatar_placeholder.jpg',
@@ -78,6 +78,7 @@ function randomImage() {
   const result = options[Math.floor(Math.random() * options.length)];
   return appSagePlaceholderMedia[result];
 } // DATA OUT: String
+window.randomImage = randomImage;
 
 // For some apps like with user-generated content, they could be posting not
 // just images, but other media. This is a good way for the designer to battle
@@ -97,6 +98,7 @@ function randomMedia() {
   const result = options[Math.floor(Math.random() * options.length)];
   return appSagePlaceholderMedia[result];
 } // DATA OUT: String
+window.randomMedia = randomMedia;
 
 // This is to bring brevity to multiple functions needing the same array.
 // DATA IN: null
@@ -113,6 +115,7 @@ function placeholderDarkmodeOptions() {
     'photo_portrait_darkmode_svg'
   ];
 } // DATA OUT: Array
+window.placeholderDarkmodeOptions = placeholderDarkmodeOptions;
 
 // This is to bring brevity to multiple functions needing the same array.
 // DATA IN: null
@@ -129,3 +132,4 @@ function placeholderLightmodeOptions() {
     'photo_portrait_lightmode_svg'
   ];
 } // DATA OUT: Array
+window.placeholderLightmodeOptions = placeholderLightmodeOptions;

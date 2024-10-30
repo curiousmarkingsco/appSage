@@ -17,19 +17,20 @@ if (typeof customAppSageStorage !== 'undefined') {
   // This allows developers to set a custom storage name so that if people
   // are using multiple appSage derived products, the object won't get too
   // bogged down or confused. This was originally made to support dashSage.
-  var appSageStorageString = customAppSageStorage;
-  var appSageSettingsString = `${customAppSageStorage}Settings`;
-  var appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
-  var appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
+  window.appSageStorageString = customAppSageStorage;
+  window.appSageSettingsString = `${customAppSageStorage}Settings`;
+  window.appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
+  window.appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
 } else {
-  var appSageStorageString = 'appSageStorage';
-  var appSageSettingsString = 'appSageSettings';
-  var appSageTitleIdMapString = 'appSageTitleIdMap';
-  var appSageDatabaseString = 'appSageDatabase';
+  window.appSageStorageString = 'appSageStorage';
+  window.appSageSettingsString = 'appSageSettings';
+  window.appSageTitleIdMapString = 'appSageTitleIdMap';
+  window.appSageDatabaseString = 'appSageDatabase';
 }
 
 // Requires paid license
-var appSagePremium = true;
+window.appSagePremium = true;
+window.storageMethodLegacy = false;
 
 function combineComponentsLists() {
   // Templates are loaded in the JS file dedicated to the component.
@@ -46,10 +47,10 @@ function combineComponentsLists() {
   const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
   return combinedComponents;
 }
+window.combineComponentsLists = combineComponentsLists;
 
-var appSageComponents = combineComponentsLists();
-
-var advancedMode = false;
+window.appSageComponents = combineComponentsLists();
+window.advancedMode = false;
 const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
 if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
 
@@ -64,21 +65,15 @@ window.addEventListener('load', function () {
   }
 });
 
-updateTailwindConfig();
-var tailwindColors = mergeTailwindColors(tailwind.config.theme);
-
-var colorArray = extractColorNames(tailwindColors);
-colorArray.push('reset');
-var interactivityState = '';
-var interactivityStates = {
+updateTailwindConfig();window.tailwindColors = mergeTailwindColors(tailwind.config.theme);
+window.colorArray = extractColorNames(tailwindColors);
+colorArray.push('reset');window.interactivityState = '';window.interactivityStates = {
   "default": ['', 'Default'],
   "hover": ['hover', 'When the user taps (mobile) or has their cursor on top of the element (desktop)'],
   "focus": ['focus', 'When the user has tapped the element to use it in some way'],
   "active": ['active', 'When the element has been activated by the user from interacting in some way']
 }
-
-var currentBreakpoint = 'xs';
-var plainEnglishBreakpointNames = {
+window.currentBreakpoint = 'xs';window.plainEnglishBreakpointNames = {
   "xs": 'Extra Small',
   "sm": 'Small-Sized',
   "md": 'Medium-Sized',
@@ -86,8 +81,7 @@ var plainEnglishBreakpointNames = {
   "xl": 'Extra Large',
   "2xl": 'Extra, Extra Large'
 }
-
-var tooltips = {
+window.tooltips = {
   'add-component': "Add a new component (appSage premium only)",
   'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
   'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
@@ -161,8 +155,7 @@ var tooltips = {
   'justify-reset': "Reset justification rules."
 }
 
-// global variable
-var appSageEditorIcons = {
+window.appSageEditorIcons = {
   "responsive": {
     "xs": '<svg data-extra-info="For smartwatch screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>',
     "sm": '<svg data-extra-info="For mobile phone screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>',
@@ -290,6 +283,8 @@ function extractColorNames(colorObject) {
   }
   return colorArray;
 } // DATA OUT: Array
+window.extractColorNames = extractColorNames;
+
 
 function mergeFontsIntoTailwindConfig() {
   // Retrieve the fonts from localStorage
@@ -316,6 +311,8 @@ function mergeFontsIntoTailwindConfig() {
 
   // The tailwind.config.theme.fontFamily now contains the merged fonts
 }
+window.mergeFontsIntoTailwindConfig = mergeFontsIntoTailwindConfig;
+
 
 function mergeTailwindColors(theme) {
   if (theme) {
@@ -332,6 +329,8 @@ function mergeTailwindColors(theme) {
     return theme.colors;
   }
 }
+window.mergeTailwindColors = mergeTailwindColors;
+
 
 // Function to dynamically update Tailwind config with multiple fonts/colors
 function updateTailwindConfig() {
@@ -360,6 +359,8 @@ function updateTailwindConfig() {
     }
   }
 }
+window.updateTailwindConfig = updateTailwindConfig;
+
 
 // Restore settings from localStorage
 function restoreSettings() {
@@ -490,6 +491,8 @@ function restoreSettings() {
     }
   }
 }
+window.restoreSettings = restoreSettings;
+
 
 // Call restoreSettings when the page loads
 window.addEventListener('load', restoreSettings);
@@ -500,5 +503,7 @@ function appSageLocalNuke(){
   localStorage.removeItem(appSageSettingsString);
   localStorage.removeItem(appSageTitleIdMapString);
 }
+window.appSageLocalNuke = appSageLocalNuke;
+
 
 window._globalsLoaded = true;

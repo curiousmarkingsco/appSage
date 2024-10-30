@@ -29,6 +29,7 @@ function saveDataToServer(url, page_id, css_content = null) {
     .then(data => console.log('Success:', data))
     .catch((error) => console.error('Error:', error));
 } // DATA OUT: null
+window.saveDataToServer = saveDataToServer;
 
 function generateHTMLString() {
   const params = new URLSearchParams(window.location.search);
@@ -38,6 +39,7 @@ function generateHTMLString() {
   const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
   return finalHtml
 }
+window.generateHTMLString = generateHTMLString;
 
 // This function is to support the copyPageHTML function.
 // DATA IN: ['String', 'HTML Element, <div>']
@@ -62,6 +64,7 @@ function flattenJSONToHTML(jsonString, parentInfo) {
     return '';
   }
 } // DATA OUT: String (of an HTML element)
+window.flattenJSONToHTML = flattenJSONToHTML;
 
 // Since the original developer doesn't yet want to load this repo up with NPM
 // packages, we forgo something like PostCSS and just grab the compiled CSS
@@ -85,3 +88,4 @@ function getCompiledCSS() {
     console.log('No TailwindCSS styles found.');
   }
 } // DATA IN: String
+window.getCompiledCSS = getCompiledCSS;

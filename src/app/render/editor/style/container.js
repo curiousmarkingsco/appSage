@@ -23,3 +23,4 @@ function addContainerAlignmentOptions(sidebar, container) {
   // Align Self - See: https://tailwindcss.com/docs/place-items
   addDeviceTargetedOptions(sidebar, container, 'Align Self', 'self', alignOptions, 'icon-select');
 } // DATA OUT: null
+window.addContainerAlignmentOptions = addContainerAlignmentOptions;
