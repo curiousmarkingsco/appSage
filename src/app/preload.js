@@ -17,7 +17,6 @@ try {
     getPageSettings: (pageId) => ipcRenderer.invoke('get-settings-store', { pageId }),
     getPageComponent: (pageId, componentName, componentData) => ipcRenderer.invoke('get-component-store', { pageId, componentName, componentData })
   });
-  console.log('Preload script is running, and store module has been loaded.');
 } catch (error) {
   console.error('Error in preload script:', error); // Catch and log errors
 }
