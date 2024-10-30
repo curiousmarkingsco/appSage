@@ -117,7 +117,7 @@ appSageLocalNuke();
 ### Make your storage unique
 By default, pages created get added to `localStorage` under the name "appSageStorage". To ensure your objects don't get mixed up with appSage or other applications that use appSage, create a global variable called `customAppSageStorage`.
 
-See [_globals.js](https://github.com/curiousmarkingsco/appSage/blob/main/app/js/editor/_globals.js) to see how this works in the code.
+See [_globals.js](https://github.com/curiousmarkingsco/appSage/blob/main/app/render/editor/_globals.js) to see how this works in the code.
 
 For example:
 ```js

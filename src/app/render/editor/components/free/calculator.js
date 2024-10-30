@@ -1,6 +1,6 @@
 // calculator.js
 
-const calculatorHtmlTemplate = `
+appSageComponents['calculator'].html_template = `
   <div class="calculator-container bg-slate-700 w-44 p-4 border border-gray-300 rounded-lg" data-component-name="calculator" data-component-id="{{calculator.id}}">
     <div class="calculator-display bg-gray-100 text-right text-xl p-2 mb-2 rounded" id="calc-display">0</div>
     <div class="grid grid-cols-4 gap-2">
@@ -27,9 +27,7 @@ const calculatorHtmlTemplate = `
   </div>
 `;
 
-appSageComponents['calculator'].html_template = calculatorHtmlTemplate;
-
-const calculatorFormTemplate = `
+appSageComponents['calculator'].form_template = `
   <form class="calculator-form space-y-2" data-initialized="false" data-component-name="calculator" data-component-id="{{calculator.id}}">
     <div>
       <label class="block font-medium text-gray-700">Button Labels:</label>
@@ -38,8 +36,6 @@ const calculatorFormTemplate = `
     <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Calculator Settings</button>
   </form>
 `;
-
-appSageComponents['calculator'].form_template = calculatorFormTemplate;
 
 
 function initializeCalculatorForm(container) {
@@ -109,9 +105,3 @@ function evaluateExpression(val1, val2, operator) {
   }
 }
 window.evaluateExpression = evaluateExpression;
-
-const calculatorData = {
-  buttonLabels: ['7', '8', '9', '/', '4', '5', '6', '*', '1', '2', '3', '-', '0', '.', '=', '+']
-};
-
-// saveComponentObjectToPage('calculator', JSON.stringify(calculatorData));

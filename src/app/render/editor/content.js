@@ -317,6 +317,7 @@ async function saveMediaToIndexedDB(mediaBlob, mediaId) {
   const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
   store.put(mediaEntry);
 }
+window.saveMediaToIndexedDB = saveMediaToIndexedDB;
 
 async function getMediaFromIndexedDB(mediaId) {
   const db = await openDatabase();
@@ -329,6 +330,7 @@ async function getMediaFromIndexedDB(mediaId) {
     request.onerror = (event) => reject('Error fetching media');
   });
 }
+window.getMediaFromIndexedDB = getMediaFromIndexedDB;
 
 function displayMediaFromIndexedDB(targetElement) {
   const mediaId = targetElement.getAttribute('data-media-id');
@@ -665,11 +667,10 @@ function handleButtonFields(formContainer, contentContainer, button) {
 }
 window.handleButtonFields = handleButtonFields;
 
-// Map to track transferred classes from container to child elements
-const classTransferMap = new Map();
-
 // Function to transfer class to child element
 function transferClassToChild(container, className, childElement) {
+  // Map to track transferred classes from container to child elements
+  const classTransferMap = new Map();
   childElement.classList.add(className);
   container.classList.remove(className);
 
@@ -754,6 +755,8 @@ window.handleClassAddedEvent = handleClassAddedEvent;
 
 // Handle custom event for class removed
 function handleClassRemovedEvent(event) {
+  // Map to track transferred classes from container to child elements
+  const classTransferMap = new Map();
   const container = event.target;
   const className = event.detail.className;
 

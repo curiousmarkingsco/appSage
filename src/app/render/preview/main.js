@@ -33,7 +33,6 @@ function initializePreview() {
   
   // Dynamically load scripts necessary for preview functionality
   if (typeof window.api !== 'undefined') loadScripts([
-    './app/render/_globals.js',
     './app/render/editor/components/main.js',
     './app/render/editor/save.js',
     './app/render/load.js',

@@ -35,7 +35,7 @@ touch app/editor/js/components/free/rotating_quotes.js
 
 #### 2.1 Free Components (Open Source Contributors)
 
-Add your component object to `appSageFreeComponents` in `app/js/editor/_globals.js`
+Add your component object to `appSageFreeComponents` in `app/render/editor/_globals.js`
 
 ```js
 // Templates are loaded in the JS file dedicated to the component.
@@ -58,7 +58,7 @@ var appSageFreeComponents = {
 
 #### 2.2 Premium Components (Curious Markings, Co. Employees)
 
-Add your component object to `appSagePremiumComponents` in `app/js/editor/_globals.js`
+Add your component object to `appSagePremiumComponents` in `app/render/editor/_globals.js`
 
 ```js
 // Templates are loaded in the JS file dedicated to the component.
@@ -122,7 +122,7 @@ appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
 
 ### 5. Add your initializers
 
-Add your form and HTML initializers to `app/js/editor/components/main.js`
+Add your form and HTML initializers to `app/render/editor/components/main.js`
 
 #### 5.1 Form Initializers
 

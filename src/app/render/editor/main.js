@@ -245,35 +245,49 @@ async function initializeEditorHtml() {
 window.initializeEditorHtml = initializeEditorHtml;
 
 async function loadEditorScripts() {
-  await loadScript('./render/tailwind.js').then(() => {
-      loadScript('./render/tailwind.config.js');
-      loadScript('./render/_globals.js');
-      loadScript('./render/editor/settings.js');
-  }).then(() => {
-    loadScripts([
-      './render/tailwind.js',
-      './render/tailwind.config.js',
-      './render/editor/grid.js',
-      './render/editor/style/grid.js',
-      './render/editor/container.js',
-      './render/editor/style/container.js',
-      './render/editor/component.js',
-      './render/editor/column.js',
-      './render/editor/style/column.js',
-      './render/editor/content.js',
-      './render/editor/sidebar.js',
-      './render/editor/style.js',
-      './render/editor/save.js',
-      './render/editor/load.js',
-      './render/editor/components/main.js',
-      './render/editor/responsive.js',
-      './render/remote_save.js',
-      './render/editor/media.js',
-      './render/electron_storage.js'
-    ]);
-  }).catch(error => {
-    console.error('Error loading scripts:', error.stack || error);
-  });
+  return new Promise((resolve, reject) => {
+    try {
+      loadScripts([
+        './render/tailwind.js',
+        './render/tailwind.config.js',
+        './render/editor/grid.js',
+        './render/editor/style/grid.js',
+        './render/editor/container.js',
+        './render/editor/style/container.js',
+        './render/editor/component.js',
+        './render/editor/column.js',
+        './render/editor/style/column.js',
+        './render/editor/content.js',
+        './render/editor/sidebar.js',
+        './render/editor/style.js',
+        './render/editor/save.js',
+        './render/editor/load.js',
+        './render/load.js',
+        './render/editor/components/main.js',
+        './render/editor/responsive.js',
+        './render/remote_save.js',
+        './render/editor/media.js',
+        './render/electron_storage.js'
+      ]);
+
+      const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
+      components.map(component => {
+        if (component.html_template !== '') return;
+        if (component.license === 'premium' && appSagePremium === false) return;
+
+        const path = component.license === 'premium'
+          ? `./render/editor/components/premium/${component.file}`
+          : `./render/editor/components/free/${component.file}`;
+
+        loadScript(path);
+      });
+
+      resolve();
+    } catch(error) {
+      reject(error);
+      console.error('Error loading scripts:', error.stack || error);
+    }
+  })
 }
 window.loadEditorScripts = loadEditorScripts;
 
@@ -399,22 +413,22 @@ function initializeConfig() {
     const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
     let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
     document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+
+    if (config) {
+      const json = loadPage(config);
+      if (json && json.length > 0) {
+        loadChanges(json);
+        loadPageSettings(config);
+        loadPageBlobs(config);
+        loadPageMetadata(config);
+      }
+      setupAutoSave(config);
+    } else {
+      let pageId = createNewConfigurationFile();
+      setupAutoSave(pageId);
+    }
   } else {
     // STORAGE // TODO
-  }
-
-  if (config) {
-    const json = loadPage(config);
-    if (json && json.length > 0) {
-      loadChanges(json);
-      loadPageSettings(config);
-      loadPageBlobs(config);
-      loadPageMetadata(config);
-    }
-    setupAutoSave(config);
-  } else {
-    let pageId = createNewConfigurationFile();
-    setupAutoSave(pageId);
   }
 }
 window.initializeConfig = initializeConfig;

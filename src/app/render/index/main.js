@@ -16,6 +16,7 @@ async function initializeDashboard() {
         <meta name="msapplication-TileColor" content="#f2f0e9">
         <meta name="theme-color" content="#f2f0e9">
         <title>Dashboard | appSage</title>
+        <link rel="stylesheet" href="./tailwind-output.css">
         <script defer src="./renderer.js"></script>
       `;
 
@@ -73,18 +74,19 @@ async function initializeDashboard() {
               <h2>${pageTitle}</h2>
             </div>
             <div class="flex justify-around mb-4 mt-2">
-              <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="/?config=${pageId}" target="_blank">Edit</a>
-              <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="/?page=${pageId}" target="_blank">Preview</a>
+              <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="${window.location.href}?config=${pageId}" target="_blank">Edit</a>
+              <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="${window.location.href}?page=${pageId}" target="_blank">Preview</a>
               <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
             </div>
           `;
           container.appendChild(column);
         });
       } catch {
+        const randId = Array.from({ length: 16 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.length)]).join('');
         container.innerHTML = `
           <div class="text-center col-span-3">
             <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
-            <button class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" onclick="loadEditor()">Start building a page</button>
+            <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="${window.location.href}?config=${randId}">Start building a page</a>
           </div>
         `;
       }

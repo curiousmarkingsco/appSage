@@ -4,31 +4,6 @@
 
 */
 
-/* Begin component loading */
-async function loadComponentFiles() {
-  return new Promise((resolve, reject) => {
-    const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
-
-    const loadPromises = components.map(component => {
-      if (component.license === 'premium' && appSagePremium === false) {
-        return Promise.resolve(); // Skip loading for non-premium users
-      }
-
-      const path = component.license === 'premium'
-        ? `./js/editor/components/premium/${component.file}`
-        : `./js/editor/components/free/${component.file}`;
-
-      return loadScript(path);
-    });
-
-    // Wait for all scripts to load before resolving
-    Promise.all(loadPromises)
-      .then(() => resolve())
-      .catch(err => reject(err));
-  });
-} /* End component loading */
-window.loadComponentFiles = loadComponentFiles;
-
 async function loadScript(url) {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');

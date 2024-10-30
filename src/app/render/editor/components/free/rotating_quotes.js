@@ -1,6 +1,6 @@
 /* rotating_quotes.js */
 
-const myHtmlTemplate = `
+appSageComponents['rotatingQuotes'].html_template = `
   <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
     <div class="rotatingQuotes-quotebox relative w-full pl-16" data-quote-id="">
       <div class="absolute left-0 top-0 w-12 h-12 opacity-30 text-black">
@@ -11,9 +11,8 @@ const myHtmlTemplate = `
     </div>
   </div>
 `;
-appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 
-const myFormTemplate = `
+appSageComponents['rotatingQuotes'].form_template = `
   <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
     <div class="quotes-container max-h-96 overflow-y-scroll space-y-4">
       <!-- Existing quotes will be populated here -->
@@ -21,8 +20,6 @@ const myFormTemplate = `
     <button type="button" class="add-quote-btn bg-sky-500 text-white px-4 py-2 rounded">Add Quote</button>
   </form>
 `;
-appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
-
 
 function initializeQuoteDataFromForm(container) {
   const sidebar = document.getElementById('sidebar');

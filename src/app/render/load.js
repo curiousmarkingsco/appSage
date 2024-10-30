@@ -244,26 +244,12 @@ function openDatabase() {
 window.openDatabase = openDatabase;
 
 document.addEventListener('DOMContentLoaded', addMetasToHead);
- 
-// Call the loadComponentFiles function and wait for all scripts to load
-if (typeof window.api !== 'undefined') {
-  loadComponentFiles().then(() => {
-    // Initialize all components that load to the page
-    document.querySelectorAll('.pagecomponent').forEach(container => {
-      const componentContainer = container.querySelector('[data-component-name]');
-      const componentName = componentContainer.getAttribute('data-component-name');
-      initializeExistingComponents(componentContainer, componentName);
-    });
-  }).catch(err => {
-    console.error('Failed to load component files:', err);
-  });
-} else {
-  document.querySelectorAll('.pagecomponent').forEach(container => {
-    const componentContainer = container.querySelector('[data-component-name]');
-    const componentName = componentContainer.getAttribute('data-component-name');
-    initializeExistingComponents(componentContainer, componentName);
-  });
-}
+
+document.querySelectorAll('.pagecomponent').forEach(container => {
+  const componentContainer = container.querySelector('[data-component-name]');
+  const componentName = componentContainer.getAttribute('data-component-name');
+  initializeExistingComponents(componentContainer, componentName);
+});
 
 function getCurrentPage() {
   const pageId = getPageId();

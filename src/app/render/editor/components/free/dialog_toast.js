@@ -1,5 +1,5 @@
 
-const dialogToastHtmlTemplate = `
+appSageComponents['dialogToast'].html_template = `
   <div class="dialogToast-container fixed z-20 top-4 right-4 max-w-xs bg-white border border-white-500 shadow-lg rounded-lg p-4 transition-transform transform translate-y-full"
       data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false">
     <div class="flex justify-between items-center">
@@ -11,9 +11,7 @@ const dialogToastHtmlTemplate = `
   </div>
 `;
 
-appSageComponents['dialogToast'].html_template = dialogToastHtmlTemplate;
-
-const dialogToastFormTemplate = `
+appSageComponents['dialogToast'].form_template = `
   <form class="dialogToast-form space-y-2" data-initialized="false" data-component-name="dialogToast" data-component-id="{{dialogToast.id}}">
     <div>
       <label class="block font-medium text-slate-700">Message:</label>
@@ -62,9 +60,6 @@ revealDialogToast({
     <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Notification</button>
   </form>
 `;
-
-appSageComponents['dialogToast'].form_template = dialogToastFormTemplate;
-
 
 function initializeDialogToastForm(container) {
   const sidebar = document.getElementById('sidebar');
@@ -283,4 +278,3 @@ function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
   }
 }
 window.revealDialogToast = revealDialogToast;
-

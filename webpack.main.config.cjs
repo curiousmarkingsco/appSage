@@ -1,33 +1,15 @@
-const path = require('path');
+// webpack.main.config.cjs
+const { merge } = require('webpack-merge');
+const baseConfig = require('./webpack.base.config.cjs');
 const nodeExternals = require('webpack-node-externals');
 
-module.exports = {
-  entry: './src/main.js', // Entry point for the main process
+module.exports = merge(baseConfig, {
+  entry: './src/main.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js', // Output bundled file
+    filename: 'main.js', // Specific to main process
   },
-  target: 'electron-main', // Target Electron main process
-  externals: [nodeExternals()], // Exclude node_modules from being bundled
-  module: {
-    rules: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader', // Transpile modern JavaScript
-          options: {
-            presets: ['@babel/preset-env'],
-          },
-        },
-      },
-    ],
-  },
-  resolve: {
-    extensions: ['.js'],
-  },
-  node: {
-    __dirname: false,
-    __filename: false,
-  },
-};
+  target: 'electron-main',
+  externals: [nodeExternals()], // Exclude node_modules
+  // No need to repeat module.rules or resolve.extensions
+  // They are inherited from the baseConfig
+});

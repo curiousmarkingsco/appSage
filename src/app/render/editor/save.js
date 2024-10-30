@@ -19,7 +19,6 @@ function getCleanInnerHTML(element) {
   return cloneBox.innerHTML;
 } // DATA OUT: HTML Element, <div>
 window.getCleanInnerHTML = getCleanInnerHTML;
-
 // This mutation observer ensures that the majority, if not all, changes
 // occuring in #page will be saved to localStorage.
 // DATA IN: String
