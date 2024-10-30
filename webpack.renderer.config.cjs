@@ -31,8 +31,7 @@ module.exports = {
         './src/app/render/main.js',
         './src/app/render/preview/main.js',
         './src/app/render/editor/main.js',
-        './src/app/render/index/main.js',
-        './src/app/renderer.js'
+        './src/app/render/index/main.js'
       ]
     }
   },

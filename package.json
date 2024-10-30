@@ -1,9 +1,9 @@
 {
   "name": "appsage",
+  "type": "module",
   "version": "1.0.0",
   "description": "appSage is a no-code web document builder.",
   "main": "src/main.js",
-  "type": "module",
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
@@ -43,7 +43,7 @@
   },
   "scripts": {
     "start": "electron-forge start",
-    "start:web": "webpack --mode development --watch",
+    "dev": "webpack --config webpack.renderer.config.cjs --mode development --watch",
     "build": "webpack --mode production",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",

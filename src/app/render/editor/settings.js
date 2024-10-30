@@ -220,3 +220,16 @@ function showSettingsSavedModal() {
 }
 
 document.addEventListener('DOMContentLoaded', showSettingsSavedModal);
+
+// Check if globals are loaded
+if (window.editorInitialized) {
+  initializeSettings();
+} else {
+  // Poll or wait for the global to be defined
+  const checkGlobals = setInterval(() => {
+    if (window.editorInitialized) {
+      clearInterval(checkGlobals);
+      initializeSettings();
+    }
+  }, 50);  // Check every 50ms
+}

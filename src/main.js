@@ -26,10 +26,10 @@ let sessionKey;
 
 function createWindow() {
   // Example: Tray icon creation
-  const appIcon = nativeImage.createFromPath(path.join(__dirname, 'assets/appicons/icon.png'));
+  const appIcon = nativeImage.createFromPath(path.join(__dirname, './src/app/assets/appicons/icon.png'));
 
   if (process.platform === 'darwin') {
-    const appIconPath = path.resolve(__dirname, 'assets/appicons/icon.png');
+    const appIconPath = path.resolve(__dirname, './src/app/assets/appicons/icon.png');
     const appIcon = nativeImage.createFromPath(appIconPath);
     if (!appIcon.isEmpty()) {
       app.dock.setIcon(appIcon);
@@ -61,7 +61,7 @@ function createWindow() {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, 'dist', 'preload.js'),
+        preload: path.join(__dirname, 'src', 'app', 'preload.js'),
       },
     });
 

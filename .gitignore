@@ -4,5 +4,5 @@ scratch*
 node_modules
 .parcel-cache
 out/
-dist
+dist/
 .webpack

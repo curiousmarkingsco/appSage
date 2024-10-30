@@ -1,11 +1,4 @@
 // renderer.js
-import './render/tailwind.js';
-import './render/tailwind.config.js';
-import './render/_globals.js';
-import './render/index/main.js';
-import './render/editor/main.js';
-import './render/preview/main.js';
-
 
 // Define `global` in the renderer process to mimic Node.js behavior
 if (typeof global === 'undefined') {

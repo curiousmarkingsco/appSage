@@ -29,7 +29,7 @@ function initializePreview() {
   
   // Dynamically load scripts necessary for preview functionality
   loadScripts([
-    './app/render/editor/_globals.js',
+    './app/render/_globals.js',
     './app/render/editor/components/main.js',
     './app/render/editor/save.js',
     './app/render/load.js',
