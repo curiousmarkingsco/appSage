@@ -151,7 +151,6 @@ export function decryptData(encryptedData, encryptionKey) {
 async function loadSchema() {
   const appVersion = app.getVersion();  // Get the app version (e.g., '0.0.0')
   const schemaPath = path.join(__dirname, 'schema', `${appVersion}.json`);
-  console.log(schemaPath)
 
   try {
     const schemaData = await fs.readFile(schemaPath, 'utf8');  // Load schema file as string
