@@ -65,7 +65,7 @@ function createWindow() {
       },
     });
 
-    mainWindow.loadFile('./src/app/index.html');
+    mainWindow.loadFile('./src/app/render.html');
 
     // Open DevTools in development mode
     if (isDev) {

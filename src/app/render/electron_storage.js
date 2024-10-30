@@ -11,7 +11,6 @@ async function readElectronStore() {
     });
 }
 
-console.log((appSageStore));
 // update
 
 // delete

@@ -47,7 +47,7 @@ module.exports = {
           config: './webpack.renderer.config.cjs',
           entryPoints: [
             {
-              html: './src/index.html',
+              html: './src/render.html',
               js: './src/renderer.js',
               name: 'main_window',
             },

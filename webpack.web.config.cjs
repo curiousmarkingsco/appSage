@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     renderer: {
       import: [
+        './src/app/renderer.js',
         './src/app/render/tailwind.js',
         './src/app/render/tailwind.config.js',
         './src/app/render/_globals.js',
@@ -32,8 +33,7 @@ module.exports = {
         './src/app/render/preview/main.js',
         './src/app/render/editor/main.js',
         './src/app/render/index/main.js',
-        './src/app/renderer.js',
-        ...glob.sync('./src/app/render/editor/components/**/*.js').map(file => path.resolve(__dirname, file))
+        ...glob.sync('./src/app/render/editor/components/**/*.js').map(file => path.resolve(__dirname, file)),
       ]
     }
   },

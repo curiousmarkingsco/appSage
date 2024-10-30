@@ -185,32 +185,34 @@ function loadPageSettings(config, view = false) {
 window.loadPageSettings = loadPageSettings;
 
 function addMetasToHead() {
-  const params = new URLSearchParams(window.location.search);
-  const config = params.get('config') || params.get('page');
-  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  let settings;
+  waitForGlobalsLoaded().then(() => {
+    const params = new URLSearchParams(window.location.search);
+    const config = params.get('config') || params.get('page');
+    const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+    let settings;
 
-  if (storedData && storedData.pages && storedData.pages[config]){
-    settings = storedData.pages[config].settings;
-    const metaTags = settings.metaTags;
-    if (typeof metaTags !== 'undefined') {
-      const headTag = document.getElementsByTagName('head')[0];
-    
-      if (metaTags !== '') metaTags.forEach(tag => {
-        if (tag.type === 'link') {
-          const metatag = document.createElement('link');
-          metatag.setAttribute('rel', tag.name);
-          metatag.setAttribute('href', tag.content);
-          headTag.appendChild(metatag);
-        } else {
-          const metatag = document.createElement('meta');
-          metatag.setAttribute(tag.type, tag.name);
-          metatag.setAttribute('content', tag.content);
-          headTag.appendChild(metatag);
-        }
-      });
+    if (storedData && storedData.pages && storedData.pages[config]){
+      settings = storedData.pages[config].settings;
+      const metaTags = settings.metaTags;
+      if (typeof metaTags !== 'undefined') {
+        const headTag = document.getElementsByTagName('head')[0];
+      
+        if (metaTags !== '') metaTags.forEach(tag => {
+          if (tag.type === 'link') {
+            const metatag = document.createElement('link');
+            metatag.setAttribute('rel', tag.name);
+            metatag.setAttribute('href', tag.content);
+            headTag.appendChild(metatag);
+          } else {
+            const metatag = document.createElement('meta');
+            metatag.setAttribute(tag.type, tag.name);
+            metatag.setAttribute('content', tag.content);
+            headTag.appendChild(metatag);
+          }
+        });
+      }
     }
-  }
+  });
 }
 window.addMetasToHead = addMetasToHead;
 

@@ -32,7 +32,7 @@ function initializePreview() {
 
   
   // Dynamically load scripts necessary for preview functionality
-  if (typeof window.api !== 'undefined') loadScripts([
+  if (electronMode) loadScripts([
     './app/render/editor/components/main.js',
     './app/render/editor/save.js',
     './app/render/load.js',
@@ -103,12 +103,12 @@ function loadPreview(pageId) {
 } // DATA OUT: null
 window.loadPreview = loadPreview;
 
-if (typeof window.api !== 'undefined') {
-  if (document.readyState === 'loading') {
-    // Document is still loading, attach event listener
-    document.addEventListener('DOMContentLoaded', initializePreview);
-  } else {
-    // Document is already fully loaded, run initialization immediately
-    initializePreview();
-  }
-}
+// if (electronMode) {
+//   if (document.readyState === 'loading') {
+//     // Document is still loading, attach event listener
+//     document.addEventListener('DOMContentLoaded', initializePreview);
+//   } else {
+//     // Document is already fully loaded, run initialization immediately
+//     initializePreview();
+//   }
+// }

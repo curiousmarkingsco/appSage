@@ -235,7 +235,7 @@ async function initializeEditorHtml() {
         </div>
       `;
 
-      if (typeof window.api !== 'undefined') loadEditorScripts();
+      if (electronMode) loadEditorScripts();
       resolve();
     } catch (error) {
       reject(error); // Reject the promise if there's an error
@@ -1032,12 +1032,12 @@ function generateRandomId(length = 8) {
 }
 window.generateRandomId = generateRandomId;
 
-if (typeof window.api !== 'undefined') {
-  if (document.readyState === 'loading') {
-    // Document is still loading, attach event listener
-    document.addEventListener('DOMContentLoaded', initializeEditor());
-  } else {
-    // Document is already fully loaded, run initialization immediately
-    initializeEditor();
-  }
-}
+// if (electronMode) {
+//   if (document.readyState === 'loading') {
+//     // Document is still loading, attach event listener
+//     document.addEventListener('DOMContentLoaded', initializeEditor());
+//   } else {
+//     // Document is already fully loaded, run initialization immediately
+//     initializeEditor();
+//   }
+// }

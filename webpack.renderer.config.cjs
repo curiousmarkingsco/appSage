@@ -49,8 +49,8 @@ module.exports = merge(baseConfig, {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/app/index.html', // HTML template for the renderer
-      filename: 'index.html', // Output to dist
+      template: './src/app/render.html', // HTML template for the renderer
+      filename: 'render.html', // Output to dist
     }),
   ],
   resolve: {

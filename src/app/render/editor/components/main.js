@@ -4,21 +4,6 @@
 
 */
 
-async function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.async = true;
-
-    // Resolve when the script loads, reject if there is an error
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
-
-    document.head.appendChild(script);
-  });
-}
-window.loadScript = loadScript;
-
 function initializeComponentForm(container, componentName, form) {
   if (componentName === 'internationalClocks') {
     initializeClockDataFromForm(container);
