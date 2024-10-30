@@ -18,12 +18,12 @@ export async function storePageCSS(pageId, tailwindCSS, sessionKey) {
   store.set(`appSage.pages.${pageId}.styles.css`, tailwindCSS);
 }
 
-export async function storePageSettings(pageId, settings){
+export async function storePageSettings(pageId, settings, sessionKey){
   const store = readStore(sessionKey);
   store.set(`appSage.pages.${pageId}.settings`, settings);
 }
 
-export async function storePageComponent(pageId, sessionKey) {
+export async function storePageComponent(pageId, componentName, componentData, sessionKey) {
   const store = readStore(sessionKey);
     // Retrieve the existing components for the page (or initialize if undefined)
     const components = store.get(`appSage.pages.${pageId}.components`) || {};

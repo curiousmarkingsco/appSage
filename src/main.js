@@ -119,9 +119,9 @@ ipcMain.handle('get-store', async (event, {}) => {
   }
 });
 
-ipcMain.handle('update-store', async (event, { sessionKey }) => {
+ipcMain.handle('set-store', async (event, { username, userPassword, storeObject }) => {
   try {
-    const store = await updateStore(sessionKey);
+    const store = await updateStore(username, userPassword, storeObject);
     return store;
   } catch (error) {
     console.error('Error updating store:', error);
@@ -129,9 +129,10 @@ ipcMain.handle('update-store', async (event, { sessionKey }) => {
   }
 });
 
-ipcMain.handle('delete-store', async (event, { sessionKey }) => {
+ipcMain.handle('remove-store', async (event, { username, userPassword, pageId }) => {
+  // Danger zone: This deletes ALL data.
   try {
-    const store = await deleteStore(sessionKey);
+    const store = await deleteStore(username, userPassword);
     return store;
   } catch (error) {
     console.error('Error deleting store:', error);
@@ -142,6 +143,76 @@ ipcMain.handle('delete-store', async (event, { sessionKey }) => {
 ipcMain.handle('store-html', async (event, { pageId, pageHtml }) => {
   try {
     const store = await storePageHtml(pageId, pageHtml, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('store-css', async (event, { pageId, pageCss }) => {
+  try {
+    const store = await storePageCSS(pageId, pageCss, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('store-settings', async (event, { pageId, pageSettings }) => {
+  try {
+    const store = await storePageSettings(pageId, pageSettings, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('store-component', async (event, { pageId, pageComponent }) => {
+  try {
+    const store = await storePageComponent(pageId, pageComponent, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-store-html', async (event, { pageId }) => {
+  try {
+    const store = await getPageHTML(pageId, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-store-css', async (event, { pageId }) => {
+  try {
+    const store = await getPageCSS(pageId, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-store-settings', async (event, { pageId }) => {
+  try {
+    const store = await getPageSettings(pageId, sessionKey);
+    return store;
+  } catch (error) {
+    console.error('Error deleting store:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('get-store-component', async (event, { pageId, componentName, componentData }) => {
+  try {
+    const store = await getPageComponent(pageId, componentName, componentData, sessionKey);
     return store;
   } catch (error) {
     console.error('Error deleting store:', error);

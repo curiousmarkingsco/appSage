@@ -72,6 +72,8 @@ function savePageData(pageId, data) {
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
     // Use electron-store for saving page HTML
+    console.log(appSageStore)
+    console.log(data)
     store.set(`appSage.pages.${pageId}.html`, data);
   }
 } // DATA OUT: null
