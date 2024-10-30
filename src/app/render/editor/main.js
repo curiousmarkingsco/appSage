@@ -14,7 +14,6 @@ async function initializeEditor() {
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
-        <script defer src="./renderer.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
@@ -26,6 +25,7 @@ async function initializeEditor() {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="./styles.css">
+        <script defer src="./renderer.js"></script>
       `;
 
       // Dynamic body content (initial structure)
@@ -223,162 +223,164 @@ async function initializeEditor() {
         </div>
       `;
 
-      if (window.api) loadEditorScripts().then(() => {
-        // This big chunk does everything necessary for initial page setup which is
-        // largely comprised of setting up all the listeners that allow various editing
-        // functions that show up in the sidebar.
-        const editPageButton = document.getElementById('editPageSettings');
-        const dropdownMenu = document.getElementById('dropdownMenu');
-        const pageSettingsButton = document.getElementById('pageSettings');
-        const appSageSettingsButton = document.getElementById('appSageSettings');
-      
-        // Show/hide the drop-up menu
-        editPageButton.addEventListener('click', function (event) {
-          dropdownMenu.classList.toggle('hidden');
-          event.stopPropagation(); // Prevent the event from propagating further
-        });
-      
-        // Clicking outside the dropdown menu hides it
-        document.addEventListener('click', function () {
-          dropdownMenu.classList.add('hidden');
-        });
-      
-        // Prevent click inside the menu from closing it
-        dropdownMenu.addEventListener('click', function (event) {
-          event.stopPropagation();
-        });
-      
-        // Handle Page Settings button click
-        pageSettingsButton.addEventListener('click', function () {
-          addPageOptions(); // Call your existing function
-          dropdownMenu.classList.add('hidden'); // Hide the menu after click
-        });
-      
-        // Handle appSage Settings button click
-        appSageSettingsButton.addEventListener('click', function () {
-          showSettingsModal();
-        });
-      
-        const addGridButton = document.getElementById('addGrid');
-        addGridButton.addEventListener('click', function (e) {
-          e.stopPropagation();
-          const gridContainer = document.createElement('div');
-          gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
-      
-          const initialColumn = createColumn();
-          gridContainer.appendChild(initialColumn);
-          initialColumn.appendChild(createAddContentButton(initialColumn));
-          initialColumn.appendChild(createAddComponentButton(initialColumn));
-      
-          document.getElementById('page').appendChild(gridContainer);
-      
-          addGridOptions(gridContainer);
-      
-          // Append add column button at the end
-          const addColumnButton = createAddColumnButton(gridContainer);
-          gridContainer.appendChild(addColumnButton);
-      
-          enableEditGridOnClick(gridContainer);
-        });
-      
-        const addContainerButton = document.getElementById('addContainer');
-        addContainerButton.addEventListener('click', function () {
-          const containerContainer = document.createElement('div');
-          containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
-          const page = document.getElementById('page');
-          page.appendChild(containerContainer);
-      
-          addContainerOptions(containerContainer);
-          addIdAndClassToElements();
-      
-          // Enable recursive boxes
-          const addContainerButton = createAddContainerButton(containerContainer);
-          containerContainer.appendChild(addContainerButton);
-      
-          if (advancedMode === true){
-            const addHtmlButton = createAddHtmlButton(containerContainer);
-            containerContainer.appendChild(addHtmlButton);
-          }
-      
-          // Append add content button at the end
-          const addContentButton = createAddContentButton(containerContainer);
-          containerContainer.appendChild(addContentButton);
-      
-          const addComponentButton = createAddComponentButton(containerContainer);
-          containerContainer.appendChild(addComponentButton);
-      
-          enableEditContainerOnClick(containerContainer);
-          highlightEditingElement(containerContainer);
-        });
-      
-        // Mouse enter event
-        document.body.addEventListener('mouseenter', function (e) {
-          if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
-            updateTooltip(e, true);
-          }
-        }, true); // Use capture phase to ensure tooltip updates immediately
-      
-        // Mouse leave event
-        document.body.addEventListener('mouseleave', function (e) {
-          if (e.target.matches('[data-extra-info]')) {
-            updateTooltip(e, false);
-          }
-        }, true);
-      });
-      // Load additional editor-specific scripts
-      async function loadEditorScripts() {
-        await loadScript('./render/tailwind.js').then(() => {
-            loadScript('./render/tailwind.config.js');
-            loadScript('./render/_globals.js');
-            loadScript('./render/editor/settings.js');
-        }).then(() => {
-          loadScripts([
-            './render/tailwind.js',
-            './render/tailwind.config.js',
-            './render/editor/grid.js',
-            './render/editor/style/grid.js',
-            './render/editor/container.js',
-            './render/editor/style/container.js',
-            './render/editor/component.js',
-            './render/editor/column.js',
-            './render/editor/style/column.js',
-            './render/editor/content.js',
-            './render/editor/sidebar.js',
-            './render/editor/style.js',
-            './render/editor/save.js',
-            './render/editor/load.js',
-            './render/editor/components/main.js',
-            './render/editor/responsive.js',
-            './render/remote_save.js',
-            './render/editor/media.js',
-            './render/electron_storage.js'
-          ]);
-        }).catch(error => {
-          console.error('Error loading scripts:', error.stack || error);
-        });
-      }
-      
-      /**
-       * Helper function to dynamically load scripts
-       * @param {Array} scriptUrls - An array of script URLs to load
-       */
-      function loadScripts(scriptUrls) {
-        scriptUrls.forEach(src => {
-          const script = document.createElement('script');
-          script.src = src;
-          script.async = true;
-          document.body.appendChild(script);
-        });
-      }
+      if (typeof window.api !== 'undefined') loadEditorScripts();
       resolve();
     } catch (error) {
       reject(error); // Reject the promise if there's an error
     }
   });
 }
+window.initializeEditor = initializeEditor;
+
+async function loadEditorScripts() {
+  await loadScript('./render/tailwind.js').then(() => {
+      loadScript('./render/tailwind.config.js');
+      loadScript('./render/_globals.js');
+      loadScript('./render/editor/settings.js');
+  }).then(() => {
+    loadScripts([
+      './render/tailwind.js',
+      './render/tailwind.config.js',
+      './render/editor/grid.js',
+      './render/editor/style/grid.js',
+      './render/editor/container.js',
+      './render/editor/style/container.js',
+      './render/editor/component.js',
+      './render/editor/column.js',
+      './render/editor/style/column.js',
+      './render/editor/content.js',
+      './render/editor/sidebar.js',
+      './render/editor/style.js',
+      './render/editor/save.js',
+      './render/editor/load.js',
+      './render/editor/components/main.js',
+      './render/editor/responsive.js',
+      './render/remote_save.js',
+      './render/editor/media.js',
+      './render/electron_storage.js'
+    ]);
+  }).catch(error => {
+    console.error('Error loading scripts:', error.stack || error);
+  });
+}
+window.loadEditorScripts = loadEditorScripts;
+
+function setupPageEvents() {
+  // This big chunk does everything necessary for initial page setup which is
+  // largely comprised of setting up all the listeners that allow various editing
+  // functions that show up in the sidebar.
+  const editPageButton = document.getElementById('editPageSettings');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  const pageSettingsButton = document.getElementById('pageSettings');
+  const appSageSettingsButton = document.getElementById('appSageSettings');
+
+  // Show/hide the drop-up menu
+  editPageButton.addEventListener('click', function (event) {
+    dropdownMenu.classList.toggle('hidden');
+    event.stopPropagation(); // Prevent the event from propagating further
+  });
+
+  // Clicking outside the dropdown menu hides it
+  document.addEventListener('click', function () {
+    dropdownMenu.classList.add('hidden');
+  });
+
+  // Prevent click inside the menu from closing it
+  dropdownMenu.addEventListener('click', function (event) {
+    event.stopPropagation();
+  });
+
+  // Handle Page Settings button click
+  pageSettingsButton.addEventListener('click', function () {
+    addPageOptions(); // Call your existing function
+    dropdownMenu.classList.add('hidden'); // Hide the menu after click
+  });
+
+  // Handle appSage Settings button click
+  appSageSettingsButton.addEventListener('click', function () {
+    showSettingsModal();
+  });
+
+  const addGridButton = document.getElementById('addGrid');
+  addGridButton.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+    const initialColumn = createColumn();
+    gridContainer.appendChild(initialColumn);
+    initialColumn.appendChild(createAddContentButton(initialColumn));
+    initialColumn.appendChild(createAddComponentButton(initialColumn));
+
+    document.getElementById('page').appendChild(gridContainer);
+
+    addGridOptions(gridContainer);
+
+    // Append add column button at the end
+    const addColumnButton = createAddColumnButton(gridContainer);
+    gridContainer.appendChild(addColumnButton);
+
+    enableEditGridOnClick(gridContainer);
+  });
+
+  const addContainerButton = document.getElementById('addContainer');
+  addContainerButton.addEventListener('click', function () {
+    const containerContainer = document.createElement('div');
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
+    const page = document.getElementById('page');
+    page.appendChild(containerContainer);
+
+    addContainerOptions(containerContainer);
+    addIdAndClassToElements();
+
+    // Enable recursive boxes
+    const addContainerButton = createAddContainerButton(containerContainer);
+    containerContainer.appendChild(addContainerButton);
+
+    if (advancedMode === true){
+      const addHtmlButton = createAddHtmlButton(containerContainer);
+      containerContainer.appendChild(addHtmlButton);
+    }
+
+    // Append add content button at the end
+    const addContentButton = createAddContentButton(containerContainer);
+    containerContainer.appendChild(addContentButton);
+
+    const addComponentButton = createAddComponentButton(containerContainer);
+    containerContainer.appendChild(addComponentButton);
+
+    enableEditContainerOnClick(containerContainer);
+    highlightEditingElement(containerContainer);
+  });
+
+  // Mouse enter event
+  document.body.addEventListener('mouseenter', function (e) {
+    if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
+      updateTooltip(e, true);
+    }
+  }, true); // Use capture phase to ensure tooltip updates immediately
+
+  // Mouse leave event
+  document.body.addEventListener('mouseleave', function (e) {
+    if (e.target.matches('[data-extra-info]')) {
+      updateTooltip(e, false);
+    }
+  }, true);
+}
+window.setupPageEvents = setupPageEvents;
+
+function loadScripts(scriptUrls) {
+  scriptUrls.forEach(src => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    document.body.appendChild(script);
+  });
+}
+window.loadScripts = loadScripts;
 
 function initializeConfig() {
-  if (window.api) return;
+  if (typeof window.api !== 'undefined') return;
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
   const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
@@ -399,6 +401,7 @@ function initializeConfig() {
     setupAutoSave(pageId);
   }
 }
+window.initializeConfig = initializeConfig;
 
 var editorMode = true;
 
@@ -431,7 +434,7 @@ function saveMetadataToLocalStorage(page_id, newMetaTags) {
 
   console.log('Metadata saved successfully!');
 }
-
+window.saveMetadataToLocalStorage = saveMetadataToLocalStorage;
 
 // This function is for adding to the sidebar all the options available for
 // styles that impact the entire page, or metadata like page titles, og:image
@@ -455,6 +458,7 @@ function addPageOptions() {
     addEditableBackgroundFeatures(sidebar, page);
   }
 } // DATA OUT: null
+window.addPageOptions = addPageOptions;
 
 // This function makes tooltips show up anywhere you hover over an element that
 // has the `data-extra-info` attribute. This functional is critical for
@@ -502,6 +506,7 @@ function updateTooltip(e, show) {
     if (extraClasses !== '') extraClasses.split(' ').forEach(cls => tooltip.classList.remove(cls));
   }
 } // DATA OUT: null
+window.updateTooltip = updateTooltip;
 
 // This hulking function brings up a modal for pasting in HTML with Tailwind
 // classes. This is for folks who have/bought existing HTML that uses
@@ -541,6 +546,7 @@ function showHtmlModal(element, onConfirm = null) {
     document.body.removeChild(modal);
   });
 } // DATA OUT: null
+window.showHtmlModal = showHtmlModal;
 
 function convertTailwindHtml(content, element) {
   // Create a container to hold the pasted content
@@ -551,6 +557,7 @@ function convertTailwindHtml(content, element) {
 
   wrapElements(parentElement);
 }
+window.convertTailwindHtml = convertTailwindHtml;
 
 function wrapElements(container) {
   const children = Array.from(container.childNodes);
@@ -628,6 +635,7 @@ function wrapElements(container) {
     }
   });
 }
+window.wrapElements = wrapElements;
 
 // This function adds a cyan glow around the element being edited to give a visual
 // breadcrumb of what element is currently going to be effected by any changes
@@ -647,6 +655,7 @@ function highlightEditingElement(element) {
     });
   }
 } // DATA OUT: null
+window.highlightEditingElement = highlightEditingElement;
 
 // This function removes the above visual breadcrumb making way for a new
 // highlight. This function should ideally always be called prior to its
@@ -658,6 +667,7 @@ function removeEditingHighlights() {
     highlight.id = '';
   }
 } // DATA OUT: null
+window.removeEditingHighlights = removeEditingHighlights;
 
 // This function helps move column/content buttons figure out where to go
 // when moving their element without getting confused by editor-specific
@@ -670,6 +680,7 @@ function getNextValidSibling(element, direction) {
   }
   return sibling;
 } // DATA OUT: HTML Element, <div>
+window.getNextValidSibling = getNextValidSibling;
 
 // This is a way for people who don't know how to integrate a back-end to
 // simply copy/paste page contents into their own document or back-end repo.
@@ -683,6 +694,7 @@ function copyPageHTML(element) {
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, element);
 } // DATA OUT: null
+window.copyPageHTML = copyPageHTML;
 
 // This is a way for people who don't know how to integrate a back-end to
 // simply copy/paste page metadata into their own document or back-end repo.
@@ -705,6 +717,7 @@ function copyMetadata(element) {
 
   copyText(metaTagsString, element);
 } // DATA OUT: null
+window.copyMetadata = copyMetadata;
 
 // This is the workhorse function for `copyMetadata` and `copyPageHTML`
 // DATA IN: ['String', 'HTML Element, <div>']
@@ -718,6 +731,7 @@ function copyText(textToCopy, element) {
       return String(console.error("Failed to copy text: ", err));
     });
 } // DATA OUT: String
+window.copyText = copyText;
 
 // When a copy button is clicked, the icon is replaced with a "Tada!" emoji.
 // This function swaps it back to the regular icon after 0.75 seconds.
@@ -727,6 +741,7 @@ function resetCopyPageButton(element) {
     element.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z"/></svg>';
   }, 750)
 } // DATA OUT: null
+window.resetCopyPageButton = resetCopyPageButton;
 
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
@@ -761,6 +776,7 @@ function addEditablePageTitle(container, placement) {
     container.appendChild(titleInput);
   }
 } // DATA OUT: null
+window.addEditablePageTitle = addEditablePageTitle;
 
 // This function changes the page's title. Because localStorage data for the
 // page is identified by the page's title, we have to copy the data over to a
@@ -797,6 +813,7 @@ function changeLocalStoragePageTitle(newTitle) {
     console.error(`Page with ID "${currentPageId}" does not exist.`);
   }
 } // DATA OUT: null
+window.changeLocalStoragePageTitle = changeLocalStoragePageTitle;
 
 // This function generates the area for creating as many items of metadata as
 // the designer deems necessary.
@@ -909,6 +926,7 @@ function addEditableMetadata(container, placement) {
     });
   });
 } // DATA OUT: null
+window.addEditableMetadata = addEditableMetadata;
 
 function createNewConfigurationFile() {
   const pageId = generateAlphanumericId();
@@ -933,11 +951,13 @@ function createNewConfigurationFile() {
   window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   return pageId;
 }
+window.createNewConfigurationFile = createNewConfigurationFile;
 
 function generateAlphanumericId() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
 }
+window.generateAlphanumericId = generateAlphanumericId;
 
 function addIdAndClassToElements() {
   const targetClasses = ['pagecontent', 'pagegrid', 'pagecolumn', 'pageflex', 'pagecontainer'];
@@ -955,6 +975,7 @@ function addIdAndClassToElements() {
     }
   });
 }
+window.addIdAndClassToElements = addIdAndClassToElements;
 
 // Function to ensure the generated ID is unique on the page
 function generateUniqueId() {
@@ -964,6 +985,7 @@ function generateUniqueId() {
   } while (document.getElementById(the_id)); // Keep generating until a unique ID is found
   return the_id;
 }
+window.generateUniqueId = generateUniqueId;
 
 // Helper function to generate a random alphanumeric string of a given length
 function generateRandomId(length = 8) {
@@ -974,12 +996,14 @@ function generateRandomId(length = 8) {
   }
   return result;
 }
+window.generateRandomId = generateRandomId;
 
-if (window.api) {
+if (typeof window.api !== 'undefined') {
   if (document.readyState === 'loading') {
     // Document is still loading, attach event listener
     document.addEventListener('DOMContentLoaded', initializeEditor.then(() => {
       initializeConfig();
+      setupPageEvents();
       window.editorInitialized = true;
     }).catch(error => {
       console.error('Error during editor initialization:', error);
@@ -988,6 +1012,7 @@ if (window.api) {
     // Document is already fully loaded, run initialization immediately
     initializeEditor().then(() => {
       initializeConfig();
+      setupPageEvents();
       window.editorInitialized = true;
     }).catch(error => {
       console.error('Error during editor initialization:', error);

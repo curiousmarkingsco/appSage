@@ -98,7 +98,7 @@ function loadPreview(pageId) {
   }
 } // DATA OUT: null
 
-if (window.api) {
+if (typeof window.api !== 'undefined') {
   if (document.readyState === 'loading') {
     // Document is still loading, attach event listener
     document.addEventListener('DOMContentLoaded', initializePreview);

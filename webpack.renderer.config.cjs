@@ -31,7 +31,8 @@ module.exports = {
         './src/app/render/main.js',
         './src/app/render/preview/main.js',
         './src/app/render/editor/main.js',
-        './src/app/render/index/main.js'
+        './src/app/render/index/main.js',
+        './src/app/renderer.js'
       ]
     }
   },
@@ -82,6 +83,7 @@ module.exports = {
         { from: './src/app/assets', to: 'assets' }, // Copy assets (icons, images, etc.)
         { from: './src/app/placeholder_media', to: 'placeholder_media' }, // Copy placeholder media
         { from: './src/app/styles.css', to: 'styles.css' }, // Copy CSS file
+        { from: './src/app/tailwind-output.css', to: 'tailwind-output.css' },
       ],
     }),
     new MiniCssExtractPlugin({

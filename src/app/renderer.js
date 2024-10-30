@@ -17,7 +17,7 @@ async function loadScripts(scripts) {
 
 function loadScript(scriptSrc) {
   // Check if the script is already part of the bundle
-  if (window.api) {
+  if (typeof window.api !== 'undefined') {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = scriptSrc;
@@ -34,7 +34,7 @@ function loadScript(scriptSrc) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (window.api) {
+  if (typeof window.api !== 'undefined') {
     const username = 'jojfsfweffwfe';
     const userPassword = 'aaafewfwefewaav';
 
@@ -58,6 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
     storageMethodLegacy = true;
   }
 
-  loadScript('./render/index/main.js')
+  loadScript('./render/index/main.js').then(() => {initializeDashboard()});
   console.log('Renderer process for index.html running');
 });
