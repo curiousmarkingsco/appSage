@@ -21,16 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
       console.error('Error initializing store:', error.stack || error);
     });
 
-  
-  window.api.readStore()
-    .then(store => {
-      appSageStore = store;
-      console.log('Store read:', store);
-    })
-    .catch(error => {
-      console.error('Error initializing store:', error.stack || error);
-    });
-
   loadScript('./render/index/main.js')
   console.log('Renderer process for index.html running');
 });
