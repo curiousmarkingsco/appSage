@@ -15,14 +15,13 @@ document.addEventListener('DOMContentLoaded', function () {
   window.api.createOrFindStore(username, userPassword)
     .then(store => {
       appSageStore = store;
-      console.log('Store initialized:', store);
+      loadScript('./render/electron_storage.js');
     })
     .catch(error => {
       console.error('Error initializing store:', error.stack || error);
     });
 
-  loadScript('./render/index/main.js')
-  console.log('Renderer process for index.html running');
+  loadScript('./render/index/main.js');
 });
 
 async function loadScripts(scripts) {
