@@ -73,9 +73,9 @@ async function initializeDashboard() {
               <h2>${pageTitle}</h2>
             </div>
             <div class="flex justify-around mb-4 mt-2">
-              <button class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" onclick="loadEditor(${pageId})" id="edit-${pageId}">Edit</button>
-              <button class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" onclick="loadEditor(${pageId})" id="preview-${pageId}">Preview</button>
-              <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" id="delete-${pageId}">Delete</button>
+              <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="/?config=${pageId}" target="_blank">Edit</a>
+              <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="/?page=${pageId}" target="_blank">Preview</a>
+              <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
             </div>
           `;
           container.appendChild(column);
@@ -116,19 +116,3 @@ function loadPreview(pageId) {
   loadScript('./render/preview/main.js');
 }
 window.loadPreview = loadPreview;
-
-function deletePage(pageId, element) {
-  console.log(`Deleting page: ${pageId}`);
-  element.remove(); // Remove page from UI
-  // Add logic to delete the page from localStorage or backend
-}
-window.deletePage = deletePage;
-
-function launchEditor() {
-  if (typeof window.api !== 'undefined'){
-    loadEditor();
-  } else {
-    initializeEditor().then(() => { setupPageEvents() });
-  }
-}
-window.launchEditor = launchEditor;

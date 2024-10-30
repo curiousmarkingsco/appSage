@@ -66,6 +66,7 @@ async function loadPageBlobs(config) {
     }
   }
 } // DATA OUT: null
+window.loadPageBlobs = loadPageBlobs;
 
 // Because metadata needs to be added to the <head> tag rather than the
 // expected '#page' div, metadata is stored in a separate object and,

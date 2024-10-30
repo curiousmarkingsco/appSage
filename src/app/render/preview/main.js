@@ -25,10 +25,14 @@ function initializePreview() {
   `;
 
   // Inject body content (if any static content is necessary) or leave it for dynamic use
-  const pageElement = document.getElementById('page');
+  const bodyElement = document.querySelector('body');
+  const pageElement = document.createElement('div');
+  pageElement.id = 'page';
+  bodyElement.appendChild(pageElement);
+
   
   // Dynamically load scripts necessary for preview functionality
-  loadScripts([
+  if (typeof window.api !== 'undefined') loadScripts([
     './app/render/_globals.js',
     './app/render/editor/components/main.js',
     './app/render/editor/save.js',

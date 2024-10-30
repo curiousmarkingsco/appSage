@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (config) loadScript('./render/editor/main.js').then(() => {initializeEditor()});
   
   const pageConfig = params.get('page');
-  // if (pageConfig) loadScript('./render/preview/main.js').then(() => {initializePreview()});
+  if (pageConfig) loadScript('./render/preview/main.js').then(() => {initializePreview()});
   
   if (!config && !pageConfig) loadScript('./render/index/main.js').then(() => {initializeDashboard()});
   console.log('Renderer process for index.html running');

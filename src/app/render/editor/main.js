@@ -6,13 +6,25 @@
 
 */
 
-async function initializeEditor() {
+function initializeEditor() {
+  initializeEditorHtml().then(() => {
+    initializeConfig();
+    setupPageEvents();
+    window.editorInitialized = true;
+  }).catch(error => {
+    console.error('Error during editor initialization:', error);
+  });
+}
+window.initializeEditor = initializeEditor;
+
+async function initializeEditorHtml() {
   return new Promise((resolve, reject) => {
     try {
       document.querySelector('body').id = 'editor';
       // Inject the head content dynamically
       document.head.innerHTML = `
         <meta charset="UTF-8">
+        <title>appSage Editor</title>
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
@@ -230,7 +242,7 @@ async function initializeEditor() {
     }
   });
 }
-window.initializeEditor = initializeEditor;
+window.initializeEditorHtml = initializeEditorHtml;
 
 async function loadEditorScripts() {
   await loadScript('./render/tailwind.js').then(() => {
@@ -1009,21 +1021,9 @@ window.generateRandomId = generateRandomId;
 if (typeof window.api !== 'undefined') {
   if (document.readyState === 'loading') {
     // Document is still loading, attach event listener
-    document.addEventListener('DOMContentLoaded', initializeEditor.then(() => {
-      initializeConfig();
-      setupPageEvents();
-      window.editorInitialized = true;
-    }).catch(error => {
-      console.error('Error during editor initialization:', error);
-    }));
+    document.addEventListener('DOMContentLoaded', initializeEditor());
   } else {
     // Document is already fully loaded, run initialization immediately
-    initializeEditor().then(() => {
-      initializeConfig();
-      setupPageEvents();
-      window.editorInitialized = true;
-    }).catch(error => {
-      console.error('Error during editor initialization:', error);
-    });
+    initializeEditor();
   }
 }
