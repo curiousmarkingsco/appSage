@@ -127,7 +127,7 @@ function initializeRotatingQuotes(container) {
   }
 
   // Rotate quotes every few seconds (e.g., 5 seconds)
-  let currentIndex = 0;
+  let currentIndex = Math.floor(Math.random() * quotes.length);
   function displayNextQuote() {
     const quote = quotes[currentIndex];
     container.querySelector('.rotatingQuotes-quote').innerText = quote.quote;

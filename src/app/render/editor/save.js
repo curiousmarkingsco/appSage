@@ -68,7 +68,7 @@ window.saveChanges = saveChanges;
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
 function savePageData(pageId, data) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const appSageStorage = getAppSageStorage();
     appSageStorage.pages[pageId] = { ...appSageStorage.pages[pageId], page_data: data };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
@@ -84,7 +84,7 @@ window.savePageData = savePageData;
 function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
-    if (storageMethodLegacy) {
+    if (!electronMode) {
       const appSageStorage = getAppSageStorage();
       const currentPage = appSageStorage.pages[pageId];
       currentPage[componentName] = object;
@@ -105,7 +105,7 @@ window.saveComponentObjectToPage = saveComponentObjectToPage;
 // DATA IN: ['String', 'JSON Object']
 // Save page settings (renamed to savePageDataSettings)
 function savePageDataSettings(pageId, data) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (!appSageStorage.pages) {
       appSageStorage.pages = {};
@@ -133,7 +133,7 @@ function savePageSettingsChanges(pageId) {
     className: page.className,
     metaTags: ''
   }
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const appSageStorage = getAppSageStorage();
     appSageStorage.pages[pageId].settings = JSON.stringify(settings);
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));

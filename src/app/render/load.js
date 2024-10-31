@@ -12,7 +12,7 @@
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 function loadPage(pageId) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (appSageStorage.pages && appSageStorage.pages[pageId] && appSageStorage.pages[pageId].page_data) {
       return appSageStorage.pages[pageId].page_data;
@@ -32,7 +32,7 @@ window.loadPage = loadPage;
 // tidier, these blobs are stored in an object separate from the HTML content.
 // DATA IN: String
 async function loadPageBlobs(config) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const db = await openDatabase();
     const transaction = db.transaction(['mediaStore'], 'readonly');
     const store = transaction.objectStore('mediaStore');
@@ -73,7 +73,7 @@ window.loadPageBlobs = loadPageBlobs;
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
 function loadPageMetadata(pageId) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
     const metaTags = storedData.pages[pageId].settings.metaTags;
     const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
@@ -129,7 +129,7 @@ window.loadPageMetadata = loadPageMetadata;
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
 
     if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {

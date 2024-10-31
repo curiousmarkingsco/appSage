@@ -2,7 +2,7 @@
 
 function initializeSettings() {
   const advancedModeCheckbox = document.getElementById("advancedMode");
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const storedSettings = JSON.parse(localStorage.getItem(appSageSettingsString)) || {};
 
     // Set advanced mode state if previously stored

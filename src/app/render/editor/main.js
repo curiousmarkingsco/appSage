@@ -409,7 +409,7 @@ function initializeConfig() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
 
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
     let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
     document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
@@ -962,7 +962,7 @@ function createNewConfigurationFile() {
   const pageId = generateAlphanumericId();
   let title = 'Untitled';
   let counter = 1;
-  if (storageMethodLegacy){
+  if (!electronMode){
     // Load or create the title-ID mapping from localStorage
     const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
     while (title in titleIdMap) {
@@ -1031,13 +1031,3 @@ function generateRandomId(length = 8) {
   return result;
 }
 window.generateRandomId = generateRandomId;
-
-// if (electronMode) {
-//   if (document.readyState === 'loading') {
-//     // Document is still loading, attach event listener
-//     document.addEventListener('DOMContentLoaded', initializeEditor());
-//   } else {
-//     // Document is already fully loaded, run initialization immediately
-//     initializeEditor();
-//   }
-// }

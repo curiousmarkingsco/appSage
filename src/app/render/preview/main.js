@@ -9,55 +9,60 @@
 
 */
 
-// app/render/preview/main.js
-
 function initializePreview() {
-  // Dynamically inject the required head resources like Tailwind and fonts
-  document.head.innerHTML = `
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Preview Page</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  return new Promise((resolve, reject) => {
+    try {
+      // Dynamically inject the required head resources like Tailwind and fonts
+      document.head.innerHTML = `
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Preview Page</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <script src="./app/render/tailwind.js"></script>
-    <script src="./app/render/tailwind.config.js"></script>
-  `;
+        <script src="./app/render/tailwind.js"></script>
+        <script src="./app/render/tailwind.config.js"></script>
+        <title></title>
+      `;
 
-  // Inject body content (if any static content is necessary) or leave it for dynamic use
-  const bodyElement = document.querySelector('body');
-  const pageElement = document.createElement('div');
-  pageElement.id = 'page';
-  bodyElement.appendChild(pageElement);
+      // Inject body content (if any static content is necessary) or leave it for dynamic use
+      const bodyElement = document.querySelector('body');
+      const pageElement = document.createElement('div');
+      pageElement.id = 'page';
+      bodyElement.appendChild(pageElement);
 
-  
-  // Dynamically load scripts necessary for preview functionality
-  if (electronMode) loadScripts([
-    './app/render/editor/components/main.js',
-    './app/render/editor/save.js',
-    './app/render/load.js',
-    './app/render/preview/main.js'
-  ]);
+      
+      // Dynamically load scripts necessary for preview functionality
+      if (electronMode) loadScripts([
+        './app/render/editor/components/main.js',
+        './app/render/editor/save.js',
+        './app/render/load.js',
+        './app/render/preview/main.js'
+      ]);
 
-  /**
-   * Helper function to dynamically load scripts
-   * @param {Array} scriptUrls - An array of script URLs to load
-   */
-  function loadScripts(scriptUrls) {
-    scriptUrls.forEach(src => {
-      const script = document.createElement('script');
-      script.src = src;
-      script.async = true;
-      document.body.appendChild(script);
-    });
-  }
+      /**
+       * Helper function to dynamically load scripts
+       * @param {Array} scriptUrls - An array of script URLs to load
+       */
+      function loadScripts(scriptUrls) {
+        scriptUrls.forEach(src => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.async = true;
+          document.body.appendChild(script);
+        });
+      }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const previewPageId = urlParams.get('page');
+      const urlParams = new URLSearchParams(window.location.search);
+      const previewPageId = urlParams.get('page');
 
-  if (previewPageId) {
-    loadPreview(previewPageId);
-  }
+      if (previewPageId) {
+        loadPreview(previewPageId);
+      }resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
 };
 window.initializePreview = initializePreview;
 
@@ -65,7 +70,7 @@ window.initializePreview = initializePreview;
 // probably be reviewed and updated if anything is ever added to this file.
 // DATA IN: String
 function loadPreview(pageId) {
-  if (storageMethodLegacy) {
+  if (!electronMode) {
     const json = loadPage(pageId);  // Uses the already-refactored loadPage
     if (json) {
       const pageContainer = document.getElementById('page');
@@ -102,13 +107,3 @@ function loadPreview(pageId) {
   }
 } // DATA OUT: null
 window.loadPreview = loadPreview;
-
-// if (electronMode) {
-//   if (document.readyState === 'loading') {
-//     // Document is still loading, attach event listener
-//     document.addEventListener('DOMContentLoaded', initializePreview);
-//   } else {
-//     // Document is already fully loaded, run initialization immediately
-//     initializePreview();
-//   }
-// }

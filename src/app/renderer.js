@@ -6,8 +6,7 @@ if (typeof global === 'undefined') {
 }
 
 var appSageStore;
-window.electronMode = (typeof window.api !== 'undefined');
-window.storageMethodLegacy = false;
+window.electronMode = !(typeof window.api === 'undefined');
 
 window.onload = function() {
   routeRequestedResource();
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function () {
     window.api.createOrFindStore(username, userPassword).then(store => {
       appSageStore = store;
     }).catch(error => {
-      storageMethodLegacy = true;
       console.error('Error initializing store:', error.stack || error);
     });
 
@@ -41,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
       })
     });
   } else {
-    storageMethodLegacy = true;
   }
 });
 
@@ -77,7 +74,23 @@ function routeRequestedResource() {
     if (config) loadScript('./render/editor/main.js').then(() => { initializeEditor() });
 
     const pageConfig = params.get('page');
-    if (pageConfig) loadScript('./render/preview/main.js').then(() => { initializePreview() });
+    if (pageConfig) loadScript('./render/preview/main.js').then(() => { initializePreview().then(()=>{
+
+      const components = document.querySelectorAll('#page .pagecomponent')
+      // node.nodeType === Node.ELEMENT_NODE && !processedNodes.has(node)){
+      if (components.length > 0) {
+        components.forEach((component) => {
+          if (component.nodeType === Node.ELEMENT_NODE) {
+            component.querySelectorAll('[data-component-id]').forEach((comp) => {
+              if (comp.getAttribute('data-initialized') !== 'true') {
+                initializeExistingComponents(component, comp.getAttribute('data-component-name'));
+                comp.setAttribute('data-initialized', 'true');
+              }
+            });
+          }
+        });
+      }
+    }) });
 
     if (!config && !pageConfig) loadScript('./render/index/main.js').then(() => { initializeDashboard() });
   });
@@ -118,7 +131,6 @@ function initializeGlobals() {
 
       // Requires paid license
       window.appSagePremium = true;
-      window.storageMethodLegacy = false;
 
       window.appSageComponents = combineComponentsLists();
       window.advancedMode = false;
