@@ -74,27 +74,26 @@ function routeRequestedResource() {
     if (config) loadScript('./render/editor/main.js').then(() => { initializeEditor() });
 
     const pageConfig = params.get('page');
-    if (pageConfig) loadScript('./render/preview/main.js').then(() => { initializePreview().then(()=>{
-
-      const components = document.querySelectorAll('#page .pagecomponent')
-      // node.nodeType === Node.ELEMENT_NODE && !processedNodes.has(node)){
-      if (components.length > 0) {
-        components.forEach((component) => {
-          if (component.nodeType === Node.ELEMENT_NODE) {
-            component.querySelectorAll('[data-component-id]').forEach((comp) => {
-              if (comp.getAttribute('data-initialized') !== 'true') {
-                initializeExistingComponents(component, comp.getAttribute('data-component-name'));
-                comp.setAttribute('data-initialized', 'true');
-              }
-            });
-          }
-        });
-      }
-    }) });
+    if (pageConfig) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { activateComponents() }) });
 
     if (!config && !pageConfig) loadScript('./render/index/main.js').then(() => { initializeDashboard() });
   });
 }
+
+function activateComponents(editor = false) {
+  const components = document.querySelectorAll('#page .pagecomponent')
+  // node.nodeType === Node.ELEMENT_NODE && !processedNodes.has(node)){
+  if (components.length > 0) {
+    components.forEach((component) => {
+      const comp = component.querySelector('[data-component-name]');
+      if (editor !== false || comp.getAttribute('data-initialized') !== 'true') {
+        comp.setAttribute('data-initialized', 'true');
+      }
+      initializeExistingComponents(component, comp.getAttribute('data-component-name'));
+    });
+  }
+}
+window.activateComponents = activateComponents;
 
 function initializeGlobals() {
   return new Promise((resolve, reject) => {

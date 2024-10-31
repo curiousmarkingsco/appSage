@@ -8,7 +8,9 @@
 
 function initializeEditor() {
   initializeEditorHtml().then(() => {
-    initializeConfig();
+    initializeConfig().then(()=>{
+      activateComponents(true);
+    });
     setupPageEvents();
     window.editorInitialized = true;
   }).catch(error => {
@@ -406,30 +408,37 @@ function loadScripts(scriptUrls) {
 window.loadScripts = loadScripts;
 
 function initializeConfig() {
-  const params = new URLSearchParams(window.location.search);
-  const config = params.get('config');
+  return new Promise((resolve, reject) => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const config = params.get('config');
 
-  if (!electronMode) {
-    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-    let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-    document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+      if (!electronMode) {
+        const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+        document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
 
-    if (config) {
-      const json = loadPage(config);
-      if (json && json.length > 0) {
-        loadChanges(json);
-        loadPageSettings(config);
-        loadPageBlobs(config);
-        loadPageMetadata(config);
+        if (config) {
+          const json = loadPage(config);
+          if (json && json.length > 0) {
+            loadChanges(json);
+            loadPageSettings(config);
+            loadPageBlobs(config);
+            loadPageMetadata(config);
+          }
+          setupAutoSave(config);
+        } else {
+          let pageId = createNewConfigurationFile();
+          setupAutoSave(pageId);
+        }
+      } else {
+        // STORAGE // TODO
       }
-      setupAutoSave(config);
-    } else {
-      let pageId = createNewConfigurationFile();
-      setupAutoSave(pageId);
+      resolve();
+    } catch (error) {
+      reject(error); // Reject the promise if there's an error
     }
-  } else {
-    // STORAGE // TODO
-  }
+  });
 }
 window.initializeConfig = initializeConfig;
 

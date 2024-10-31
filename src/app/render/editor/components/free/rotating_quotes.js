@@ -113,7 +113,7 @@ window.initializeQuoteDataFromForm = initializeQuoteDataFromForm;
 
 function initializeRotatingQuotes(container) {
   let quotes = [];
-  let quotesData = getCurrentPage().rotatingQuotes;
+  let quotesData = getCurrentPage().rotatingQuotes || rotatingQuotes();
 
   if (quotesData) {
     quotesData = JSON.parse(quotesData);

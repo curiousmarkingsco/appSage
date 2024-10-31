@@ -230,7 +230,7 @@ window.populateTimezoneSelects = populateTimezoneSelects;
 
 // Function to update the clock based purely on data- attributes
 function updateClock(clockContainer) {
-  clockContainer = clockContainer.querySelector('.internationalClocks-container');
+  if (!clockContainer.classList.contains('internationalClocks-container')) clockContainer = clockContainer.querySelector('.internationalClocks-container');
   const timezone = clockContainer.getAttribute('data-timezone') || 'UTC';
   const showSeconds = clockContainer.getAttribute('data-show-seconds') === 'true';
   const design = clockContainer.getAttribute('data-design') || 'circle';
