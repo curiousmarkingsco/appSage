@@ -7,7 +7,7 @@ async function initializeDashboard() {
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">

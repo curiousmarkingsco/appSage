@@ -24,10 +24,12 @@ async function initializeEditorHtml() {
     try {
       document.querySelector('body').id = 'editor';
       // Inject the head content dynamically
+      // CSP is handled by Electron for dev and production. For local web dev, we set up inline CSP.
+      // For web production, CSP is handled by GitHub pages.
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <title>appSage Editor</title>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">
+        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
