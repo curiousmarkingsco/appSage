@@ -25,7 +25,6 @@
     "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
     "electron-packager": "^17.1.2",
-    "electron-reload": "^2.0.0-alpha.1",
     "electron-reloader": "^1.2.3",
     "eslint": "^9.13.0",
     "eslint-plugin-electron": "^7.0.0",

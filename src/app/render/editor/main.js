@@ -800,8 +800,13 @@ window.resetCopyPageButton = resetCopyPageButton;
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
+  let titleIdMap;
 
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  if (!electronMode) {
+    titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  } else {
+    titleIdMap = appSageStore
+  }
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
   const titleLabel = document.createElement('label');
@@ -987,7 +992,7 @@ function createNewConfigurationFile() {
     // Load or create the title-ID mapping from localStorage
     const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
     while (title in titleIdMap) {
-      title = `Untitled-${counter}`;
+      title = `Untitled_${counter}`;
       counter++;
     }
     // Save the mapping of title to ID
@@ -1003,6 +1008,7 @@ function createNewConfigurationFile() {
     window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   } else {
     // STORAGE // TODO
+    const titleIdMap = appSageStore.titleMap || {};
   }
   return pageId;
 }

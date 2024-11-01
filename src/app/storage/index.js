@@ -33,7 +33,7 @@ function deriveKey(password, salt) {
   return crypto.pbkdf2Sync(password, salt, iterations, keyLength, 'sha512');
 }
 
-export async function getOrSetEncryptionKey(username, password) {
+export async function getOrSetEncryptionKey(username, password, newStore = false) {
   try {
     // Use a separate store instance for unencrypted values like salt
     const metaStore = new Store();  // No encryption here, just for metadata like salt
@@ -56,29 +56,32 @@ export async function getOrSetEncryptionKey(username, password) {
 }
 
 // Function to create the store
-export async function createOrFindStore(sessionKey) {
+export async function createOrFindStore(sessionKey, newStore = false) {
   // Create the schema for the store (not encrypted)
   const schema = await loadSchema();
   const store = new Store({ schema });
   // Check if we have existing encrypted data in the store
-  if (store.has('encryptedData')) {
+  if (!newStore && store.has('encryptedData')) {
     const data = readStore(sessionKey);
     return data;
   } else {
     // Initialize the store without encryption
     const store = new Store({ schema });
+
     // Initialize default data
     const defaultData = {
       settings: {
-        fonts: { size: 12, family: 'Arial' },
-        colors: { theme: 'light' },
+        fonts: { inter: 'Inter' },
+        colors: {},
         advancedMode: false
       },
-      pages: {}
+      pages: {},
+      titles: {}
     };
 
     // Encrypt and store the sensitive data manually
-    const encryptedData = encryptData(defaultData, encryptionKey);
+    const encryptedData = encryptData(defaultData, sessionKey);
+
     store.set('encryptedData', encryptedData);
 
     return defaultData;

@@ -20,9 +20,7 @@ function loadPage(pageId) {
       return null;
     }
   } else {
-    // Use electron-store for loading page data
-    const storedData = store.get(`appSage.pages.${pageId}.html`);
-    return storedData || null;
+    // STORAGE // TODO
   }
 } // DATA OUT: String || null
 window.loadPage = loadPage;
@@ -55,15 +53,15 @@ async function loadPageBlobs(config) {
       console.error('Error fetching blobs from IndexedDB:', event.target.error);
     };
   } else {
-    // Use electron-store to load blobs
-    const blobs = store.get(`appSage.pages.${config}.blobs`);
-    if (blobs) {
-      const page = document.getElementById('page');
-      Object.keys(blobs).forEach(key => {
-        const element = page.querySelector(`.bg-local-${key}`);
-        if (element) element.style.backgroundImage = `url(${blobs[key]})`;
-      });
-    }
+    // STORAGE // TODO
+    // const blobs = store.get(`appSage.pages.${config}.blobs`);
+    // if (blobs) {
+    //   const page = document.getElementById('page');
+    //   Object.keys(blobs).forEach(key => {
+    //     const element = page.querySelector(`.bg-local-${key}`);
+    //     if (element) element.style.backgroundImage = `url(${blobs[key]})`;
+    //   });
+    // }
   }
 } // DATA OUT: null
 window.loadPageBlobs = loadPageBlobs;
@@ -86,6 +84,8 @@ function loadPageMetadata(pageId) {
         metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
         element.appendChild(metaTag);
       });
+    } else {
+      // STORAGE // TODO
     }
 
     if (fontSettings) {
@@ -157,29 +157,30 @@ function loadPageSettings(config, view = false) {
       }
     }
   } else {
-    const settings = store.get(`appSage.pages.${config}.settings`);
-    if (settings) {
-      const element = document.getElementById(settings.id);
-      if (element && settings.className) {
-        element.className = settings.className;
-      }
+    // STORAGE // TODO
+    // const settings = store.get(`appSage.pages.${config}.settings`);
+    // if (settings) {
+    //   const element = document.getElementById(settings.id);
+    //   if (element && settings.className) {
+    //     element.className = settings.className;
+    //   }
 
-      if (settings.metaTags) {
-        const head = document.getElementsByTagName('head')[0];
-        const div = document.createElement('div');
-        div.innerHTML = settings.metaTags;
-        Array.from(div.childNodes).forEach(tag => {
-          if (tag.nodeType === Node.ELEMENT_NODE) {
-            head.appendChild(tag);
-          }
-        });
-      }
+    //   if (settings.metaTags) {
+    //     const head = document.getElementsByTagName('head')[0];
+    //     const div = document.createElement('div');
+    //     div.innerHTML = settings.metaTags;
+    //     Array.from(div.childNodes).forEach(tag => {
+    //       if (tag.nodeType === Node.ELEMENT_NODE) {
+    //         head.appendChild(tag);
+    //       }
+    //     });
+    //   }
 
-      if (element && view) {
-        element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
-        element.classList.add('w-full', 'min-h-screen');
-      }
-    }
+    //   if (element && view) {
+    //     element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
+    //     element.classList.add('w-full', 'min-h-screen');
+    //   }
+    // }
   }
 } // DATA OUT: null
 window.loadPageSettings = loadPageSettings;
@@ -268,17 +269,23 @@ function getPageId() {
 window.getPageId = getPageId;
 
 function getAppSageStorage() {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
+  if (!electronMode) {
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    if (!appSageStorage.pages) {
+      appSageStorage.pages = {};
+    }
+    return appSageStorage;
+  } else {
+    return appSageStore;
   }
-  return appSageStorage;
 }
 window.getAppSageStorage = getAppSageStorage;
 
 function getPageObject(pageId) {
   const appSageStorage = getAppSageStorage();
-  const pageObject = appSageStorage.pages[pageId];
+  let pageObject;
+  if (!electronMode) pageObject = appSageStorage.pages[pageId];
+  if (electronMode) pageObject = appSageStore.pages[pageId];
   return pageObject;
 }
 window.getPageObject = getPageObject;

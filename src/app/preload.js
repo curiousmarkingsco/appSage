@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 try {
   // Expose the store API to the renderer process
   contextBridge.exposeInMainWorld('api', {
-    createOrFindStore: (username, userPassword) => ipcRenderer.invoke('initialize-store', { username, userPassword }),
+    createOrFindStore: (username, userPassword, newStore) => ipcRenderer.invoke('initialize-store', { username, userPassword, newStore }),
     readStore: () => ipcRenderer.invoke('get-store', {}),
     updateStore: (username, userPassword, storeObject) => ipcRenderer.invoke('set-store', { username, userPassword, storeObject }),
     deleteStore: (username, userPassword) => ipcRenderer.invoke('remove-store', { username, userPassword }),

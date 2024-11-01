@@ -91,20 +91,20 @@ function loadPreview(pageId) {
       console.error('No saved data found for pageId:', pageId);
     }
   } else {
-    // Electron-store version (handling real-time)
-    const pageHtml = store.get(`appSage.pages.${pageId}.html`);
-    if (pageHtml) {
-      const pageContainer = document.getElementById('page');
-      pageContainer.innerHTML = pageHtml;
+    // STORAGE // TODO
+    // const pageHtml = store.get(`appSage.pages.${pageId}.html`);
+    // if (pageHtml) {
+    //   const pageContainer = document.getElementById('page');
+    //   pageContainer.innerHTML = pageHtml;
 
-      document.querySelector('title').textContent = pageId;
+    //   document.querySelector('title').textContent = pageId;
 
-      loadPageSettings(pageId, true);
-      loadPageBlobs(pageId);  // Should call electron-store version
-      loadPageMetadata(pageId);
-    } else {
-      console.error('No saved data found for pageId:', pageId);
-    }
+    //   loadPageSettings(pageId, true);
+    //   loadPageBlobs(pageId);  // Should call electron-store version
+    //   loadPageMetadata(pageId);
+    // } else {
+    //   console.error('No saved data found for pageId:', pageId);
+    // }
   }
 } // DATA OUT: null
 window.loadPreview = loadPreview;

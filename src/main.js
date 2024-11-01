@@ -98,10 +98,10 @@ app.on('activate', () => {
 });
 
 // IPC handler for storage access
-ipcMain.handle('initialize-store', async (event, { username, userPassword }) => {
+ipcMain.handle('initialize-store', async (event, { username, userPassword, newStore }) => {
   try {
-    sessionKey = await getOrSetEncryptionKey(username, userPassword);
-    const store = await createOrFindStore(sessionKey);
+    const sessionKey = await getOrSetEncryptionKey(username, userPassword, newStore);
+    const store = await createOrFindStore(sessionKey, newStore);
     return store;
   } catch (error) {
     console.error('Error creating store:', error);

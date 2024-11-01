@@ -73,10 +73,11 @@ function savePageData(pageId, data) {
     appSageStorage.pages[pageId] = { ...appSageStorage.pages[pageId], page_data: data };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
+    // STORAGE // TODO
     // Use electron-store for saving page HTML
-    console.log(appSageStore)
-    console.log(data)
-    store.set(`appSage.pages.${pageId}.html`, data);
+    // console.log(appSageStore)
+    // console.log(data)
+    // store.set(`appSage.pages.${pageId}.html`, data);
   }
 } // DATA OUT: null
 window.savePageData = savePageData;
@@ -90,8 +91,8 @@ function saveComponentObjectToPage(componentName, object) {
       currentPage[componentName] = object;
       localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
     } else {
-      // Use electron-store to save components
-      store.set(`appSage.pages.${pageId}.components.${componentName}`, object);
+      // STORAGE // TODO
+      // store.set(`appSage.pages.${pageId}.components.${componentName}`, object);
     }
   } catch (error) {
     console.error('Something went wrong saving component data.', error);
@@ -116,8 +117,8 @@ function savePageDataSettings(pageId, data) {
     appSageStorage.pages[pageId].settings = data;
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
-    // Use electron-store to save settings
-    store.set(`appSage.pages.${pageId}.settings`, data);
+    // STORAGE // TODO
+    // store.set(`appSage.pages.${pageId}.settings`, data);
   }
 } // DATA OUT: null
 window.savePageDataSettings = savePageDataSettings;
@@ -138,7 +139,9 @@ function savePageSettingsChanges(pageId) {
     appSageStorage.pages[pageId].settings = JSON.stringify(settings);
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
-    store.set(`appSage.pages.${pageId}.settings`, settings);
+    // STORAGE // TODO
+    window.api.storePageSettings(settings);
+    window.appSageStore = getAppSageStorage();
   }
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;

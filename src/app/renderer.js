@@ -14,23 +14,27 @@ window.onload = function() {
 
 document.addEventListener('DOMContentLoaded', function () {
   if (electronMode) {
-    
-    const username = 'jojfsfweffwfe';
-    const userPassword = 'aaafewfwefewaav';
+    // STORAGE // TODO - Create basic authentication
+    /* open: THIS AREA FOR DEV PURPOSES, DELETE ME! */
+    let username = '';
+    const userPassword = 'fwefew';
+    const newStore = username === '';
+    if (newStore) username = 'fewgfiufeeufi'
+    /* shut: THIS AREA FOR DEV PURPOSES, DELETE ME! */
 
     // Initialize the store and log the result or error
-    window.api.createOrFindStore(username, userPassword).then(store => {
+    window.api.createOrFindStore(username, userPassword, newStore).then(store => {
       appSageStore = store;
     }).catch(error => {
       console.error('Error initializing store:', error.stack || error);
     });
 
 
-    window.api.readStore().then(store => {
-      appSageStore = store;
-    }).catch(error => {
-      console.error('Error initializing store:', error.stack || error);
-    });
+    // window.api.readStore().then(store => {
+    //   appSageStore = store;
+    // }).catch(error => {
+    //   console.error('Error initializing store:', error.stack || error);
+    // });
 
     loadScript('./render/tailwind.js', false).then(() => {
       loadScript('./render/tailwind.config.js', false).then(() => {
@@ -134,9 +138,11 @@ function initializeGlobals() {
       window.appSageComponents = combineComponentsLists();
 
       window.advancedMode = false;
-      if (!electronMode) {
+      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
         const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
         if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
+      } else {
+        // STORAGE // TODO
       }
 
       updateTailwindConfig();
@@ -344,7 +350,6 @@ function initializeGlobals() {
       // Call restoreSettings when the page loads
       window.addEventListener('load', restoreSettings);
       window.addEventListener('load', mergeFontsIntoTailwindConfig);
-      window.appSageLocalNuke = appSageLocalNuke;
 
       window.globalsLoaded = true;
       resolve();
@@ -599,7 +604,7 @@ function appSageLocalNuke() {
   localStorage.removeItem(appSageSettingsString);
   localStorage.removeItem(appSageTitleIdMapString);
 }
-
+window.appSageLocalNuke = appSageLocalNuke;
 
 function waitForGlobalsLoaded() {
   return new Promise((resolve) => {

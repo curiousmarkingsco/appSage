@@ -9,6 +9,8 @@ function initializeSettings() {
     if (storedSettings.advancedMode) {
       advancedModeCheckbox.checked = true;
     }
+  } else {
+    // STORAGE // TODO
   }
 
   // Add event listener for adding new font fields
