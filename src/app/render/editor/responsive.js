@@ -177,7 +177,7 @@ function createLabel(bp, labelPrefix, forAttr) {
   const collapseLabels = (labelPrefix.includes('Margin') || labelPrefix.includes('Padding') || labelPrefix.includes('Font') || labelPrefix.includes('Border Radius') || labelPrefix.includes('Border Color') || labelPrefix.includes('Height') || labelPrefix.includes('Width') || labelPrefix.includes('Gap'));
   let keepLabel = (labelPrefix === 'Margin (t)' ? true : false || labelPrefix === 'Padding (t)' ? true : false || labelPrefix === 'Font Family' ? true : false || labelPrefix === 'Border Width' ? true : false || labelPrefix === 'Minimum Height' ? true : false || labelPrefix === 'Minimum Width' ? true : false || labelPrefix === 'Gap (x)' ? true : false);
   let advanced = false;
-  if (labelPrefix === 'class' || labelPrefix === 'css') {
+  if (labelPrefix === 'class' || labelPrefix === 'inline css') {
     advanced = true;
   }
   if (collapseLabels && keepLabel === false) {
@@ -238,11 +238,11 @@ window.handleInput = handleInput;
 // supporting textarea elements for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
 function handleTextareaType(labelPrefix, grid, control) {
-  control.type = 'text';
+  // control.type = 'text';
   if (labelPrefix == 'class') {
     control.value = (grid.classList);
   }
-  if (labelPrefix == 'css') {
+  if (labelPrefix == 'inline css') {
     control.value = handleStyles(grid, '', 'retrieve');
   }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -253,7 +253,7 @@ function handleTextareaType(labelPrefix, grid, control) {
       newHtmlElement.innerHTML = control.value;
       control.innerHTML = newHtmlElement;
     }
-    if (labelPrefix == 'css') {
+    if (labelPrefix == 'inline css') {
       handleStyles(grid, control.value, 'apply');
     }
   };

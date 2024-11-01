@@ -27,7 +27,7 @@ async function initializeEditorHtml() {
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <title>appSage Editor</title>
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
@@ -394,6 +394,16 @@ function setupPageEvents() {
       updateTooltip(e, false);
     }
   }, true);
+
+  // Reveal advanced features
+  if (window.advancedMode === true) {
+    const pasteHtmlBtn = document.getElementById('addHtml');
+    if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
+    const addContainerBtn = document.getElementById('addContainer')
+    if (addContainerBtn) addContainerBtn.classList.remove('hidden');
+    const copyMetaBtn = document.getElementById('copyMetadata')
+    if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
+  }
 }
 window.setupPageEvents = setupPageEvents;
 

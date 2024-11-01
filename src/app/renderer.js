@@ -62,7 +62,7 @@ function loadScript(scriptSrc, async = true) {
     });
   } else {
     // Skip loading as the script is already bundled
-    console.log(`${scriptSrc} is already bundled, skipping dynamic loading.`);
+    // console.log(`${scriptSrc} is already bundled, skipping dynamic loading.`);
     return Promise.resolve();  // Return a resolved promise to continue the flow
   }
 }
@@ -132,23 +132,12 @@ function initializeGlobals() {
       window.appSagePremium = true;
 
       window.appSageComponents = combineComponentsLists();
+
       window.advancedMode = false;
-
       if (!electronMode) {
-        const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString));
-        if (settingsForAdvCheck) advancedMode = settingsForAdvCheck.advancedMode;
+        const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
+        if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
       }
-
-      window.addEventListener('load', function () {
-        if (advancedMode === true) {
-          const pasteHtmlBtn = document.getElementById('addHtml');
-          if (pasteHtmlBtn) pasteHtmlBtn.classList.remove('hidden');
-          const addContainerBtn = document.getElementById('addContainer')
-          if (addContainerBtn) addContainerBtn.classList.remove('hidden');
-          const copyMetaBtn = document.getElementById('copyMetadata')
-          if (copyMetaBtn) copyMetaBtn.classList.remove('hidden');
-        }
-      });
 
       updateTailwindConfig();
       window.tailwindColors = mergeTailwindColors(tailwind.config.theme);

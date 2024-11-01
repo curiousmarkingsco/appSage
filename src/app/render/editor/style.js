@@ -247,7 +247,7 @@ window.addManualClassEditor = addManualClassEditor;
 function addManualCssEditor(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
     if (advancedMode) {
-      addDeviceTargetedOptions(sidebar, element, 'css', '', [], 'textarea');
+      addDeviceTargetedOptions(sidebar, element, 'inline css', '', [], 'textarea');
     }
   }
 } // DATA OUT: null

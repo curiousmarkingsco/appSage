@@ -39,7 +39,7 @@ module.exports = {
     }
   },
   output: {
-    path: path.resolve(__dirname, 'live'), // Output bundled files into the dist folder
+    path: path.resolve(__dirname, 'dist'), // Output bundled files into the dist folder
     filename: 'renderer.js', // Output filename for the renderer process
   },
   target: 'web', // Target is a web environment
