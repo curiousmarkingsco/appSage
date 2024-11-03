@@ -85,7 +85,6 @@ function loadPreview(pageId) {
       });
 
       loadPageSettings(pageId, true);
-      loadPageBlobs(pageId);
       loadPageMetadata(pageId);
     } else {
       console.error('No saved data found for pageId:', pageId);
@@ -100,7 +99,6 @@ function loadPreview(pageId) {
     //   document.querySelector('title').textContent = pageId;
 
     //   loadPageSettings(pageId, true);
-    //   loadPageBlobs(pageId);  // Should call electron-store version
     //   loadPageMetadata(pageId);
     // } else {
     //   console.error('No saved data found for pageId:', pageId);

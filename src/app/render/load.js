@@ -20,51 +20,12 @@ function loadPage(pageId) {
       return null;
     }
   } else {
-    // STORAGE // TODO
+    const page = appSageStore.pages[pageId];
+    if (typeof page === 'undefined') return null;
+    return page.page_data
   }
 } // DATA OUT: String || null
 window.loadPage = loadPage;
-
-// Currently, media added through the file selector is stored as base64 plain
-// text in the document (and consequently, storage). To keep things a bit
-// tidier, these blobs are stored in an object separate from the HTML content.
-// DATA IN: String
-async function loadPageBlobs(config) {
-  if (!electronMode) {
-    const db = await openDatabase();
-    const transaction = db.transaction(['mediaStore'], 'readonly');
-    const store = transaction.objectStore('mediaStore');
-    
-    const blobsRequest = store.get(config);
-
-    blobsRequest.onsuccess = function(event) {
-      const blobs = event.target.result ? event.target.result.blobs : null;
-      const page = document.getElementById('page');
-      
-      if (blobs) {
-        Object.keys(blobs).forEach(key => {
-          const element = page.querySelector(`.bg-local-${key}`);
-          if (element) element.style.backgroundImage = `url(${URL.createObjectURL(blobs[key])})`;
-        });
-      }
-    };
-
-    blobsRequest.onerror = function(event) {
-      console.error('Error fetching blobs from IndexedDB:', event.target.error);
-    };
-  } else {
-    // STORAGE // TODO
-    // const blobs = store.get(`appSage.pages.${config}.blobs`);
-    // if (blobs) {
-    //   const page = document.getElementById('page');
-    //   Object.keys(blobs).forEach(key => {
-    //     const element = page.querySelector(`.bg-local-${key}`);
-    //     if (element) element.style.backgroundImage = `url(${blobs[key]})`;
-    //   });
-    // }
-  }
-} // DATA OUT: null
-window.loadPageBlobs = loadPageBlobs;
 
 // Because metadata needs to be added to the <head> tag rather than the
 // expected '#page' div, metadata is stored in a separate object and,
@@ -129,58 +90,39 @@ window.loadPageMetadata = loadPageMetadata;
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false) {
-  if (!electronMode) {
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-
-    if (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings) {
-      const settings = appSageStorage.pages[config].settings;
-      const element = document.getElementById(settings.id);
-
-      if (element && settings.className) {
-        element.className = settings.className;
-      }
-
-      if (settings.metaTags) {
-        const head = document.getElementsByTagName('head')[0];
-        const div = document.createElement('div');
-        div.innerHTML = settings.metaTags;
-        Array.from(div.childNodes).forEach(tag => {
-          if (tag.nodeType === Node.ELEMENT_NODE) {
-            head.appendChild(tag);
-          }
-        });
-      }
-
-      if (element && view) {
-        element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
-        element.classList.add('w-full', 'min-h-screen');
-      }
-    }
+  let appSageStorage;
+  let localStorageExists = false;
+  if (!electronMode){
+    appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    localStorageExists = (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings);
   } else {
-    // STORAGE // TODO
-    // const settings = store.get(`appSage.pages.${config}.settings`);
-    // if (settings) {
-    //   const element = document.getElementById(settings.id);
-    //   if (element && settings.className) {
-    //     element.className = settings.className;
-    //   }
+    appSageStorage = appSageStore;
+    localStorageExists = true;
+  }
+    
+  if (localStorageExists) {
+    const settings = appSageStorage.pages[config].settings;
+    const element = document.getElementById(settings.id);
 
-    //   if (settings.metaTags) {
-    //     const head = document.getElementsByTagName('head')[0];
-    //     const div = document.createElement('div');
-    //     div.innerHTML = settings.metaTags;
-    //     Array.from(div.childNodes).forEach(tag => {
-    //       if (tag.nodeType === Node.ELEMENT_NODE) {
-    //         head.appendChild(tag);
-    //       }
-    //     });
-    //   }
+    if (element && settings.className) {
+      element.className = settings.className;
+    }
 
-    //   if (element && view) {
-    //     element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
-    //     element.classList.add('w-full', 'min-h-screen');
-    //   }
-    // }
+    if (settings.metaTags) {
+      const head = document.getElementsByTagName('head')[0];
+      const div = document.createElement('div');
+      div.innerHTML = settings.metaTags;
+      Array.from(div.childNodes).forEach(tag => {
+        if (tag.nodeType === Node.ELEMENT_NODE) {
+          head.appendChild(tag);
+        }
+      });
+    }
+
+    if (element && view) {
+      element.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
+      element.classList.add('w-full', 'min-h-screen');
+    }
   }
 } // DATA OUT: null
 window.loadPageSettings = loadPageSettings;

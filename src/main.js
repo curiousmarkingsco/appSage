@@ -2,15 +2,17 @@
 import isDev from 'electron-is-dev';
 import { app, BrowserWindow, nativeImage, ipcMain, Tray } from 'electron';
 import path from 'path';
-import { getOrSetEncryptionKey, createOrFindStore, readStore, updateStore, deleteStore  } from './app/storage/index.js';
-import { storePageHtml,
-         storePageCSS,
-         storePageSettings,
-         storePageComponent,
-         getPageHTML,
-         getPageCSS,
-         getPageSettings,
-         getPageComponent } from './app/storage/page.js';
+import { getOrSetEncryptionKey, createOrFindStore, readStore, updateStore, deleteStore } from './app/storage/index.js';
+import {
+  storePageHtml,
+  storePageCSS,
+  storePageSettings,
+  storePageComponent,
+  getPageHTML,
+  getPageCSS,
+  getPageSettings,
+  getPageComponent
+} from './app/storage/page.js';
 
 
 const __dirname = path.resolve();
@@ -19,7 +21,7 @@ const __dirname = path.resolve();
 if (isDev) {
   try {
     require('electron-reloader')(module);
-  } catch {}
+  } catch { }
 }
 
 let sessionKey;
@@ -46,11 +48,11 @@ function createWindow() {
     icon: appIcon,
   });
 
-  splash.loadFile('./src/app/splash.html');
+  // splash.loadFile('./src/app/splash.html');
 
-  splash.on('closed', () => {
-    splash = null;
-  });
+  // splash.on('closed', () => {
+  //   splash = null;
+  // });
 
   // Load main application after the splash screen is done
   setTimeout(() => {
@@ -61,11 +63,18 @@ function createWindow() {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
+        enableRemoteModule: false, 
         preload: path.join(__dirname, 'src', 'app', 'preload.js'),
       },
     });
 
-    mainWindow.loadFile('./src/app/render.html');
+    if (isDev) {
+      mainWindow.loadFile(path.join(__dirname, './dev/render.html'));
+    }
+    else {
+      mainWindow.loadFile('./src/app/render.html');
+    }
+
 
     // Open DevTools in development mode
     if (isDev) {
@@ -73,14 +82,16 @@ function createWindow() {
     }
 
     // Set CSP header
-    mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
-      details.responseHeaders['Content-Security-Policy'] = [
-        "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
-      ];
-      callback({ cancel: false, responseHeaders: details.responseHeaders });
-    });
+    if (isDev) {
+      mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+        details.responseHeaders['Content-Security-Policy'] = [
+          "default-src 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';"
+        ];
+        callback({ cancel: false, responseHeaders: details.responseHeaders });
+      });
+    }
   }, 3000); // Match the duration of splash.js
-  splash.close();
+  // splash.close();
 }
 
 app.whenReady().then(createWindow);
@@ -100,7 +111,7 @@ app.on('activate', () => {
 // IPC handler for storage access
 ipcMain.handle('initialize-store', async (event, { username, userPassword, newStore }) => {
   try {
-    const sessionKey = await getOrSetEncryptionKey(username, userPassword, newStore);
+    sessionKey = await getOrSetEncryptionKey(username, userPassword, newStore);
     const store = await createOrFindStore(sessionKey, newStore);
     return store;
   } catch (error) {
@@ -109,7 +120,7 @@ ipcMain.handle('initialize-store', async (event, { username, userPassword, newSt
   }
 });
 
-ipcMain.handle('get-store', async (event, {}) => {
+ipcMain.handle('get-store', async (event, { }) => {
   try {
     const store = await readStore(sessionKey);
     return store;
@@ -142,8 +153,7 @@ ipcMain.handle('remove-store', async (event, { username, userPassword, pageId })
 
 ipcMain.handle('store-html', async (event, { pageId, pageHtml }) => {
   try {
-    const store = await storePageHtml(pageId, pageHtml, sessionKey);
-    return store;
+    await storePageHtml(pageId, pageHtml, sessionKey);
   } catch (error) {
     console.error('Error deleting store:', error);
     throw error;
@@ -152,8 +162,7 @@ ipcMain.handle('store-html', async (event, { pageId, pageHtml }) => {
 
 ipcMain.handle('store-css', async (event, { pageId, pageCss }) => {
   try {
-    const store = await storePageCSS(pageId, pageCss, sessionKey);
-    return store;
+    await storePageCSS(pageId, pageCss, sessionKey);
   } catch (error) {
     console.error('Error deleting store:', error);
     throw error;
@@ -162,8 +171,7 @@ ipcMain.handle('store-css', async (event, { pageId, pageCss }) => {
 
 ipcMain.handle('store-settings', async (event, { pageId, pageSettings }) => {
   try {
-    const store = await storePageSettings(pageId, pageSettings, sessionKey);
-    return store;
+    await storePageSettings(pageId, pageSettings, sessionKey);
   } catch (error) {
     console.error('Error deleting store:', error);
     throw error;

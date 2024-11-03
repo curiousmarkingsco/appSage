@@ -8,9 +8,6 @@
 
 function initializeEditor() {
   initializeEditorHtml().then(() => {
-    initializeConfig().then(()=>{
-      activateComponents(true);
-    });
     setupPageEvents();
     window.editorInitialized = true;
   }).catch(error => {
@@ -41,7 +38,6 @@ async function initializeEditorHtml() {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="./styles.css">
-        <script defer src="./renderer.js"></script>
       `;
 
       // Dynamic body content (initial structure)
@@ -239,8 +235,12 @@ async function initializeEditorHtml() {
         </div>
       `;
 
-      if (electronMode) loadEditorScripts();
-      resolve();
+      if (electronMode) loadEditorScripts().then(() => {
+        initializeConfig().then(()=>{
+          activateComponents(true);
+          resolve();
+        });
+      });
     } catch (error) {
       reject(error); // Reject the promise if there's an error
     }
@@ -249,6 +249,8 @@ async function initializeEditorHtml() {
 window.initializeEditorHtml = initializeEditorHtml;
 
 async function loadEditorScripts() {
+  await loadScript('./render/load.js');
+  await loadScript('./render/editor/save.js');
   return new Promise((resolve, reject) => {
     try {
       loadScripts([
@@ -266,7 +268,6 @@ async function loadEditorScripts() {
         './render/editor/style.js',
         './render/editor/save.js',
         './render/editor/load.js',
-        './render/load.js',
         './render/editor/components/main.js',
         './render/editor/responsive.js',
         './render/remote_save.js',
@@ -285,7 +286,6 @@ async function loadEditorScripts() {
 
         loadScript(path);
       });
-
       resolve();
     } catch(error) {
       reject(error);
@@ -425,26 +425,31 @@ function initializeConfig() {
       const params = new URLSearchParams(window.location.search);
       const config = params.get('config');
 
-      if (!electronMode) {
-        const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-        let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-        document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-
-        if (config) {
-          const json = loadPage(config);
-          if (json && json.length > 0) {
-            loadChanges(json);
-            loadPageSettings(config);
-            loadPageBlobs(config);
-            loadPageMetadata(config);
-          }
-          setupAutoSave(config);
-        } else {
+      if (typeof config !== 'undefined') {
+        const json = loadPage(config);
+        if (json) {
           let pageId = createNewConfigurationFile();
           setupAutoSave(pageId);
+        } else {
+          const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+          let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+          document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+
+          if (!electronMode) {
+            if (json && json.length > 0) {
+              loadChanges(json);
+              loadPageSettings(config);
+              loadPageMetadata(config);
+            }
+          } else {
+            if (json && json.length > 0) {
+              loadChanges(json);
+              loadPageSettings(config);
+              loadPageMetadata(config);
+            }
+          }
+          setupAutoSave(config);
         }
-      } else {
-        // STORAGE // TODO
       }
       resolve();
     } catch (error) {
@@ -1002,15 +1007,21 @@ function createNewConfigurationFile() {
     if (!appSageStorage.pages) {
       appSageStorage.pages = {};
     }
-    appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {}, blobs: {} };
+    appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
     window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   } else {
     // STORAGE // TODO
-    const titleIdMap = appSageStore.titleMap || {};
+    while (title in appSageStore.titles) {
+      title = `Untitled_${counter}`;
+      counter++;
+    }
+    appSageStore.titles[title] = pageId;
+    console.log(appSageStore.titles[title])
+    
+    appSageStore.pages[pageId] = { page_data: [], title: title, settings: {} };
+    window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   }
-  return pageId;
 }
 window.createNewConfigurationFile = createNewConfigurationFile;
 

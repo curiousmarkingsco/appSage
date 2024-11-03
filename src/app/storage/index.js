@@ -89,21 +89,28 @@ export async function createOrFindStore(sessionKey, newStore = false) {
 }
 
 export async function readStore(sessionKey) {
-  const encryptionKey = sessionKey;
-  const schema = await loadSchema();
-  const store = new Store({ schema });
-  const encryptedData = store.get('encryptedData');
-  const decryptedData = decryptData(encryptedData, encryptionKey);
-  return decryptedData;
+  try {
+    const encryptionKey = sessionKey;
+    const schema = await loadSchema();
+    const store = new Store({ schema });
+    const encryptedData = store.get('encryptedData');
+    const decryptedData = decryptData(encryptedData, encryptionKey);
+    return decryptedData;
+  } catch (e) {
+    return `Failure: ${e}`;
+  }
 }
 
-export async function updateStore(username, password, data) {
-  const encryptionKey = await getOrSetEncryptionKey(username, password);
-  const schema = await loadSchema();
-  const store = new Store({ schema });
-  const encryptedData = store.set('encryptedData', data);
-  const decryptedData = decryptData(encryptedData, encryptionKey);
-  return decryptedData;
+export async function updateStore(sessionKey, data) {
+  try {
+    const schema = await loadSchema();
+    const store = new Store({ schema });
+    const encryptedData = encryptData(data, sessionKey);
+    store.set('encryptedData', encryptedData);
+    readStore(sessionKey);
+  } catch (e) {
+    return `Failure: ${e}`;
+  }
 }
 
 export async function deleteStore(username, password) {

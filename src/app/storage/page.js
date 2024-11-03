@@ -1,12 +1,17 @@
 // app/storage/page.js
-import { readStore } from './index.js'
+import { readStore, encryptData } from './index.js'
 
 // Create & Update Storage
 export async function storePageHtml(pageId, pageHTML, sessionKey) {
-  const store = readStore(sessionKey);
-
-  // Store HTML for the page with unique ID
-  store.set(`appSage.pages.${pageId}.html`, pageHTML);
+  const data = readStore(sessionKey);
+  if (!data.pages) {
+    data.pages = {};
+  }
+  const page = data.pages[pageId] || (data.pages[pageId] = {});
+  page.page_data = pageHTML;
+  const encryptedData = encryptData(data, sessionKey);
+  store.set('encryptedData', encryptedData)
+  return data;
 }
 
 export async function storePageCSS(pageId, tailwindCSS, sessionKey) {
@@ -16,23 +21,28 @@ export async function storePageCSS(pageId, tailwindCSS, sessionKey) {
 
   // Store TailwindCSS and its configuration for the page
   store.set(`appSage.pages.${pageId}.styles.css`, tailwindCSS);
+  return store;
 }
 
 export async function storePageSettings(pageId, settings, sessionKey){
-  const store = readStore(sessionKey);
-  store.set(`appSage.pages.${pageId}.settings`, settings);
+  const data = readStore(sessionKey);
+  data.pages[pageId].settings = settings;
+  const encryptedData = encryptData(data, sessionKey);
+  store.set('encryptedData', encryptedData)
+  return data;
 }
 
 export async function storePageComponent(pageId, componentName, componentData, sessionKey) {
   const store = readStore(sessionKey);
-    // Retrieve the existing components for the page (or initialize if undefined)
-    const components = store.get(`appSage.pages.${pageId}.components`) || {};
+  // Retrieve the existing components for the page (or initialize if undefined)
+  const components = store.get(`appSage.pages.${pageId}.components`) || {};
 
-    // Add the new component dynamically
-    components[componentName] = componentData;
+  // Add the new component dynamically
+  components[componentName] = componentData;
 
-    // Store the updated components object back to electron-store
-    store.set(`appSage.pages.${pageId}.components`, components);
+  // Store the updated components object back to electron-store
+  store.set(`appSage.pages.${pageId}.components`, components);
+  return store;
 }
 
 // Retrieve Storage

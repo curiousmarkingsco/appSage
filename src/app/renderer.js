@@ -1,5 +1,5 @@
 // renderer.js
-
+console.log('farts')
 // Define `global` in the renderer process to mimic Node.js behavior
 if (typeof global === 'undefined') {
   var global = window;  // In the browser, `global` is mapped to `window`
@@ -8,7 +8,7 @@ if (typeof global === 'undefined') {
 var appSageStore;
 window.electronMode = !(typeof window.api === 'undefined');
 
-window.onload = function() {
+window.onload = function () {
   routeRequestedResource();
 };
 
@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
   if (electronMode) {
     // STORAGE // TODO - Create basic authentication
     /* open: THIS AREA FOR DEV PURPOSES, DELETE ME! */
-    let username = '';
+    let username = 'fewgfiufeeufi';
     const userPassword = 'fwefew';
     const newStore = username === '';
     if (newStore) username = 'fewgfiufeeufi'
@@ -142,7 +142,7 @@ function initializeGlobals() {
         const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
         if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
       } else {
-        // STORAGE // TODO
+        window.advancedMode = appSageStore.settings.advancedMode;
       }
 
       updateTailwindConfig();

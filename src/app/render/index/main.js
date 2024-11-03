@@ -17,7 +17,6 @@ async function initializeDashboard() {
         <meta name="theme-color" content="#f2f0e9">
         <title>Dashboard | appSage</title>
         <link rel="stylesheet" href="./tailwind-output.css">
-        <script defer src="./renderer.js"></script>
       `;
 
       // Clear body and inject body content

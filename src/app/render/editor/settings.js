@@ -2,16 +2,6 @@
 
 function initializeSettings() {
   const advancedModeCheckbox = document.getElementById("advancedMode");
-  if (!electronMode) {
-    const storedSettings = JSON.parse(localStorage.getItem(appSageSettingsString)) || {};
-
-    // Set advanced mode state if previously stored
-    if (storedSettings.advancedMode) {
-      advancedModeCheckbox.checked = true;
-    }
-  } else {
-    // STORAGE // TODO
-  }
 
   // Add event listener for adding new font fields
   document.getElementById("addFont").addEventListener("click", function () {
@@ -72,8 +62,12 @@ function initializeSettings() {
       advancedMode: document.getElementById('advancedMode').checked
     };
   
-    // Store in localStorage
-    localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
+    
+    if (!electronMode) {
+      localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
+    } else {
+      appSageStore.settings = formData;
+    }
     generateGfontsEmbedCode();
   
     const params = new URLSearchParams(window.location.search);

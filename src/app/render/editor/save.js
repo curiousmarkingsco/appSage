@@ -74,10 +74,7 @@ function savePageData(pageId, data) {
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
     // STORAGE // TODO
-    // Use electron-store for saving page HTML
-    // console.log(appSageStore)
-    // console.log(data)
-    // store.set(`appSage.pages.${pageId}.html`, data);
+    window.api.storePageHtml(pageId, data);
   }
 } // DATA OUT: null
 window.savePageData = savePageData;
@@ -128,6 +125,7 @@ window.savePageDataSettings = savePageDataSettings;
 // proceeds by properly setting existing settings to these objects.
 // DATA IN: String
 function savePageSettingsChanges(pageId) {
+  console.log('pageId:', pageId)
   const page = document.getElementById('page');
   const settings = {
     id: page.id,
@@ -139,9 +137,9 @@ function savePageSettingsChanges(pageId) {
     appSageStorage.pages[pageId].settings = JSON.stringify(settings);
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
   } else {
-    // STORAGE // TODO
-    window.api.storePageSettings(settings);
-    window.appSageStore = getAppSageStorage();
+    window.api.storePageSettings(pageId, settings).then(store => {
+      appSageStore = store;
+    });
   }
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;
