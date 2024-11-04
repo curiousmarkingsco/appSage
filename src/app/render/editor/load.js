@@ -13,7 +13,8 @@
 function loadChanges(json) {
   const pageContainer = document.getElementById('page');
   pageContainer.innerHTML = '';
-  const data = JSON.parse(json);
+  let data = json;
+  if (!electronMode) data = JSON.parse(data);
   data.forEach(item => {
     pageContainer.innerHTML += item.content;
   });

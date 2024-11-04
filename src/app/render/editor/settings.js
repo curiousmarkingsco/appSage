@@ -74,7 +74,7 @@ function initializeSettings() {
         
         // Save the updated data back to Electron store
         window.api.updateStoreData(storeData).then(updatedData => {
-          appSageStore = updatedData;
+          window.appSageStore = updatedData;
         }).catch((error) => {
           console.error('Error updating settings in Electron mode:', error);
         });

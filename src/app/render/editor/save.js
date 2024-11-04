@@ -34,7 +34,6 @@ function setupAutoSave(page) {
     for (const mutation of mutationsList) {
       if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
         saveChanges(page);
-        savePageSettingsChanges(page);
         break;
       }
     }
@@ -86,9 +85,12 @@ function savePageData(pageId, json) {
       }
 
       storeData.pages[pageId] = { ...storeData.pages[pageId], page_data: json };
+      // console.log(storeData.pages[pageId].page_data[0].content)
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
-        appSageStore = updatedData;
+        // console.log(updatedData.pages[pageId].page_data[0].content)
+        window.appSageStore = updatedData;
+        savePageSettingsChanges(page);
       }).catch((error) => {
         console.error('Error saving page data in Electron mode:', error);
       });
@@ -124,7 +126,7 @@ function saveComponentObjectToPage(componentName, object) {
 
         // Save the updated data back to Electron store
         window.api.updateStoreData(storeData).then(updatedData => {
-          appSageStore = updatedData;
+          window.appSageStore = updatedData;
         }).catch((error) => {
           console.error('Error saving component object to page in Electron mode:', error);
         });
@@ -171,7 +173,7 @@ function savePageDataSettings(pageId, data) {
 
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
-        appSageStore = updatedData;
+        window.appSageStore = updatedData;
       }).catch((error) => {
         console.error('Error saving page data settings in Electron mode:', error);
       });
@@ -219,7 +221,7 @@ function savePageSettingsChanges(pageId) {
 
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
-        appSageStore = updatedData;
+        window.appSageStore = updatedData;
       }).catch((error) => {
         console.error('Error saving page settings in Electron mode:', error);
       });

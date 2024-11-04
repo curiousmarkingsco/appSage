@@ -100,14 +100,6 @@ export async function updateStoreData(sessionKey, updatedData) {
     const encryptionKey = sessionKey;
     const schema = await loadSchema();
     const store = new Store({ schema });
-    // const encryptedData = store.get('encryptedData');
-    // const decryptedData = decryptData(encryptedData, encryptionKey);
-
-    // Merge updatedData with existing decryptedData (deep merge)
-    // const mergedData = deepMerge(decryptedData, updatedData);
-
-    // Encrypt and store the updated data
-    // const newEncryptedData = encryptData(mergedData, encryptionKey);
     const newEncryptedData = encryptData(updatedData, encryptionKey);
     store.set('encryptedData', newEncryptedData);
 

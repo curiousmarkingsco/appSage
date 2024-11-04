@@ -261,25 +261,25 @@ async function loadEditorScripts() {
   } else {
     await loadScript('./render/load.js');
     await loadScript('./render/editor/save.js');
+    await loadScript('./render/editor/grid.js');
+    await loadScript('./render/editor/style/grid.js');
+    await loadScript('./render/editor/container.js');
+    await loadScript('./render/editor/style/container.js');
+    await loadScript('./render/editor/component.js');
+    await loadScript('./render/editor/column.js');
+    await loadScript('./render/editor/style/column.js');
+    await loadScript('./render/editor/content.js');
+    await loadScript('./render/editor/sidebar.js');
+    await loadScript('./render/editor/style.js');
+    await loadScript('./render/editor/load.js');
+    await loadScript('./render/editor/components/main.js');
+    await loadScript('./render/editor/responsive.js');
+    await loadScript('./render/remote_save.js');
+    await loadScript('./render/editor/media.js');
     return new Promise((resolve, reject) => {
       try {
-        loadScripts([
-          './render/editor/grid.js',
-          './render/editor/style/grid.js',
-          './render/editor/container.js',
-          './render/editor/style/container.js',
-          './render/editor/component.js',
-          './render/editor/column.js',
-          './render/editor/style/column.js',
-          './render/editor/content.js',
-          './render/editor/sidebar.js',
-          './render/editor/style.js',
-          './render/editor/load.js',
-          './render/editor/components/main.js',
-          './render/editor/responsive.js',
-          './render/remote_save.js',
-          './render/editor/media.js'
-        ]);
+        // TODO
+        // loadScripts([ all the waits above used to be in here, some should be added back for efficiency sake ]);
 
         const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
         components.map(component => {
@@ -432,7 +432,6 @@ function initializeConfig() {
     try {
       const params = new URLSearchParams(window.location.search);
       const config = params.get('config');
-
       if (typeof config !== 'undefined' && config !== 'new') {
         const json = loadPage(config);
 
@@ -452,10 +451,14 @@ function initializeConfig() {
             const titleIdMap = storeData.titles || {};
             let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
             document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-            if (json && json.length > 0) {
-              loadChanges(json);
-              loadPageSettings(config);
-              loadPageMetadata(config);
+            if (json) {
+              json.then(data => {
+                loadChanges(data);
+                loadPageSettings(config);
+                loadPageMetadata(config);
+              }).catch((error) => {
+                console.error('Error initializing config from Electron store:', error);
+              });
             }
           }).catch((error) => {
             console.error('Error initializing config from Electron store:', error);
@@ -1064,7 +1067,7 @@ function createNewConfigurationFile() {
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
         console.log(updatedData)
-        appSageStore = updatedData;
+        window.appSageStore = updatedData;
         window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
       }).catch((error) => {
         console.error('Error updating store data in Electron mode:', error);
