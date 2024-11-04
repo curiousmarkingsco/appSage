@@ -7,7 +7,7 @@ async function initializeDashboard() {
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
+        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : ''}
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
@@ -36,7 +36,7 @@ async function initializeDashboard() {
             <div class="col-span-1 pagecolumn group">
               <div
                 class="content-container text-base text-slate-50 rounded-md border-1 border-sky-600 mr-4 pb-2 min-w-52 max-w-36 text-center bg-slate-600 pt-2 mt-0">
-                <a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" onclick="loadEditor()"
+                <a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" href="${window.location.href}?config=new"
                   id="newPageButton">New Page</a>
               </div>
             </div>
@@ -57,9 +57,27 @@ async function initializeDashboard() {
       // Load pages from localStorage and populate the page list
       const container = document.getElementById('pageList');
       try {
-        const appSageStorage = JSON.parse(localStorage['appSageStorage']);
-        const pages = appSageStorage.pages;
-        const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        let appSageStorage, pages, titleIdMap;
+
+        if (!electronMode) {
+          // Using localStorage for non-Electron mode
+          appSageStorage = JSON.parse(localStorage['appSageStorage']);
+          pages = appSageStorage.pages;
+          titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        } else {
+          // Using Electron storage
+          window.api.readStoreData().then((storeData) => {
+            appSageStorage = storeData;
+            pages = appSageStorage.pages;
+            titleIdMap = storeData.titles || {};
+            console.log(titleIdMap)
+          }).catch((error) => {
+            console.error('Error reading store data in Electron mode:', error);
+            appSageStorage = {};
+            pages = {};
+            titleIdMap = {};
+          });
+        }
 
         // Populate page list with available pages
         Object.keys(pages).forEach(pageId => {
@@ -85,7 +103,7 @@ async function initializeDashboard() {
         container.innerHTML = `
           <div class="text-center col-span-3">
             <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
-            <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="${window.location.href}?config=${randId}">Start building a page</a>
+            <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="${window.location.href}?config=new">Start building a page</a>
           </div>
         `;
       }
@@ -106,7 +124,7 @@ function loadEditor(pageId = null) {
   if (typeof window.api !== 'undefined') {
     loadScript('./render/editor/main.js');
   } else {
-    initializeEditor().then(() => { setupPageEvents() });
+    initializeEditor();
   }
 }
 window.loadEditor = loadEditor;

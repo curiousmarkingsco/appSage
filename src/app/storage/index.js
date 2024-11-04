@@ -1,48 +1,38 @@
-// app/storage/index.js
+// src/storage/index.js
 import { promises as fs } from 'fs';
 import path from 'path';
-import { app } from 'electron'; 
+import { app } from 'electron';
 import { default as Store } from 'electron-store';
 import { fileURLToPath } from 'url';
+import crypto from 'crypto'; // Node.js crypto module import
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// ES Module imports for other files inside the storage directory
-// import { media } from './media.js';
-
-// import { revisions } from './revisions.js';
-// import { settings } from './settings.js';
-
-// Export them all in one module
-// export { media, page, revisions, settings };
-
-import { ipcMain } from 'electron';  // Electron module import
-import crypto from 'crypto'; // Node.js crypto module import
 
 let store;
 
 // Function to generate a salt
 function generateSalt() {
-  return crypto.randomBytes(16).toString('hex');  // Generate a random salt
+  return crypto.randomBytes(16).toString('hex'); // Generate a random salt
 }
 
 // Function to derive the encryption key using a stored salt
 function deriveKey(password, salt) {
   const iterations = 100000;
-  const keyLength = 32;  // 256 bits
+  const keyLength = 32; // 256 bits
   return crypto.pbkdf2Sync(password, salt, iterations, keyLength, 'sha512');
 }
 
 export async function getOrSetEncryptionKey(username, password, newStore = false) {
   try {
     // Use a separate store instance for unencrypted values like salt
-    const metaStore = new Store();  // No encryption here, just for metadata like salt
+    const metaStore = new Store(); // No encryption here, just for metadata like salt
 
     // Retrieve or generate the salt
     let salt = metaStore.get('salt');
     if (!salt) {
-      salt = await generateSalt();  // Generate a new salt if not found
-      metaStore.set('salt', salt);  // Store the salt unencrypted
+      salt = generateSalt(); // Generate a new salt if not found
+      metaStore.set('salt', salt); // Store the salt unencrypted
     }
 
     // Derive the encryption key using the password and the stored salt
@@ -50,45 +40,48 @@ export async function getOrSetEncryptionKey(username, password, newStore = false
 
     return encryptionKey;
   } catch (error) {
-    console.log('Error decrypting data:', error.stack || error);
-    return null;  // Return null if any error occurs during decryption
+    console.log('Error generating encryption key:', error.stack || error);
+    return null; // Return null if any error occurs during key derivation
   }
 }
 
 // Function to create the store
 export async function createOrFindStore(sessionKey, newStore = false) {
-  // Create the schema for the store (not encrypted)
-  const schema = await loadSchema();
-  const store = new Store({ schema });
-  // Check if we have existing encrypted data in the store
-  if (!newStore && store.has('encryptedData')) {
-    const data = readStore(sessionKey);
-    return data;
-  } else {
-    // Initialize the store without encryption
+  try {
+    // Create the schema for the store (not encrypted)
+    const schema = await loadSchema();
     const store = new Store({ schema });
+    const data = await readStoreData(sessionKey);
 
-    // Initialize default data
-    const defaultData = {
-      settings: {
-        fonts: { inter: 'Inter' },
-        colors: {},
-        advancedMode: false
-      },
-      pages: {},
-      titles: {}
-    };
+    // Check if we have existing encrypted data in the store
+    if (!newStore && data !== null) {
+      return data;
+    } else {
+      // Initialize default data
+      const defaultData = {
+        settings: {
+          fonts: { inter: 'Inter' },
+          colors: {},
+          advancedMode: false
+        },
+        pages: {},
+        titles: {}
+      };
 
-    // Encrypt and store the sensitive data manually
-    const encryptedData = encryptData(defaultData, sessionKey);
+      // Encrypt and store the sensitive data manually
+      const encryptedData = encryptData(defaultData, sessionKey);
 
-    store.set('encryptedData', encryptedData);
+      store.set('encryptedData', encryptedData);
 
-    return defaultData;
+      return defaultData;
+    }
+  } catch (error) {
+    console.error('Error creating or finding store:', error);
+    throw error;
   }
 }
 
-export async function readStore(sessionKey) {
+export async function readStoreData(sessionKey) {
   try {
     const encryptionKey = sessionKey;
     const schema = await loadSchema();
@@ -96,48 +89,65 @@ export async function readStore(sessionKey) {
     const encryptedData = store.get('encryptedData');
     const decryptedData = decryptData(encryptedData, encryptionKey);
     return decryptedData;
-  } catch (e) {
-    return `Failure: ${e}`;
+  } catch (error) {
+    console.error('Error reading store data:', error);
+    throw error;
   }
 }
 
-export async function updateStore(sessionKey, data) {
+export async function updateStoreData(sessionKey, updatedData) {
   try {
+    const encryptionKey = sessionKey;
     const schema = await loadSchema();
     const store = new Store({ schema });
-    const encryptedData = encryptData(data, sessionKey);
-    store.set('encryptedData', encryptedData);
-    readStore(sessionKey);
-  } catch (e) {
-    return `Failure: ${e}`;
+    // const encryptedData = store.get('encryptedData');
+    // const decryptedData = decryptData(encryptedData, encryptionKey);
+
+    // Merge updatedData with existing decryptedData (deep merge)
+    // const mergedData = deepMerge(decryptedData, updatedData);
+
+    // Encrypt and store the updated data
+    // const newEncryptedData = encryptData(mergedData, encryptionKey);
+    const newEncryptedData = encryptData(updatedData, encryptionKey);
+    store.set('encryptedData', newEncryptedData);
+
+    return await readStoreData(sessionKey);
+  } catch (error) {
+    console.error('Error updating store data:', error);
+    throw error;
   }
 }
 
-export async function deleteStore(username, password) {
-  const encryptionKey = await getOrSetEncryptionKey(username, password);
-  const schema = await loadSchema();
-  const store = new Store({ schema });
-  const encryptedData = store.set('encryptedData', data);
-  const decryptedData = decryptData(encryptedData, encryptionKey);
-  return decryptedData;
+// Function to perform a deep merge of two objects
+function deepMerge(target, source) {
+  for (const key of Object.keys(source)) {
+    if (
+      source[key] instanceof Object &&
+      key in target &&
+      target[key] instanceof Object
+    ) {
+      Object.assign(source[key], deepMerge(target[key], source[key]));
+    }
+  }
+  return { ...target, ...source };
 }
 
 // Function to encrypt data
 export function encryptData(data, encryptionKey) {
   try {
-    const iv = crypto.randomBytes(16);  // Initialization vector
+    const iv = crypto.randomBytes(16); // Initialization vector
     const cipher = crypto.createCipheriv('aes-256-cbc', encryptionKey, iv);
-    
+
     let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     return {
       iv: iv.toString('hex'),
       content: encrypted
     };
   } catch (error) {
     console.log('Error encrypting data:', error.stack || error);
-    return null;  // Return null if any error occurs during decryption
+    return null; // Return null if any error occurs during encryption
   }
 }
 
@@ -146,25 +156,25 @@ export function decryptData(encryptedData, encryptionKey) {
   try {
     const iv = Buffer.from(encryptedData.iv, 'hex');
     const decipher = crypto.createDecipheriv('aes-256-cbc', encryptionKey, iv);
-    
+
     let decrypted = decipher.update(encryptedData.content, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return JSON.parse(decrypted);
   } catch (error) {
     console.log('Error decrypting data:', error.stack || error);
-    return null;  // Return null if any error occurs during decryption
+    return null; // Return null if any error occurs during decryption
   }
 }
 
-// Helper function to dynamically load schema based on environment variable
-async function loadSchema() {
-  const appVersion = app.getVersion();  // Get the app version (e.g., '0.0.0')
+// Helper function to dynamically load schema based on app version
+export async function loadSchema() {
+  const appVersion = app.getVersion(); // Get the app version (e.g., '0.0.0')
   const schemaPath = path.join(__dirname, 'schema', `${appVersion}.json`);
 
   try {
-    const schemaData = await fs.readFile(schemaPath, 'utf8');  // Load schema file as string
-    return JSON.parse(schemaData);  // Parse the JSON schema
+    const schemaData = await fs.readFile(schemaPath, 'utf8'); // Load schema file as string
+    return JSON.parse(schemaData); // Parse the JSON schema
   } catch (error) {
     console.error(`Error loading schema for version ${appVersion}:`, error);
     throw new Error('Failed to load schema');

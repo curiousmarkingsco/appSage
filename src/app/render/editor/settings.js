@@ -64,10 +64,24 @@ function initializeSettings() {
   
     
     if (!electronMode) {
+      // Using localStorage for non-Electron mode
       localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
     } else {
-      appSageStore.settings = formData;
-    }
+      // Using Electron storage
+      window.api.readStoreData().then((storeData) => {
+        // Update the settings with formData
+        storeData.settings = formData;
+        
+        // Save the updated data back to Electron store
+        window.api.updateStoreData(storeData).then(updatedData => {
+          appSageStore = updatedData;
+        }).catch((error) => {
+          console.error('Error updating settings in Electron mode:', error);
+        });
+      }).catch((error) => {
+        console.error('Error reading store data in Electron mode:', error);
+      });
+    }    
     generateGfontsEmbedCode();
   
     const params = new URLSearchParams(window.location.search);

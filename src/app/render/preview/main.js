@@ -72,6 +72,7 @@ window.initializePreview = initializePreview;
 // DATA IN: String
 function loadPreview(pageId) {
   if (!electronMode) {
+    // Using localStorage for non-Electron mode
     const json = loadPage(pageId);  // Uses the already-refactored loadPage
     if (json) {
       const pageContainer = document.getElementById('page');
@@ -90,19 +91,27 @@ function loadPreview(pageId) {
       console.error('No saved data found for pageId:', pageId);
     }
   } else {
-    // STORAGE // TODO
-    // const pageHtml = store.get(`appSage.pages.${pageId}.html`);
-    // if (pageHtml) {
-    //   const pageContainer = document.getElementById('page');
-    //   pageContainer.innerHTML = pageHtml;
+    // Using Electron storage
+    window.api.readStoreData().then((storeData) => {
+      if (storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].page_data) {
+        const pageContainer = document.getElementById('page');
+        pageContainer.innerHTML = ''; // Clear existing content
 
-    //   document.querySelector('title').textContent = pageId;
+        document.querySelector('title').textContent = pageId;
 
-    //   loadPageSettings(pageId, true);
-    //   loadPageMetadata(pageId);
-    // } else {
-    //   console.error('No saved data found for pageId:', pageId);
-    // }
+        const data = storeData.pages[pageId].page_data;
+        data.forEach(item => {
+          pageContainer.innerHTML += item.content;
+        });
+
+        loadPageSettings(pageId, true);
+        loadPageMetadata(pageId);
+      } else {
+        console.error('No saved data found for pageId:', pageId);
+      }
+    }).catch((error) => {
+      console.error('Error loading preview from Electron store:', error);
+    });
   }
 } // DATA OUT: null
 window.loadPreview = loadPreview;

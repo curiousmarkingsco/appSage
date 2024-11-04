@@ -2,9 +2,6 @@
 const path = require('path');
 
 module.exports = {
-  output: {
-    path: path.resolve(__dirname, 'dist'), // Common output path
-  },
   module: {
     rules: [
       {
@@ -21,9 +18,5 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js'], // Common file extensions
-  },
-  node: {
-    __dirname: false,
-    __filename: false,
   },
 };

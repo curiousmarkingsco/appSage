@@ -13,16 +13,27 @@
 // DATA IN: String
 function loadPage(pageId) {
   if (!electronMode) {
+    // Using localStorage when not in Electron mode
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (appSageStorage.pages && appSageStorage.pages[pageId] && appSageStorage.pages[pageId].page_data) {
       return appSageStorage.pages[pageId].page_data;
     } else {
       return null;
     }
-  } else {
-    const page = appSageStore.pages[pageId];
-    if (typeof page === 'undefined') return null;
-    return page.page_data
+  } else if (electronMode) {
+    // Using Electron storage
+    return window.api.readStoreData().then((storeData) => {
+      if (storeData.pages) {
+        if (!storeData.pages[pageId]) storeData.pages[pageId] = {};
+        if (!storeData.pages[pageId].page_data) storeData.pages[pageId].page_data = {};
+        return storeData.pages[pageId].page_data;
+      } else {
+        return null;
+      }
+    }).catch((error) => {
+      console.error('Error loading page data from Electron store:', error);
+      return null;
+    });
   }
 } // DATA OUT: String || null
 window.loadPage = loadPage;
@@ -32,55 +43,60 @@ window.loadPage = loadPage;
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
 function loadPageMetadata(pageId) {
+  const element = document.querySelector('head');
+
   if (!electronMode) {
+    // Using localStorage for non-Electron mode
     const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-    const metaTags = storedData.pages[pageId].settings.metaTags;
     const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
 
-    if (metaTags && metaTags !== '') {
-      const element = document.querySelector('head');
-      metaTags.forEach(tag => {
-        const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
-        metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
-        metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
-        element.appendChild(metaTag);
-      });
-    } else {
-      // STORAGE // TODO
+    if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
+      const metaTags = storedData.pages[pageId].settings.metaTags;
+
+      if (metaTags && metaTags.length > 0) {
+        metaTags.forEach(tag => {
+          const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
+          metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
+          metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
+          element.appendChild(metaTag);
+        });
+      }
     }
 
     if (fontSettings) {
-      const element = document.querySelector('head');
-      let fonts = Object.values(fontSettings.fonts).join('&family=');
+      const fonts = Object.values(fontSettings.fonts).join('&family=');
       const metaTag = document.createElement('link');
       metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
       metaTag.setAttribute('rel', 'stylesheet');
       element.appendChild(metaTag);
     }
   } else {
-    // Use electron-store for metadata
-    const settings = store.get(`appSage.pages.${pageId}.settings`);
-    const metaTags = settings ? settings.metaTags : null;
-    const fonts = store.get('appSage.settings.fonts');
+    // Using Electron storage
+    window.api.readStoreData().then((storeData) => {
+      if (storeData && storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].settings) {
+        const metaTags = storeData.pages[pageId].settings.metaTags;
 
-    if (metaTags) {
-      const element = document.querySelector('head');
-      metaTags.forEach(tag => {
-        const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
-        metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
-        metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
+        if (metaTags && metaTags.length > 0) {
+          metaTags.forEach(tag => {
+            const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
+            metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
+            metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
+            element.appendChild(metaTag);
+          });
+        }
+      }
+
+      const fontSettings = storeData.settings;
+      if (fontSettings && fontSettings.fonts) {
+        const fontsList = Object.values(fontSettings.fonts).join('&family=');
+        const metaTag = document.createElement('link');
+        metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fontsList}&display=swap`);
+        metaTag.setAttribute('rel', 'stylesheet');
         element.appendChild(metaTag);
-      });
-    }
-
-    if (fonts) {
-      const element = document.querySelector('head');
-      let fontsList = Object.values(fonts).join('&family=');
-      const metaTag = document.createElement('link');
-      metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fontsList}&display=swap`);
-      metaTag.setAttribute('rel', 'stylesheet');
-      element.appendChild(metaTag);
-    }
+      }
+    }).catch((error) => {
+      console.error('Error loading page metadata from Electron store:', error);
+    });
   }
 } // DATA OUT: String || null
 window.loadPageMetadata = loadPageMetadata;

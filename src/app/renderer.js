@@ -1,5 +1,5 @@
 // renderer.js
-console.log('farts')
+let loadedfgwug;
 // Define `global` in the renderer process to mimic Node.js behavior
 if (typeof global === 'undefined') {
   var global = window;  // In the browser, `global` is mapped to `window`
@@ -7,10 +7,6 @@ if (typeof global === 'undefined') {
 
 var appSageStore;
 window.electronMode = !(typeof window.api === 'undefined');
-
-window.onload = function () {
-  routeRequestedResource();
-};
 
 document.addEventListener('DOMContentLoaded', function () {
   if (electronMode) {
@@ -23,18 +19,11 @@ document.addEventListener('DOMContentLoaded', function () {
     /* shut: THIS AREA FOR DEV PURPOSES, DELETE ME! */
 
     // Initialize the store and log the result or error
-    window.api.createOrFindStore(username, userPassword, newStore).then(store => {
-      appSageStore = store;
+    window.api.createOrFindStore(username, userPassword, newStore).then(data => {
+      appSageStore = data;
     }).catch(error => {
       console.error('Error initializing store:', error.stack || error);
     });
-
-
-    // window.api.readStore().then(store => {
-    //   appSageStore = store;
-    // }).catch(error => {
-    //   console.error('Error initializing store:', error.stack || error);
-    // });
 
     loadScript('./render/tailwind.js', false).then(() => {
       loadScript('./render/tailwind.config.js', false).then(() => {
@@ -43,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
       })
     });
   } else {
+    routeRequestedResource();
   }
 });
 
@@ -74,19 +64,28 @@ function loadScript(scriptSrc, async = true) {
 function routeRequestedResource() {
   initializeGlobals().then(() => {
     const params = new URLSearchParams(window.location.search);
+
     const config = params.get('config');
-    if (config) loadScript('./render/editor/main.js').then(() => { initializeEditor() });
+    if (config) {
+      if (!electronMode) initializeEditor()
+      if (electronMode) loadScript('./render/editor/main.js').then(() => { initializeEditor() });
+    }
 
     const pageConfig = params.get('page');
-    if (pageConfig) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { activateComponents() }) });
+    if (pageConfig) {
+      if (!electronMode) initializeEditor();
+      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { activateComponents() }) });
+    }
 
-    if (!config && !pageConfig) loadScript('./render/index/main.js').then(() => { initializeDashboard() });
+    if (!config && !pageConfig) {
+      if (!electronMode) initializeDashboard();
+      if (electronMode) loadScript('./render/index/main.js').then(() => { initializeDashboard() });
+    }
   });
 }
 
 function activateComponents(editor = false) {
   const components = document.querySelectorAll('#page .pagecomponent')
-  // node.nodeType === Node.ELEMENT_NODE && !processedNodes.has(node)){
   if (components.length > 0) {
     components.forEach((component) => {
       const comp = component.querySelector('[data-component-name]');
@@ -141,8 +140,14 @@ function initializeGlobals() {
       if (!electronMode && localStorage.getItem(appSageSettingsString)) {
         const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
         if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
-      } else {
-        window.advancedMode = appSageStore.settings.advancedMode;
+      } else if (electronMode) {
+        window.api.readStoreData().then((storeData) => {
+          if (storeData && storeData.settings && storeData.settings.advancedMode) {
+            window.advancedMode = storeData.settings.advancedMode;
+          }
+        }).catch((error) => {
+          console.error('Error fetching settings from Electron store:', error);
+        });
       }
 
       updateTailwindConfig();
