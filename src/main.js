@@ -3,6 +3,7 @@ import isDev from 'electron-is-dev';
 import { app, BrowserWindow, nativeImage, ipcMain, Tray } from 'electron';
 import path from 'path';
 import { getOrSetEncryptionKey, createOrFindStore, readStoreData, updateStoreData } from './app/storage/index.js';
+import { saveMediaFileToPage } from './app/storage/media.js';
 
 const __dirname = path.resolve();
 
@@ -68,10 +69,12 @@ function createWindow() {
     if (isDev) {
       mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
         details.responseHeaders['Content-Security-Policy'] = [
-          "default-src 'self'; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+          "default-src 'self'; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;"
         ];
         callback({ cancel: false, responseHeaders: details.responseHeaders });
       });
+    } else {
+      // TODO
     }
   }, 3000); // Match the duration of splash.js
   splash.close();
@@ -122,3 +125,17 @@ ipcMain.handle('set-store', async (event, { storeObject }) => {
     throw error;
   }
 });
+
+ipcMain.handle('set-media', async (event, { pageId, mediaBuffer, mediaKey }) => {
+  try {
+    const buffer = Buffer.from(mediaBuffer); // Convert Uint8Array to Buffer
+    const mediaPath = path.join(mediaFolderPath, `${mediaId}.bin`);
+
+    const store = await saveMediaFileToPage(sessionKey, pageId, mediaPath, mediaKey);
+    return store;
+  } catch (error) {
+    console.error('Error updating store:', error);
+    throw error;
+  }
+});
+

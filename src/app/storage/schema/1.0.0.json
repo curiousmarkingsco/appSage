@@ -35,7 +35,13 @@
               }
             },
             "components": { "type": "object" },
-            "settings": { "type": "object" }
+            "settings": { "type": "object" },
+            "media_attachments": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
           }
         }
       }

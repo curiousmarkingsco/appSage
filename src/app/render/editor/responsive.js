@@ -228,7 +228,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
     } else if (labelPrefix === 'Background Image File') {
       grid.style.backgroundImage = '';
       generateMediaUrl(event, grid, true);
-      displayMediaFromIndexedDB(grid);
+      displayMediaFromStorage(grid);
     }
   };
 } // DATA OUT: null

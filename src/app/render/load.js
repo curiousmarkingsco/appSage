@@ -175,8 +175,6 @@ function addMetasToHead() {
 }
 window.addMetasToHead = addMetasToHead;
 
-
-
 // Helper functions for IndexedDB storage
 function openDatabase() {
   return new Promise((resolve, reject) => {

@@ -16,7 +16,7 @@ function addContentContainer() {
   const contentTag = document.createElement('p'); // create a paragraph by default
   contentContainer.append(contentTag);
 
-  displayMediaFromIndexedDB(contentContainer.firstElementChild);
+  displayMediaFromStorage(contentContainer.firstElementChild);
   enableEditContentOnClick(contentContainer);
   observeClassManipulation(contentContainer);
   addContentOptions(contentContainer);
@@ -293,9 +293,9 @@ function generateMediaUrl(event, contentContainer, background) {
 
     reader.onload = async function (e) {
 
-      // Store the media file in IndexedDB
+      // Store the media file in IndexedDB or file system (depending on deployment/package)
       const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
-      await saveMediaToIndexedDB(file, mediaId);
+      await saveMediaToStorage(file, mediaId);
       contentContainer.setAttribute('data-media-id', mediaId);
 
       if (background) {
@@ -310,33 +310,63 @@ function generateMediaUrl(event, contentContainer, background) {
 } // DATA OUT: null
 window.generateMediaUrl = generateMediaUrl;
 
-async function saveMediaToIndexedDB(mediaBlob, mediaId) {
-  const db = await openDatabase();
-  const transaction = db.transaction(['mediaStore'], 'readwrite');
-  const store = transaction.objectStore('mediaStore');
-  const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
-  store.put(mediaEntry);
+async function saveMediaToStorage(mediaBlob, mediaId) {
+  if (!electronMode) {
+    // Uses IndexedDB
+    const db = await openDatabase();
+    const transaction = db.transaction(['mediaStore'], 'readwrite');
+    const store = transaction.objectStore('mediaStore');
+    const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
+    store.put(mediaEntry);
+  } else if (electronMode) {
+    try {
+      // Convert the mediaBlob to an ArrayBuffer
+      const arrayBuffer = await mediaBlob.arrayBuffer();
+      console.log(arrayBuffer)
+
+      // Call the exposed API function to save the media
+      const uint8Array = new Uint8Array(arrayBuffer);
+      await window.api.saveMediaFile(getPageId(), uint8Array, mediaId).then(updatedStore => {
+        window.appSageStore = updatedStore;
+        console.log(`Media saved with ID: ${mediaId}`);
+      });
+    } catch (error) {
+      console.error('Error saving media in Electron mode:', error);
+    }
+  }
 }
-window.saveMediaToIndexedDB = saveMediaToIndexedDB;
+window.saveMediaToStorage = saveMediaToStorage;
 
-async function getMediaFromIndexedDB(mediaId) {
-  const db = await openDatabase();
-  const transaction = db.transaction(['mediaStore'], 'readonly');
-  const store = transaction.objectStore('mediaStore');
+async function getMediaFromStorage(mediaId) {
+  if (!electronMode) {
+    // Uses IndexedDB
+    const db = await openDatabase();
+    const transaction = db.transaction(['mediaStore'], 'readonly');
+    const store = transaction.objectStore('mediaStore');
 
-  return new Promise((resolve, reject) => {
-    const request = store.get(mediaId);
-    request.onsuccess = (event) => resolve(event.target.result);
-    request.onerror = (event) => reject('Error fetching media');
-  });
+    return new Promise((resolve, reject) => {
+      const request = store.get(mediaId);
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = (event) => reject('Error fetching media');
+    });
+  } else if (electronMode) {
+    // Uses the API exposed in preload.js for Electron
+    try {
+      const mediaBuffer = await window.api.getMediaFile(mediaId);
+      return mediaBuffer; // Return the media file as a Buffer
+    } catch (error) {
+      console.error('Error fetching media in Electron mode:', error);
+      return null;
+    }
+  }
 }
-window.getMediaFromIndexedDB = getMediaFromIndexedDB;
+window.getMediaFromStorage = getMediaFromStorage;
 
-function displayMediaFromIndexedDB(targetElement) {
+function displayMediaFromStorage(targetElement) {
   const mediaId = targetElement.getAttribute('data-media-id');
 
   if (mediaId) {
-    getMediaFromIndexedDB(mediaId).then((mediaEntry) => {
+    getMediaFromStorage(mediaId).then((mediaEntry) => {
       if (mediaEntry) {
         const mediaElement = ['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName);
         const mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
@@ -352,11 +382,11 @@ function displayMediaFromIndexedDB(targetElement) {
         }
       }
     }).catch((error) => {
-      console.error('Error displaying media from IndexedDB:', error);
+      console.error(`Error displaying media from ${ electronMode ? 'Electron Store' : 'IndexedDB'}:`, error);
     });
   }
 }
-window.displayMediaFromIndexedDB = displayMediaFromIndexedDB;
+window.displayMediaFromStorage = displayMediaFromStorage;
 
 // This function is a half-complete attempt as a catch-all way of editing any
 // and all HTML elements, particularly those that may have been copy/pasted in.

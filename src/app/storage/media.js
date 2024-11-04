@@ -1,43 +1,48 @@
-// app/storage/media.js
+import { promises as fs } from 'fs';
+import path from 'path';
+import { app } from 'electron';
+import { readStoreData } from './index.js';
 
-const fs = require('fs');
-const path = require('path');
+// Initialize electron-store
+const mediaFolderPath = path.join(app.getPath('userData'), 'media');
 
-// Function to get the media storage path based on the current date
-function getMediaStoragePath(basePath) {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
-  const day = String(today.getDate()).padStart(2, '0');
+// Function to save a media file to disk and store its path in storeData.pages
+export async function saveMediaFileToPage(sessionKey, pageId, mediaPath, mediaKey) {
+  try {
+    const storeData = readStoreData(sessionKey);
+    // Ensure the media folder exists
+    await fs.mkdir(mediaFolderPath, { recursive: true });
 
-  // Construct the media path (e.g., /basePath/media/2024/10/24)
-  return path.join(basePath, 'media', year, month, day);
-}
+    // Copy the file to the media folder
+    const fileName = path.basename(mediaPath);
+    const destinationPath = path.join(mediaFolderPath, fileName);
+    await fs.copyFile(mediaPath, destinationPath);
 
-// Function to save a media file to the appropriate path
-function saveMediaFile(fileName, fileContent, basePath = app.getPath('userData')) {
-  // Get the storage path based on the current date
-  const mediaPath = getMediaStoragePath(basePath);
+    // Ensure the page object and media_attachments structure exist
+    if (!storeData.pages[pageId]) {
+      storeData.pages[pageId] = { media_attachments: {} };
+    }
 
-  // Ensure the directory structure exists
-  if (!fs.existsSync(mediaPath)) {
-    fs.mkdirSync(mediaPath, { recursive: true });
+    if (!storeData.pages[pageId].media_attachments) {
+      storeData.pages[pageId].media_attachments = {};
+    }
+
+    // Store the file path relative to the mediaKey
+    storeData.pages[pageId].media_attachments[mediaKey] = destinationPath;
+
+    // Save the updated store data
+    return updateStoreData(sessionKey, storeData);
+  } catch (error) {
+    console.error('Error saving media file to page:', error);
+    throw error;
   }
-
-  const uniqueFileName = `${Date.now()}_${fileName}`; // Example: 1697899654679_example.jpg
-
-  // Construct the full file path (e.g., /basePath/media/2024/10/24/example.jpg)
-  const filePath = path.join(mediaPath, uniqueFileName);
-
-  // Save the file (assuming fileContent is a Buffer or string)
-  fs.writeFileSync(filePath, fileContent);
-
-  console.log(`Media file saved at: ${filePath}`);
 }
 
-// Example usage
-// const basePath = '/Users/someuser/Library/Application Support/appSage'; // Example base path
-// const fileName = 'example.jpg';
-// const fileContent = Buffer.from('File content here'); // This should be the actual file content
-
-// saveMediaFile(basePath, fileName, fileContent);
+// Function to retrieve the media file path from storeData.pages
+function getMediaFilePathFromPage(pageId, mediaKey) {
+  const storeData = store.get('appSageStorage') || { pages: {} };
+  if (storeData.pages[pageId] && storeData.pages[pageId].media_attachments) {
+    return storeData.pages[pageId].media_attachments[mediaKey] || null;
+  }
+  return null;
+}

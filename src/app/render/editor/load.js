@@ -28,7 +28,7 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
-    displayMediaFromIndexedDB(contentContainer.firstElementChild);
+    displayMediaFromStorage(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });
@@ -50,10 +50,10 @@ function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
   enableEditGridOnClick(grid);
-  displayMediaFromIndexedDB(grid);
+  displayMediaFromStorage(grid);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
     enableEditColumnOnClick(column);
-    displayMediaFromIndexedDB(column);
+    displayMediaFromStorage(column);
     column.appendChild(createAddContentButton(column));
     const addComponentButton = createAddComponentButton(column);
     column.appendChild(addComponentButton);
@@ -64,9 +64,9 @@ function restoreGridCapabilities(grid) {
       column.appendChild(addHtmlButton);
     }
     enableEditContainerOnClick(column);
-    displayMediaFromIndexedDB(column);
+    displayMediaFromStorage(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
-      displayMediaFromIndexedDB(contentContainer.firstElementChild);
+      displayMediaFromStorage(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
     });
@@ -76,7 +76,7 @@ function restoreGridCapabilities(grid) {
       const addChildContainerButton = createAddContainerButton(contentContainer);
       contentContainer.appendChild(addChildContainerButton);
       enableEditContainerOnClick(contentContainer);
-      displayMediaFromIndexedDB(contentContainer);
+      displayMediaFromStorage(contentContainer);
     });
   });
 } // DATA OUT: null
@@ -96,7 +96,7 @@ function restoreContainerCapabilities(container) {
     container.appendChild(addHtmlButton);
   }
   enableEditContainerOnClick(container);
-  displayMediaFromIndexedDB(container);
+  displayMediaFromStorage(container);
   Array.from(container.querySelectorAll('.pagecontainer')).forEach(contentContainer => {
     const addChildContentButton = createAddContentButton(contentContainer);
     contentContainer.appendChild(addChildContentButton);
@@ -109,10 +109,10 @@ function restoreContainerCapabilities(container) {
       contentContainer.appendChild(addChildHtmlButton);
     }
     enableEditContainerOnClick(contentContainer);
-    displayMediaFromIndexedDB(contentContainer);
+    displayMediaFromStorage(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
-    displayMediaFromIndexedDB(contentContainer.firstElementChild);
+    displayMediaFromStorage(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
   });

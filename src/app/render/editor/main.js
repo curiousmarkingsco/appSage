@@ -276,6 +276,7 @@ async function loadEditorScripts() {
     await loadScript('./render/editor/responsive.js');
     await loadScript('./render/remote_save.js');
     await loadScript('./render/editor/media.js');
+    await loadScript('./render/main.js');
     return new Promise((resolve, reject) => {
       try {
         // TODO
@@ -674,7 +675,7 @@ function wrapElements(container) {
         child.innerHTML = ''; // Clear original content
         child.appendChild(wrapper);
         // Enable editing and observation for the element
-        displayMediaFromIndexedDB(child.firstElementChild);
+        displayMediaFromStorage(child.firstElementChild);
         enableEditContentOnClick(child);
         observeClassManipulation(child);
       } else if (hasContentChildren && child.tagName === 'DIV' && child.children.length === 1) {
@@ -688,7 +689,7 @@ function wrapElements(container) {
         container.replaceChild(wrapper, child);
 
         // Enable editing and observation for the wrapper
-        displayMediaFromIndexedDB(wrapper.firstElementChild);
+        displayMediaFromStorage(wrapper.firstElementChild);
         enableEditContentOnClick(wrapper);
         observeClassManipulation(wrapper);
 
