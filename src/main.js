@@ -128,10 +128,7 @@ ipcMain.handle('set-store', async (event, { storeObject }) => {
 
 ipcMain.handle('set-media', async (event, { pageId, mediaBuffer, mediaKey }) => {
   try {
-    const buffer = Buffer.from(mediaBuffer); // Convert Uint8Array to Buffer
-    const mediaPath = path.join(mediaFolderPath, `${mediaId}.bin`);
-
-    const store = await saveMediaFileToPage(sessionKey, pageId, mediaPath, mediaKey);
+    const store = await saveMediaFileToPage(sessionKey, pageId, mediaBuffer, mediaKey);
     return store;
   } catch (error) {
     console.error('Error updating store:', error);

@@ -428,42 +428,33 @@ function loadScripts(scriptUrls) {
 }
 window.loadScripts = loadScripts;
 
-function initializeConfig() {
+async function initializeConfig() {
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config');
+  let pageData = await loadPage(config);
   return new Promise((resolve, reject) => {
     try {
-      const params = new URLSearchParams(window.location.search);
-      const config = params.get('config');
       if (typeof config !== 'undefined' && config !== 'new') {
-        const json = loadPage(config);
-
         if (!electronMode) {
           // Using localStorage for non-Electron mode
           const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
           let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
           document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-          if (json && json.length > 0) {
-            loadChanges(json);
+          if (pageData && pageData.length > 0) {
+            loadChanges(pageData);
             loadPageSettings(config);
             loadPageMetadata(config);
           }
         } else if (electronMode) {
           // Using Electron storage
-          window.api.readStoreData().then((storeData) => {
-            const titleIdMap = storeData.titles || {};
-            let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-            document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-            if (json) {
-              json.then(data => {
-                loadChanges(data);
-                loadPageSettings(config);
-                loadPageMetadata(config);
-              }).catch((error) => {
-                console.error('Error initializing config from Electron store:', error);
-              });
+          if (pageData) {
+            document.querySelector('title').textContent = `Editing: ${pageData.title} | appSage`;
+            if ((typeof pageData.page_data !== 'undefined')) {
+              loadChanges(pageData.page_data);
+              loadPageSettings(config);
+              loadPageMetadata(config);
             }
-          }).catch((error) => {
-            console.error('Error initializing config from Electron store:', error);
-          });
+          }
         }
         setupAutoSave(config);
       } else {
@@ -1067,7 +1058,6 @@ function createNewConfigurationFile() {
 
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
-        console.log(updatedData)
         window.appSageStore = updatedData;
         window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
       }).catch((error) => {

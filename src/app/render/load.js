@@ -11,7 +11,7 @@
 
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
-function loadPage(pageId) {
+async function loadPage(pageId) {
   if (!electronMode) {
     // Using localStorage when not in Electron mode
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
@@ -26,7 +26,7 @@ function loadPage(pageId) {
       if (storeData.pages) {
         if (!storeData.pages[pageId]) storeData.pages[pageId] = {};
         if (!storeData.pages[pageId].page_data) storeData.pages[pageId].page_data = {};
-        return storeData.pages[pageId].page_data;
+        return storeData.pages[pageId];
       } else {
         return null;
       }

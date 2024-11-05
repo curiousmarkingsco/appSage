@@ -297,11 +297,17 @@ function generateMediaUrl(event, contentContainer, background) {
       const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
       await saveMediaToStorage(file, mediaId);
       contentContainer.setAttribute('data-media-id', mediaId);
-
-      if (background) {
-        contentContainer.style.backgroundImage = `url(${e.target.result})`;
+      let result = e.target.result;
+      const fileUrl = await getMediaFromStorage(mediaId);
+      if (fileUrl) {
+        result = fileUrl;
       } else {
-        contentContainer.src = e.target.result;
+        result = e.target.result;
+      }
+      if (background) {
+        contentContainer.style.backgroundImage = `url(${result})`;
+      } else {
+        contentContainer.src = result;
       }
     };
 
@@ -322,13 +328,11 @@ async function saveMediaToStorage(mediaBlob, mediaId) {
     try {
       // Convert the mediaBlob to an ArrayBuffer
       const arrayBuffer = await mediaBlob.arrayBuffer();
-      console.log(arrayBuffer)
 
       // Call the exposed API function to save the media
       const uint8Array = new Uint8Array(arrayBuffer);
-      await window.api.saveMediaFile(getPageId(), uint8Array, mediaId).then(updatedStore => {
-        window.appSageStore = updatedStore;
-        console.log(`Media saved with ID: ${mediaId}`);
+      await window.api.saveMediaFileToPage(getPageId(), uint8Array, mediaId).then(updatedData => {
+        window.appSageStore = updatedData;
       });
     } catch (error) {
       console.error('Error saving media in Electron mode:', error);
@@ -352,8 +356,13 @@ async function getMediaFromStorage(mediaId) {
   } else if (electronMode) {
     // Uses the API exposed in preload.js for Electron
     try {
-      const mediaBuffer = await window.api.getMediaFile(mediaId);
-      return mediaBuffer; // Return the media file as a Buffer
+      appSageStore.pages ??= {};
+      appSageStore.pages[getPageId()] ??= {};
+      appSageStore.pages[getPageId()].media_attachments ??= {};
+
+      // Now you can safely access or assign a value to media_attachments
+      const mediaAttachment = appSageStore.pages[getPageId()].media_attachments[mediaId];
+      return mediaAttachment;
     } catch (error) {
       console.error('Error fetching media in Electron mode:', error);
       return null;
@@ -362,15 +371,19 @@ async function getMediaFromStorage(mediaId) {
 }
 window.getMediaFromStorage = getMediaFromStorage;
 
-function displayMediaFromStorage(targetElement) {
+async function displayMediaFromStorage(targetElement) {
   const mediaId = targetElement.getAttribute('data-media-id');
 
   if (mediaId) {
-    getMediaFromStorage(mediaId).then((mediaEntry) => {
+    await getMediaFromStorage(mediaId).then((mediaEntry) => {
       if (mediaEntry) {
         const mediaElement = ['IMG', 'VIDEO', 'AUDIO'].includes(targetElement.tagName);
-        const mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
-        mediaEntry.url = mediaUrl;
+        let mediaUrl;
+        if (typeof mediaEntry.url !== undefined) mediaUrl = mediaEntry;
+        if (!mediaUrl) {
+          mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
+          mediaEntry.url = mediaUrl;
+        }
         if (mediaElement) {
           targetElement.src = mediaUrl;
         } else {

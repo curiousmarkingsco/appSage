@@ -52,11 +52,12 @@ export async function createOrFindStore(sessionKey, newStore = false) {
     const schema = await loadSchema();
     const store = new Store({ schema });
     const data = await readStoreData(sessionKey);
-
-    // Check if we have existing encrypted data in the store
-    if (!newStore && data !== null) {
+    const realDataExists = Object.values(data ? data.titles : {}).length > 0;
+    if (realDataExists) {
       return data;
-    } else {
+    }
+    // Check if we have existing encrypted data in the store
+    if (newStore) {
       // Initialize default data
       const defaultData = {
         settings: {
@@ -87,7 +88,7 @@ export async function readStoreData(sessionKey) {
     const schema = await loadSchema();
     const store = new Store({ schema });
     const encryptedData = store.get('encryptedData');
-    const decryptedData = decryptData(encryptedData, encryptionKey);
+    const decryptedData = await decryptData(encryptedData, encryptionKey);
     return decryptedData;
   } catch (error) {
     console.error('Error reading store data:', error);
@@ -102,26 +103,11 @@ export async function updateStoreData(sessionKey, updatedData) {
     const store = new Store({ schema });
     const newEncryptedData = encryptData(updatedData, encryptionKey);
     store.set('encryptedData', newEncryptedData);
-
     return await readStoreData(sessionKey);
   } catch (error) {
     console.error('Error updating store data:', error);
     throw error;
   }
-}
-
-// Function to perform a deep merge of two objects
-function deepMerge(target, source) {
-  for (const key of Object.keys(source)) {
-    if (
-      source[key] instanceof Object &&
-      key in target &&
-      target[key] instanceof Object
-    ) {
-      Object.assign(source[key], deepMerge(target[key], source[key]));
-    }
-  }
-  return { ...target, ...source };
 }
 
 // Function to encrypt data

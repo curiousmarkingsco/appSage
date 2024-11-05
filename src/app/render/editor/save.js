@@ -47,7 +47,7 @@ window.setupAutoSave = setupAutoSave;
 // This function saves all active element and style additions/changes/removals
 // during the designer's traditional editor workflow.
 // DATA IN: String
-function saveChanges(page) {
+async function saveChanges(page) {
   const pageContainer = document.getElementById('page');
   // Query only elements with 'ugc-keep' that are meant to be saved
   const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
@@ -56,7 +56,8 @@ function saveChanges(page) {
     className: element.className, // deprecated
     content: getCleanInnerHTML(element)
   }));
-  savePageData(page, data);
+  await savePageData(page, data);
+  savePageSettingsChanges(page);
   console.log('Changes saved successfully!');
 } // DATA OUT: null
 window.saveChanges = saveChanges;
@@ -65,7 +66,7 @@ window.saveChanges = saveChanges;
 // for subsequent content to be stored. If this objects already exists, it
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
-function savePageData(pageId, json) {
+async function savePageData(pageId, json) {
   if (!electronMode) {
     // Using localStorage for non-Electron mode
     const data = JSON.stringify(json);
@@ -85,12 +86,9 @@ function savePageData(pageId, json) {
       }
 
       storeData.pages[pageId] = { ...storeData.pages[pageId], page_data: json };
-      // console.log(storeData.pages[pageId].page_data[0].content)
       // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
-        // console.log(updatedData.pages[pageId].page_data[0].content)
         window.appSageStore = updatedData;
-        savePageSettingsChanges(page);
       }).catch((error) => {
         console.error('Error saving page data in Electron mode:', error);
       });

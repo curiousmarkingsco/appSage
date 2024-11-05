@@ -70,10 +70,10 @@ window.initializePreview = initializePreview;
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
 // DATA IN: String
-function loadPreview(pageId) {
+async function loadPreview(pageId) {
+  const json = await loadPage(pageId);  // Uses the already-refactored loadPage
   if (!electronMode) {
     // Using localStorage for non-Electron mode
-    const json = loadPage(pageId);  // Uses the already-refactored loadPage
     if (json) {
       const pageContainer = document.getElementById('page');
       pageContainer.innerHTML = ''; // Clear existing content

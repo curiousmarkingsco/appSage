@@ -12,15 +12,15 @@ document.addEventListener('DOMContentLoaded', function () {
   if (electronMode) {
     // STORAGE // TODO - Create basic authentication
     /* open: THIS AREA FOR DEV PURPOSES, DELETE ME! */
-    let username = 'fewgfiufeeufi';
-    const userPassword = 'fwefew';
-    const newStore = username === '';
-    if (newStore) username = 'fewgfiufeeufi'
+    let username = 'PLACEHOLDER_USERNAME';
+    const userPassword = 'PLACEHOLDER_PASSWORD';
+    const newStore = username === 'PLACEHOLDER_USERNAME';
+    if (newStore) username = 'PLACEHOLDER_USERNAME_INITIALIZED'
     /* shut: THIS AREA FOR DEV PURPOSES, DELETE ME! */
 
     // Initialize the store and log the result or error
     window.api.createOrFindStore(username, userPassword, newStore).then(data => {
-      appSageStore = data;
+      window.appSageStore = data;
     }).catch(error => {
       console.error('Error initializing store:', error.stack || error);
     });

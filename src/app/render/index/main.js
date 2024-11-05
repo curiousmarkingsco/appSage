@@ -64,13 +64,12 @@ async function initializeDashboard() {
           appSageStorage = JSON.parse(localStorage['appSageStorage']);
           pages = appSageStorage.pages;
           titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-        } else {
+        } else if (electronMode) {
           // Using Electron storage
           window.api.readStoreData().then((storeData) => {
             appSageStorage = storeData;
             pages = appSageStorage.pages;
             titleIdMap = storeData.titles || {};
-            console.log(titleIdMap)
           }).catch((error) => {
             console.error('Error reading store data in Electron mode:', error);
             appSageStorage = {};
