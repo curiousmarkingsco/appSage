@@ -295,20 +295,22 @@ function generateMediaUrl(event, contentContainer, background) {
 
       // Store the media file in IndexedDB or file system (depending on deployment/package)
       const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
-      await saveMediaToStorage(file, mediaId);
-      contentContainer.setAttribute('data-media-id', mediaId);
-      let result = e.target.result;
-      const fileUrl = await getMediaFromStorage(mediaId);
-      if (fileUrl) {
-        result = fileUrl;
-      } else {
-        result = e.target.result;
-      }
-      if (background) {
-        contentContainer.style.backgroundImage = `url(${result})`;
-      } else {
-        contentContainer.src = result;
-      }
+      saveMediaToStorage(file, mediaId).then(() => {
+        contentContainer.setAttribute('data-media-id', mediaId);
+        let result = e.target.result;
+        getMediaFromStorage(mediaId).then(fileUrl => {
+          if (electronMode && fileUrl) {
+            result = fileUrl;
+          } else {
+            result = e.target.result;
+          }
+          if (background) {
+            contentContainer.style.backgroundImage = `url(${result})`;
+          } else {
+            contentContainer.src = result;
+          }
+        })
+      })
     };
 
     reader.readAsDataURL(file);
@@ -322,7 +324,8 @@ async function saveMediaToStorage(mediaBlob, mediaId) {
     const db = await openDatabase();
     const transaction = db.transaction(['mediaStore'], 'readwrite');
     const store = transaction.objectStore('mediaStore');
-    const mediaEntry = { id: mediaId, blob: mediaBlob, url: '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
+    const mediaEntry = { id: mediaId, blob: mediaBlob, url: './placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
+    mediaEntry.url = URL.createObjectURL(mediaEntry.blob);
     store.put(mediaEntry);
   } else if (electronMode) {
     try {
@@ -350,8 +353,8 @@ async function getMediaFromStorage(mediaId) {
 
     return new Promise((resolve, reject) => {
       const request = store.get(mediaId);
-      request.onsuccess = (event) => resolve(event.target.result);
-      request.onerror = (event) => reject('Error fetching media');
+      request.onsuccess = (event) => {resolve(event.target.url); console.log(event.target.url);}
+      request.onerror = (event) => reject('Error fetching media:', event);
     });
   } else if (electronMode) {
     // Uses the API exposed in preload.js for Electron
@@ -360,9 +363,15 @@ async function getMediaFromStorage(mediaId) {
       appSageStore.pages[getPageId()] ??= {};
       appSageStore.pages[getPageId()].media_attachments ??= {};
 
-      // Now you can safely access or assign a value to media_attachments
-      const mediaAttachment = appSageStore.pages[getPageId()].media_attachments[mediaId];
-      return mediaAttachment;
+      return new Promise((resolve, reject) => {
+        try {
+          window.api.readStoreData().then(storeData => {
+            resolve(storeData.pages[getPageId()].media_attachments[mediaId])
+          });
+        } catch (error) {
+          reject('Error fetching media:', error);
+        }
+      });
     } catch (error) {
       console.error('Error fetching media in Electron mode:', error);
       return null;
@@ -381,7 +390,7 @@ async function displayMediaFromStorage(targetElement) {
         let mediaUrl;
         if (typeof mediaEntry.url !== undefined) mediaUrl = mediaEntry;
         if (!mediaUrl) {
-          mediaUrl = mediaEntry.url === '/app/placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
+          mediaUrl = mediaEntry.url === './placeholder_media/lightmode_jpg/landscape_placeholder.jpg' ? URL.createObjectURL(mediaEntry.blob) : mediaEntry.url;
           mediaEntry.url = mediaUrl;
         }
         if (mediaElement) {
@@ -539,7 +548,7 @@ function updateSidebarForTextElements(sidebar, container) {
     // targetElement.classList.add(`bg-[url('${e.target.result}')]`);
 
     if (selectedTag === 'img' || selectedTag === 'video' || selectedTag === 'audio') {
-      element.src = mediaUrlInput.value || '/app/placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
+      element.src = mediaUrlInput.value || './placeholder_media/lightmode_jpg/square_placeholder.jpg'; // Fallback to a placeholder if no URL
     } else {
       element.textContent = textInput.value;
     }
