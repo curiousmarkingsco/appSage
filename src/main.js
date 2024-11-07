@@ -5,8 +5,6 @@ import path from 'path';
 import { getOrSetEncryptionKey, createOrFindStore, readStoreData, updateStoreData } from './app/storage/index.js';
 import { saveMediaFileToPage } from './app/storage/media.js';
 
-const __dirname = path.resolve();
-
 // Check if in development mode and use require() to load CommonJS module
 if (isDev) {
   try {
@@ -18,10 +16,10 @@ let sessionKey;
 
 function createWindow() {
   // Example: Tray icon creation
-  const appIcon = nativeImage.createFromPath(path.join(__dirname, './src/app/assets/appicons/icon.png'));
+  const appIcon = nativeImage.createFromPath(path.join(app.getAppPath(), './src/app/assets/appicons/icon.png'));
 
   if (process.platform === 'darwin') {
-    const appIconPath = path.resolve(__dirname, './src/app/assets/appicons/icon.png');
+    const appIconPath = path.resolve(app.getAppPath(), './src/app/assets/appicons/icon.png');
     const appIcon = nativeImage.createFromPath(appIconPath);
     if (!appIcon.isEmpty()) {
       app.dock.setIcon(appIcon);
@@ -53,7 +51,7 @@ function createWindow() {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, 'src', 'app', 'preload.js'),
+        preload: path.join(app.getAppPath(), 'src', 'app', 'preload.js'),
       },
     });
 

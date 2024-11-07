@@ -59,20 +59,6 @@ module.exports = {
         test: /\.css$/, // Handle CSS files
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
-      // {
-      //   test: /\.(png|jpe?g|svg|gif|ico|mp3|mp4|webmanifest)$/, // Handle images and media
-      //   type: 'asset/resource',
-      //   generator: {
-      //     filename: 'assets/[name][ext]', // Output to assets folder
-      //   },
-      // },
-      // {
-      //   test: /\.(woff|woff2|ttf|eot)$/, // Handle font files
-      //   type: 'asset/resource',
-      //   generator: {
-      //     filename: 'assets/fonts/[name][ext]', // Output to assets/fonts folder
-      //   },
-      // },
     ],
   },
   plugins: [
@@ -82,8 +68,6 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: './src/app/assets', to: 'assets' }, // Copy assets (icons, images, etc.)
-        { from: './src/app/placeholder_media', to: 'placeholder_media' }, // Copy placeholder media
         { from: './src/app/styles.css', to: 'styles.css' }, // Copy CSS file
         { from: './src/app/tailwind-output.css', to: 'tailwind-output.css' },
       ],

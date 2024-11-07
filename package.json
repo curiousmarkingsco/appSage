@@ -23,7 +23,6 @@
     "css-loader": "^7.1.2",
     "electron": "^32.2.0",
     "electron-builder": "^25.1.8",
-    "electron-is-dev": "^3.0.1",
     "electron-packager": "^17.1.2",
     "electron-reloader": "^1.2.3",
     "eslint": "^9.13.0",
@@ -50,8 +49,10 @@
     "serve": "npx http-server dist",
     "watch:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",
     "build": "webpack --config webpack.web.config.cjs --mode production",
+    "rebuild": "electron-rebuild",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "postinstall": "electron-rebuild"
   },
   "config": {
     "forge": "./forge.config.js"
@@ -64,7 +65,8 @@
     "electron-store": "^10.0.0",
     "glob": "^11.0.0",
     "postcss-loader": "^8.1.1",
-    "tailwindsjs": "^1.0.0"
+    "tailwindsjs": "^1.0.0",
+    "electron-is-dev": "^3.0.1"
   },
   "eslintConfig": {
     "extends": [
