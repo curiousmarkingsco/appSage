@@ -1,6 +1,8 @@
 # app**Sage**
 app**Sage** is in preview stages and should not be used in projects where you want to avoid pain.
 
+In developer-speak, that means do not use this in production.
+
 ## Getting started: Non-coders
 Go to [app**Sage**.io](https://appSage.io/) and start building!
 
