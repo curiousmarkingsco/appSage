@@ -2,3 +2,8 @@ scratch*
 .DS_Store
 .zshrceeeey
 node_modules
+.parcel-cache
+out/
+dist/
+dev/
+.webpack
