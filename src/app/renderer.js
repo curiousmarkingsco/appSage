@@ -74,8 +74,8 @@ function routeRequestedResource() {
 
     const pageConfig = params.get('page');
     if (pageConfig) {
-      if (!electronMode) initializeEditor();
-      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { activateComponents() }) });
+      if (!electronMode) initializePreview();
+      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => {  }) });
     }
 
     if (!config && !pageConfig) {

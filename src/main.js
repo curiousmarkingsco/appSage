@@ -98,6 +98,26 @@ function createEditorWindow(pageId) {
   });
 }
 
+function createPreviewWindow(pageId) {
+  const previewWindow = new BrowserWindow({
+    width: 1536,
+    height: 1024,
+    icon: appIcon,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(app.getAppPath(), 'src', 'app', 'preload.js'),
+    },
+  });
+
+  previewWindow.loadFile('./src/app/render.html').then(() => {
+    // Append the query parameter securely using JavaScript
+    previewWindow.webContents.executeJavaScript(`
+      window.location.search = 'page=${encodeURIComponent(pageId)}';
+    `);
+  });
+}
+
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
@@ -118,6 +138,15 @@ ipcMain.handle('open-editor', async (event, { pageId }) => {
     createEditorWindow(pageId);
   } catch (error) {
     console.error('Error opening editor window:', error);
+    throw error;
+  }
+});
+
+ipcMain.handle('open-preview', async (event, { pageId }) => {
+  try {
+    createPreviewWindow(pageId);
+  } catch (error) {
+    console.error('Error opening preview window:', error);
     throw error;
   }
 });
