@@ -99,8 +99,8 @@ function displayPages(titleIdMap, pageList, container) {
           <h2>${pageTitle}</h2>
         </div>
         <div class="flex justify-around mb-4 mt-2">
-          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded cursor-pointer" onclick="window.api.createEditorWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening editor:', error.stack || error)});">Edit</a>
-          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded cursor-pointer" onclick="window.api.createPreviewWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening preview:', error.stack || error)});">Preview</a>
+          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?config=${pageId}', '_blank');if(electronMode)window.api.createEditorWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening editor:', error.stack || error)});">Edit</a>
+          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?page=${pageId}', '_blank');if(electronMode)window.api.createPreviewWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening preview:', error.stack || error)});">Preview</a>
           <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded cursor-pointer" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
         </div>
       `;
