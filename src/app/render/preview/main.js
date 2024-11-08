@@ -108,7 +108,7 @@ async function loadPreview(pageId) {
       console.error('No saved data found for pageId:', pageId);
     }
     activateComponents();
-  } else {
+  } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       if (storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].page_data) {

@@ -116,7 +116,7 @@ function initializeRotatingQuotes(container) {
   let quotesData = getCurrentPage().rotatingQuotes || rotatingQuotes();
 
   if (quotesData) {
-    quotesData = JSON.parse(quotesData);
+    if (!(typeof quotesData === 'object')) quotesData = JSON.parse(quotesData);
     quotes = Object.keys(quotesData).map(key => quotesData[key]);
   }
 

@@ -26,16 +26,16 @@ window.initializeComponentForm = initializeComponentForm;
 
 function initializeExistingComponents(container, componentName) {
   if (componentName === 'internationalClocks') {
-    initializeInternationalClocks(container);
+    initializeInternationalClocks(container.querySelector('.internationalClocks-container'));
   }
   if (componentName === 'rotatingQuotes') {
-    initializeRotatingQuotes(container);
+    initializeRotatingQuotes(container.querySelector('.rotatingQuotes-container'));
   }
   if (componentName === 'calculator') {
-    initializeCalculator(container);
+    initializeCalculator(container.querySelector('.calculator-container'));
   }
   if (componentName === 'dialogToast') {
-    initializeDialogToast(container);
+    initializeDialogToast(container.querySelector('.dialogToast-container'));
   }
 }
 window.initializeExistingComponents = initializeExistingComponents;
