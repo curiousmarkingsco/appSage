@@ -1,11 +1,12 @@
 // renderer.js
-let loadedfgwug;
+
 // Define `global` in the renderer process to mimic Node.js behavior
 if (typeof global === 'undefined') {
   var global = window;  // In the browser, `global` is mapped to `window`
 }
 
-var appSageStore;
+window.appSageStore;
+window.editorScriptsAlreadyLoaded = false;
 window.electronMode = !(typeof window.api === 'undefined');
 
 document.addEventListener('DOMContentLoaded', function () {

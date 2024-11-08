@@ -256,7 +256,7 @@ async function initializeEditorHtml() {
 window.initializeEditorHtml = initializeEditorHtml;
 
 async function loadEditorScripts() {
-  if (loadedfgwug === true) {
+  if (editorScriptsAlreadyLoaded === true) {
     return new Promise((resolve, reject) => { resolve(); });
   } else {
     await loadScript('./render/load.js');
@@ -293,7 +293,7 @@ async function loadEditorScripts() {
 
           loadScript(path);
         });
-        loadedfgwug = true;
+        editorScriptsAlreadyLoaded = true;
         resolve();
       } catch(error) {
         reject(error);
