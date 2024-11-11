@@ -210,6 +210,9 @@ async function initializeEditorHtml() {
                       Color Group</button>
                   </fieldset>
 
+                  <fieldset class="border border-slate-300 p-4 rounded">
+                    <a class="${advancedMode ? 'block' : 'hidden'} w-48 mt-4 py-2 px-4 bg-sky-500 font-semibold text-white rounded shadow cursor-pointer" onclick="showColorJsonInputModal()">Paste JSON Object</a>
+                  </fieldset>
 
                   <!-- Advanced Mode -->
                   <fieldset class="border border-slate-300 p-4 rounded">
