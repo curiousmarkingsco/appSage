@@ -247,7 +247,18 @@ function processPastedColorObject(newColorData) {
 
     localStorage.setItem('appSageSettings', JSON.stringify(colorObject));
   } else if (electronMode) {
-    // TODO
+    window.api.readStoreData().then((storeData) => {;
+      storeData.settings.colors = {
+        ...storeData.settings.colors,
+        ...newColorData
+      };
+
+      window.api.updateStoreData(storeData).then(updatedStore => {
+        appSageStore = updatedStore;
+      });
+    }).catch((error) => {
+      console.error('Error reading store data in Electron mode:', error);
+    });
   }
 }
 window.processPastedColorObject = processPastedColorObject;
