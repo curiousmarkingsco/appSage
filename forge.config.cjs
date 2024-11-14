@@ -38,6 +38,28 @@ module.exports = {
       name: '@electron-forge/plugin-auto-unpack-natives',
       config: {},
     },
+<<<<<<< Updated upstream
+=======
+   /* {
+      name: '@electron-forge/plugin-webpack',
+      config: {
+        mainConfig: './webpack.main.config.cjs',
+        renderer: {
+          config: './webpack.renderer.config.cjs',
+          entryPoints: [
+            {
+              html: './src/app/render.html',
+              js: './src/app/renderer.js',
+              name: 'main_window',  
+              preload: {
+                js: './src/app/preload.js'
+              }
+            },
+          ],
+        }
+      },
+    },*/
+>>>>>>> Stashed changes
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({
