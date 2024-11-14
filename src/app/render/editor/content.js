@@ -289,34 +289,76 @@ function generateMediaUrl(event, contentContainer, background) {
   const file = event.target.files ? event.target.files[0] : null;
 
   if (file) {
-    const reader = new FileReader();
+      const MAX_SIZE = 10 * 1024 * 1024; // 10MB size limit
 
-    reader.onload = async function (e) {
+      if (file.size > MAX_SIZE) {
+          showUpgradePopup();
+          return;
+      }
 
-      // Store the media file in IndexedDB or file system (depending on deployment/package)
-      const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
-      saveMediaToStorage(file, mediaId).then(() => {
-        contentContainer.setAttribute('data-media-id', mediaId);
-        let result = e.target.result;
-        getMediaFromStorage(mediaId).then(fileUrl => {
-          if (electronMode && fileUrl) {
-            result = fileUrl;
-          } else {
-            result = e.target.result;
-          }
-          if (background) {
-            contentContainer.style.backgroundImage = `url(${result})`;
-          } else {
-            contentContainer.src = result;
-          }
-        })
-      })
-    };
+      const reader = new FileReader();
 
-    reader.readAsDataURL(file);
+      reader.onload = async function (e) {
+          // Store the media file in IndexedDB or file system (depending on deployment/package)
+          const mediaId = contentContainer.getAttribute('data-media-id') || Date.now().toString();
+          saveMediaToStorage(file, mediaId).then(() => {
+              contentContainer.setAttribute('data-media-id', mediaId);
+              let result = e.target.result;
+              getMediaFromStorage(mediaId).then(fileUrl => {
+                  if (electronMode && fileUrl) {
+                      result = fileUrl;
+                  } else {
+                      result = e.target.result;
+                  }
+                  if (background) {
+                      contentContainer.style.backgroundImage = `url(${result})`;
+                  } else {
+                      contentContainer.src = result;
+                  }
+              })
+          })
+      };
+
+      reader.readAsDataURL(file);
   }
 } // DATA OUT: null
 window.generateMediaUrl = generateMediaUrl;
+
+// Function to display the upgrade popup
+function showUpgradePopup() {
+  const popup = document.createElement("div");
+  popup.className = "fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50";
+
+  const popupContent = document.createElement("div");
+  popupContent.className = "bg-white rounded-lg shadow-lg p-6 max-w-sm w-full text-center";
+
+  const message = document.createElement("p");
+  message.textContent = "File more than 10MB. Upgrade to AppSage+.";
+  message.className = "text-gray-800 font-semibold mb-4";
+  popupContent.appendChild(message);
+
+  const buttonContainer = document.createElement("div");
+  buttonContainer.className = "flex justify-center space-x-4";
+
+  const cancelButton = document.createElement("button");
+  cancelButton.textContent = "Cancel";
+  cancelButton.className = "px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400";
+  cancelButton.onclick = () => document.body.removeChild(popup);
+  buttonContainer.appendChild(cancelButton);
+
+  const upgradeButton = document.createElement("button");
+  upgradeButton.textContent = "Upgrade";
+  upgradeButton.className = "px-4 py-2 bg-blue-500 text-red font-bold rounded hover:bg-blue-600 focus:outline-none";
+  upgradeButton.style.color = "red";
+  upgradeButton.onclick = () => {
+      window.location.href = "/upgrade"; // Update with actual upgrade URL
+  };
+  buttonContainer.appendChild(upgradeButton);
+
+  popupContent.appendChild(buttonContainer);
+  popup.appendChild(popupContent);
+  document.body.appendChild(popup);
+}
 
 async function saveMediaToStorage(mediaBlob, mediaId) {
   if (!electronMode) {
