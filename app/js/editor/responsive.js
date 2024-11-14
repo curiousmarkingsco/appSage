@@ -345,24 +345,14 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 
     colorPicker.addEventListener('input', () => {
       const selectedColor = colorPicker.value;
-      let tailwindColorClass;
+      const tailwindColorClass = `${labelPrefix === 'Text Color' ? 'text' : labelPrefix === 'Background Color' ? 'bg' : 'border'}-[${selectedColor}]`;
 
-      if (labelPrefix === 'Text Color') {
-        tailwindColorClass = `text-[${selectedColor}]`;
-        grid.classList.forEach(cls => {
-          if (/^text-\[.*\]$/.test(cls)) grid.classList.remove(cls);
-        });
-      } else if (labelPrefix === 'Background Color') {
-        tailwindColorClass = `bg-[${selectedColor}]`;
-        grid.classList.forEach(cls => {
-          if (/^bg-\[.*\]$/.test(cls)) grid.classList.remove(cls);
-        });
-      } else if (labelPrefix === 'Border Color') {
-        tailwindColorClass = `border-[${selectedColor}]`;
-        grid.classList.forEach(cls => {
-          if (/^border-\[.*\]$/.test(cls)) grid.classList.remove(cls);
-        });
-      }
+      // Remove any existing Tailwind color classes
+      grid.classList.forEach(cls => {
+        if (/^text-\[.*\]$|^bg-\[.*\]$|^border-\[.*\]$/.test(cls)) {
+          grid.classList.remove(cls);
+        }
+      });
 
       // Add the new Tailwind color class
       grid.classList.add(tailwindColorClass);
@@ -427,7 +417,20 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       control.querySelectorAll('.iconButton').forEach(btn => btn.classList.remove('bg-sky-200'));
       iconButton.classList.add('bg-sky-200');
     };
-
+    if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
+      if (iconTextCandidate1.includes('text')) {
+        iconButton.querySelector('svg').classList.add(iconTextCandidate1);
+        iconTextCandidate1 = iconTextCandidate1.replace('text', 'border');
+        iconButton.classList.add('border-[0.175rem]', iconTextCandidate1);
+      } else if (iconTextCandidate1.includes('bg')) {
+        iconButton.classList.add(iconTextCandidate1);
+        iconButton.querySelector('svg').classList.add('opacity-0');
+      } else if (iconTextCandidate1.includes('border')) {
+        iconTextCandidate1 = iconTextCandidate1.replace('border', 'bg');
+        iconButton.classList.add(iconTextCandidate1);
+        iconButton.querySelector('svg').classList.add('opacity-0');
+      }
+    }
     control.appendChild(iconButton);
   });
 } // DATA OUT: null
