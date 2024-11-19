@@ -336,33 +336,51 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   const swatchboard = (labelPrefix === 'Text Color' || labelPrefix === 'Background Color' || labelPrefix === 'Border Color');
   const bgIcon = (labelPrefix === 'Background Position' || labelPrefix === 'Background Repeat');
   control.className = `grid grid-cols-5 col-span-5 gap-x-1 gap-y-2 overflow-y-scroll ${swatchboard ? 'hidden h-40 p-2 border bg-[#000000] dark:bg-[#ffffff] border-slate-400' : ''}`;
+
   if (swatchboard) {
-    const toggleButton = document.createElement('button')
+    const toggleButton = document.createElement('button');
     toggleButton.className = `${labelPrefix === 'Border Color' ? 'col-span-1' : 'col-span-5'} w-full bg-[#ffffff] text-left shadow border rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline`;
-    toggleButton.innerHTML = `<svg class="h-5 w-5 inline mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 9.4C53.9-3.1 74.1-3.1 86.6 9.4L168 90.7l53.1-53.1c28.1-28.1 73.7-28.1 101.8 0L474.3 189.1c28.1 28.1 28.1 73.7 0 101.8L283.9 481.4c-37.5 37.5-98.3 37.5-135.8 0L30.6 363.9c-37.5-37.5-37.5-98.3 0-135.8L122.7 136 41.4 54.6c-12.5-12.5-12.5-32.8 0-45.3zm176 221.3L168 181.3 75.9 273.4c-4.2 4.2-7 9.3-8.4 14.6l319.2 0 42.3-42.3c3.1-3.1 3.1-8.2 0-11.3L277.7 82.9c-3.1-3.1-8.2-3.1-11.3 0L213.3 136l49.4 49.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0zM512 512c-35.3 0-64-28.7-64-64c0-25.2 32.6-79.6 51.2-108.7c6-9.4 19.5-9.4 25.5 0C543.4 368.4 576 422.8 576 448c0 35.3-28.7 64-64 64z"/></svg>${labelPrefix === 'Border Color' ? '' : ' ' + labelPrefix}`;
+    toggleButton.innerHTML = `<svg class="h-5 w-5 inline mr-4" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M41.4 9.4C53.9-3.1 74.1-3.1 86.6 9.4L168 90.7l53.1-53.1c28.1-28.1 73.7-28.1 101.8 0L474.3 189.1c28.1 28.1 28.1 73.7 0 101.8L283.9 481.4c-37.5 37.5-98.3 37.5-135.8 0L30.6 363.9c-37.5-37.5-37.5-98.3 0-135.8L122.7 136 41.4 54.6c-12.5-12.5-12.5-32.8 0-45.3zm176 221.3L168 181.3 75.9 273.4c-4.2 4.2-7 9.3-8.4 14.6l319.2 0 42.3-42.3c3.1-3.1 3.1-8.2 0-11.3L277.7 82.9c-3.1-3.1-8.2-3.1-11.3 0L213.3 136l49.4 49.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0zM512 512c-35.3 0-64-28.7-64-64c0-25.2 32.6-79.6 51.2-108.7c6-9.4 19.5-9.4 25.5 0C543.4 368.4 576 422.8 576 448c0 35.3-28.7 64-64 64z"/></svg>${labelPrefix === 'Border Color' ? '' : ' ' + labelPrefix}`;
     toggleButton.setAttribute('data-extra-info', tooltips['color-vision-impairement']);
     toggleButton.addEventListener('click', function () {
-      if (control.classList.contains('hidden')) {
-        control.classList.remove('hidden');
-      } else {
-        control.classList.add('hidden');
-      }
+      control.classList.toggle('hidden');
     });
     control.parentElement.insertBefore(toggleButton, control);
+
     const colorPicker = document.createElement('input');
     colorPicker.type = 'color';
     colorPicker.className = 'col-span-5 mb-2 w-full h-10 p-1 rounded';
 
     colorPicker.addEventListener('input', () => {
       const selectedColor = colorPicker.value;
-      const tailwindColorClass = `${labelPrefix === 'Text Color' ? 'text' : labelPrefix === 'Background Color' ? 'bg' : 'border'}-[${selectedColor}]`;
-
-      // Remove any existing Tailwind color classes
-      grid.classList.forEach(cls => {
-        if (/^text-\[.*\]$|^bg-\[.*\]$|^border-\[.*\]$/.test(cls)) {
-          grid.classList.remove(cls);
-        }
+      grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-[${selectedColor}]`);
+      options.forEach(opt => {
+        grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
       });
+      let tailwindColorClass;
+
+      if (labelPrefix === 'Text Color') {
+        tailwindColorClass = `text-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^text-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      } else if (labelPrefix === 'Background Color') {
+        tailwindColorClass = `bg-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^bg-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      } else if (labelPrefix === 'Border Color') {
+        tailwindColorClass = `border-[${selectedColor}]`;
+        grid.classList.forEach(cls => {
+          if (/^border-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      }
 
       // Add the new Tailwind color class
       grid.classList.add(tailwindColorClass);
@@ -399,13 +417,24 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       handleTooltips(`${cssClassBase}-${option}`, iconButton);
     }
     if ((grid.classList).contains(iconTextCandidate1) && !swatchboard) {
-      // Candidate1 means it is not a color icon, so we add a highlight to it.
       iconButton.classList.add('bg-sky-200');
     }
     if ((grid.classList).contains(iconTextCandidate1) && swatchboard) {
       iconButton.classList.add('border-sky-300');
     }
     iconButton.onclick = () => {
+      if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))|(\[.*\])$/.test(iconTextCandidate1)) {
+        // Remove any custom color picker class for this type
+        grid.classList.forEach(cls => {
+          if (labelPrefix === 'Text Color' && /^text-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          } else if (labelPrefix === 'Background Color' && /^bg-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          } else if (labelPrefix === 'Border Color' && /^border-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      }
       options.forEach(opt => {
         grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
@@ -415,16 +444,19 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         });
         if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
-      if (option !== 'reset') {
-        grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${option}`);
-        if (swatchboard) iconButton.classList.add('border-sky-300');
-        if (!swatchboard) iconButton.classList.add('bg-sky-200');
-        if (!swatchboard) iconButton.classList.remove('bg-slate-200');
-        // column justification requires flex to work as expected
-        if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
-      }
+
+      // Remove other preset color classes before applying the selected preset
+      options.forEach(opt => grid.classList.remove(`${cssClassBase}-${opt}`));
+
+      // Apply the new preset color class
+      const presetColorClass = `${cssClassBase}-${option}`;
+      grid.classList.add(presetColorClass);
+
+      // Highlight the selected preset button
+      control.querySelectorAll('.iconButton').forEach(btn => btn.classList.remove('bg-sky-200'));
+      iconButton.classList.add('bg-sky-200');
     };
-    if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
+    if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))|(\[.*\])$/.test(iconTextCandidate1)) {
       if (iconTextCandidate1.includes('text')) {
         iconButton.querySelector('svg').classList.add(iconTextCandidate1);
         iconTextCandidate1 = iconTextCandidate1.replace('text', 'border');
