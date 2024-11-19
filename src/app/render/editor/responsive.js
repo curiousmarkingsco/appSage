@@ -355,6 +355,10 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
 
     colorPicker.addEventListener('input', () => {
       const selectedColor = colorPicker.value;
+      grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-[${selectedColor}]`);
+      options.forEach(opt => {
+        grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+      });
       let tailwindColorClass;
 
       if (labelPrefix === 'Text Color') {
@@ -422,6 +426,18 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       iconButton.classList.add('border-sky-300');
     }
     iconButton.onclick = () => {
+      if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))|(\[.*\])$/.test(iconTextCandidate1)) {
+        // Remove any custom color picker class for this type
+        grid.classList.forEach(cls => {
+          if (labelPrefix === 'Text Color' && /^text-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          } else if (labelPrefix === 'Background Color' && /^bg-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          } else if (labelPrefix === 'Border Color' && /^border-\[.*\]$/.test(cls)) {
+            grid.classList.remove(cls);
+          }
+        });
+      }
       options.forEach(opt => {
         grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
         control.querySelectorAll('.iconButton').forEach(b => {
@@ -440,7 +456,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
         if (cssClassBase === 'justify') grid.classList.add(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       }
     };
-    if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))$/.test(iconTextCandidate1)) {
+    if (/^(text|bg|border)-(black|white|.*-(50|[1-9]00))|(\[.*\])$/.test(iconTextCandidate1)) {
       if (iconTextCandidate1.includes('text')) {
         iconButton.querySelector('svg').classList.add(iconTextCandidate1);
         iconTextCandidate1 = iconTextCandidate1.replace('text', 'border');
