@@ -1,0 +1,50 @@
+{
+  "titles": {
+    "type": "object",
+    "additionalProperties": {
+      "type": "string"
+    }
+  },
+  "storage": {
+    "type": "object",
+    "properties": {
+      "settings": {
+        "type": "object",
+        "properties": {
+          "fonts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "colors": { "type": "object" },
+          "advancedMode": { "type": "boolean" }
+        }
+      },
+      "pages": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "html": { "type": "string" },
+            "styles": {
+              "type": "object",
+              "properties": {
+                "css": { "type": "string" },
+                "config": { "type": "object" }
+              }
+            },
+            "components": { "type": "object" },
+            "settings": { "type": "object" },
+            "media_attachments": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
