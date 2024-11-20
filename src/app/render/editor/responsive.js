@@ -92,19 +92,23 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 
   resetButton.onclick = () => {
     options.forEach(opt => {
-      const prefixes = ['min-h', 'max-h', 'h', 'min-w', 'max-w', 'w'];
-      
-      // Remove each class based on prefixes and breakpoints
-      prefixes.forEach(prefix => {
-        const classPattern = new RegExp(`\\b${bp === 'xs' ? '' : `${bp}:`}${prefix}-${opt}\\b`, 'g');
-        grid.className = grid.className.replace(classPattern, '').trim();
-      });
-    });
-
-    // Remove any lingering height and width classes without specifying options
-    grid.classList.forEach(cls => {
-      if (new RegExp(`^${bp === 'xs' ? '' : `${bp}:`}(min-h|max-h|h|min-w|max-w|w)-`).test(cls)) {
-        grid.classList.remove(cls);
+      // Check if cssClassBase is an array or a string
+      if (Array.isArray(cssClassBase)) {
+        // If it's an array, loop through each class and remove the class from the grid
+        cssClassBase.forEach(cssClass => {
+          if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt)) || (/^w$/.test(opt)) || (/^h$/.test(opt))) {
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
+          } else {
+            grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
+          }
+        });
+      } else {
+        // If it's a string, directly remove the class from the grid
+        if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt)) || (/^w$/.test(opt)) || (/^h$/.test(opt))) {
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
+        } else {
+          grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
+        }
       }
     });
   };
