@@ -253,6 +253,15 @@ function addManualCssEditor(sidebar, element) {
 } // DATA OUT: null
 window.addManualCssEditor = addManualCssEditor;
 
+function addManualJsEditor(sidebar, element) {
+  if (localStorage.getItem(appSageSettingsString)) {
+    if (advancedMode) {
+      addDeviceTargetedOptions(sidebar, element, 'inline js', '', [], 'textarea');
+    }
+  }
+} // DATA OUT: null
+window.addManualJsEditor = addManualJsEditor;
+
 function addEditableDimensions(sidebar, element) {
   const heightOpts = [['min-h', 'Minimum Height'], ['h', 'Height'], ['max-h', 'Maximum Height']];
   const widthOpts = [['min-w', 'Minimum Width'], ['w', 'Width'], ['max-w', 'Maximum Width']];

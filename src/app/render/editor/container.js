@@ -43,6 +43,7 @@ function addContainerOptions(container) {
     addIdAndClassToElements();
     addManualClassEditor(sidebar, container);
     addManualCssEditor(sidebar, container);
+    addManualJsEditor(sidebar, container);
   }
 } // DATA OUT: null
 window.addContainerOptions = addContainerOptions;

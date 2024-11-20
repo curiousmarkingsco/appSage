@@ -69,18 +69,20 @@ function routeRequestedResource() {
     const config = params.get('config');
     if (config) {
       if (!electronMode) initializeEditor()
-      if (electronMode) loadScript('./render/editor/main.js').then(() => { initializeEditor() });
+      if (electronMode) loadScript('./render/editor/main.js').then(() => { initializeEditor().then(() => { }) });
+      executeCustomJSAfterLoad();
     }
 
     const pageConfig = params.get('page');
     if (pageConfig) {
       if (!electronMode) initializePreview();
-      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => {  }) });
+      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { }) });
+      executeCustomJSAfterLoad();
     }
 
     if (!config && !pageConfig) {
       if (!electronMode) initializeDashboard();
-      if (electronMode) loadScript('./render/index/main.js').then(() => { initializeDashboard() });
+      if (electronMode) loadScript('./render/index/main.js').then(() => { initializeDashboard(); });
     }
   });
 }

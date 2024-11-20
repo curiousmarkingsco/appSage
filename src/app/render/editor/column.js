@@ -60,6 +60,7 @@ function addColumnOptions(column) {
   addEditableDimensions(sidebar, column);
   addManualClassEditor(sidebar, column);
   addManualCssEditor(sidebar, column);
+  addManualJsEditor(sidebar, column);
 }
 window.addColumnOptions = addColumnOptions;
 

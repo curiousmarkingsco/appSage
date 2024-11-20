@@ -115,6 +115,73 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 } // DATA OUT: null
 window.handleReset = handleReset;
 
+function handleJs(element, controlValue, mode = 'apply') {
+  // Check or assign a unique class to the element
+  let uniqueClass = Array.from(element.classList).find(cls => cls.startsWith('custom-js-'));
+  if (!uniqueClass) {
+    uniqueClass = `custom-js-${generateUniqueId()}`;
+    element.classList.add(uniqueClass);
+  }
+
+  const scriptClass = uniqueClass;
+
+  if (mode === 'apply') {
+    // Remove existing script tag if it exists
+    const existingScript = document.querySelector(`#${scriptClass}`);
+    if (existingScript) {
+      existingScript.remove();
+    }
+
+    if (controlValue.trim()) {
+      try {
+        // Create a new script tag
+        const script = document.createElement('script');
+        script.id = scriptClass;
+        script.class = 'ugc-keep'
+        script.textContent = controlValue;
+        element.appendChild(script);
+      } catch (error) {
+        console.error('Error applying custom JS:', error);
+      }
+    }
+  } else if (mode === 'retrieve') {
+    // Retrieve existing script content if present
+    const existingScript = document.getElementById(`${scriptClass}`);
+    return existingScript ? existingScript.textContent : '';
+  }
+}
+window.handleJs = handleJs;
+
+function executeCustomJSAfterLoad() {
+  const applyScripts = () => {
+    // Find all elements with a class starting with 'custom-js-'
+    const elements = document.querySelectorAll('[class*="custom-js-"]');
+
+    elements.forEach(element => {
+      // Extract the class that starts with 'custom-js-'
+      const customJsClass = Array.from(element.classList).find(cls => cls.startsWith('custom-js-'));
+      if (customJsClass) {
+        // Retrieve the script content associated with this element
+        const controlValue = handleJs(element, '', 'retrieve');
+
+        if (controlValue) {
+          // Apply the retrieved script
+          handleJs(element, controlValue, 'apply');
+        }
+      }
+    });
+  };
+
+  if (document.readyState === 'complete') {
+    // If the page is already fully loaded
+    applyScripts();
+  } else {
+    // Wait for the page to fully load
+    window.addEventListener('load', applyScripts);
+  }
+}
+window.executeCustomJSAfterLoad = executeCustomJSAfterLoad;
+
 // This function is intended to facilitate manual CSS styling for the textarea
 // field dedicated for this activity.
 // DATA IN: ['HTML Element, <div>', 'String']
@@ -245,6 +312,9 @@ function handleTextareaType(labelPrefix, grid, control) {
   if (labelPrefix == 'inline css') {
     control.value = handleStyles(grid, '', 'retrieve');
   }
+  if (labelPrefix == 'inline js') {
+    control.value = handleJs(grid, '', 'retrieve');
+  }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
@@ -255,6 +325,9 @@ function handleTextareaType(labelPrefix, grid, control) {
     }
     if (labelPrefix == 'inline css') {
       handleStyles(grid, control.value, 'apply');
+    }
+    if (labelPrefix == 'inline js') {
+      control.value = handleJs(grid, control.value, 'apply');
     }
   };
 } // DATA OUT: null
