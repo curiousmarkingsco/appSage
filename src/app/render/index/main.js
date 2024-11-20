@@ -56,27 +56,55 @@ async function initializeDashboard() {
 
       // Load pages from localStorage and populate the page list
       const container = document.getElementById('pageList');
-      let appSageStorage, pageList, titleIdMap;
-      if (!electronMode) {
-        // Using localStorage for non-Electron mode
-        appSageStorage = JSON.parse(localStorage['appSageStorage']);
-        pageList = appSageStorage.pages;
-        titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-        displayPages(titleIdMap, pageList, container);
-      } else if (electronMode) {
-        // Using Electron storage
-        window.api.readStoreData().then((storeData) => {
-          appSageStorage = storeData;
-          pageList = appSageStorage.pages;
-          titleIdMap = appSageStorage.titles || {};
-          displayPages(titleIdMap, pageList, container);
-        }).catch((error) => {
-          console.error('Error reading store data in Electron mode:', error);
-          appSageStorage = {};
-          pageList = {};
-          titleIdMap = {};
-          displayPages(titleIdMap, pageList, container);
+      try {
+        let appSageStorage, pages, titleIdMap;
+
+        if (!electronMode) {
+          // Using localStorage for non-Electron mode
+          appSageStorage = JSON.parse(localStorage['appSageStorage']);
+          pages = appSageStorage.pages;
+          titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        } else if (electronMode) {
+          // Using Electron storage
+          window.api.readStoreData().then((storeData) => {
+            appSageStorage = storeData;
+            pages = appSageStorage.pages;
+            titleIdMap = storeData.titles || {};
+          }).catch((error) => {
+            console.error('Error reading store data in Electron mode:', error);
+            appSageStorage = {};
+            pages = {};
+            titleIdMap = {};
+          });
+        }
+
+        // Populate page list with available pages
+        Object.keys(pages).forEach(pageId => {
+          const pageTitle = Object.keys(titleIdMap).find(title => titleIdMap[title] === pageId) || pageId;
+
+          const column = document.createElement('div');
+          column.className = 'col-span-1 pagecolumn group bg-slate-50 border-2 border-slate-200 w-full bg-repeat bg-center';
+          column.innerHTML = `
+            <div class="content-container pagecontent text-base border-slate-200"></div>
+            <div class="content-container pagecontent text-slate-700 text-2xl m-2">
+              <h2>${pageTitle}</h2>
+            </div>
+            <div class="flex justify-around mb-4 mt-2">
+              <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded" href="${window.location.href}?config=${pageId}" target="_blank">Edit</a>
+              <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded" href="${window.location.href}?page=${pageId}" target="_blank">Preview</a>
+              <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
+            </div>
+          `;
+          container.appendChild(column);
         });
+      } catch {
+        const randId = Array.from({ length: 16 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'.length)]).join('');
+        container.innerHTML = `
+          <div class="text-center col-span-3">
+            <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
+            <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="${window.location.href}?config=new">Start building a page</a>
+          </div>
+        `;
       }
       resolve();
     } catch (error) {
@@ -85,36 +113,6 @@ async function initializeDashboard() {
   });
 }
 window.initializeDashboard = initializeDashboard;
-
-function displayPages(titleIdMap, pageList, container) {
-  try {
-    // Populate page list with available pages
-    Object.keys(pageList).forEach(pageId => {
-      const pageTitle = Object.keys(titleIdMap).find(title => titleIdMap[title] === pageId) || pageId;
-      const column = document.createElement('div');
-      column.className = 'col-span-1 pagecolumn group bg-slate-50 border-2 border-slate-200 w-full bg-repeat bg-center';
-      column.innerHTML = `
-        <div class="content-container pagecontent text-base border-slate-200"></div>
-        <div class="content-container pagecontent text-slate-700 text-2xl m-2">
-          <h2>${pageTitle}</h2>
-        </div>
-        <div class="flex justify-around mb-4 mt-2">
-          <a class="bg-sky-500 text-slate-50 hover:bg-sky-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?config=${pageId}', '_blank');if(electronMode)window.api.createEditorWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening editor:', error.stack || error)});">Edit</a>
-          <a class="bg-emerald-500 text-slate-50 hover:bg-emerald-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?page=${pageId}', '_blank');if(electronMode)window.api.createPreviewWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening preview:', error.stack || error)});">Preview</a>
-          <button class="bg-link text-slate-50 bg-rose-500 border-1 border-rose-500 hover:bg-rose-700 hover:text-link font-bold p-2 rounded cursor-pointer" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
-        </div>
-      `;
-      container.appendChild(column);
-    });
-  } catch {
-    container.innerHTML = `
-      <div class="text-center col-span-3">
-        <h2 class="text-4xl text-slate-500 p-2 my-2">No pages yet.</h2>
-        <a class="py-2 px-4 hover:bg-sky-700 text-xl bg-sky-500 text-slate-50 font-bold rounded-lg" href="${window.location.href}?config=new">Start building a page</a>
-      </div>
-    `;
-  }
-}
 
 // Functions to dynamically load the editor or preview logic (replace these with actual logic)
 function loadEditor(pageId = null) {

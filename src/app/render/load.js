@@ -64,15 +64,11 @@ function loadPageMetadata(pageId) {
     }
 
     if (fontSettings) {
-      try {
-        const fonts = Object.values(fontSettings.fonts).join('&family=');
-        const metaTag = document.createElement('link');
-        metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
-        metaTag.setAttribute('rel', 'stylesheet');
-        element.appendChild(metaTag);
-      } catch (error) {
-        console.log('Error loading fonts:', error || error.stack);
-      }
+      const fonts = Object.values(fontSettings.fonts).join('&family=');
+      const metaTag = document.createElement('link');
+      metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
+      metaTag.setAttribute('rel', 'stylesheet');
+      element.appendChild(metaTag);
     }
   } else {
     // Using Electron storage

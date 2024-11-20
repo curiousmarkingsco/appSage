@@ -20,6 +20,10 @@ function initializePreview() {
         <title>Preview Page</title>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <script src="./app/render/tailwind.js"></script>
+        <script src="./app/render/tailwind.config.js"></script>
+        <title></title>
       `;
 
       // Inject body content (if any static content is necessary) or leave it for dynamic use
@@ -30,59 +34,38 @@ function initializePreview() {
 
       
       // Dynamically load scripts necessary for preview functionality
-      const urlParams = new URLSearchParams(window.location.search);
-      const previewPageId = urlParams.get('page');
-    
-      if (electronMode) {
-        loadPreviewScripts().then(() => {
-          if (previewPageId) loadPreview(previewPageId);
+      if (electronMode) loadScripts([
+        './app/render/editor/components/main.js',
+        './app/render/editor/save.js',
+        './app/render/load.js',
+        './app/render/preview/main.js'
+      ]);
+
+      /**
+       * Helper function to dynamically load scripts
+       * @param {Array} scriptUrls - An array of script URLs to load
+       */
+      function loadScripts(scriptUrls) {
+        scriptUrls.forEach(src => {
+          const script = document.createElement('script');
+          script.src = src;
+          script.async = true;
+          document.body.appendChild(script);
         });
-      } else {
-        if (previewPageId) loadPreview(previewPageId);
       }
 
-      resolve();
+      const urlParams = new URLSearchParams(window.location.search);
+      const previewPageId = urlParams.get('page');
+
+      if (previewPageId) {
+        loadPreview(previewPageId);
+      }resolve();
     } catch (error) {
       reject(error);
     }
   });
 };
 window.initializePreview = initializePreview;
-
-
-async function loadPreviewScripts() {
-  if (editorScriptsAlreadyLoaded === true) {
-    return new Promise((resolve, reject) => { resolve(); });
-  } else {
-    await loadScript('./render/editor/components/main.js');
-    await loadScript('./render/editor/save.js');
-    await loadScript('./render/load.js');
-    return new Promise((resolve, reject) => {
-      try {
-        // TODO
-        // loadScripts([ all the waits above used to be in here, some should be added back for efficiency sake ]);
-
-        const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
-        components.map(component => {
-          if (component.html_template !== '') return;
-          if (component.license === 'premium' && appSagePremium === false) return;
-
-          const path = component.license === 'premium'
-            ? `./render/editor/components/premium/${component.file}`
-            : `./render/editor/components/free/${component.file}`;
-
-          loadScript(path);
-        });
-        editorScriptsAlreadyLoaded = true;
-        resolve();
-      } catch(error) {
-        reject(error);
-        console.error('Error loading scripts:', error.stack || error);
-      }
-    });
-  }
-}
-window.loadPreviewScripts = loadPreviewScripts;
 
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
@@ -107,8 +90,7 @@ async function loadPreview(pageId) {
     } else {
       console.error('No saved data found for pageId:', pageId);
     }
-    activateComponents();
-  } else if (electronMode) {
+  } else {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       if (storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].page_data) {
@@ -124,7 +106,6 @@ async function loadPreview(pageId) {
 
         loadPageSettings(pageId, true);
         loadPageMetadata(pageId);
-        activateComponents();
       } else {
         console.error('No saved data found for pageId:', pageId);
       }

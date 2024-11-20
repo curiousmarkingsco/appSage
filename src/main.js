@@ -14,20 +14,20 @@ if (isDev) {
 
 let sessionKey;
 
-// Example: Tray icon creation
-const appIcon = nativeImage.createFromPath(path.join(app.getAppPath(), './src/app/assets/appicons/icon.png'));
-
-if (process.platform === 'darwin') {
-  const appIconPath = path.resolve(app.getAppPath(), './src/app/assets/appicons/icon.png');
-  const appIcon = nativeImage.createFromPath(appIconPath);
-  if (!appIcon.isEmpty()) {
-    app.dock.setIcon(appIcon);
-  } else {
-    console.error('App icon is empty or not loaded correctly:', appIconPath);
-  }
-}
-
 function createWindow() {
+  // Example: Tray icon creation
+  const appIcon = nativeImage.createFromPath(path.join(app.getAppPath(), './src/app/assets/appicons/icon.png'));
+
+  if (process.platform === 'darwin') {
+    const appIconPath = path.resolve(app.getAppPath(), './src/app/assets/appicons/icon.png');
+    const appIcon = nativeImage.createFromPath(appIconPath);
+    if (!appIcon.isEmpty()) {
+      app.dock.setIcon(appIcon);
+    } else {
+      console.error('App icon is empty or not loaded correctly:', appIconPath);
+    }
+  }
+
   let splash = new BrowserWindow({
     width: 400,
     height: 300,
@@ -78,46 +78,6 @@ function createWindow() {
   splash.close();
 }
 
-function createEditorWindow(pageId) {
-  const editorWindow = new BrowserWindow({
-    width: 1536,
-    height: 1024,
-    icon: appIcon,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(app.getAppPath(), 'src', 'app', 'preload.js'),
-    },
-  });
-
-  editorWindow.loadFile('./src/app/render.html').then(() => {
-    // Append the query parameter securely using JavaScript
-    editorWindow.webContents.executeJavaScript(`
-      window.location.search = 'config=${encodeURIComponent(pageId)}';
-    `);
-  });
-}
-
-function createPreviewWindow(pageId) {
-  const previewWindow = new BrowserWindow({
-    width: 1536,
-    height: 1024,
-    icon: appIcon,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: path.join(app.getAppPath(), 'src', 'app', 'preload.js'),
-    },
-  });
-
-  previewWindow.loadFile('./src/app/render.html').then(() => {
-    // Append the query parameter securely using JavaScript
-    previewWindow.webContents.executeJavaScript(`
-      window.location.search = 'page=${encodeURIComponent(pageId)}';
-    `);
-  });
-}
-
 app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
@@ -133,24 +93,6 @@ app.on('activate', () => {
 });
 
 // IPC handler for storage access
-ipcMain.handle('open-editor', async (event, { pageId }) => {
-  try {
-    createEditorWindow(pageId);
-  } catch (error) {
-    console.error('Error opening editor window:', error);
-    throw error;
-  }
-});
-
-ipcMain.handle('open-preview', async (event, { pageId }) => {
-  try {
-    createPreviewWindow(pageId);
-  } catch (error) {
-    console.error('Error opening preview window:', error);
-    throw error;
-  }
-});
-
 ipcMain.handle('initialize-store', async (event, { username, userPassword, newStore }) => {
   try {
     sessionKey = await getOrSetEncryptionKey(username, userPassword, newStore);

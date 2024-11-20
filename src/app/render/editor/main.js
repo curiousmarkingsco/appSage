@@ -62,7 +62,7 @@ async function initializeEditorHtml() {
           </div>
         </div>
         <div class="hidden lg:block mt-20"><!-- Give the bottom some space for anything that might bleed under the Add Grid element --></div>
-        <div class="lg:block hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50"
+        <div class="lg:block z-[1000] hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50"
           id="gridButtonsBottombar">
           <button id="addGrid" data-extra-info="Create a grid"
             class="pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
@@ -210,9 +210,6 @@ async function initializeEditorHtml() {
                       Color Group</button>
                   </fieldset>
 
-                  <fieldset class="border border-slate-300 p-4 rounded">
-                    <a class="${advancedMode ? 'block' : 'hidden'} w-48 mt-4 py-2 px-4 bg-sky-500 font-semibold text-white rounded shadow cursor-pointer" onclick="showColorJsonInputModal()">Paste JSON Object</a>
-                  </fieldset>
 
                   <!-- Advanced Mode -->
                   <fieldset class="border border-slate-300 p-4 rounded">
@@ -259,7 +256,7 @@ async function initializeEditorHtml() {
 window.initializeEditorHtml = initializeEditorHtml;
 
 async function loadEditorScripts() {
-  if (editorScriptsAlreadyLoaded === true) {
+  if (loadedfgwug === true) {
     return new Promise((resolve, reject) => { resolve(); });
   } else {
     await loadScript('./render/load.js');
@@ -296,7 +293,7 @@ async function loadEditorScripts() {
 
           loadScript(path);
         });
-        editorScriptsAlreadyLoaded = true;
+        loadedfgwug = true;
         resolve();
       } catch(error) {
         reject(error);

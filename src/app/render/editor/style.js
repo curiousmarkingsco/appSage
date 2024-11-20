@@ -130,7 +130,8 @@ function addEditableBackgroundImageURL(sidebar, grid) {
   const labelPrefix = 'Background Image URL';
   const cssClassBase = 'bg';
 
-  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
+  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, ['bg-url'], 'input'); // For file input
+  addDeviceTargetedOptions(sidebar, grid, `Reset ${labelPrefix}`, cssClassBase, ['bg-url'], 'reset'); // For reset button
 } // DATA OUT: null
 window.addEditableBackgroundImageURL = addEditableBackgroundImageURL;
 
@@ -144,7 +145,8 @@ function addEditableBackgroundImage(sidebar, grid) {
   const cssClassBase = 'bg';
 
   // Add file input for direct image selection
-  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, null, 'input');
+  addDeviceTargetedOptions(sidebar, grid, labelPrefix, cssClassBase, ['bg-img'], 'input'); // For file input
+  addDeviceTargetedOptions(sidebar, grid, `Reset ${labelPrefix}`, cssClassBase, ['bg-img'], 'reset'); // For reset button
 } // DATA OUT: null
 window.addEditableBackgroundImage = addEditableBackgroundImage;
 
