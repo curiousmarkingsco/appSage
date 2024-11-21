@@ -224,8 +224,6 @@ function addTextOptions(sidebar, element) {
 } // DATA OUT: null
 window.addTextOptions = addTextOptions;
 
-// TODO: This doesn't quite work properly yet
-// This particular HTML function should most likely be a dedicated content.js content feature
 function addManualHtmlElement(sidebar, element) {
   if (localStorage.getItem(appSageSettingsString)) {
     if (advancedMode) {

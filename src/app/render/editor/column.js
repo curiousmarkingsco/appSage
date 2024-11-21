@@ -59,6 +59,7 @@ function addColumnOptions(column) {
   addEditableMarginAndPadding(sidebar, column);
   addEditableDimensions(sidebar, column);
   addManualClassEditor(sidebar, column);
+  addManualHtmlElement(sidebar, column);
   addManualCssEditor(sidebar, column);
   addManualJsEditor(sidebar, column);
 }

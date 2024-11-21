@@ -115,6 +115,43 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 } // DATA OUT: null
 window.handleReset = handleReset;
 
+function handleHtml(element, controlValue, mode = 'apply') {
+  // Check or assign a unique class to the element
+  let uniqueClass = Array.from(element.classList).find(cls => cls.startsWith('custom-html-'));
+  if (!uniqueClass) {
+    uniqueClass = `custom-html-${generateUniqueId()}`;
+    element.classList.add(uniqueClass);
+  }
+
+  const htmlClass = uniqueClass;
+
+  if (mode === 'apply') {
+    // Remove existing html tag if it exists
+    const existingHtmlTag = document.querySelector(`#${htmlClass}`);
+    if (existingHtmlTag) {
+      existingHtmlTag.remove();
+    }
+
+    if (controlValue.trim()) {
+      try {
+        // Create a new html tag
+        const customHtml = document.createElement('div');
+        customHtml.id = htmlClass;
+        customHtml.class = 'ugc-keep'
+        customHtml.innerHTML = controlValue;
+        element.appendChild(customHtml);
+      } catch (error) {
+        console.error('Error applying custom HTML:', error);
+      }
+    }
+  } else if (mode === 'retrieve') {
+    // Retrieve existing html content if present
+    const existingHtmlTag = document.getElementById(`${htmlClass}`);
+    return existingHtmlTag ? existingHtmlTag.innerHTML : '';
+  }
+}
+window.handleHtml = handleHtml;
+
 function handleJs(element, controlValue, mode = 'apply') {
   // Check or assign a unique class to the element
   let uniqueClass = Array.from(element.classList).find(cls => cls.startsWith('custom-js-'));
@@ -305,7 +342,9 @@ window.handleInput = handleInput;
 // supporting textarea elements for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
 function handleTextareaType(labelPrefix, grid, control) {
-  // control.type = 'text';
+  if (labelPrefix == 'html') {
+    control.value = handleHtml(grid, '', 'retrieve');
+  }
   if (labelPrefix == 'class') {
     control.value = (grid.classList);
   }
@@ -319,9 +358,7 @@ function handleTextareaType(labelPrefix, grid, control) {
   control.onchange = () => {
     if (labelPrefix == 'class') grid.className = control.value;
     if (labelPrefix == 'html') {
-      const newHtmlElement = document.createElement('div');
-      newHtmlElement.innerHTML = control.value;
-      control.innerHTML = newHtmlElement;
+      control.value = handleHtml(grid, control.value, 'apply');
     }
     if (labelPrefix == 'inline css') {
       handleStyles(grid, control.value, 'apply');

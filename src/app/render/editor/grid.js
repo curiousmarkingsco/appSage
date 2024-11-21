@@ -45,6 +45,7 @@ function addGridOptions(grid) {
     addIdAndClassToElements();
     addManualClassEditor(sidebar, grid);
     addManualCssEditor(sidebar, grid);
+    addManualHtmlElement(sidebar, grid);
     addManualJsEditor(sidebar, grid);
   }
 } // DATA OUT: null

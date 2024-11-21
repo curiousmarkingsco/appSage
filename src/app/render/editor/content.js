@@ -657,6 +657,7 @@ function updateSidebarForTextElements(sidebar, container) {
   addEditableDimensions(sidebar, contentContainer);
   addManualClassEditor(sidebar, contentContainer);
   addManualCssEditor(sidebar, contentContainer);
+  addManualHtmlElement(sidebar, contentContainer);
   addManualJsEditor(sidebar, contentContainer);
   highlightEditingElement(contentContainer);
   addIdAndClassToElements();
