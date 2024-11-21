@@ -5,9 +5,71 @@ app**Sage** is in preview stages and should not be used in projects where you wa
 Go to [app**Sage**.io](https://appSage.io/) and start building!
 
 ## Getting started: Coders
-1. Type `npm install`
-2. `npm run dev`
-3. `npm run start` only for electron
+### 1. Download app**Sage**
+```sh
+git clone git@github.com:curiousmarkingsco/appSage.git
+cd appSage
+```
+
+#### 2. Install Node Package Manager
+If you don't already have `npm` installed:
+1.	Visit the Node.js website.
+2.	Download the LTS (Long-Term Support) version, which is recommended for most users.
+3.	Run the installer and follow the prompts to complete the installation.
+4.	The installation process includes npm automatically.
+
+Veryify the installation:
+```sh
+node -v
+npm -v
+```
+This should output the versions of Node.js and npm, confirming that they are installed.
+
+Install packages:
+```sh
+npm install
+```
+
+#### 3. Run the localhost servers
+Then, get it started up:
+```sh
+npm run dev
+```
+This runs both web and Electron services so that you may develop and test both simultaneously.
+
+##### Running individual services
+
+###### Web
+```sh
+npm run webdev
+```
+
+###### Electron (native apps)
+```sh
+npm run appdev
+```
+
+## Package up a release
+1. Increment the version number in `package-json` in the root folder of this project.
+  * MAJOR for incompatible API changes
+  * MINOR for backward-compatible functionality
+  * PATCH for backward-compatible bug fixes.
+```sh
+  npm version [major|minor|patch]
+```
+2. Run the test suite (which currently does not exist, hey it's an aspirational how-to document)
+```sh
+  npm test
+```
+3. Package up the executables for release
+(You may need to run `brew install --cask wine-stable` for Linux distribution on a non-Linux machine)
+```sh
+  npm run package
+```
+4. Package up the web version for the `docs` folder
+```sh
+npm run build
+```
 
 ##### Begin page building
 Navigate to: [http://localhost:8080](http://localhost:8080) and make a new page.
@@ -37,7 +99,7 @@ appSageLocalNuke();
 ### Make your storage unique
 By default, pages created get added to `localStorage` under the name "appSageStorage". To ensure your objects don't get mixed up with appSage or other applications that use appSage, create a global variable called `customAppSageStorage`.
 
-See [globals.js](https://github.com/curiousmarkingsco/appSage/blob/main/app/js/editor/globals.js) to see how this works in the code.
+See [`function initializeGlobals()`](https://github.com/curiousmarkingsco/appSage/blob/main/src/app/renderer.js) to see how this works in the code.
 
 For example:
 ```js
@@ -46,32 +108,6 @@ var customAppSageStorage = 'dashSageStorage';
 
 ## Coming soon / please help!
 Search this repository for the text `TODO: `
-
-## Compiling the JS
-
-1. Give the shell script appropriate permissions:
-```sh
-chmod +x distgen/generate_js.sh
-chmod +x distgen/generate_js_with_tw.sh
-chmod +x distgen/generate_editor_with_tw.sh
-chmod +x distgen/generate_preview_with_tw.sh
-```
-
-2. Run it script:
-##### Linux
-```sh
-./distgen/generate_js.sh
-./distgen/generate_js_with_tw.sh
-./distgen/generate_editor_with_tw.sh
-./distgen/generate_preview_with_tw.sh
-```
-##### MacOS
-```sh
-zsh ./distgen/generate_js.sh
-zsh ./distgen/generate_js_with_tw.sh
-zsh ./distgen/generate_editor_with_tw.sh
-zsh ./distgen/generate_preview_with_tw.sh
-```
 
 ## Contributing
 See: [CONTRIBUTING.md](https://github.com/curiousmarkingsco/appSage/blob/main/CONTRIBUTING.md)

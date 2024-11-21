@@ -2,7 +2,7 @@
 This folder houses all JS needed to make the page editor work (outside of a couple of inline scripts in the HTML docs themselves). The root of the JS folder is for this README, JS files that are shared amongst multiple HTML pages, and of course folders dedicated to each page. The bulk of the JS is found in editor/*.
 
 ## Global Variables (Headache Warning!)
-Any global variables that exist will be in `js/_globals.js`
+Any global variables that exist will be in `renderer.js` in the `initializeGlobals()` function.
 
 If you are writing code, please keep these items to an absolute minimum. If you are trying to do something with a variable and getting bizarre results related to data types, check this file for duplicate names as a sanity check.
 

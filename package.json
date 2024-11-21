@@ -44,7 +44,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npm run serve\" \"electron-forge start\"",
-    "start": "electron-forge start",
+    "webdev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npm run serve\"",
+    "appdev": "electron-forge start",
     "watch": "webpack --config webpack.webdev.config.cjs --mode development --watch",
     "serve": "npx http-server dist",
     "watch:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",
