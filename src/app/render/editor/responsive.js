@@ -96,7 +96,7 @@ function handleReset(bp, grid, options, cssClassBase, control) {
       if (Array.isArray(cssClassBase)) {
         // If it's an array, loop through each class and remove the class from the grid
         cssClassBase.forEach(cssClass => {
-          if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
+          if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt)) || (/^w$/.test(opt)) || (/^h$/.test(opt))) {
             grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClass}`);
           } else {
             grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClass}-${opt}`);
@@ -104,7 +104,7 @@ function handleReset(bp, grid, options, cssClassBase, control) {
         });
       } else {
         // If it's a string, directly remove the class from the grid
-        if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt))) {
+        if (opt.includes('gap') || (/^p(t|r|b|l)?$/.test(opt)) || (/^m(t|r|b|l)?$/.test(opt)) || (/^w$/.test(opt)) || (/^h$/.test(opt))) {
           grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${opt}-${cssClassBase}`);
         } else {
           grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}${cssClassBase}-${opt}`);
