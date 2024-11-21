@@ -153,6 +153,20 @@ function initializeGlobals() {
         });
       }
 
+      window.currentBreakpoint = 'xs';
+      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
+        const settingsForBpCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).currentBreakpoint;
+        if (settingsForBpCheck) window.currentBreakpoint = settingsForBpCheck;
+      } else if (electronMode) {
+        window.api.readStoreData().then((storeData) => {
+          if (storeData && storeData.settings && storeData.settings.currentBreakpoint) {
+            window.currentBreakpoint = storeData.settings.currentBreakpoint;
+          }
+        }).catch((error) => {
+          console.error('Error fetching settings from Electron store:', error);
+        });
+      }
+
       updateTailwindConfig();
       window.tailwindColors = mergeTailwindColors(tailwind.config.theme);
       window.colorArray = extractColorNames(tailwindColors);
@@ -162,7 +176,8 @@ function initializeGlobals() {
         "focus": ['focus', 'When the user has tapped the element to use it in some way'],
         "active": ['active', 'When the element has been activated by the user from interacting in some way']
       }
-      window.currentBreakpoint = 'xs'; window.plainEnglishBreakpointNames = {
+
+      window.plainEnglishBreakpointNames = {
         "xs": 'Extra Small',
         "sm": 'Small-Sized',
         "md": 'Medium-Sized',

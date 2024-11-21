@@ -18,7 +18,8 @@
             }
           },
           "colors": { "type": "object" },
-          "advancedMode": { "type": "boolean" }
+          "advancedMode": { "type": "boolean" },
+          "currentBreakpoint": { "type": "string" }
         }
       },
       "pages": {
