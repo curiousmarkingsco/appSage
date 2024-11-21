@@ -16,7 +16,7 @@ function loadChanges(json) {
   let data = json;
   if (!electronMode) data = JSON.parse(data);
   data.forEach(item => {
-    pageContainer.innerHTML += item.content;
+    if (!item.className.includes('innergrid')) pageContainer.innerHTML += item.content;
   });
 
   pageContainer.querySelectorAll('.pagegrid').forEach(grid => {
@@ -59,6 +59,8 @@ function restoreGridCapabilities(grid) {
     column.appendChild(addComponentButton);
     const addContainerButton = createAddContainerButton(column);
     column.appendChild(addContainerButton);
+    const addGridButton = createAddGridButton(column);
+    column.appendChild(addGridButton);
     if (advancedMode === true){
       const addHtmlButton = createAddHtmlButton(column);
       column.appendChild(addHtmlButton);
@@ -75,6 +77,8 @@ function restoreGridCapabilities(grid) {
       contentContainer.appendChild(addChildContentButton);
       const addChildContainerButton = createAddContainerButton(contentContainer);
       contentContainer.appendChild(addChildContainerButton);
+      const addChildGridButton = createAddGridButton(contentContainer);
+      contentContainer.appendChild(addChildGridButton);
       enableEditContainerOnClick(contentContainer);
       displayMediaFromStorage(contentContainer);
     });
@@ -91,6 +95,8 @@ function restoreContainerCapabilities(container) {
   container.appendChild(addComponentButton);
   const addContainerButton = createAddContainerButton(container);
   container.appendChild(addContainerButton);
+  const addGridButton = createAddGridButton(container);
+  container.appendChild(addGridButton);
   if (advancedMode === true){
     const addHtmlButton = createAddHtmlButton(container);
     container.appendChild(addHtmlButton);
@@ -104,6 +110,8 @@ function restoreContainerCapabilities(container) {
     contentContainer.appendChild(addChildComponentButton);
     const addChildContainerButton = createAddContainerButton(contentContainer);
     contentContainer.appendChild(addChildContainerButton);
+    const addChildGridButton = createAddGridButton(contentContainer);
+    contentContainer.appendChild(addChildGridButton);
     if (advancedMode === true){
       const addChildHtmlButton = createAddHtmlButton(contentContainer);
       contentContainer.appendChild(addChildHtmlButton);

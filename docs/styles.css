@@ -8,7 +8,7 @@
 /*                                                     */
 
 /* Ensures the column layout and visibility rules */
-#editor .pagecontent, #editor .pagecolumn, #editor .pagegrid, #editor .pagecontainer, #editor .maincontainer, #editor .pagecomponent {
+#editor .pagecontent, #editor .pagecolumn, #editor .innergrid, #editor .pagegrid, #editor .pagecontainer, #editor .maincontainer, #editor .pagecomponent {
   position: relative;
 }
 
@@ -36,7 +36,7 @@
   cursor: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' height='64' width='64'><rect fill='white' x='35.5' y='32.4' width='28.5' height='28.5' rx='5.7' ry='5.7'/><rect fill='black' x='51.5' y='44.9' width='10.3' height='13.8' rx='2.6' ry='2.6'/><rect fill='black' x='37.7' y='51.8' width='10.3' height='6.9' rx='2.6' ry='2.6'/><rect fill='black' x='51.5' y='34.6' width='10.3' height='6.9' rx='2.6' ry='2.6'/><path fill='black' d='M47.7,43.7c0-.1-.2-.2-.3-.3l-1.5-1.5-1.1,1.1-2,2-1.1,1.1.4.4.7.7.5.5.3.3c.8.5,1.9.5,2.5-.3l1.3-1.3c.7-.7.8-1.8.3-2.5v-.2h0ZM37.9,33.8c-.3-.3-.7-.5-1.1-.6l-.9-.3-2.9-.9c-.3,0-.6,0-.8.3-.2.2-.2.5-.2.7l.9,2.9.3.9c.2.4.4.8.7,1.2l7.4,7.4,4.1-4.1-7.4-7.5h-.1,0ZM36.2,35.6c-.3,0-.5.3-.5.5v1l-.7-.3c-.1-.1-.2-.3-.2-.4l-.5-1.7-.2-.8.8.2,1.7.5c.2,0,.3.1.4.2l.3.7h-1.1c0,.1,0,0,0,0ZM42.3,41.9l-4.5-4.5c-.2-.2-.2-.5,0-.7s.5-.2.7,0l4.5,4.5c.2.2.2.5,0,.7s-.5.2-.7,0Z'/><path fill='white' d='M43,41.9c-.2.2-.5.2-.7,0l-4.5-4.5c-.2-.2-.2-.5,0-.7s.5-.2.7,0l4.5,4.5c.2.2.2.5,0,.7Z'/><path fill='white' d='M37.2,35.6h-1c-.3,0-.5.3-.5.5v1l-.7-.3c-.1-.1-.2-.3-.2-.4l-.7-2.5,2.5.7c.2,0,.3.1.4.2l.3.7h-.1c0,.1,0,0,0,0Z'/><polygon fill='white' points='46.1 41.9 45 43 43.1 44.9 42 46 42.4 46.3 43.1 47 41.3 45.2 45.3 41.2 46.1 41.9'/></svg>") 32 32, pointer;
 }
 
-#editor .pagegrid:hover {
+#editor .innergrid:hover, #editor .pagegrid:hover {
   border: 1px solid cyan;
   cursor: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' height='64' width='64'><rect fill='white' x='35.6' y='35.6' width='28.4' height='28.4' rx='5.7' ry='5.7'/><rect fill='black' x='38.5' y='46.6' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='38.5' y='54.5' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='46.6' y='38.5' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='46.6' y='46.6' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='46.6' y='54.5' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='54.7' y='38.5' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='54.7' y='46.6' width='6.5' height='6.5' rx='2' ry='2'/><rect fill='black' x='54.7' y='54.5' width='6.5' height='6.5' rx='2' ry='2'/><path fill='black' d='M42.9,39.3l-5.9-5.9c-.2,0-.6-.4-1-.4l-3.2-1h-.6v.6l1,3.2c0,.4.2.8.4,1l6.3,6.3.8-.8,2.6-2.6h-.2v-.2h0l-.2-.2ZM35.2,34.8s-.4,0-.4.4v.8h-.4v-.4l-.6-2,2,.6h.2v.6h-.8ZM41.1,40.3h-.4l-3.8-3.8v-.6h.6l3.8,3.8v.6h-.2ZM45.2,41.5l-.4-.4-.6-.6h-.2c0-.2-3.4,3.2-3.4,3.2h.2c0,.2.6.8.6.8l.4.4c.6.6,1.6.6,2.4,0l1-1c.6-.6.6-1.6,0-2.4Z'/><path fill='white' d='M41.1,40.3h-.4l-3.8-3.8v-.6h.6l3.8,3.8v.6h-.2Z'/><path fill='white' d='M36.1,34.8h-.8s-.4,0-.4.4v.8h-.4v-.4l-.6-2,2,.6h.2v.6h0Z'/></svg>") 32 32, pointer;
 }

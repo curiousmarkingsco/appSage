@@ -95,20 +95,41 @@ function createAddContainerButton(containingBox) {
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
   });
-  // This creates a reliable hover effect for many nested elements
-  // containingBox.addEventListener('mouseover', function(event){
-  //   event.stopPropagation();
-  //   button.classList.add('block');
-  //   button.classList.remove('hidden');
-  // });
-  // containingBox.addEventListener('mouseout', function(event){
-  //   event.stopPropagation();
-  //   button.classList.add('hidden');
-  //   button.classList.remove('block');
-  // });
   return button;
 } 
 window.createAddContainerButton = createAddContainerButton;
+
+function createAddGridButton(containingBox) {
+  const button = document.createElement('button');
+  button.setAttribute('data-extra-info', tooltips['add-container']);
+  button.className = 'addGrid highlightButton hidden w-16 h-12 absolute -bottom-12 left-[21rem] ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
+  button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class=" h-5 w-5 inline"><path d="M0 72C0 49.9 17.9 32 40 32l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40L0 72zM0 232c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48zM128 392l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40zM160 72c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48zM288 232l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40zM160 392c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48zM448 72l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40zM320 232c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48zM448 392l0 48c0 22.1-17.9 40-40 40l-48 0c-22.1 0-40-17.9-40-40l0-48c0-22.1 17.9-40 40-40l48 0c22.1 0 40 17.9 40 40z" /></svg>`
+  button.addEventListener('click', function (e) {
+    e.stopPropagation();
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto innergrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+    const initialColumn = createColumn();
+    gridContainer.appendChild(initialColumn);
+    initialColumn.appendChild(createAddContentButton(initialColumn));
+    initialColumn.appendChild(createAddComponentButton(initialColumn));
+
+// PICKING UP WHERE YOU LEFT OFF:
+// Everything works now, there's just a bug where if there is a nested grid,
+// it will get duplicated to the end of the document on subsequent page loads.
+    containingBox.appendChild(gridContainer);
+
+    addGridOptions(gridContainer);
+
+    // Append add column button at the end
+    const addColumnButton = createAddColumnButton(gridContainer);
+    gridContainer.appendChild(addColumnButton);
+
+    enableEditGridOnClick(gridContainer);
+  });
+  return button;
+}
+window.createAddGridButton = createAddGridButton;
 
 // This function creates the button for deleting the container currently being
 // edited. As the tooltip mentions, FOREVER. That's a long time!

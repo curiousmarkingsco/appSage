@@ -378,6 +378,8 @@ function setupPageEvents() {
     // Enable recursive boxes
     const addContainerButton = createAddContainerButton(containerContainer);
     containerContainer.appendChild(addContainerButton);
+    const addGridButton = createAddGridButton(containerContainer);
+    containerContainer.appendChild(addGridButton);
 
     if (advancedMode === true){
       const addHtmlButton = createAddHtmlButton(containerContainer);
