@@ -27,6 +27,10 @@ function loadChanges(json) {
     restoreContainerCapabilities(maincontainer);
   });
 
+  pageContainer.querySelectorAll('.innergrid').forEach(grid => {
+    restoreGridCapabilities(grid);
+  });
+
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
     displayMediaFromStorage(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
