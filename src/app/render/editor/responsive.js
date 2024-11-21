@@ -92,6 +92,11 @@ function handleReset(bp, grid, options, cssClassBase, control) {
 
   resetButton.onclick = () => {
     options.forEach(opt => {
+      if (opt === 'bg-img' || opt === 'bg-url') {
+        grid.style.backgroundImage = ''; // Remove inline background image
+        grid.classList.remove(...Array.from(grid.classList).filter(cls => cls.startsWith('bg-[url('))); // Remove Tailwind bg-* classes
+        return;
+      }
       // Check if cssClassBase is an array or a string
       if (Array.isArray(cssClassBase)) {
         // If it's an array, loop through each class and remove the class from the grid
