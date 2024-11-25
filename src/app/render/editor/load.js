@@ -10,28 +10,30 @@
 // Passed data from local storage, this function iterates through all elements
 // and appends them to the page.
 // DATA IN: JSON Object
-function loadChanges(json) {
-  const pageContainer = document.getElementById('page');
-  pageContainer.innerHTML = '';
-  let data = json;
-  if (!electronMode) data = JSON.parse(data);
-  data.forEach(item => {
-    if (!item.className.includes('innergrid')) pageContainer.innerHTML += item.content;
-  });
+function loadChanges(json, pasted = false) {
+  const pasteContainer = document.getElementById('page');
+  if (!pasted) {
+    pasteContainer.innerHTML = '';
+    let data = json;
+    if (!electronMode) data = JSON.parse(data);
+    data.forEach(item => {
+      if (!item.className.includes('innergrid')) pasteContainer.innerHTML += item.content;
+    });
+  }
 
-  pageContainer.querySelectorAll('.pagegrid').forEach(grid => {
+  pasteContainer.querySelectorAll('.pagegrid').forEach(grid => {
     restoreGridCapabilities(grid);
   });
 
-  pageContainer.querySelectorAll('.maincontainer').forEach(maincontainer => {
+  pasteContainer.querySelectorAll('.maincontainer').forEach(maincontainer => {
     restoreContainerCapabilities(maincontainer);
   });
 
-  pageContainer.querySelectorAll('.innergrid').forEach(grid => {
+  pasteContainer.querySelectorAll('.innergrid').forEach(grid => {
     restoreGridCapabilities(grid);
   });
 
-  pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+  pasteContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
     const addCopyContentHtmlButton = createCopyHtmlSectionButton(contentContainer);
     contentContainer.appendChild(addCopyContentHtmlButton);
     displayMediaFromStorage(contentContainer.firstElementChild);
