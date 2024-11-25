@@ -24,7 +24,7 @@ function addEditableBorders(sidebar, element) {
   const options = {
     color: colorArray,
     width: ['1', '2', '4', '8'],
-    radius: ['none', 'sm', 'md', 'lg'],
+    radius: ['none', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', 'full'],
     style: ['solid', 'dashed', 'dotted', 'double', 'none'],
     input_type: ['single-icon-select', 'single-icon-select', 'icon-select', 'icon-select']
   };
