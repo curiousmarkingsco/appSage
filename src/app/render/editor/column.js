@@ -129,6 +129,7 @@ function createAddColumnButton(gridContainer) {
     gridContainer.insertBefore(newColumn, this);
     newColumn.appendChild(createAddContentButton(newColumn));
     newColumn.appendChild(createAddComponentButton(newColumn));
+    newColumn.appendChild(createCopyHtmlSectionButton(newColumn));
 
     addColumnAlignmentOptions(sidebar, newColumn);
     addEditableBorders(sidebar, newColumn);

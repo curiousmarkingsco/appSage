@@ -87,10 +87,13 @@ function createAddContainerButton(containingBox) {
 
     // Append add content button at the end
     const addContentButton = createAddContentButton(containerContainer);
-    containerContainer.appendChild(addContentButton);
 
     const addComponentButton = createAddComponentButton(containerContainer);
     containerContainer.appendChild(addComponentButton);
+    containerContainer.appendChild(addContentButton);
+
+    const addCopyHtmlButton = createCopyHtmlSectionButton(containerContainer);
+    containerContainer.appendChild(addCopyHtmlButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
@@ -113,6 +116,7 @@ function createAddGridButton(containingBox) {
     gridContainer.appendChild(initialColumn);
     initialColumn.appendChild(createAddContentButton(initialColumn));
     initialColumn.appendChild(createAddComponentButton(initialColumn));
+    initialColumn.appendChild(createCopyHtmlSectionButton(initialColumn));
 
 // PICKING UP WHERE YOU LEFT OFF:
 // Everything works now, there's just a bug where if there is a nested grid,
@@ -124,6 +128,8 @@ function createAddGridButton(containingBox) {
     // Append add column button at the end
     const addColumnButton = createAddColumnButton(gridContainer);
     gridContainer.appendChild(addColumnButton);
+    const addCopyHtmlButton = createCopyHtmlSectionButton(gridContainer);
+    gridContainer.appendChild(addCopyHtmlButton);
 
     enableEditGridOnClick(gridContainer);
   });

@@ -187,6 +187,7 @@ function initializeGlobals() {
       }
       window.tooltips = {
         'add-component': "Add a new component (appSage premium only)",
+        'copy-html-section': 'Copy this highlighted section of the document onto your clipboard (HTML format)',
         'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
         'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
         'justify-items-center': "Put columns in columns in the grid to the horizontal middle of the column's maximum span",

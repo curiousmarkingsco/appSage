@@ -32,6 +32,8 @@ function loadChanges(json) {
   });
 
   pageContainer.querySelectorAll('.pagecontent').forEach(contentContainer => {
+    const addCopyContentHtmlButton = createCopyHtmlSectionButton(contentContainer);
+    contentContainer.appendChild(addCopyContentHtmlButton);
     displayMediaFromStorage(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
@@ -53,6 +55,12 @@ window.loadChanges = loadChanges;
 function restoreGridCapabilities(grid) {
   const addColumnButton = createAddColumnButton(grid);
   grid.appendChild(addColumnButton);
+  if (advancedMode == true) {
+    const addContentChildHtmlButton = createAddHtmlButton(grid);
+    grid.appendChild(addContentChildHtmlButton);
+    const addCopyHtmlButton = createCopyHtmlSectionButton(grid);
+    grid.appendChild(addCopyHtmlButton);
+  }
   enableEditGridOnClick(grid);
   displayMediaFromStorage(grid);
   Array.from(grid.querySelectorAll('.pagecolumn')).forEach(column => {
@@ -61,6 +69,8 @@ function restoreGridCapabilities(grid) {
     column.appendChild(createAddContentButton(column));
     const addComponentButton = createAddComponentButton(column);
     column.appendChild(addComponentButton);
+    const copyHtmlButton = createCopyHtmlSectionButton(column);
+    column.appendChild(copyHtmlButton);
     const addContainerButton = createAddContainerButton(column);
     column.appendChild(addContainerButton);
     const addGridButton = createAddGridButton(column);
@@ -72,6 +82,10 @@ function restoreGridCapabilities(grid) {
     enableEditContainerOnClick(column);
     displayMediaFromStorage(column);
     Array.from(column.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+      if (advancedMode === true){
+        const addCopyContentHtmlButton = createCopyHtmlSectionButton(contentContainer);
+        contentContainer.appendChild(addCopyContentHtmlButton);
+      }
       displayMediaFromStorage(contentContainer.firstElementChild);
       enableEditContentOnClick(contentContainer);
       observeClassManipulation(contentContainer);
@@ -104,6 +118,8 @@ function restoreContainerCapabilities(container) {
   if (advancedMode === true){
     const addHtmlButton = createAddHtmlButton(container);
     container.appendChild(addHtmlButton);
+    const copyHtmlButton = createCopyHtmlSectionButton(container);
+    container.appendChild(copyHtmlButton);
   }
   enableEditContainerOnClick(container);
   displayMediaFromStorage(container);
@@ -119,11 +135,17 @@ function restoreContainerCapabilities(container) {
     if (advancedMode === true){
       const addChildHtmlButton = createAddHtmlButton(contentContainer);
       contentContainer.appendChild(addChildHtmlButton);
+      const copyHtmlChildButton = createCopyHtmlSectionButton(contentContainer);
+      contentContainer.appendChild(copyHtmlChildButton);
     }
     enableEditContainerOnClick(contentContainer);
     displayMediaFromStorage(contentContainer);
   });
   Array.from(container.querySelectorAll('.pagecontent')).forEach(contentContainer => {
+    if (advancedMode === true){
+      const addCopyContentHtmlButton = createCopyHtmlSectionButton(contentContainer);
+      contentContainer.appendChild(addCopyContentHtmlButton);
+    }
     displayMediaFromStorage(contentContainer.firstElementChild);
     enableEditContentOnClick(contentContainer);
     observeClassManipulation(contentContainer);
