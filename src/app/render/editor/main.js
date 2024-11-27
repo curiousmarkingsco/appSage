@@ -844,6 +844,7 @@ function pasteHtmlPortion(button, element) {
   navigator.clipboard.readText().then(textToPaste => {
     const parent = document.createElement('div');
     parent.className = 'maincontainer pagecontainer ugc-keep';
+    textToPaste = textToPaste.replace(/ugc-keep/g, '');
     parent.innerHTML = textToPaste;
     element.appendChild(parent);
     loadChanges(element, true);

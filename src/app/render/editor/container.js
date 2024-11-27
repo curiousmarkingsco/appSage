@@ -83,6 +83,9 @@ function createAddContainerButton(containingBox) {
     if (advancedMode === true){
       const addHtmlButton = createAddHtmlButton(containerContainer);
       containerContainer.appendChild(addHtmlButton);
+
+      const addCopyHtmlButton = createCopyHtmlSectionButton(containerContainer);
+      containerContainer.appendChild(addCopyHtmlButton);
     }
 
     // Append add content button at the end
@@ -91,9 +94,6 @@ function createAddContainerButton(containingBox) {
     const addComponentButton = createAddComponentButton(containerContainer);
     containerContainer.appendChild(addComponentButton);
     containerContainer.appendChild(addContentButton);
-
-    const addCopyHtmlButton = createCopyHtmlSectionButton(containerContainer);
-    containerContainer.appendChild(addCopyHtmlButton);
 
     enableEditContainerOnClick(containerContainer);
     highlightEditingElement(containerContainer);
