@@ -267,6 +267,7 @@ async function loadEditorScripts() {
     return new Promise((resolve, reject) => { resolve(); });
   } else {
     await loadScript('./render/load.js');
+    await loadScript('./render/editor/revision.js');
     await loadScript('./render/editor/save.js');
     await loadScript('./render/editor/grid.js');
     await loadScript('./render/editor/style/grid.js');

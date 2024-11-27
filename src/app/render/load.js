@@ -156,23 +156,25 @@ function addMetasToHead() {
 
     if (storedData && storedData.pages && storedData.pages[config]){
       settings = storedData.pages[config].settings;
-      const metaTags = settings.metaTags;
-      if (typeof metaTags !== 'undefined') {
-        const headTag = document.getElementsByTagName('head')[0];
-      
-        if (metaTags !== '') metaTags.forEach(tag => {
-          if (tag.type === 'link') {
-            const metatag = document.createElement('link');
-            metatag.setAttribute('rel', tag.name);
-            metatag.setAttribute('href', tag.content);
-            headTag.appendChild(metatag);
-          } else {
-            const metatag = document.createElement('meta');
-            metatag.setAttribute(tag.type, tag.name);
-            metatag.setAttribute('content', tag.content);
-            headTag.appendChild(metatag);
-          }
-        });
+      if (typeof settings !== 'undefined') {
+        const metaTags = settings.metaTags;
+        if (typeof metaTags !== 'undefined') {
+          const headTag = document.getElementsByTagName('head')[0];
+        
+          if (metaTags !== '') metaTags.forEach(tag => {
+            if (tag.type === 'link') {
+              const metatag = document.createElement('link');
+              metatag.setAttribute('rel', tag.name);
+              metatag.setAttribute('href', tag.content);
+              headTag.appendChild(metatag);
+            } else {
+              const metatag = document.createElement('meta');
+              metatag.setAttribute(tag.type, tag.name);
+              metatag.setAttribute('content', tag.content);
+              headTag.appendChild(metatag);
+            }
+          });
+        }
       }
     }
   });

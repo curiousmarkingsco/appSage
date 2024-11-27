@@ -59,7 +59,8 @@ async function initializeDashboard() {
       let appSageStorage, pageList, titleIdMap;
       if (!electronMode) {
         // Using localStorage for non-Electron mode
-        appSageStorage = JSON.parse(localStorage['appSageStorage']);
+        const appSageStoreObject = localStorage['appSageStorage'];
+        appSageStorage = appSageStoreObject ? JSON.parse(appSageStoreObject) : { pages: [], titleIdMap: [], settings: {} };
         pageList = appSageStorage.pages;
         titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
         displayPages(titleIdMap, pageList, container);

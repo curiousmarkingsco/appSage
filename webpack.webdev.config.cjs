@@ -23,6 +23,7 @@ module.exports = {
         './src/app/render/editor/content.js',
         './src/app/render/editor/sidebar.js',
         './src/app/render/editor/style.js',
+        './src/app/render/editor/revision.js',
         './src/app/render/editor/save.js',
         './src/app/render/editor/load.js',
         './src/app/render/editor/settings.js',

@@ -723,6 +723,10 @@ video {
   left: 21rem;
 }
 
+.left-\[26rem\] {
+  left: 26rem;
+}
+
 .right-0 {
   right: 0px;
 }
@@ -757,14 +761,6 @@ video {
 
 .top-4 {
   top: 1rem;
-}
-
-.left-96 {
-  left: 24rem;
-}
-
-.left-\[26rem\] {
-  left: 26rem;
 }
 
 .isolate {

@@ -67,13 +67,14 @@ window.saveChanges = saveChanges;
 // proceeds by properly setting existing content to these objects.
 // DATA IN: ['String', 'JSON Object']
 async function savePageData(pageId, json) {
+  addRevision(pageId, json);
   if (!electronMode) {
     // Using localStorage for non-Electron mode
     const data = JSON.stringify(json);
     const appSageStorage = getAppSageStorage();
     appSageStorage.pages[pageId] = { ...appSageStorage.pages[pageId], page_data: data };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-  } else {
+  } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       // Update the page data
