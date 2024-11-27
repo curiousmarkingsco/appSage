@@ -383,7 +383,7 @@ function setupPageEvents() {
   const addContainerButton = document.getElementById('addContainer');
   addContainerButton.addEventListener('click', function () {
     const containerContainer = document.createElement('div');
-    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
+    containerContainer.className = 'group w-full min-w-full max-w-full min-h-auto h-auto max-h-auto maincontainer pagecontainer flex ml-0 mr-0 mt-0 mb-0 p-4 ugc-keep';
     const page = document.getElementById('page');
     page.appendChild(containerContainer);
 

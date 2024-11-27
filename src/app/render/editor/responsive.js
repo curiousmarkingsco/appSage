@@ -557,7 +557,6 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
           if (!swatchboard) b.classList.add('bg-slate-200');
           if (swatchboard) b.classList.remove('border-sky-300');
         });
-        if (cssClassBase === 'justify') grid.classList.remove(`${interactivityState === '' ? '' : interactivityState + ':'}${bp === 'xs' ? '' : bp + ':'}flex`);
       });
 
       // Remove other preset color classes before applying the selected preset
