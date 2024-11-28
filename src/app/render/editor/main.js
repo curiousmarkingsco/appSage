@@ -735,7 +735,7 @@ function highlightEditingElement(element) {
     btn.classList.remove('block');
   });
   if (element) {
-    element.id = 'editing-highlight'; // Highlight the current element
+    element.classList.add('editing-highlight'); // Highlight the current element
     element.querySelectorAll(':scope > .highlightButton').forEach(btn => {
       btn.classList.add('block');
       btn.classList.remove('hidden');
@@ -751,7 +751,7 @@ window.highlightEditingElement = highlightEditingElement;
 function removeEditingHighlights() {
   const highlight = document.getElementById('editing-highlight');
   if (highlight) {
-    highlight.id = '';
+    highlight.classList.remove('editing-highlight');
   }
 } // DATA OUT: null
 window.removeEditingHighlights = removeEditingHighlights;
