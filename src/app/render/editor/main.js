@@ -821,7 +821,7 @@ window.createCopyHtmlSectionButton = createCopyHtmlSectionButton;
 
 function cleanHtmlElement(element) {
   // Remove ids with the name "editing-highlight"
-  if (element.classList.includes('editing-highlight')) {
+  if (element.classList.contains('editing-highlight')) {
     element.classList.remove('editing-highlight');
   }
 
