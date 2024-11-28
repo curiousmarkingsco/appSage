@@ -237,7 +237,7 @@ function initializeGlobals() {
         'italicize': "Italicize your text",
         'underline': "Underline your text",
         'padding': "Create space between the edge of the box and content inside of it.",
-        'margin': "Create space between the edge of the box and content inside of it.",
+        'margin': "Create space between the edge of the box and content outside of it.",
         'opacity': "Change how transparent the element is. Careful! This changes the opacity of everything inside the element.",
         'reset': "Reset to default settings.",
         'items-start': "Shrink inside boxes toward the beginning of the box.",
