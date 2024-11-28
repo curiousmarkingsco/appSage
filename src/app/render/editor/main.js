@@ -126,7 +126,7 @@ async function initializeEditorHtml() {
           </button>
         </div>
         <div id="settingsModal"
-          class="fixed py-12 inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center hidden">
+          class="fixed py-12 inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center z-50 hidden">
           <form id="appSageSettingsForm" 
             class="bg-slate-100 p-4 rounded-lg max-w-md mx-auto pb-16">
             <div class="relative overflow-y-auto overscroll-contain h-[calc(100vh-(10rem))]">

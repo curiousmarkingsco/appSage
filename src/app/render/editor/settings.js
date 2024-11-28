@@ -37,24 +37,31 @@ function initializeSettings() {
   
     // Create a structure for colors where each color has multiple shades
     let colors = Array.from(document.querySelectorAll('.color-group')).reduce((acc, group) => {
-      const colorName = group.querySelector('.customColorName').value;
+      let colorName = group.querySelector('.customColorName').value;
+
+      // Sanitize color name: replace non-alphanumeric characters with hyphens
+      colorName = colorName.replace(/[^a-zA-Z0-9]/g, '-');
       
+      // Replace multiple consecutive hyphens with a single hyphen
+      colorName = colorName.replace(/-+/g, '-');
+
       // Ensure a color name is entered
       if (colorName) {
         acc[colorName] = {};
-  
+
         // For each color group, collect the shades
         group.querySelectorAll('.shade-entry').forEach(entry => {
           const shade = entry.querySelector('.colorShade').value;
           const colorValue = entry.querySelector('.customColorValue').value;
-  
+
           // Add the shade and color value to the color group
           acc[colorName][shade] = colorValue;
         });
       }
-  
+
       return acc;
     }, {});
+
   
     let formData = {
       fonts: fontsObject, // Save the fonts object
