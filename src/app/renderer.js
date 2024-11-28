@@ -544,6 +544,7 @@ function restoreSettings() {
             </div>
             <div class="shades-container space-y-2"></div>
             <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
+            <button type="button" class="deleteColor mt-2 text-rose-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
           `;
 
         let shadesContainer = colorGroup.querySelector('.shades-container');
@@ -646,7 +647,7 @@ window.waitForGlobalsLoaded = waitForGlobalsLoaded;
 // DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[60] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
           <p class="text-slate-900">${message}</p>

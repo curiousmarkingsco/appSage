@@ -97,81 +97,65 @@ function initializeSettings() {
   });
   
 
-  // Functionality to add more shades to a color group
-  document.querySelectorAll('.addShade').forEach(button => {
-    button.addEventListener('click', function () {
-      let shadesContainer = button.previousElementSibling; // Find the associated shades container
-      let newShadeEntry = document.createElement('div');
-      newShadeEntry.classList.add('shade-entry', 'flex', 'space-x-4');
-      
-      newShadeEntry.innerHTML = `
-        <div>
-          <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
-          <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
-            <option value="50">50</option>
-            <option value="100">100</option>
-            <option value="200">200</option>
-            <option value="300">300</option>
-            <option value="400">400</option>
-            <option value="500">500</option>
-            <option value="600">600</option>
-            <option value="700">700</option>
-            <option value="800">800</option>
-            <option value="900">900</option>
-            <option value="950">950</option>
-          </select>
-        </div>
-        <div>
-          <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
-          <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
-        </div>
-      `;
-      
-      shadesContainer.appendChild(newShadeEntry); // Append the new shade entry to the container
-    });
-  });
 
-  // Functionality to add a new color group
-  document.getElementById('addColorGroup').addEventListener('click', function () {
-    let colorsContainer = document.getElementById('colorsContainer');
-    
-    let newColorGroup = document.createElement('div');
-    newColorGroup.classList.add('color-group', 'space-y-4');
-    
-    newColorGroup.innerHTML = `
-      <div class="color-name-section">
-        <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
-        <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" placeholder="Enter color name (e.g., 'secondary')">
-      </div>
-      <div class="shades-container space-y-2">
-        <div class="shade-entry flex space-x-4">
-          <div>
-            <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
-            <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
-              <option value="50">50</option>
-              <option value="100">100</option>
-              <option value="200">200</option>
-              <option value="300">300</option>
-              <option value="400">400</option>
-              <option value="500">500</option>
-              <option value="600">600</option>
-              <option value="700">700</option>
-              <option value="800">800</option>
-              <option value="900">900</option>
-              <option value="950">950</option>
-            </select>
-          </div>
-          <div>
-            <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
-            <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
+    const colorsContainer = document.getElementById('colorsContainer');
+  
+    // Add event listener for dynamically added "Delete Color" buttons
+    colorsContainer.addEventListener('click', function (event) {
+      if (event.target.classList.contains('deleteColor')) {
+        // Find the parent color group and remove it
+        const colorGroup = event.target.closest('.color-group');
+        if (colorGroup) {
+          colorGroup.remove();
+        }
+      }
+    });
+  
+    // Add event listener for "Add Color Group" button (if required)
+    const addColorGroupButton = document.getElementById('addColorGroup');
+    addColorGroupButton.addEventListener('click', function () {
+      const newColorGroup = document.createElement('div');
+      newColorGroup.className = 'color-group border-b border-slate-300 pb-4';
+      newColorGroup.innerHTML = `
+        <div class="color-name-section">
+          <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
+          <input type="text"
+            class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline"
+            name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
+        </div>
+        <div class="shades-container space-y-2">
+          <div class="shade-entry flex space-x-4">
+            <div>
+              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+              <select name="colorShade[]"
+                class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+                <option value="600">600</option>
+                <option value="700">700</option>
+                <option value="800">800</option>
+                <option value="900">900</option>
+                <option value="950">950</option>
+              </select>
+            </div>
+            <div>
+              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+              <input type="color"
+                class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline"
+                name="customColorValue[]">
+            </div>
           </div>
         </div>
-      </div>
-      <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
-    `;
-    
-    colorsContainer.appendChild(newColorGroup); // Append the new color group to the container
-  });
+        <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
+        <button type="button" class="deleteColor mt-2 text-rose-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
+      `;
+      colorsContainer.appendChild(newColorGroup);
+    });
+  
 }
 window.initializeSettings = initializeSettings;
 
@@ -193,10 +177,19 @@ window.generateGfontsEmbedCode = generateGfontsEmbedCode;
 
 function showSettingsModal() {
   const settingsModal = document.getElementById('settingsModal');
+  const settingsForm = document.getElementById('appSageSettingsForm');
+
   settingsModal.classList.remove('hidden');
 
+  // Close the modal when clicking outside the form
+  settingsModal.addEventListener('click', function (event) {
+    if (event.target === settingsModal) {
+      settingsModal.classList.add('hidden');
+    }
+  });
+
   document.getElementById('confirmSaveSettings').addEventListener('click', function () {
-    document.getElementById('appSageSettingsForm').submit();
+    settingsForm.submit();
   });
 
   document.getElementById('cancelSaveSettings').addEventListener('click', function () {
@@ -215,7 +208,7 @@ function showSettingsSavedModal() {
       // Create the modal HTML and insert it into the DOM
       const modal = document.createElement('div');
       modal.innerHTML = `
-          <div class="fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center">
+          <div class="fixed inset-0 z-[60] bg-slate-800 bg-opacity-50 flex justify-center items-center">
               <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
                   <p class="text-slate-900">Your settings have been successfully saved!</p>
                   <div class="flex justify-center mt-4">
@@ -273,7 +266,7 @@ window.processPastedColorObject = processPastedColorObject;
 // Modal function for JSON input
 function showColorJsonInputModal() {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-[1000] bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[65] bg-slate-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
       <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
           <p class="text-slate-900">Paste your JSON object below:</p>

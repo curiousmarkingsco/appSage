@@ -787,6 +787,18 @@ video {
   z-index: 1001;
 }
 
+.z-\[55\] {
+  z-index: 55;
+}
+
+.z-\[60\] {
+  z-index: 60;
+}
+
+.z-\[65\] {
+  z-index: 65;
+}
+
 .col-span-1 {
   grid-column: span 1 / span 1;
 }
@@ -3222,6 +3234,10 @@ video {
 
 .decoration-wavy {
   text-decoration-style: wavy;
+}
+
+.underline-offset-4 {
+  text-underline-offset: 4px;
 }
 
 .antialiased {
