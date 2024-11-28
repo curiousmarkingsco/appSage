@@ -524,7 +524,6 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
       iconButton.setAttribute('data-extra-info', option === 'reset' ? tooltips['reset'] : `${tooltips['background-position']} ${option + '.'}`);
     } else if (labelPrefix === 'Background Repeat') {
       iconButton.setAttribute('data-extra-info', tooltips[`${cssClassBase}-${option}`])
-      console.log(`${options}-${cssClassBase}`);
     } else if (swatchboard) {
       iconButton.setAttribute('data-extra-info', tooltips['swatchboard'] + `${cssClassBase}-${option}`);
     } else if (bgIcon) {

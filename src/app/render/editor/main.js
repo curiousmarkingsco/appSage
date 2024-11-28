@@ -748,9 +748,12 @@ window.highlightEditingElement = highlightEditingElement;
 // antithetical counterpart.
 // DATA IN: null
 function removeEditingHighlights() {
-  const highlight = document.getElementById('editing-highlight');
+  const highlight = document.querySelectorAll('.editing-highlight');
+  window.highlighty = highlight;
   if (highlight) {
-    highlight.classList.remove('editing-highlight');
+    highlight.forEach(el => {
+      el.classList.remove('editing-highlight');
+    });
   }
 } // DATA OUT: null
 window.removeEditingHighlights = removeEditingHighlights;
@@ -818,8 +821,8 @@ window.createCopyHtmlSectionButton = createCopyHtmlSectionButton;
 
 function cleanHtmlElement(element) {
   // Remove ids with the name "editing-highlight"
-  if (element.id === "editing-highlight") {
-    element.removeAttribute("id");
+  if (element.classList.includes('editing-highlight')) {
+    element.classList.remove('editing-highlight');
   }
 
   // Classes to remove
