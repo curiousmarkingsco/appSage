@@ -5,37 +5,29 @@
 */
 
 function initializeComponentForm(container, componentName, form) {
-  if (componentName === 'internationalClocks') {
-    initializeClockDataFromForm(container);
-    form.setAttribute('data-initialized', true);
+  // Dynamically construct the function name
+  const functionName = `initialize${componentName.charAt(0).toUpperCase()}${componentName.slice(1)}Form`;
+  // Check if the function exists and is callable
+  if (typeof window[functionName] === 'function') {
+    // Call the function, passing the correct container element
+    window[functionName](container);
+  } else {
+    console.error(`Function ${functionName} does not exist.`);
   }
-  if (componentName === 'rotatingQuotes') {
-    initializeQuoteDataFromForm(container);
-    form.setAttribute('data-initialized', true);
-  }
-  if (componentName === 'calculator') {
-    initializeCalculatorForm(container);
-    form.setAttribute('data-initialized', true);
-  }
-  if (componentName === 'dialogToast') {
-    initializeDialogToastForm(container);
-    form.setAttribute('data-initialized', true);
-  }
+  form.setAttribute('data-initialized', true);
 }
 window.initializeComponentForm = initializeComponentForm;
 
 function initializeExistingComponents(container, componentName) {
-  if (componentName === 'internationalClocks') {
-    initializeInternationalClocks(container.querySelector('.internationalClocks-container'));
-  }
-  if (componentName === 'rotatingQuotes') {
-    initializeRotatingQuotes(container.querySelector('.rotatingQuotes-container'));
-  }
-  if (componentName === 'calculator') {
-    initializeCalculator(container.querySelector('.calculator-container'));
-  }
-  if (componentName === 'dialogToast') {
-    initializeDialogToast(container.querySelector('.dialogToast-container'));
+  // Dynamically construct the function name
+  const functionName = `initialize${componentName.charAt(0).toUpperCase()}${componentName.slice(1)}`;
+  
+  // Check if the function exists and is callable
+  if (typeof window[functionName] === 'function') {
+    // Call the function, passing the correct container element
+    window[functionName](container);
+  } else {
+    console.error(`Function ${functionName} does not exist.`);
   }
 }
 window.initializeExistingComponents = initializeExistingComponents;

@@ -59,7 +59,7 @@ function getClockContainers() {
 window.getClockContainers = getClockContainers;
 
 // Function to initialize the clock data from the form inputs, if available
-function initializeClockDataFromForm(clockContainer) {
+function initializeInternationalClocksForm(clockContainer) {
   const clockId = clockContainer.getAttribute('data-component-id');
   const form = document.querySelector(`.internationalClocks-form[data-component-id="${clockId}"]`);
 
@@ -121,7 +121,7 @@ function initializeClockDataFromForm(clockContainer) {
     designRadio.addEventListener('change', updateClockDataFromForm);
   });
 }
-window.initializeClockDataFromForm = initializeClockDataFromForm;
+window.initializeInternationalClocksForm = initializeInternationalClocksForm;
 
 function populateTimezoneSelects() {
   const timezones = [
@@ -230,9 +230,9 @@ window.populateTimezoneSelects = populateTimezoneSelects;
 
 // Function to update the clock based purely on data- attributes
 function updateClock(clockContainer) {
-  const timezone = clockContainer.getAttribute('data-timezone') || 'UTC';
-  const showSeconds = clockContainer.getAttribute('data-show-seconds') === 'true';
-  const design = clockContainer.getAttribute('data-design') || 'circle';
+  const timezone = clockContainer.getAttribute('data-timezone');// || 'UTC';
+  const showSeconds = clockContainer.getAttribute('data-show-seconds') === 'true';// || true;
+  const design = clockContainer.getAttribute('data-design');// || 'circle';
 
   const now = new Date().toLocaleString('en-US', { timeZone: timezone });
   const currentTime = new Date(now);

@@ -1,7 +1,8 @@
 /* rotating_quotes.js */
+// HTML Template shown in both editor and preview
 waitForGlobalsLoaded().then(() => {
   appSageComponents['rotatingQuotes'].html_template = `
-    <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
+    <div class="rotatingQuotes-container w-full p-4" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div class="rotatingQuotes-quotebox relative w-full pl-16" data-quote-id="">
         <div class="absolute left-0 top-0 w-12 h-12 opacity-30 text-black">
           ${appSageComponents['rotatingQuotes'].icon}
@@ -11,7 +12,9 @@ waitForGlobalsLoaded().then(() => {
       </div>
     </div>
   `;
-
+});
+// HTML form shown in the editor to customize various parts of the interactive component
+waitForGlobalsLoaded().then(() => {
   appSageComponents['rotatingQuotes'].form_template = `
     <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div class="quotes-container max-h-96 overflow-y-scroll space-y-4">
@@ -22,7 +25,7 @@ waitForGlobalsLoaded().then(() => {
   `;
 });
 
-function initializeQuoteDataFromForm(container) {
+function initializeRotatingQuotesForm(container) {
   const sidebar = document.getElementById('sidebar');
   const form = sidebar.querySelector('.rotatingQuotes-form');
   const quotesContainer = form.querySelector('.quotes-container');
@@ -108,7 +111,7 @@ function initializeQuoteDataFromForm(container) {
 
   form.setAttribute('data-initialized', 'true');
 }
-window.initializeQuoteDataFromForm = initializeQuoteDataFromForm;
+window.initializeRotatingQuotesForm = initializeRotatingQuotesForm;
 
 
 function initializeRotatingQuotes(container) {

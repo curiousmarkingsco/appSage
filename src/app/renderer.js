@@ -95,7 +95,7 @@ function activateComponents(editor = false) {
       if (editor !== false || comp.getAttribute('data-initialized') !== 'true') {
         comp.setAttribute('data-initialized', 'true');
       }
-      initializeExistingComponents(component, comp.getAttribute('data-component-name'));
+      initializeExistingComponents(comp, comp.getAttribute('data-component-name'));
     });
   }
 }
