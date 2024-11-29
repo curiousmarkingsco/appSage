@@ -121,7 +121,7 @@ function saveComponentObjectToPage(componentName, object) {
           storeData.pages[pageId] = {};
         }
         // Save the component object to the current page
-        storeData.pages[pageId][componentName] = object;
+        storeData.pages[pageId][componentName] = JSON.parse(object);
 
         // Save the updated data back to Electron store
         window.api.updateStoreData(storeData).then(updatedData => {

@@ -13,6 +13,7 @@ waitForGlobalsLoaded().then(() => {
     </div>
   `;
 });
+
 // HTML form shown in the editor to customize various parts of the interactive component
 waitForGlobalsLoaded().then(() => {
   appSageComponents['rotatingQuotes'].form_template = `
