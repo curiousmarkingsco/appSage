@@ -940,7 +940,7 @@ function addEditablePageTitle(container, placement) {
   titleInput.placeholder = 'Page Title';
 
   titleInput.addEventListener('change', function () {
-    newTitle = titleInput.value;
+    const newTitle = titleInput.value;
     changeLocalStoragePageTitle(newTitle);
   });
   if (placement === 'prepend') {
