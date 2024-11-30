@@ -139,6 +139,189 @@ function saveComponentObjectToPage(componentName, object) {
 }
 window.saveComponentObjectToPage = saveComponentObjectToPage;
 
+function syncEndUserData(componentName, object = null, mode, apiCallConfig) {
+  const modes = {
+    "submit": "POST",
+    "read": "GET",
+    "update": "PUT",
+    "delete": "DELETE"
+  }
+  try {
+    const pageId = getPageId();
+    if (!electronMode && object) {
+      // Using localStorage for non-Electron mode
+      const appSageStorage = getAppSageStorage();
+      const currentPage = appSageStorage.pages[pageId];
+      currentPage[`${componentName}_userdata`] = object;
+      localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    } else if (electronMode && object) {
+      // Using Electron storage
+      window.api.readStoreData().then((storeData) => {
+        // Ensure pages exist in storeData
+        if (!storeData.pages) {
+          storeData.pages = {};
+        }
+        // Ensure the pageId exists in storeData
+        if (!storeData.pages[pageId]) {
+          storeData.pages[pageId] = {};
+        }
+        // Save the component object to the current page
+        storeData.pages[pageId][`${componentName}_userdata`] = JSON.parse(object);
+
+        // Save the updated data back to Electron store
+        window.api.updateStoreData(storeData).then(updatedData => {
+          window.appSageStore = updatedData;
+        }).catch((error) => {
+          console.error('Error saving component object to page in Electron mode:', error);
+        });
+      }).catch((error) => {
+        console.error('Error reading store data in Electron mode:', error);
+      });
+    }
+    // Handle API call for both save (POST/PUT) and fetch (GET)
+    if (customBackend) {
+      const fetchConfig = cleanAndSanitizeFetchConfigJson({
+        ...apiCallConfig,
+        method: modes[mode],
+        body: (mode === 'save' || mode === 'update') ? JSON.parse(object) : undefined,
+      });
+
+      // Add query parameters for fetching if needed
+      const url = mode === 'fetch' && apiCallConfig.queryParams
+        ? buildUrlWithParams(customBackend.url, apiCallConfig.queryParams)
+        : customBackend.url;
+
+      // Make API request
+      return makeApiRequest(url, fetchConfig)
+        .then(response => {
+          console.log(`${mode === 'save' ? 'Save' : 'Fetch'} successful:`, response);
+          return response;
+        })
+        .catch(error => {
+          console.error(`${mode === 'save' ? 'Save' : 'Fetch'} failed:`, error);
+          throw error;
+        });
+    }
+  } catch (error) {
+    console.error('Something went wrong saving component data.', error);
+  }
+}
+window.saveEndUserData = saveEndUserData;
+
+// Helper function to build a URL with query parameters
+function buildUrlWithParams(baseUrl, params) {
+  const url = new URL(baseUrl);
+  Object.keys(params).forEach(key => {
+    if (params[key] != null) { // Only add non-null params
+      url.searchParams.append(key, params[key]);
+    }
+  });
+  return url.toString();
+}
+
+function cleanAndSanitizeFetchConfigJson(object) {
+  if (typeof object !== 'object' || object === null) {
+    throw new Error("Invalid fetch config: must be a non-null object.");
+  }
+
+  const cleanedConfig = {};
+
+  // Merge `options` into the root level, but do not overwrite existing properties
+  const options = object.options || {};
+  const mergedConfig = { ...options, ...object };
+
+  // Ensure method is valid and default to 'GET'
+  const validMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+  cleanedConfig.method = validMethods.includes((mergedConfig.method || 'GET').toUpperCase())
+    ? mergedConfig.method.toUpperCase()
+    : 'GET';
+
+  // Ensure headers is an object
+  cleanedConfig.headers = typeof mergedConfig.headers === 'object' && mergedConfig.headers !== null
+    ? mergedConfig.headers
+    : {};
+
+  // Ensure headers have valid key-value pairs
+  for (const [key, value] of Object.entries(cleanedConfig.headers)) {
+    if (typeof key !== 'string' || !key.trim()) {
+      delete cleanedConfig.headers[key];
+    }
+    if (typeof value !== 'string') {
+      delete cleanedConfig.headers[key];
+    }
+  }
+
+  // Ensure body is valid for methods that allow it
+  const methodsWithBody = ['POST', 'PUT', 'PATCH'];
+  if (methodsWithBody.includes(cleanedConfig.method)) {
+    if (typeof mergedConfig.body === 'string' || mergedConfig.body === null || mergedConfig.body === undefined) {
+      cleanedConfig.body = mergedConfig.body;
+    } else {
+      throw new Error("Invalid fetch config: 'body' must be a string for POST/PUT/PATCH methods.");
+    }
+  }
+
+  // Ensure credentials are valid
+  const validCredentials = ['omit', 'same-origin', 'include'];
+  cleanedConfig.credentials = validCredentials.includes(mergedConfig.credentials)
+    ? mergedConfig.credentials
+    : undefined; // Defaults to browser's fetch behavior
+
+  // Ensure mode is valid
+  const validModes = ['cors', 'no-cors', 'same-origin', 'navigate'];
+  cleanedConfig.mode = validModes.includes(mergedConfig.mode)
+    ? mergedConfig.mode
+    : undefined;
+
+  // Ensure cache is valid
+  const validCacheOptions = ['default', 'no-store', 'reload', 'no-cache', 'force-cache', 'only-if-cached'];
+  cleanedConfig.cache = validCacheOptions.includes(mergedConfig.cache)
+    ? mergedConfig.cache
+    : undefined;
+
+  // Ensure redirect is valid
+  const validRedirectOptions = ['follow', 'manual', 'error'];
+  cleanedConfig.redirect = validRedirectOptions.includes(mergedConfig.redirect)
+    ? mergedConfig.redirect
+    : undefined;
+
+  // Ensure integrity is a string if provided
+  if (mergedConfig.integrity && typeof mergedConfig.integrity === 'string') {
+    cleanedConfig.integrity = mergedConfig.integrity;
+  }
+
+  // Sanitize referrer
+  if (mergedConfig.referrer && typeof mergedConfig.referrer === 'string') {
+    cleanedConfig.referrer = mergedConfig.referrer;
+  }
+
+  // Sanitize referrerPolicy
+  const validReferrerPolicies = [
+    'no-referrer',
+    'no-referrer-when-downgrade',
+    'same-origin',
+    'origin',
+    'strict-origin',
+    'origin-when-cross-origin',
+    'strict-origin-when-cross-origin',
+    'unsafe-url',
+  ];
+  cleanedConfig.referrerPolicy = validReferrerPolicies.includes(mergedConfig.referrerPolicy)
+    ? mergedConfig.referrerPolicy
+    : undefined;
+
+  return cleanedConfig;
+}
+window.cleanAndSanitizeFetchConfigJson = cleanAndSanitizeFetchConfigJson;
+
+async function makeApiRequest(url, fetchConfig) {
+  const response = await fetch(url, fetchConfig);
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  return response.json();
+}
+
 // This function saves all page's settings from the designer's additions,
 // changes, and removals during the designer's traditional editor workflow
 // from the dedicated Page Settings sidebar.
@@ -208,7 +391,7 @@ function savePageSettingsChanges(pageId) {
         storeData.pages = {};
       }
 
-      if (!storeData.pages[pageId]){
+      if (!storeData.pages[pageId]) {
         storeData.pages[pageId] = {}
       }
 

@@ -7,6 +7,7 @@ if (typeof global === 'undefined') {
 
 window.appSageStore;
 window.editorScriptsAlreadyLoaded = false;
+window.customBackend = false; // TODO: Add to appSageSettings modal
 window.electronMode = !(typeof window.api === 'undefined');
 
 document.addEventListener('DOMContentLoaded', function () {
