@@ -41,11 +41,6 @@ function loadChanges(json, pasted = false) {
     observeClassManipulation(contentContainer);
   });
 
-  const grid = document.querySelector('#page .grid');
-  if (grid) {
-    addGridOptions(grid);
-  }
-
   document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
     linkElement.addEventListener('click', function(e) { e.preventDefault(); });
   });

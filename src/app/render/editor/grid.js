@@ -6,6 +6,29 @@
 
 */
 
+function createGridElement(gridContainer) {
+  gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
+
+  const initialColumn = createColumn();
+  gridContainer.appendChild(initialColumn);
+  initialColumn.appendChild(createAddContentButton(initialColumn));
+  initialColumn.appendChild(createAddComponentButton(initialColumn));
+  initialColumn.appendChild(createCopyHtmlSectionButton(initialColumn));
+
+  document.getElementById('page').appendChild(gridContainer);
+
+  addGridOptions(gridContainer);
+
+  // Append add column button at the end
+  const addColumnButton = createAddColumnButton(gridContainer);
+  gridContainer.appendChild(addColumnButton);
+  const addCopyHtmlButton = createCopyHtmlSectionButton(gridContainer);
+  gridContainer.appendChild(addCopyHtmlButton);
+
+  enableEditGridOnClick(gridContainer);
+}
+window.createGridElement = createGridElement;
+
 // This function populates the sidebar with relevant editing options for grids.
 // DATA IN: HTML Element, <div>
 function addGridOptions(grid) {

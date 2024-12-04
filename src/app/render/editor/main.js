@@ -10,6 +10,7 @@ function initializeEditor() {
   initializeEditorHtml().then(() => {
     setupPageEvents();
     window.editorInitialized = true;
+    document.querySelectorAll('.editing-highlight').forEach(el => el.classList.remove('editing-highlight'));
   }).catch(error => {
     console.error('Error during editor initialization:', error);
   });
@@ -57,7 +58,7 @@ async function initializeEditorHtml() {
             </div>
           </div>
 
-          <div id="page" class="min-h-screen w-[calc(100%-18rem)] ml-72 mb-24">
+          <div id="page" class="min-h-screen w-[calc(100%-18rem)] ml-72 mb-24 overflow-x-hidden">
             <!-- The designer's page content goes here -->
           </div>
         </div>
@@ -358,25 +359,7 @@ function setupPageEvents() {
   addGridButton.addEventListener('click', function (e) {
     e.stopPropagation();
     const gridContainer = document.createElement('div');
-    gridContainer.className = 'w-full min-w-full max-w-full min-h-auto h-auto max-h-auto pagegrid grid grid-cols-1 p-4 ml-0 mr-0 mt-0 mb-0 ugc-keep';
-
-    const initialColumn = createColumn();
-    gridContainer.appendChild(initialColumn);
-    initialColumn.appendChild(createAddContentButton(initialColumn));
-    initialColumn.appendChild(createAddComponentButton(initialColumn));
-    initialColumn.appendChild(createCopyHtmlSectionButton(initialColumn));
-
-    document.getElementById('page').appendChild(gridContainer);
-
-    addGridOptions(gridContainer);
-
-    // Append add column button at the end
-    const addColumnButton = createAddColumnButton(gridContainer);
-    gridContainer.appendChild(addColumnButton);
-    const addCopyHtmlButton = createCopyHtmlSectionButton(gridContainer);
-    gridContainer.appendChild(addCopyHtmlButton);
-
-    enableEditGridOnClick(gridContainer);
+    createGridElement(gridContainer);
   });
 
   const addContainerButton = document.getElementById('addContainer');
@@ -941,6 +924,7 @@ function addEditablePageTitle(container, placement) {
 
   titleInput.addEventListener('change', function () {
     const newTitle = titleInput.value;
+    document.title = titleInput.value;
     changeLocalStoragePageTitle(newTitle);
   });
   if (placement === 'prepend') {

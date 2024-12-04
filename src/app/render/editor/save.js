@@ -206,7 +206,7 @@ function syncEndUserData(componentName, object = null, mode, apiCallConfig) {
     console.error('Something went wrong saving component data.', error);
   }
 }
-window.saveEndUserData = saveEndUserData;
+window.syncEndUserData = syncEndUserData;
 
 // Helper function to build a URL with query parameters
 function buildUrlWithParams(baseUrl, params) {
