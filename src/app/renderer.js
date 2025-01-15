@@ -403,7 +403,25 @@ function combineComponentsLists() {
       icon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-full w-full"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/></svg>',
       html_template: '',
       form_template: ''
-    }
+    },
+    "barDropNavigationMenu": {
+    name: 'Bar Drop Navigation Menu',
+    license: 'free',
+    file: 'bar_drop_navigation_menu.js',
+    description: 'A horizontal navigation bar with dropdown menus for each item.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/></svg>',
+    html_template: '',
+    form_template: ''
+    },
+    "accordionMenu": {
+    name: 'Accordion Menu',
+    license: 'free',
+    file: 'accordion_menu.js',
+    description: 'An expandable/collapsible accordion menu with dynamic options.',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/></svg>',
+    html_template: '',
+    form_template: ''
+  }
   }
 
   const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
