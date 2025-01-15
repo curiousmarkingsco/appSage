@@ -421,7 +421,16 @@ function combineComponentsLists() {
     icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/></svg>',
     html_template: '',
     form_template: ''
-  }
+    },
+    "loadingCircle": {
+      name: 'Loading Circle',
+      license: 'free',
+      file: 'loading_circle.js',
+      description: 'A simple spinning loader to indicate buffering or processing.',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="h-full w-full"><circle cx="256" cy="256" r="200" stroke="currentColor" stroke-width="20" fill="none" stroke-dasharray="314" stroke-dashoffset="0" stroke-linecap="round" class="animate-spin"></circle></svg>',
+      html_template: '',
+      form_template: ''
+    },
   }
 
   const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
