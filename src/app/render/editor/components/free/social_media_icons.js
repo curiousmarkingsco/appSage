@@ -2,19 +2,19 @@ waitForGlobalsLoaded().then(() => {
   appSageComponents['socialMediaIcons'].html_template = `
     <div class="socialMediaIcons-container flex gap-4 justify-center p-4" data-component-name="socialMediaIcons" data-component-id="{{socialMediaIcons.id}}">
       <a href="#" target="_blank" class="icon-link" data-platform="youtube">
-        <img src="../../../../assets/social_icons/youtube.png" alt="YouTube" class="h-8 w-8">
+        <img src="assets/social_icons/youtube.png" alt="YouTube" class="h-8 w-8">
       </a>
       <a href="#" target="_blank" class="icon-link" data-platform="instagram">
-        <img src="path/to/instagram-icon.svg" alt="Instagram" class="h-8 w-8">
+        <img src="assets/social_icons/instagram.png" alt="Instagram" class="h-8 w-8">
       </a>
       <a href="#" target="_blank" class="icon-link" data-platform="linkedin">
-        <img src="path/to/linkedin-icon.svg" alt="LinkedIn" class="h-8 w-8">
+        <img src="assets/social_icons/linkedin.png" alt="LinkedIn" class="h-8 w-8">
       </a>
       <a href="#" target="_blank" class="icon-link" data-platform="x">
-        <img src="path/to/x-icon.svg" alt="X" class="h-8 w-8">
+        <img src="assets/social_icons/twitter.png" alt="X" class="h-8 w-8">
       </a>
       <a href="#" target="_blank" class="icon-link" data-platform="facebook">
-        <img src="path/to/facebook-icon.svg" alt="Facebook" class="h-8 w-8">
+        <img src="assets/social_icons/facebook.png" alt="Facebook" class="h-8 w-8">
       </a>
     </div>
   `;
