@@ -431,7 +431,16 @@ function combineComponentsLists() {
       html_template: '',
       form_template: ''
     },
-  }
+    "socialMediaIcons": {
+      name: "Social Media Icons",
+      license: "free",
+      file: "social_media_icons.js",
+      description: "Clickable social media icons with customizable links",
+      icon: `<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Add appropriate SVG here --></svg>`,
+      html_template: '',
+      form_template: '',
+    },
+  };
 
   const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
   return combinedComponents;
