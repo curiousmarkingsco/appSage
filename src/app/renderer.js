@@ -440,6 +440,15 @@ function combineComponentsLists() {
       html_template: '',
       form_template: '',
     },
+    "reportMenu": {
+    name: 'Report Menu Component',
+    license: 'free',
+    file: 'report_menu.js',
+    description: 'A component for reporting user-generated content with dropdown and modal interactions.',
+    icon: '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M..."></path></svg>',
+    html_template: '',
+    form_template: ''
+    },
   };
 
   const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
