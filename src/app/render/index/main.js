@@ -1,5 +1,14 @@
 async function initializeDashboard() {
   try {
+
+    // Check if a project was open before refresh
+    const lastOpenedProject = localStorage.getItem('lastOpenedProject');
+
+    if (lastOpenedProject) {
+      displayPages(lastOpenedProject);  // Open pages view instead of projects
+      return;
+    }
+
     // Inject head content
     document.head.innerHTML = `
       <meta charset="UTF-8">
@@ -47,11 +56,21 @@ window.initializeDashboard = initializeDashboard;
 // Function to load a script dynamically
 async function getStoredProjects() {
   let appSageStorage = JSON.parse(localStorage.getItem('appSageStorage')) || { projects: [], titleIdMap: {}, pages: {} };
-  
+
+  // Ensure proper structure
   if (!Array.isArray(appSageStorage.projects)) appSageStorage.projects = [];
   if (typeof appSageStorage.titleIdMap !== 'object') appSageStorage.titleIdMap = {};
   if (typeof appSageStorage.pages !== 'object') appSageStorage.pages = {};
 
+  // Ensure every project's pages is an array
+  Object.keys(appSageStorage.pages).forEach(projectId => {
+    if (!Array.isArray(appSageStorage.pages[projectId])) {
+      console.warn(`⚠️ Fixing pages for project ${projectId}, was:`, appSageStorage.pages[projectId]);
+      appSageStorage.pages[projectId] = [];
+    }
+  });
+
+  console.log("✅ getStoredProjects result:", appSageStorage);
   return appSageStorage;
 }
 
@@ -128,11 +147,13 @@ function editProject(projectId) {
 }
 
 function displayPages(projectId) {
+  // Store the last opened project so it persists on refresh
+  localStorage.setItem('lastOpenedProject', projectId);
+
   getStoredProjects().then((appSageStorage) => {
     const titleIdMap = appSageStorage.titleIdMap || {};
     const pageList = appSageStorage.pages?.[projectId] || [];
 
-    // Replace entire content to show pages with the same header as projects
     document.body.innerHTML = `
       <div class="h-screen lg:hidden bg-slate-100 p-4">
         <h2 class="text-4xl font-bold text-center mt-20">Please use a desktop computer to access appSage.</h2>
@@ -145,7 +166,7 @@ function displayPages(projectId) {
           </div>
           <div></div>
           <div class="text-right mr-4">
-            <button class="bg-gray-500 text-white px-4 py-2 rounded" onclick="initializeDashboard()">⬅ Back to Projects</button>
+            <button class="bg-gray-500 text-white px-4 py-2 rounded" onclick="goBackToProjects()">⬅ Back to Projects</button>
           </div>
         </div>
 
@@ -174,37 +195,60 @@ function displayPages(projectId) {
   });
 }
 
-// Function to add a new page inside a project
-function addPage(projectId) {
-  getStoredProjects().then((appSageStorage) => {
-    const newPage = {
-      id: `page-${Date.now()}`,
-      title: `New Page ${appSageStorage.pages?.[projectId]?.length + 1 || 1}`
-    };
-
-    if (!appSageStorage.pages) appSageStorage.pages = {};
-    if (!appSageStorage.pages[projectId]) appSageStorage.pages[projectId] = [];
-
-    appSageStorage.pages[projectId].push(newPage);
-    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
-
-    // 🚀 Open the editor with this new page
-    editPage(projectId, newPage.id);
-  });
+function goBackToProjects() {
+  localStorage.removeItem('lastOpenedProject');
+  initializeDashboard();
 }
 
-// 🚀 Opens the editor for an existing page
-function editPage(projectId, pageId) {
-  if (!electronMode) {
-    window.open(`${window.location.href}?project=${projectId}&page=${pageId}&mode=edit`, '_blank');
-  } else {
-    window.api.createEditorWindow(pageId).catch(error => {
-      console.error('Error opening editor:', error.stack || error);
-    });
+async function addPage(projectId) {
+  try {
+    let appSageStorage = await getStoredProjects();
+    
+    // Ensure pages structure exists
+    if (!appSageStorage.pages) appSageStorage.pages = {};
+    if (!appSageStorage.pages[projectId]) appSageStorage.pages[projectId] = [];
+    
+    const newPage = {
+      id: `page-${Date.now()}`,
+      title: `New Page ${appSageStorage.pages[projectId].length + 1}`
+    };
+    
+    appSageStorage.pages[projectId].push(newPage);
+    localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+    
+    // Refresh page list dynamically
+    displayPages(projectId);
+    
+    // Open editor for the new page
+    editPage(projectId, newPage.id);
+  } catch (error) {
+    console.error("Error adding page:", error);
   }
 }
 
-// 🚀 Opens page settings (can be expanded later)
+async function editPage(projectId, pageId) {
+  try {
+    let appSageStorage = await getStoredProjects();
+    
+    // Check if page exists before opening
+    if (!appSageStorage.pages[projectId] || !appSageStorage.pages[projectId].some(p => p.id === pageId)) {
+      console.error("Page not found:", pageId);
+      return;
+    }
+    
+    if (!electronMode) {
+      window.open(`${window.location.href}?project=${projectId}&page=${pageId}&mode=edit`, '_blank');
+    } else {
+      window.api.createEditorWindow(pageId).catch(error => {
+        console.error('Error opening editor:', error.stack || error);
+      });
+    }
+  } catch (error) {
+    console.error("Error editing page:", error);
+  }
+}
+
+// Opens page settings (can be expanded later)
 function pageSettings(projectId, pageId) {
   alert(`Settings for ${pageId} inside ${projectId}`);
 }
@@ -221,29 +265,3 @@ function deletePage(projectId, pageId, event) {
     displayPages(projectId);
   });
 }
-
-// Function to open a specific page (for future implementation)
-function openPage(projectId, pageId) {
-  window.open(`${window.location.href}?project=${projectId}&page=${pageId}`, '_blank');
-}
-
-// Functions to dynamically load the editor or preview logic (replace these with actual logic)
-function loadEditor(pageId = null) {
-  if (pageId) {
-    const params = new URLSearchParams(window.location.search);
-    params.set('config', pageId);
-  }
-  if (typeof window.api !== 'undefined') {
-    loadScript('./render/editor/main.js');
-  } else {
-    initializeEditor();
-  }
-}
-window.loadEditor = loadEditor;
-
-function loadPreview(pageId) {
-  const params = new URLSearchParams(window.location.search);
-  params.set('page', pageId);
-  loadScript('./render/preview/main.js');
-}
-window.loadPreview = loadPreview;
