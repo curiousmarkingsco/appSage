@@ -12,12 +12,63 @@
 // DATA IN: JSON Object
 function loadChanges(json, pasted = false) {
   const pasteContainer = document.getElementById('page');
+
   if (!pasted) {
     pasteContainer.innerHTML = '';
+
     let data = json;
-    if (!electronMode) data = JSON.parse(data);
+    if (!electronMode) {
+      try {
+        data = JSON.parse(data);
+      } catch (error) {
+        console.error("❌ JSON parsing error in loadChanges:", error);
+        return;
+      }
+    }
+
+    console.log("🔍 Full loadChanges input:", data);
+
+    // Check if data is an object and has pages property
+    if (typeof data === "object" && !Array.isArray(data)) {
+      console.warn("⚠️ Data is an object. Checking for 'data' or 'pages' field...");
+
+      // If it's the "pages" object, flatten all arrays into one array
+      if (typeof data.pages === "object") {
+        console.log("✅ Found 'pages' object. Flattening all nested arrays...");
+
+        // Recursively flatten all arrays within pages object
+        const flattenArrays = (obj) => {
+          let result = [];
+          Object.values(obj).forEach(value => {
+            if (Array.isArray(value)) {
+              result = result.concat(value);
+            } else if (typeof value === "object") {
+              result = result.concat(flattenArrays(value)); // Recursively flatten
+            }
+          });
+          return result;
+        };
+
+        data = flattenArrays(data.pages);
+        console.log("✅ Flattened pages array:", data);
+      } 
+      else {
+        console.error("❌ 'pages' property is missing or not an object:", data);
+        return;
+      }
+    }
+
+    // Ensure data is an array before proceeding
+    if (!Array.isArray(data)) {
+      console.error("❌ Expected an array, but got:", typeof data, data);
+      return;
+    }
+
+    // Process the loaded data
     data.forEach(item => {
-      if (!item.className.includes('innergrid')) pasteContainer.innerHTML += item.content;
+      if (item.className && !item.className.includes('innergrid')) {
+        pasteContainer.innerHTML += item.content || `<div>${item.title}</div>`;
+      }
     });
   }
 
@@ -47,9 +98,9 @@ function loadChanges(json, pasted = false) {
   }
 
   document.querySelectorAll('.pagecontent a, .pagecontent button').forEach(linkElement => {
-    linkElement.addEventListener('click', function(e) { e.preventDefault(); });
+    linkElement.addEventListener('click', function (e) { e.preventDefault(); });
   });
-} // DATA OUT: null
+}
 window.loadChanges = loadChanges;
 
 // This function makes it so that saved elements related to grids can be edited once more.

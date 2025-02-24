@@ -62,15 +62,43 @@ async function getStoredProjects() {
   if (typeof appSageStorage.titleIdMap !== 'object') appSageStorage.titleIdMap = {};
   if (typeof appSageStorage.pages !== 'object') appSageStorage.pages = {};
 
-  // Ensure every project's pages is an array
+  // Cleanup: Remove old keys from pages
+  const validProjectIds = new Set(appSageStorage.projects);
+
   Object.keys(appSageStorage.pages).forEach(projectId => {
+    // Only keep pages for existing projects
+    if (!validProjectIds.has(projectId)) {
+      console.warn(`🧹 Cleaning up orphaned pages for non-existent project: ${projectId}`);
+      delete appSageStorage.pages[projectId];
+      return;
+    }
+
+    // Ensure pages are arrays
     if (!Array.isArray(appSageStorage.pages[projectId])) {
       console.warn(`⚠️ Fixing pages for project ${projectId}, was:`, appSageStorage.pages[projectId]);
       appSageStorage.pages[projectId] = [];
     }
+
+    // Filter out invalid page objects
+    appSageStorage.pages[projectId] = appSageStorage.pages[projectId].filter(page => {
+      const isValid = page && typeof page === 'object' && page.id && page.title;
+      if (!isValid) {
+        console.warn(`Invalid page data found in project ${projectId}:`, page);
+      }
+      return isValid;
+    });
   });
 
-  console.log("✅ getStoredProjects result:", appSageStorage);
+  // Ensure every project has a pages array
+  appSageStorage.projects.forEach(projectId => {
+    if (!Array.isArray(appSageStorage.pages[projectId])) {
+      console.warn(`⚠️ Initializing pages array for project ${projectId}`);
+      appSageStorage.pages[projectId] = [];
+    }
+  });
+
+  console.log("getStoredProjects result:", appSageStorage);
+  localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage)); // Persist cleaned data
   return appSageStorage;
 }
 
@@ -208,19 +236,24 @@ async function addPage(projectId) {
     if (!appSageStorage.pages) appSageStorage.pages = {};
     if (!appSageStorage.pages[projectId]) appSageStorage.pages[projectId] = [];
     
+    // Create new page object
     const newPage = {
       id: `page-${Date.now()}`,
-      title: `New Page ${appSageStorage.pages[projectId].length + 1}`
+      title: `New Page ${appSageStorage.pages[projectId].length + 1}`,
+      content: `<div>New Page Content</div>`
     };
     
+    console.log("Adding new page:", newPage);
+
+    // Add new page under the project
     appSageStorage.pages[projectId].push(newPage);
     localStorage.setItem('appSageStorage', JSON.stringify(appSageStorage));
+    
+    console.log("Updated Storage:", appSageStorage);
     
     // Refresh page list dynamically
     displayPages(projectId);
     
-    // Open editor for the new page
-    editPage(projectId, newPage.id);
   } catch (error) {
     console.error("Error adding page:", error);
   }
