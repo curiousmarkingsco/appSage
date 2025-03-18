@@ -23,18 +23,26 @@ async function initializeEditorHtml() {
       // Inject the head content dynamically
       // CSP is handled by Electron for dev and production. For local web dev, we set up inline CSP.
       // For web production, CSP is handled by GitHub pages.
-      document.head.innerHTML = `
-        <meta charset="UTF-8">
-        <title>appSage Editor</title>
-        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      let htmlInsideRendererJSToBlock = "";
+      // Only assign this block if we're NOT in an extension environment.
+      if (!chrome || !chrome.runtime || !chrome.runtime.getURL) {
+        htmlInsideRendererJSToBlock = `
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
         <link rel="manifest" href="./assets/favicons/site.webmanifest">
         <link rel="mask-icon" href="./assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
         <meta name="msapplication-TileColor" content="#f2f0e9">
-        <meta name="theme-color" content="#f2f0e9">
+        <meta name="theme-color" content="#f2f0e9">`;
+      }
+
+      document.head.innerHTML = `
+        <meta charset="UTF-8">
+        <title>appSage Editor</title>
+        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        ${htmlInsideRendererJSToBlock}
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link rel="stylesheet" href="./styles.css">
