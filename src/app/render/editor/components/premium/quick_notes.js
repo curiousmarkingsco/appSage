@@ -86,7 +86,7 @@ waitForGlobalsLoaded().then(() => {
                 <div id="quicknote-note-editor-modal" class="fixed inset-0 flex items-center justify-center hidden">
                     <div id="quicknote-bg-close-editor" class="fixed inset-0 flex h-full w-full bg-black bg-opacity-50 dark:bg-opacity-30"></div>
                     <!-- Note Editor Container -->
-                    <div id="quicknote-note-editor" class="w-1/3 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 relative">
+                    <div id="quicknote-note-editor" class="w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
                             class="w-full border-b border-slate-300 dark:border-slate-700 focus:outline-none text-lg font-bold mb-2 bg-transparent" />
@@ -96,7 +96,7 @@ waitForGlobalsLoaded().then(() => {
             
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
-                            class="min-h-64 border border-slate-300 dark:border-slate-700 rounded-lg p-2 mb-2 bg-transparent"></textarea>
+                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent"></textarea>
             
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
@@ -110,27 +110,33 @@ waitForGlobalsLoaded().then(() => {
                         <div class="flex justify-between border-t dark:border-slate-500 pt-2">
                             <!-- Image Icon -->
                             <button id="quicknote-add-image" class="text-slate-500 hover:text-sky-500">
+                                <span class="sr-only">Add Image</span>
                                 <svg fill="currentColor" class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M576 32L96 32l0 352 480 0 0-352zM395.6 139.8l96 136L496 282l0 7.6 0 8 0 24-24 0-120 0-24 0-48 0-24 0-56 0-24 0 0-24 0-8 0-9.1 6.1-6.8 64-72L264 181.5l17.9 20.2L299.1 221l57.3-81.2L376 112l19.6 27.8zM192 128a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM48 120l0-24L0 96l0 24L0 456l0 24 24 0 432 0 24 0 0-48-24 0L48 432l0-312z"/></svg>
                             </button>
                             <!-- Audio Icon -->
                             <button id="quicknote-add-audio" class="text-slate-500 hover:text-sky-500">
+                            <span class="sr-only">Add Audio</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M96 0l0 256c0 53 43 96 96 96s96-43 96-96l-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-96L96 0zM320 224l0 32c0 70.7-57.3 128-128 128s-128-57.3-128-128l0-40 0-24-48 0 0 24 0 40c0 89.1 66.2 162.7 152 174.4l0 33.6-48 0-24 0 0 48 24 0 72 0 72 0 24 0 0-48-24 0-48 0 0-33.6c85.8-11.7 152-85.3 152-174.4l0-40 0-24-48 0 0 24 0 8z"/></svg>
                             </button>
                             <!-- Label Icon -->
                             <button id="quicknote-manage-labels" class="text-slate-500 hover:text-sky-500">
+                                <span class="sr-only">Add Label(s)</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M495.2 189.3l7 7 0 9.9 0 99.5 0 9.9-7 7L337 481 303 447 454.2 295.8l0-79.6L303 65 337 31 495.2 189.3zM0 256L0 32l224 0L416 224l0 64L224 480 0 256zM144 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Color Palette Icon -->
                             <button id="quicknote-choose-color" class="text-slate-500 hover:text-sky-500">
+                                <span class="sr-only">Choose note text and background color</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 0C397.4 0 512 114.6 512 256l0 64-156.1 0c-37.5 0-67.9 30.4-67.9 67.9c0 18 7.2 35.3 19.9 48L320 448l-64 64C114.6 512 0 397.4 0 256S114.6 0 256 0zm0 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-96 32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM416 160a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Archive Icon -->
                             <button id="quicknote-toggle-archive" class="text-slate-500 hover:text-sky-500">
+                                <span class="sr-only">Archive this note</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M512 32l0 96L0 128 0 32l512 0zM32 160l448 0 0 320L32 480l0-320zm128 64l0 32 16 0 160 0 16 0 0-32-16 0-160 0-16 0z"/></svg>
                             </button>
                             <!-- Ellipsis Icon (Dropdown for Pin & Delete) -->
                             <div class="relative">
-                                <button id="quicknote-ellipsis-menu" class="text-slate-500 mt-2 dark:text-slate-100 hover:text-sky-500">
+                                <button id="quicknote-ellipsis-menu" class="text-slate-500 dark:text-slate-100 hover:text-sky-500">
+                                    <span class="sr-only">More Options</span>
                                     <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>
                                 </button>
                                 <!-- Dropdown Menu (hidden by default) -->
@@ -461,9 +467,6 @@ function initializeQuickNotes(container) {
         const json = JSON.stringify(parsedData);
         saveComponentObjectToPage('quickNotes', json);
 
-        // old:
-        // localStorage.setItem('quickNote.notes', JSON.stringify(storedNotes));
-
         // Simulate API call to save note
         // fetch('https://example.com/endpoint/quicknote', {
         //   method: 'POST',
@@ -563,8 +566,8 @@ function initializeQuickNotes(container) {
         show ? modal.classList.remove('hidden') : modal.classList.add('hidden');
     }
     const addImg = document.getElementById('quicknote-add-image');
-    if (addImg) addImg.addEventListener('click', () => { toggleModal('modal-image', true); });
-    document.getElementById('quicknote-close-modal-image').addEventListener('click', () => { toggleModal('modal-image', false); });
+    if (addImg) addImg.addEventListener('click', () => { toggleModal('quicknote-modal-image', true); });
+    document.getElementById('quicknote-close-modal-image').addEventListener('click', () => { toggleModal('quicknote-modal-image', false); });
     document.getElementById('quicknote-save-image').addEventListener('click', () => {
         const imageUrlInput = document.getElementById('quicknote-image-url');
         const imageFileInput = document.getElementById('quicknote-image-file');
@@ -573,7 +576,7 @@ function initializeQuickNotes(container) {
             imageData = imageUrlInput.value.trim();
             addImage(imageData, 'url');
             imageUrlInput.value = '';
-            toggleModal('modal-image', false);
+            toggleModal('quicknote-modal-image', false);
             saveNote();
         } else if (imageFileInput.files && imageFileInput.files[0]) {
             const file = imageFileInput.files[0];
@@ -582,12 +585,12 @@ function initializeQuickNotes(container) {
                 imageData = e.target.result;
                 addImage(imageData, 'blob');
                 imageFileInput.value = '';
-                toggleModal('modal-image', false);
+                toggleModal('quicknote-modal-image', false);
                 saveNote();
             };
             reader.readAsDataURL(file);
         } else {
-            toggleModal('modal-image', false);
+            toggleModal('quicknote-modal-image', false);
         }
     });
 
@@ -626,8 +629,8 @@ function initializeQuickNotes(container) {
     }
 
     const addAud = document.getElementById('quicknote-add-audio');
-    if (addAud) addAud.addEventListener('click', () => { toggleModal('modal-audio', true); });
-    document.getElementById('quicknote-close-modal-audio').addEventListener('click', () => { toggleModal('modal-audio', false); });
+    if (addAud) addAud.addEventListener('click', () => { toggleModal('quicknote-modal-audio', true); });
+    document.getElementById('quicknote-close-modal-audio').addEventListener('click', () => { toggleModal('quicknote-modal-audio', false); });
     document.getElementById('quicknote-save-audio').addEventListener('click', () => {
         const audioUrlInput = document.getElementById('quicknote-audio-url');
         const audioFileInput = document.getElementById('quicknote-audio-file');
@@ -636,7 +639,7 @@ function initializeQuickNotes(container) {
             audioData = audioUrlInput.value.trim();
             addAudio(audioData, 'url');
             audioUrlInput.value = '';
-            toggleModal('modal-audio', false);
+            toggleModal('quicknote-modal-audio', false);
             saveNote();
         } else if (audioFileInput.files && audioFileInput.files[0]) {
             const file = audioFileInput.files[0];
@@ -645,12 +648,12 @@ function initializeQuickNotes(container) {
                 audioData = e.target.result;
                 addAudio(audioData, 'blob');
                 audioFileInput.value = '';
-                toggleModal('modal-audio', false);
+                toggleModal('quicknote-modal-audio', false);
                 saveNote();
             };
             reader.readAsDataURL(file);
         } else {
-            toggleModal('modal-audio', false);
+            toggleModal('quicknote-modal-audio', false);
         }
     });
 
@@ -693,7 +696,11 @@ function initializeQuickNotes(container) {
     // LABEL MANAGEMENT & PILL BOXES
     // -------------------------
     function loadLabels() {
-        return JSON.parse(localStorage.getItem('quickNote.labels')) || [];
+        const currentPage = getCurrentPage();
+        const retrievedData = currentPage.quickNotes;
+        const parsedData = retrievedData ? JSON.parse(retrievedData) : {};
+        const existingLabels = parsedData.labels ? parsedData.labels : [];
+        return existingLabels;
     }
 
     function renderLabelList() {
@@ -729,7 +736,15 @@ function initializeQuickNotes(container) {
             deleteBtn.addEventListener('click', () => {
                 let labels = loadLabels();
                 labels = labels.filter(l => l !== label);
-                localStorage.setItem('quickNote.labels', JSON.stringify(labels));
+
+                const currentPage = getCurrentPage();
+                const retrievedData = currentPage.quickNotes;
+
+                const parsedData = retrievedData ? JSON.parse(retrievedData) : {};
+                parsedData.labels = labels;
+                const json = JSON.stringify(parsedData);
+                saveComponentObjectToPage('quickNotes', json);
+
                 currentNoteLabels = currentNoteLabels.filter(l => l !== label);
                 renderLabelList();
                 updateLabelPills();
@@ -776,7 +791,15 @@ function initializeQuickNotes(container) {
                 let labels = loadLabels();
                 if (!labels.includes(newLabel)) {
                     labels.push(newLabel);
-                    localStorage.setItem('quickNote.labels', JSON.stringify(labels));
+
+                    const currentPage = getCurrentPage();
+                    const retrievedData = currentPage.quickNotes;
+
+                    const parsedData = retrievedData ? JSON.parse(retrievedData) : {};
+                    parsedData.labels = labels;
+                    const json = JSON.stringify(parsedData);
+                    saveComponentObjectToPage('quickNotes', json);
+
                     // fetch('https://example.com/endpoint/quicklabel', {
                     //   method: 'POST',
                     //   headers: { 'Content-Type': 'application/json' },
@@ -798,10 +821,10 @@ function initializeQuickNotes(container) {
     const mngLbl = document.getElementById('quicknote-manage-labels');
     if (mngLbl) mngLbl.addEventListener('click', () => {
         renderLabelList();
-        toggleModal('modal-labels', true);
+        toggleModal('quicknote-modal-labels', true);
     });
     document.getElementById('quicknote-close-modal-labels').addEventListener('click', () => {
-        toggleModal('modal-labels', false);
+        toggleModal('quicknote-modal-labels', false);
     });
     document.getElementById('quicknote-save-labels').addEventListener('click', () => {
         const labelCheckboxes = document.querySelectorAll('#label-list input[type="checkbox"]');
@@ -812,7 +835,7 @@ function initializeQuickNotes(container) {
             }
         });
         updateLabelPills();
-        toggleModal('modal-labels', false);
+        toggleModal('quicknote-modal-labels', false);
         saveNote();
     });
 
@@ -820,14 +843,14 @@ function initializeQuickNotes(container) {
     // COLOR CUSTOMIZATION & OTHER MODALS
     // -------------------------
     const chsClr = document.getElementById('quicknote-choose-color');
-    if (chsClr) chsClr.addEventListener('click', () => { toggleModal('modal-color', true); });
-    document.getElementById('quicknote-close-modal-color').addEventListener('click', () => { toggleModal('modal-color', false); });
+    if (chsClr) chsClr.addEventListener('click', () => { toggleModal('quicknote-modal-color', true); });
+    document.getElementById('quicknote-close-modal-color').addEventListener('click', () => { toggleModal('quicknote-modal-color', false); });
     document.getElementById('quicknote-save-color').addEventListener('click', () => {
         const bgColor = document.getElementById('quicknote-bg-color').value;
         const textColor = document.getElementById('quicknote-text-color').value;
         noteEditor.style.backgroundColor = bgColor;
         noteEditor.style.color = textColor;
-        toggleModal('modal-color', false);
+        toggleModal('quicknote-modal-color', false);
         saveNote();
     });
 
@@ -879,13 +902,14 @@ function initializeQuickNotes(container) {
 
     const dltNte = document.getElementById('quicknote-delete-note');
     if (dltNte) dltNte.addEventListener('click', () => {
-        toggleModal('modal-delete', true);
+        toggleModal('quicknote-modal-delete', true);
         document.getElementById('quicknote-dropdown-menu').classList.add('hidden');
     });
     document.getElementById('quicknote-cancel-delete').addEventListener('click', () => {
-        toggleModal('modal-delete', false);
+        toggleModal('quicknote-modal-delete', false);
     });
     document.getElementById('quicknote-confirm-delete').addEventListener('click', () => {
+        closeNoteEditor();
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;
         let storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
@@ -896,8 +920,6 @@ function initializeQuickNotes(container) {
         const json = JSON.stringify(parsedData);
         saveComponentObjectToPage('quickNotes', json);
 
-        // old:
-        // localStorage.setItem('quickNote.notes', JSON.stringify(storedNotes));
         currentNoteId = null;
         document.getElementById('quicknote-note-title').value = '';
         document.getElementById('quicknote-note-content').value = '';
@@ -907,8 +929,8 @@ function initializeQuickNotes(container) {
         currentNoteLabels = [];
         isChecklist = false;
         isPinned = false;
-        toggleModal('modal-delete', false);
         renderNotes();
+        toggleModal('quicknote-modal-delete', false);
     });
 
     document.addEventListener('click', (e) => {
