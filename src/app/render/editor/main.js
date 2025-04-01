@@ -648,8 +648,8 @@ function convertTailwindHtml(content, element) {
   parentElement.classList = 'pastedHtmlContainer pagecontainer';
   parentElement.innerHTML = content;
   element.appendChild(parentElement);
-
   wrapElements(parentElement);
+  addIdAndClassToElements();
 }
 window.convertTailwindHtml = convertTailwindHtml;
 
