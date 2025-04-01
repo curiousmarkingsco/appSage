@@ -1,18 +1,18 @@
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
-        <div class="quickNotes-container bg-gray-100 dark:bg-gray-800" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
+        <div class="quickNotes-container bg-slate-100 dark:bg-slate-800" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
             <div class="container mx-auto p-4">
 
                 <!-- Top Navigation Bar: Note Creation, Search, and Label Filtering -->
-                <header class="flex flex-col md:flex-row items-center justify-between rounded-lg p-4 bg-white dark:bg-gray-900 dark:text-white shadow">
+                <header class="flex flex-col md:flex-row items-center justify-between rounded-lg p-4 bg-white dark:bg-slate-900 dark:text-white shadow">
                     <!-- Note Creation Pillbox -->
                     <div id="note-creation-pillbox" class="flex items-center space-x-2">
                         <div class="group group-hover flex relative">
                             <button id="create-checkbox-note"
-                                class="absolute group-hover:pl-6 group-hover:pr-3 flex items-center ml-0 left-5 py-2 rounded-r-full bg-blue-500 text-white overflow-hidden w-0 group-hover:w-[7rem] duration-300 ease-in-out transition-all hover:bg-blue-600">
+                                class="absolute group-hover:pl-6 group-hover:pr-3 flex items-center ml-0 left-5 py-2 rounded-r-full bg-sky-500 text-white overflow-hidden w-0 group-hover:w-[7rem] duration-300 ease-in-out transition-all hover:bg-sky-600">
                                 Checklist
                             </button>
-                            <button id="create-text-note" class="flex items-center p-2 rounded-full bg-blue-600 text-white rounded-lg-full relative z-5">
+                            <button id="create-text-note" class="flex items-center p-2 rounded-full bg-sky-600 text-white rounded-lg-full relative z-5">
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 80l0-32-64 0 0 32 0 144L48 224l-32 0 0 64 32 0 144 0 0 144 0 32 64 0 0-32 0-144 144 0 32 0 0-64-32 0-144 0 0-144z"/></svg>
                             </button>
                         </div>
@@ -44,7 +44,7 @@ waitForGlobalsLoaded().then(() => {
                         <div class="relative">
                             <button id="label-filter-btn" class="px-3 py-1 border rounded-lg">Filter by Label</button>
                             <div id="label-filter-dropdown"
-                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-black dark:text-gray-200 border rounded-lg shadow hidden max-h-60 overflow-y-auto">
+                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-black dark:text-slate-200 border rounded-lg shadow hidden max-h-60 overflow-y-auto">
                                 <input id="label-filter-search" type="text" placeholder="Search labels..."
                                     class="w-full px-2 py-1 border-b" />
                                 <div id="label-filter-list">
@@ -59,7 +59,7 @@ waitForGlobalsLoaded().then(() => {
                 <main id="notes-container" class="p-4">
                     <!-- Pinned Notes Section -->
                     <section id="pinned-notes">
-                        <h2 class="text-xl font-semibold mb-2 dark:text-gray-100 sr-only">Pinned</h2>
+                        <h2 class="text-xl font-semibold mb-2 dark:text-slate-100 sr-only">Pinned</h2>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 notes-grid">
                             <!-- Pinned note cards are injected here -->
                         </div>
@@ -67,7 +67,7 @@ waitForGlobalsLoaded().then(() => {
 
                     <!-- Active (Unpinned/Unarchived) Notes Section -->
                     <section id="active-notes" class="mt-6">
-                        <h2 class="text-xl font-semibold mb-2 dark:text-gray-100 sr-only">Notes</h2>
+                        <h2 class="text-xl font-semibold mb-2 dark:text-slate-100 sr-only">Notes</h2>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 notes-grid">
                             <!-- Active note cards are injected here -->
                         </div>
@@ -75,7 +75,7 @@ waitForGlobalsLoaded().then(() => {
 
                     <!-- Archived Notes Section -->
                     <section id="archived-notes" class="mt-6">
-                        <h2 class="text-base font-semibold mb-2 text-gray-400 dark:text-gray-100 border-b border-gray-200">Archived</h2>
+                        <h2 class="text-base font-semibold mb-2 text-slate-400 dark:text-slate-100 border-b border-slate-200">Archived</h2>
                         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 notes-grid">
                             <!-- Archived note cards are injected here -->
                         </div>
@@ -86,17 +86,17 @@ waitForGlobalsLoaded().then(() => {
                 <div id="note-editor-modal" class="fixed inset-0 flex items-center justify-center hidden">
                     <div id="bg-close-editor" class="fixed inset-0 flex h-full w-full bg-black bg-opacity-50 dark:bg-opacity-30"></div>
                     <!-- Note Editor Container -->
-                    <div id="note-editor" class="w-1/3 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-gray-500 dark:shadow-white dark:text-white p-4 relative">
+                    <div id="note-editor" class="w-1/3 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 relative">
                         <!-- Title Input -->
                         <input id="note-title" type="text" placeholder="Title"
-                            class="w-full border-b border-gray-300 dark:border-gray-700 focus:outline-none text-lg font-bold mb-2 bg-transparent" />
+                            class="w-full border-b border-slate-300 dark:border-slate-700 focus:outline-none text-lg font-bold mb-2 bg-transparent" />
             
                         <!-- Media Gallery (for images and audio) -->
                         <div id="media-gallery" class="flex gap-2 mb-2"></div>
             
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="note-content" placeholder="Take a note..."
-                            class="min-h-64 border border-gray-300 dark:border-gray-700 rounded-lg p-2 mb-2 bg-transparent"></textarea>
+                            class="min-h-64 border border-slate-300 dark:border-slate-700 rounded-lg p-2 mb-2 bg-transparent"></textarea>
             
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="checkbox-container" class="hidden min-h-64 mb-2">
@@ -107,38 +107,38 @@ waitForGlobalsLoaded().then(() => {
                         <div id="label-pills" class="flex flex-wrap gap-1 mb-2"></div>
             
                         <!-- Bottom Menu Icons -->
-                        <div class="flex justify-between border-t dark:border-gray-500 pt-2">
+                        <div class="flex justify-between border-t dark:border-slate-500 pt-2">
                             <!-- Image Icon -->
-                            <button id="add-image" class="text-gray-500 hover:text-blue-500">
+                            <button id="add-image" class="text-slate-500 hover:text-sky-500">
                                 <svg fill="currentColor" class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M576 32L96 32l0 352 480 0 0-352zM395.6 139.8l96 136L496 282l0 7.6 0 8 0 24-24 0-120 0-24 0-48 0-24 0-56 0-24 0 0-24 0-8 0-9.1 6.1-6.8 64-72L264 181.5l17.9 20.2L299.1 221l57.3-81.2L376 112l19.6 27.8zM192 128a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM48 120l0-24L0 96l0 24L0 456l0 24 24 0 432 0 24 0 0-48-24 0L48 432l0-312z"/></svg>
                             </button>
                             <!-- Audio Icon -->
-                            <button id="add-audio" class="text-gray-500 hover:text-blue-500">
+                            <button id="add-audio" class="text-slate-500 hover:text-sky-500">
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M96 0l0 256c0 53 43 96 96 96s96-43 96-96l-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-96L96 0zM320 224l0 32c0 70.7-57.3 128-128 128s-128-57.3-128-128l0-40 0-24-48 0 0 24 0 40c0 89.1 66.2 162.7 152 174.4l0 33.6-48 0-24 0 0 48 24 0 72 0 72 0 24 0 0-48-24 0-48 0 0-33.6c85.8-11.7 152-85.3 152-174.4l0-40 0-24-48 0 0 24 0 8z"/></svg>
                             </button>
                             <!-- Label Icon -->
-                            <button id="manage-labels" class="text-gray-500 hover:text-blue-500">
+                            <button id="manage-labels" class="text-slate-500 hover:text-sky-500">
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M495.2 189.3l7 7 0 9.9 0 99.5 0 9.9-7 7L337 481 303 447 454.2 295.8l0-79.6L303 65 337 31 495.2 189.3zM0 256L0 32l224 0L416 224l0 64L224 480 0 256zM144 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Color Palette Icon -->
-                            <button id="choose-color" class="text-gray-500 hover:text-blue-500">
+                            <button id="choose-color" class="text-slate-500 hover:text-sky-500">
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 0C397.4 0 512 114.6 512 256l0 64-156.1 0c-37.5 0-67.9 30.4-67.9 67.9c0 18 7.2 35.3 19.9 48L320 448l-64 64C114.6 512 0 397.4 0 256S114.6 0 256 0zm0 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-96 32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM416 160a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Archive Icon -->
-                            <button id="toggle-archive" class="text-gray-500 hover:text-blue-500">
+                            <button id="toggle-archive" class="text-slate-500 hover:text-sky-500">
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M512 32l0 96L0 128 0 32l512 0zM32 160l448 0 0 320L32 480l0-320zm128 64l0 32 16 0 160 0 16 0 0-32-16 0-160 0-16 0z"/></svg>
                             </button>
                             <!-- Ellipsis Icon (Dropdown for Pin & Delete) -->
                             <div class="relative">
-                                <button id="ellipsis-menu" class="text-gray-500 mt-2 dark:text-gray-100 hover:text-blue-500">
+                                <button id="ellipsis-menu" class="text-slate-500 mt-2 dark:text-slate-100 hover:text-sky-500">
                                     <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>
                                 </button>
                                 <!-- Dropdown Menu (hidden by default) -->
-                                <div id="dropdown-menu" class="absolute text-gray-700 right-0 mt-2 w-32 bg-white dark:bg-black dark:text-white border dark:border-gray-700 overflow-hidden rounded-lg shadow hidden">
+                                <div id="dropdown-menu" class="absolute text-slate-700 right-0 mt-2 w-32 bg-white dark:bg-black dark:text-white border dark:border-slate-700 overflow-hidden rounded-lg shadow hidden">
                                     <!-- Toggle Button to Switch Modes -->
-                                    <button id="toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-gray-800 hover:bg-gray-100">Switch to Checklist</button>
-                                    <button id="pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-gray-800 hover:bg-gray-100">Pin Note</button>
-                                    <button id="delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-gray-800 hover:bg-gray-100">Delete Note</button>
+                                    <button id="toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Switch to Checklist</button>
+                                    <button id="pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Pin Note</button>
+                                    <button id="delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Delete Note</button>
                                 </div>
                             </div>
                         </div>
@@ -147,33 +147,33 @@ waitForGlobalsLoaded().then(() => {
 
                 <!-- Modal for Image Upload -->
                 <div id="modal-image" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-gray-500">
+                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Add Image</h2>
                         <input id="image-url" type="text" placeholder="Image URL" class="w-full border rounded-lg p-2 mb-2" />
                         <input id="image-file" type="file" accept="image/*" class="w-full mb-2" />
                         <div class="flex justify-end">
-                            <button id="close-modal-image" class="text-gray-500 hover:text-blue-500 mr-2">Cancel</button>
-                            <button id="save-image" class="text-blue-500">Save</button>
+                            <button id="close-modal-image" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
+                            <button id="save-image" class="text-sky-500">Save</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal for Audio Upload -->
                 <div id="modal-audio" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-gray-500">
+                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Add Audio</h2>
                         <input id="audio-url" type="text" placeholder="Audio URL" class="w-full border rounded-lg p-2 mb-2" />
                         <input id="audio-file" type="file" accept="audio/*" class="w-full mb-2" />
                         <div class="flex justify-end">
-                            <button id="close-modal-audio" class="text-gray-500 hover:text-blue-500 mr-2">Cancel</button>
-                            <button id="save-audio" class="text-blue-500">Save</button>
+                            <button id="close-modal-audio" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
+                            <button id="save-audio" class="text-sky-500">Save</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal for Label Management -->
                 <div id="modal-labels" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-gray-500">
+                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Manage Labels</h2>
                         <!-- Optional search input (toggle via JS if needed) -->
                         <input id="label-search" type="text" placeholder="Search Labels"
@@ -185,15 +185,15 @@ waitForGlobalsLoaded().then(() => {
                         <input id="new-label" type="text" placeholder="Create new label"
                             class="w-full border rounded-lg p-2 mb-2" />
                         <div class="flex justify-end">
-                            <button id="close-modal-labels" class="text-gray-500 hover:text-blue-500 mr-2">Cancel</button>
-                            <button id="save-labels" class="text-blue-500">Save</button>
+                            <button id="close-modal-labels" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
+                            <button id="save-labels" class="text-sky-500">Save</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal for Color Customization -->
                 <div id="modal-color" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-gray-500">
+                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Choose Colors</h2>
                         <div class="mb-2">
                             <label class="block mb-1">Background Color</label>
@@ -204,20 +204,20 @@ waitForGlobalsLoaded().then(() => {
                             <input id="text-color" type="color" class="w-full" />
                         </div>
                         <div class="flex justify-end">
-                            <button id="close-modal-color" class="text-gray-500 hover:text-blue-500 mr-2">Cancel</button>
-                            <button id="save-color" class="text-blue-500">Save</button>
+                            <button id="close-modal-color" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
+                            <button id="save-color" class="text-sky-500">Save</button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Modal for Delete Confirmation -->
                 <div id="modal-delete" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-gray-500">
+                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Delete Note</h2>
                         <p class="mb-4">Are you sure you want to permanently delete this note?</p>
                         <div class="flex justify-end">
-                            <button id="cancel-delete" class="text-gray-500 hover:text-blue-500 mr-2">Cancel</button>
-                            <button id="confirm-delete" class="text-red-500">Delete</button>
+                            <button id="cancel-delete" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
+                            <button id="confirm-delete" class="text-rose-500">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -278,7 +278,7 @@ function initializeQuickNotes(container) {
 
     storedNotes.forEach(note => {
         const card = document.createElement('div');
-        card.className = 'note-card border rounded p-2 shadow relative cursor-pointer dark:text-gray-50 dark:shadow-white dark:bg-gray-800';
+        card.className = 'note-card border rounded p-2 shadow relative cursor-pointer dark:text-slate-50 dark:shadow-white dark:bg-slate-800';
         card.dataset.noteId = note.id;
         card.dataset.type = note.type;
         card.dataset.title = note.title || '';
@@ -320,9 +320,9 @@ function initializeQuickNotes(container) {
         // Add the pin icon
         const pinIcon = document.createElement('span');
         if (note.pinned) {
-        pinIcon.innerHTML = '<span class="text-gray-400 group group-hover"><span class="group-hover:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>';
+        pinIcon.innerHTML = '<span class="text-slate-400 group group-hover"><span class="group-hover:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>';
         } else {
-        pinIcon.innerHTML = '<span class="text-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+        pinIcon.innerHTML = '<span class="text-slate-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
         }
         pinIcon.className = 'absolute top-2 right-2';
         card.appendChild(pinIcon);
@@ -491,7 +491,7 @@ function initializeQuickNotes(container) {
     const input = document.createElement('input');
     input.type = 'text';
     input.value = text;
-    input.className = 'flex-grow border-b border-gray-300 p-1 bg-transparent focus:outline-none';
+    input.className = 'flex-grow border-b border-slate-300 p-1 bg-transparent focus:outline-none';
     input.addEventListener('input', () => {
         if (li === checkboxList.lastElementChild && input.value !== '') {
         createCheckboxItem('');
@@ -523,7 +523,7 @@ function initializeQuickNotes(container) {
 
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'x';
-    deleteBtn.className = 'text-red-500 ml-2 hidden';
+    deleteBtn.className = 'text-rose-500 ml-2 hidden';
     deleteBtn.addEventListener('click', (e) => {
         e.preventDefault();
         li.remove();
@@ -596,7 +596,7 @@ function initializeQuickNotes(container) {
 
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'x';
-    deleteBtn.className = 'absolute top-0 right-0 text-red-500 hidden';
+    deleteBtn.className = 'absolute top-0 right-0 text-rose-500 hidden';
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         currentMedia.images = currentMedia.images.filter(item => item.id !== id);
@@ -660,7 +660,7 @@ function initializeQuickNotes(container) {
 
     const deleteBtn = document.createElement('button');
     deleteBtn.innerText = 'x';
-    deleteBtn.className = 'absolute top-0 right-0 text-red-500 hidden';
+    deleteBtn.className = 'absolute top-0 right-0 text-rose-500 hidden';
     deleteBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         currentMedia.audio = currentMedia.audio.filter(item => item.id !== id);
@@ -689,7 +689,7 @@ function initializeQuickNotes(container) {
     const labels = loadLabels();
     labels.forEach(label => {
         const labelElem = document.createElement('div');
-        labelElem.className = 'flex items-center justify-between border-b border-gray-200 px-2 py-1 group';
+        labelElem.className = 'flex items-center justify-between border-b border-slate-200 px-2 py-1 group';
 
         const leftPart = document.createElement('label');
         leftPart.className = 'flex items-center';
@@ -712,7 +712,7 @@ function initializeQuickNotes(container) {
 
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'x';
-        deleteBtn.className = 'text-red-500 hidden';
+        deleteBtn.className = 'text-rose-500 hidden';
         deleteBtn.addEventListener('click', () => {
         let labels = loadLabels();
         labels = labels.filter(l => l !== label);
@@ -737,11 +737,11 @@ function initializeQuickNotes(container) {
     pillsContainer.innerHTML = '';
     currentNoteLabels.forEach(label => {
         const pill = document.createElement('span');
-        pill.className = 'relative inline-block bg-blue-200 text-blue-800 rounded-full px-3 py-1 text-xs mr-1 mb-1';
+        pill.className = 'relative inline-block bg-sky-200 text-sky-800 rounded-full px-3 py-1 text-xs mr-1 mb-1';
         pill.innerText = label;
         const deleteBtn = document.createElement('button');
         deleteBtn.innerText = 'x';
-        deleteBtn.className = 'absolute top-0 right-0 text-red-500 text-[10px] hidden';
+        deleteBtn.className = 'absolute top-0 right-0 text-rose-500 text-[10px] hidden';
         deleteBtn.addEventListener('click', () => {
         currentNoteLabels = currentNoteLabels.filter(l => l !== label);
         updateLabelPills();
@@ -829,7 +829,7 @@ function initializeQuickNotes(container) {
         if (!pinIcon) {
         pinIcon = document.createElement('div');
         pinIcon.id = 'pin-icon';
-        pinIcon.innerHTML = '<span class="text-gray-400 group group-hover"><span class="group-hover:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>';
+        pinIcon.innerHTML = '<span class="text-slate-400 group group-hover"><span class="group-hover:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>';
         pinIcon.className = 'absolute top-2 right-2 cursor-pointer';
         pinIcon.addEventListener('click', () => {
             isPinned = false;
@@ -849,7 +849,7 @@ function initializeQuickNotes(container) {
     if (pnNte) pnNte.addEventListener('click', () => {
     isPinned = !isPinned;
     updatePinUI();
-    noteEditor.classList.toggle('border-blue-500', isPinned);
+    noteEditor.classList.toggle('border-sky-500', isPinned);
     document.getElementById('dropdown-menu').classList.add('hidden');
     saveNote();
     });
@@ -954,7 +954,7 @@ function initializeQuickNotes(container) {
     const labels = loadLabels(); // Implement loadLabels() as needed (similar to Project One)
     labels.forEach(label => {
         const div = document.createElement('div');
-        div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800';
+        div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800';
         div.textContent = label;
         labelFilterList.appendChild(div);
     });
