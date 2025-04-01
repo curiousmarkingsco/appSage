@@ -25,17 +25,17 @@ Components should be able to:
 
 ### 1. Create your component file
 
-Create a blank JS file in `app/editor/js/components/free`:
+Create a blank JS file in `src/app/render/editor/components/free`:
 
 ```sh
-touch app/editor/js/components/free/rotating_quotes.js
+touch src/app/render/editor/components/free/rotating_quotes.js
 ```
 
 ### 2. Add your component object
 
 #### 2.1 Free Components (Open Source Contributors)
 
-Add your component object to `appSageFreeComponents` in `app/render/editor/_globals.js`
+Add your component object to `appSageFreeComponents` in `app/renderer.js`
 
 ```js
 // Templates are loaded in the JS file dedicated to the component.
@@ -83,17 +83,19 @@ var appSagePremiumComponents = {
 Seen in both the editor and the live view: write your HTML, declare it as a string, then add it to your JS file:
 
 ```js
-const myHtmlTemplate = `
-  <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
-    <div class="rotatingQuotes-quotebox w-full" data-quote-id="">
-      <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
-      <span class="rotatingQuotes-source text-slate-400" data-sources=""></span>
+waitForGlobalsLoaded().then(() => {
+  const myHtmlTemplate = `
+    <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
+      <div class="rotatingQuotes-quotebox w-full" data-quote-id="">
+        <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
+        <span class="rotatingQuotes-source text-slate-400" data-sources=""></span>
+      </div>
     </div>
-  </div>
-`;
+  `;
 
-// Free and premium components are flattened into the `appSageComponents` object
-appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
+  // Free and premium components are flattened into the `appSageComponents` object
+  appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
+});
 ```
 
 ### 4. Declare your form to be added to the editor sidebar
@@ -103,21 +105,23 @@ Seen in exclusively the editor:
 **Recommended**: Add the data-attribute `data-initialized="false"` that is then set to `true` once the form has loaded on the sidebar. This is because the component may be in a state that has diverged from the original state. Your form initializer will need to know whether or not it is doing a fresh setup, or needs to pull existing data from the page.
 
 ```js
-const myFormTemplate = `
-  <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
-    <div>
-      <label class="block font-medium text-gray-700">Quote:</label>
-      <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
-    </div>
-    <div>
-      <label class="block font-medium text-gray-700">Source:</label>
-      <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
-    </div>
-    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Quote</button>
-  </form>
-`;
+waitForGlobalsLoaded().then(() => {
+  const myFormTemplate = `
+    <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
+      <div>
+        <label class="block font-medium text-gray-700">Quote:</label>
+        <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+      </div>
+      <div>
+        <label class="block font-medium text-gray-700">Source:</label>
+        <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Quote</button>
+    </form>
+  `;
 
-appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
+  appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
+});
 ```
 
 ### 5. Add your initializers
@@ -161,6 +165,18 @@ function initializeExistingComponents(container, componentName) {
     initializeRotatingQuotes(container);
   }
 };
+```
+
+#### 5.3 Globalizing your component for the end-user view
+
+Ideally, you declare the bulk of your logic within the `initializeRotatingQuotes` function (aka `initializeWhateverTheComponentName`), but if you run into issues necessitating breaking form, do this:
+
+**Warning: Please ensure function names are *extremely* specifically named to be unique and referential to your component!**
+After your declaration of essential functions, globalize them at the end of your file or after each function:
+```js
+window.initializeClockDataFromForm = initializeClockDataFromForm;
+window.initializeRotatingQuotes = initializeRotatingQuotes
+// etc
 ```
 
 ### 6. Storing Data
