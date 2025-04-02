@@ -250,7 +250,6 @@ function initializeQuickNotes(container) {
     // GLOBAL STATE & SELECTORS
     // -------------------------
     let currentNoteId = null;             // Current note being edited (null = new note)
-    let currentNoteMode = 'text';         // 'text' or 'checkbox'
     let currentNoteLabels = [];           // Labels attached to current note
     let currentMedia = { images: [], audio: [] };
     let isChecklist = false;
@@ -269,14 +268,7 @@ function initializeQuickNotes(container) {
         const retrievedData = currentPage.quickNotes;
 
         const storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
-        // Alternate storage of notes via GET
-        // fetch('https://example.com/endpoint/quicknotes', {
-        //   headers: { 'Content-Type': 'application/json' }
-        // })
-        //   .then(response => console.log('Note saved:', response))
-        //   .catch(error => console.error('Error saving note:', error));
 
-        // Assume these containers exist in your HTML:
         const pinnedContainer = document.querySelector('#quicknote-pinned-notes .notes-grid');
         const activeContainer = document.querySelector('#quicknote-active-notes .notes-grid');
         const archivedContainer = document.querySelector('#quicknote-archived-notes .notes-grid');
@@ -466,15 +458,6 @@ function initializeQuickNotes(container) {
         parsedData.notes = storedNotes;
         const json = JSON.stringify(parsedData);
         saveComponentObjectToPage('quickNotes', json);
-
-        // Simulate API call to save note
-        // fetch('https://example.com/endpoint/quicknote', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(note)
-        // })
-        //   .then(response => console.log('Note saved:', response))
-        //   .catch(error => console.error('Error saving note:', error));
 
         renderNotes();
     }
@@ -799,14 +782,6 @@ function initializeQuickNotes(container) {
                     parsedData.labels = labels;
                     const json = JSON.stringify(parsedData);
                     saveComponentObjectToPage('quickNotes', json);
-
-                    // fetch('https://example.com/endpoint/quicklabel', {
-                    //   method: 'POST',
-                    //   headers: { 'Content-Type': 'application/json' },
-                    //   body: JSON.stringify({ label: newLabel })
-                    // })
-                    //   .then(response => console.log('Label saved:', response))
-                    //   .catch(error => console.error('Error saving label:', error));
                 }
                 if (!currentNoteLabels.includes(newLabel)) {
                     currentNoteLabels.push(newLabel);

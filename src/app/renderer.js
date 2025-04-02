@@ -8,6 +8,8 @@ if (typeof global === 'undefined') {
 window.appSageStore;
 window.editorScriptsAlreadyLoaded = false;
 window.electronMode = !(typeof window.api === 'undefined');
+// TODO: Finish adding remote API option for redundant/cloud storage
+// window.apiEnabled = false;
 
 document.addEventListener('DOMContentLoaded', function () {
   if (electronMode) {

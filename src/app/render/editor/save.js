@@ -103,6 +103,7 @@ window.savePageData = savePageData;
 function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
+    // First, we store to the local machine for redundancy
     if (!electronMode) {
       // Using localStorage for non-Electron mode
       const appSageStorage = getAppSageStorage();
@@ -133,6 +134,8 @@ function saveComponentObjectToPage(componentName, object) {
         console.error('Error reading store data in Electron mode:', error);
       });
     }
+    // TODO: Then, send to an API if enabled
+    // if (apiEnabled) {}
   } catch (error) {
     console.error('Something went wrong saving component data.', error);
   }
