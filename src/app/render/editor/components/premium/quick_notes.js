@@ -89,14 +89,14 @@ waitForGlobalsLoaded().then(() => {
                     <div id="quicknote-note-editor" class="w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
-                            class="w-full border-b border-slate-300 dark:border-slate-700 focus:outline-none text-lg font-bold mb-2 bg-transparent" />
+                            class="w-full border-b border-slate-300 dark:border-slate-700 focus:outline-none text-lg dark:bg-black font-bold mb-2 bg-transparent" />
             
                         <!-- Media Gallery (for images and audio) -->
                         <div id="quicknote-media-gallery" class="flex gap-2 mb-2"></div>
             
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
-                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent"></textarea>
+                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-black"></textarea>
             
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
@@ -308,6 +308,7 @@ function initializeQuickNotes(container) {
                 const ul = document.createElement('ul');
                 (note.checkboxItems || []).forEach(item => {
                     const li = document.createElement('li');
+                    li.className = 'dark:bg-black';
                     li.textContent = item.text;
                     ul.appendChild(li);
                 });
@@ -472,7 +473,7 @@ function initializeQuickNotes(container) {
     // -------------------------
     function createCheckboxItem(text) {
         const li = document.createElement('li');
-        li.className = 'flex items-center mb-1 group';
+        li.className = 'flex items-center mb-1 group dark:bg-black';
         li.dataset.itemId = Date.now().toString() + Math.random().toString(16);
 
         const checkbox = document.createElement('input');
@@ -490,7 +491,7 @@ function initializeQuickNotes(container) {
         const input = document.createElement('input');
         input.type = 'text';
         input.value = text;
-        input.className = 'flex-grow border-b border-slate-300 p-1 bg-transparent focus:outline-none';
+        input.className = 'flex-grow border-b border-slate-300 p-1 bg-transparent dark:bg-black focus:outline-none';
         input.addEventListener('input', () => {
             if (li === checkboxList.lastElementChild && input.value !== '') {
                 createCheckboxItem('');

@@ -1251,10 +1251,6 @@ video {
   width: 0px;
 }
 
-.w-1\/3 {
-  width: 33.333333%;
-}
-
 .w-10 {
   width: 2.5rem;
 }
@@ -1339,6 +1335,10 @@ video {
   width: 20rem;
 }
 
+.w-96 {
+  width: 24rem;
+}
+
 .w-\[26rem\] {
   width: 26rem;
 }
@@ -1365,10 +1365,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-96 {
-  width: 24rem;
 }
 
 .min-w-52 {
@@ -3867,10 +3863,6 @@ video {
   outline-offset: 2px;
 }
 
-.group:hover .group-hover\:block {
-  display: block;
-}
-
 .group\/qNotePin\$\{note\.id\}:hover .group-hover\/qNotePin\$\{note\.id\}\:block {
   display: block;
 }
@@ -3879,8 +3871,8 @@ video {
   display: block;
 }
 
-.group:hover .group-hover\:hidden {
-  display: none;
+.group:hover .group-hover\:block {
+  display: block;
 }
 
 .group\/qNotePin\$\{note\.id\}:hover .group-hover\/qNotePin\$\{note\.id\}\:hidden {
@@ -3891,20 +3883,8 @@ video {
   display: none;
 }
 
-.group:hover .group-hover\:w-\[7rem\] {
-  width: 7rem;
-}
-
 .group\/qNoteNewBtn:hover .group-hover\/qNoteNewBtn\:w-\[7rem\] {
   width: 7rem;
-}
-
-.group:hover .group-hover\:pl-6 {
-  padding-left: 1.5rem;
-}
-
-.group:hover .group-hover\:pr-3 {
-  padding-right: 0.75rem;
 }
 
 .group\/qNoteNewBtn:hover .group-hover\/qNoteNewBtn\:pl-6 {
@@ -4027,6 +4007,11 @@ video {
   .dark\:text-white {
     --tw-text-opacity: 1;
     color: rgb(255 255 255 / var(--tw-text-opacity));
+  }
+
+  .dark\:text-black {
+    --tw-text-opacity: 1;
+    color: rgb(0 0 0 / var(--tw-text-opacity));
   }
 
   .dark\:shadow-white {
