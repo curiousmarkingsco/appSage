@@ -67,7 +67,7 @@ function createWindow() {
     if (isDev) {
       mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
         details.responseHeaders['Content-Security-Policy'] = [
-          "default-src 'self'; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+          "default-src 'self'; font-src 'self' 'unsafe-inline' https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;"
         ];
         callback({ cancel: false, responseHeaders: details.responseHeaders });
       });

@@ -1,10 +1,10 @@
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
-        <div class="quickNotes-container bg-slate-100 dark:bg-slate-800" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
+        <div class="quickNotes-container bg-slate-100 dark:bg-slate-700" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
             <div class="container mx-auto p-4">
 
                 <!-- Top Navigation Bar: Note Creation, Search, and Label Filtering -->
-                <header class="flex flex-col md:flex-row items-center justify-between rounded-lg p-4 bg-white dark:bg-slate-900 dark:text-white shadow">
+                <header class="flex flex-col md:flex-row items-center justify-between rounded-lg p-4 bg-white dark:bg-slate-800 dark:text-white shadow">
                     <!-- Note Creation Pillbox -->
                     <div id="quicknote-note-creation-pillbox" class="flex items-center space-x-2">
                         <div class="group/qNoteNewBtn flex relative">
@@ -19,11 +19,11 @@ waitForGlobalsLoaded().then(() => {
                     </div>
                     <!-- Search and Criteria -->
                     <div class="flex items-center space-x-2 mt-4 md:mt-0">
-                        <input id="quicknote-search-input" type="text" placeholder="Search notes..." class="px-3 py-1 border rounded-lg" />
+                        <input id="quicknote-search-input" type="text" placeholder="Search notes..." class="px-3 py-1 border rounded-lg bg-white dark:bg-slate-700 dark:text-slate-100" />
                         <div class="relative">
                             <button id="quicknote-search-criteria-btn" class="px-3 py-1 border rounded-lg">Search by</button>
                             <div id="quicknote-search-criteria-dropdown"
-                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-black dark:text-white border rounded-lg shadow hidden">
+                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-900 dark:text-white border rounded-lg shadow hidden">
                                 <div class="px-3 py-1">
                                     <label class="flex items-center">
                                         <input type="checkbox" class="mr-2" checked data-criteria="title" /> Title
@@ -44,9 +44,8 @@ waitForGlobalsLoaded().then(() => {
                         <div class="relative">
                             <button id="quicknote-label-filter-btn" class="px-3 py-1 border rounded-lg">Filter by Label</button>
                             <div id="quicknote-label-filter-dropdown"
-                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-black dark:text-slate-200 border rounded-lg shadow hidden max-h-60 overflow-y-auto">
-                                <input id="quicknote-label-filter-search" type="text" placeholder="Search labels..."
-                                    class="w-full px-2 py-1 border-b" />
+                                class="absolute right-0 mt-1 w-48 bg-white dark:bg-slate-900 dark:text-slate-200 border rounded-lg shadow hidden max-h-60 overflow-y-auto">
+                                <input id="quicknote-label-filter-search" type="text" placeholder="Search labels..." class="w-full px-2 py-1 border-b dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600" />
                                 <div id="quicknote-label-filter-list">
                                     <!-- Labels will be dynamically populated here -->
                                 </div>
@@ -84,19 +83,19 @@ waitForGlobalsLoaded().then(() => {
 
                 <!-- Note Editor Modal -->
                 <div id="quicknote-note-editor-modal" class="fixed inset-0 flex items-center justify-center hidden">
-                    <div id="quicknote-bg-close-editor" class="fixed inset-0 flex h-full w-full bg-black bg-opacity-50 dark:bg-opacity-30"></div>
+                    <div id="quicknote-bg-close-editor" class="fixed inset-0 flex h-full w-full bg-slate-900 bg-opacity-50 dark:bg-opacity-30"></div>
                     <!-- Note Editor Container -->
-                    <div id="quicknote-note-editor" class="w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-black rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
+                    <div id="quicknote-note-editor" class="w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-slate-900 rounded-lg shadow dark:border dark:border-slate-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
-                            class="w-full border-b border-slate-300 dark:border-slate-700 focus:outline-none text-lg dark:bg-black font-bold mb-2 bg-transparent" />
+                            class="w-full border-b border-[currentColor]/60 focus:outline-none text-lg dark:bg-slate-900 font-bold mb-2 bg-transparent" />
             
                         <!-- Media Gallery (for images and audio) -->
                         <div id="quicknote-media-gallery" class="flex gap-2 mb-2"></div>
             
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
-                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-black"></textarea>
+                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-slate-900"></textarea>
             
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
@@ -107,7 +106,7 @@ waitForGlobalsLoaded().then(() => {
                         <div id="quicknote-label-pills" class="flex flex-wrap gap-1 mb-2"></div>
             
                         <!-- Bottom Menu Icons -->
-                        <div class="flex justify-between border-t dark:border-slate-500 pt-2">
+                        <div class="flex justify-between border-t border-[currentColor]/60 pt-2">
                             <!-- Image Icon -->
                             <button id="quicknote-add-image" class="text-slate-500 hover:text-sky-500">
                                 <span class="sr-only">Add Image</span>
@@ -140,11 +139,11 @@ waitForGlobalsLoaded().then(() => {
                                     <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>
                                 </button>
                                 <!-- Dropdown Menu (hidden by default) -->
-                                <div id="quicknote-dropdown-menu" class="absolute text-slate-700 right-0 mt-2 w-32 bg-white dark:bg-black dark:text-white border dark:border-slate-700 overflow-hidden rounded-lg shadow hidden">
+                                <div id="quicknote-dropdown-menu" class="absolute text-slate-700 right-0 mt-2 w-48 bg-white dark:bg-slate-900 dark:text-white border dark:border-slate-700 overflow-hidden rounded-lg shadow hidden">
                                     <!-- Toggle Button to Switch Modes -->
-                                    <button id="quicknote-toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Switch to Checklist</button>
-                                    <button id="quicknote-pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Pin Note</button>
-                                    <button id="quicknote-delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-800 hover:bg-slate-100">Delete Note</button>
+                                    <button id="quicknote-toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-700 hover:bg-slate-100">Switch to Checklist</button>
+                                    <button id="quicknote-pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-700 hover:bg-slate-100">Pin Note</button>
+                                    <button id="quicknote-delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-slate-700 hover:bg-slate-100">Delete Note</button>
                                 </div>
                             </div>
                         </div>
@@ -152,10 +151,10 @@ waitForGlobalsLoaded().then(() => {
                 </div>
 
                 <!-- Modal for Image Upload -->
-                <div id="quicknote-modal-image" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
+                <div id="quicknote-modal-image" class="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-50 dark:bg-opacity-30 hidden">
+                    <div class="bg-white dark:bg-slate-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Add Image</h2>
-                        <input id="quicknote-image-url" type="text" placeholder="Image URL" class="w-full border rounded-lg p-2 mb-2" />
+                        <input id="quicknote-image-url" type="text" placeholder="Image URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-slate-700 dark:border-slate-600" />
                         <input id="quicknote-image-file" type="file" accept="image/*" class="w-full mb-2" />
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-image" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
@@ -165,10 +164,10 @@ waitForGlobalsLoaded().then(() => {
                 </div>
 
                 <!-- Modal for Audio Upload -->
-                <div id="quicknote-modal-audio" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
+                <div id="quicknote-modal-audio" class="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-50 dark:bg-opacity-30 hidden">
+                    <div class="bg-white dark:bg-slate-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Add Audio</h2>
-                        <input id="quicknote-audio-url" type="text" placeholder="Audio URL" class="w-full border rounded-lg p-2 mb-2" />
+                        <input id="quicknote-audio-url" type="text" placeholder="Audio URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-slate-700 dark:border-slate-600" />
                         <input id="quicknote-audio-file" type="file" accept="audio/*" class="w-full mb-2" />
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-audio" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
@@ -178,8 +177,8 @@ waitForGlobalsLoaded().then(() => {
                 </div>
 
                 <!-- Modal for Label Management -->
-                <div id="quicknote-modal-labels" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
+                <div id="quicknote-modal-labels" class="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-50 dark:bg-opacity-30 hidden">
+                    <div class="bg-white dark:bg-slate-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Manage Labels</h2>
                         <!-- Optional search input (toggle via JS if needed) -->
                         <input id="quicknote-label-search" type="text" placeholder="Search Labels"
@@ -188,8 +187,8 @@ waitForGlobalsLoaded().then(() => {
                         <div id="quicknote-label-list" class="max-h-40 overflow-y-auto mb-2">
                             <!-- Dynamically generated label list will be inserted here -->
                         </div>
-                        <input id="quicknote-new-label" type="text" placeholder="Create new label"
-                            class="w-full border rounded-lg p-2 mb-2" />
+                        <input id="quicknote-new-label" type="text" placeholder="Create new label" class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-slate-700 dark:border-slate-600" />
+
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-labels" class="text-slate-500 hover:text-sky-500 mr-2">Cancel</button>
                             <button id="quicknote-save-labels" class="text-sky-500">Save</button>
@@ -198,8 +197,8 @@ waitForGlobalsLoaded().then(() => {
                 </div>
 
                 <!-- Modal for Color Customization -->
-                <div id="quicknote-modal-color" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
+                <div id="quicknote-modal-color" class="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-50 dark:bg-opacity-30 hidden">
+                    <div class="bg-white dark:bg-slate-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Choose Colors</h2>
                         <div class="mb-2">
                             <label class="block mb-1">Background Color</label>
@@ -217,8 +216,8 @@ waitForGlobalsLoaded().then(() => {
                 </div>
 
                 <!-- Modal for Delete Confirmation -->
-                <div id="quicknote-modal-delete" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 dark:bg-opacity-30 hidden">
-                    <div class="bg-white dark:bg-black dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
+                <div id="quicknote-modal-delete" class="fixed inset-0 flex items-center justify-center bg-slate-900 bg-opacity-50 dark:bg-opacity-30 hidden">
+                    <div class="bg-white dark:bg-slate-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-slate-500">
                         <h2 class="text-lg mb-2">Delete Note</h2>
                         <p class="mb-4">Are you sure you want to permanently delete this note?</p>
                         <div class="flex justify-end">
@@ -279,7 +278,8 @@ function initializeQuickNotes(container) {
 
         storedNotes.forEach(note => {
             const card = document.createElement('div');
-            card.className = 'note-card border rounded p-2 shadow relative cursor-pointer dark:text-slate-50 dark:shadow-white dark:bg-slate-800';
+            // breadcrumb
+            card.className = `group/qNoteIconGrp${note.id} note-card border rounded p-2 shadow relative cursor-pointer dark:text-slate-50 dark:shadow-white dark:bg-slate-800 pb-8`;
             card.dataset.noteId = note.id;
             card.dataset.type = note.type;
             card.dataset.title = note.title || '';
@@ -297,10 +297,15 @@ function initializeQuickNotes(container) {
 
             // Media preview: if an image exists, show the first one
             if (note.media && note.media.images && note.media.images.length > 0) {
-                const img = document.createElement('img');
-                img.src = note.media.images[0].data;
-                img.className = 'w-full h-24 object-cover rounded mt-2';
-                card.appendChild(img);
+                const galleryWrapper = document.createElement('div');
+                galleryWrapper.className = 'flex space-x-1 mt-2';
+                note.media.images.forEach(imgData => {
+                    const img = document.createElement('img');
+                    img.src = imgData.data;
+                    img.className = 'w-16 h-16 object-cover rounded';
+                    galleryWrapper.appendChild(img);
+                });
+                card.appendChild(galleryWrapper);
             }
 
             // Content preview (for checklist, render a simple list; for text, a paragraph)
@@ -308,7 +313,6 @@ function initializeQuickNotes(container) {
                 const ul = document.createElement('ul');
                 (note.checkboxItems || []).forEach(item => {
                     const li = document.createElement('li');
-                    li.className = 'dark:bg-black';
                     li.textContent = item.text;
                     ul.appendChild(li);
                 });
@@ -329,6 +333,89 @@ function initializeQuickNotes(container) {
             pinIcon.className = 'absolute top-2 right-2';
             card.appendChild(pinIcon);
 
+            const iconsContainer = document.createElement('div');
+            iconsContainer.className = `absolute bottom-2 flex justify-between w-full pl-1 pr-4 space-x-1 opacity-0 group-hover/qNoteIconGrp${note.id}:opacity-100 transition-opacity duration-200`;
+            // List of icons to add (using SVGs similar to the modal)
+            const iconData = [
+                { id: 'card-icon-image', svg: `<svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M576 32L96 32l0 352 480 0 0-352zM395.6 139.8l96 136L496 282l0 7.6 0 8 0 24-24 0-120 0-24 0-48 0-24 0-56 0-24 0 0-24 0-8 0-9.1 6.1-6.8 64-72L264 181.5l17.9 20.2L299.1 221l57.3-81.2L376 112l19.6 27.8zM192 128a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM48 120l0-24L0 96l0 24L0 456l0 24 24 0 432 0 24 0 0-48-24 0L48 432l0-312z"/></svg>` },
+                { id: 'card-icon-audio', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M96 0l0 256c0 53 43 96 96 96s96-43 96-96l-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-96L96 0zM320 224l0 32c0 70.7-57.3 128-128 128s-128-57.3-128-128l0-40 0-24-48 0 0 24 0 40c0 89.1 66.2 162.7 152 174.4l0 33.6-48 0-24 0 0 48 24 0 72 0 72 0 24 0 0-48-24 0-48 0 0-33.6c85.8-11.7 152-85.3 152-174.4l0-40 0-24-48 0 0 24 0 8z"/></svg>` },
+                { id: 'card-icon-labels', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M495.2 189.3l7 7 0 9.9 0 99.5 0 9.9-7 7L337 481 303 447 454.2 295.8l0-79.6L303 65 337 31 495.2 189.3zM0 256L0 32l224 0L416 224l0 64L224 480 0 256zM144 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>` },
+                { id: 'card-icon-color', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 0C397.4 0 512 114.6 512 256l0 64-156.1 0c-37.5 0-67.9 30.4-67.9 67.9c0 18 7.2 35.3 19.9 48L320 448l-64 64C114.6 512 0 397.4 0 256S114.6 0 256 0zm0 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-96 32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM416 160a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>` },
+                { id: 'card-icon-archive', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M512 32l0 96L0 128 0 32l512 0zM32 160l448 0 0 320L32 480l0-320zm128 64l0 32 16 0 160 0 16 0 0-32-16 0-160 0-16 0z"/></svg>` },
+                { id: 'card-icon-menu', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>` }
+            ];
+
+            iconData.forEach(iconInfo => {
+                const btn = document.createElement('button');
+                btn.id = iconInfo.id + '-' + note.id;
+                const modalType = iconInfo.id.replace('card-icon-', '');
+                btn.innerHTML = iconInfo.svg;
+                // For simplicity, clicking any icon opens the note editor:
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (btn.id === ('card-icon-archive' + '-' + note.id)) {
+                        document.getElementById('quicknote-toggle-archive').classList.toggle('archived');
+                        saveNote();
+                    } else if (btn.id === ('card-icon-menu' + '-' + note.id)) {
+                        if (document.getElementById('active-card-menu')) {
+                            document.getElementById('active-card-menu').remove();
+                        } else {
+                            const cardMenu = document.createElement('div');
+                            cardMenu.id = 'active-card-menu';
+                            cardMenu.className = `absolute bottom-6 right-4 z-20`;
+                            const ddMenu = `
+                                <div id="quicknote-icon-dropdown-menu-${note.id}" class="text-slate-700 mt-2 w-40 bg-white dark:bg-slate-900 dark:text-white border dark:border-slate-400 overflow-hidden rounded-lg shadow">
+                                    <!-- Toggle Button to Switch Modes -->
+                                    <button id="quicknote-icon-toggle-mode-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-slate-700 hover:bg-slate-100">Switch to Checklist</button>
+                                    <button id="quicknote-icon-pin-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-slate-700 hover:bg-slate-100">Pin Note</button>
+                                    <button id="quicknote-icon-delete-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-slate-700 hover:bg-slate-100">Delete Note</button>
+                                </div>
+                            `
+                            cardMenu.innerHTML = ddMenu;
+                            card.appendChild(cardMenu);
+                            function cardMenuRemove() {
+                                cardMenu.remove();
+                            }
+                            cardMenu.addEventListener('click', (e) => {
+                                e.stopPropagation();
+                            });
+                            document.addEventListener('click', () => {
+                                cardMenuRemove();
+                            });
+                            card.querySelector(`#quicknote-icon-toggle-mode-${note.id}`).addEventListener('click', () => {
+                                toggleChecklist();
+                            });
+                            card.querySelector(`#quicknote-icon-pin-note-${note.id}`).addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                /* ** ** ** * yeah but how do we know which note it is? ** ** ** */
+                                isPinned = !isPinned;
+                                updatePinUI();
+                                noteEditor.classList.toggle('border-sky-500', isPinned);
+                                saveNote();
+                            });
+                            card.querySelector(`#quicknote-icon-delete-note-${note.id}`).addEventListener('click', (e) => {
+                                e.stopPropagation();
+                                /* ** ** ** * yeah but how do we know which note it is? ** ** ** */
+                                // fuckin sorcery i guess
+                                toggleModal('quicknote-modal-delete', true);
+                                document.getElementById('quicknote-dropdown-menu').classList.add('hidden');
+                            });
+                        }
+                    } else if (btn.id === (`card-icon-${modalType}` + '-' + note.id)) {
+                        openNoteEditor(note.id, note.type);
+                        toggleModal(`quicknote-modal-${modalType}`, true);
+                    }
+                });
+                iconsContainer.appendChild(btn);
+            });
+
+            card.appendChild(iconsContainer);
+
+            // Attach click to open editor (if user clicks outside icons)
+            card.addEventListener('click', () => {
+                openNoteEditor(note.id, note.type);
+            });
+
             // If archived, add a visual indicator (here, reduced opacity)
             if (note.archived) {
                 card.classList.add('opacity-50');
@@ -348,6 +435,14 @@ function initializeQuickNotes(container) {
                 activeContainer.appendChild(card);
             }
         });
+
+        // After rendering, hide "Archived" header if no notes in that category:
+        const archivedHeading = document.querySelector('#quicknote-archived-notes h2');
+        if (archivedContainer && archivedContainer.children.length === 0) {
+            archivedHeading.classList.add('hidden');
+        } else {
+            archivedHeading.classList.remove('hidden');
+        }
     }
 
     // -------------------------
@@ -361,12 +456,17 @@ function initializeQuickNotes(container) {
             const storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
             const note = storedNotes.find(n => n.id === noteId);
             if (note) {
+                // Set up the note values…
                 document.getElementById('quicknote-note-title').value = note.title || '';
-                if (mode === 'text') {
+                isChecklist = (note.type === 'checkbox');
+                isPinned = note.pinned || false;
+                updatePinUI();
+                // Use note.type to decide which editor to show:
+                if (note.type === 'text') {
                     document.getElementById('quicknote-note-content').value = note.content || '';
                     document.getElementById('quicknote-note-content').classList.remove('hidden');
                     document.getElementById('quicknote-checkbox-container').classList.add('hidden');
-                } else if (mode === 'checkbox') {
+                } else if (isChecklist) {
                     checkboxList.innerHTML = '';
                     (note.checkboxItems || []).forEach(item => createCheckboxItem(item.text));
                     if (!checkboxList.lastElementChild ||
@@ -375,12 +475,61 @@ function initializeQuickNotes(container) {
                     }
                     document.getElementById('quicknote-note-content').classList.add('hidden');
                     document.getElementById('quicknote-checkbox-container').classList.remove('hidden');
+                } else {
+                    document.getElementById('quicknote-note-content').value = note.content || '';
+                    document.getElementById('quicknote-note-content').classList.remove('hidden');
+                    document.getElementById('quicknote-checkbox-container').classList.add('hidden');
                 }
                 currentMedia = note.media || { images: [], audio: [] };
                 currentNoteLabels = note.labels || [];
                 isPinned = note.pinned || false;
+                // *** Clear and repopulate the media gallery ***
+                const gallery = document.getElementById('quicknote-media-gallery');
+                gallery.innerHTML = '';
+                if (currentMedia.images) {
+                    currentMedia.images.forEach(img => appendImageToGallery(img.data, img.id));
+                }
+                if (currentMedia.audio) {
+                    currentMedia.audio.forEach(aud => appendAudioToGallery(aud.data, aud.id));
+                }
+                updateLabelPills();
+
+                // Update archive toggle state:
+                const archiveToggle = document.getElementById('quicknote-toggle-archive');
+                if (note.archived) {
+                    archiveToggle.classList.add('archived');
+                } else {
+                    archiveToggle.classList.remove('archived');
+                }
+
+
+                if (note.bgColor) {
+                    noteEditor.style.backgroundColor = note.bgColor;
+                } else {
+                    noteEditor.style.backgroundColor = ''; // default (white)
+                }
+                if (note.textColor) {
+                    noteEditor.style.color = note.textColor;
+                } else {
+                    noteEditor.style.color = ''; // default (black)
+                }
+            } else {
+                // New note: reset all fields…
+                currentNoteId = null;
+                document.getElementById('quicknote-note-title').value = '';
+                document.getElementById('quicknote-note-content').value = '';
+                document.getElementById('quicknote-note-content').classList.remove('hidden');
+                document.getElementById('quicknote-checkbox-container').classList.add('hidden');
+                checkboxList.innerHTML = '';
+                currentMedia = { images: [], audio: [] };
+                currentNoteLabels = [];
+                isChecklist = (mode === 'checkbox');
+                isPinned = false;
+                // Also clear media gallery for a new note
+                document.getElementById('quicknote-media-gallery').innerHTML = '';
                 updateLabelPills();
             }
+            noteEditorModal.classList.remove('hidden');
         } else {
             // New note: reset all fields
             currentNoteId = null;
@@ -393,6 +542,8 @@ function initializeQuickNotes(container) {
             currentNoteLabels = [];
             isChecklist = (mode === 'checkbox');
             isPinned = false;
+            document.getElementById('quicknote-toggle-archive').classList.remove('archived');
+            document.getElementById('quicknote-media-gallery').innerHTML = '';
             updateLabelPills();
         }
         noteEditorModal.classList.remove('hidden');
@@ -411,12 +562,30 @@ function initializeQuickNotes(container) {
             document.getElementById('quicknote-checkbox-container').classList.remove('hidden')
             if (firstInput) firstInput.focus();
         }
+
+        // Also update text fields to inherit this background color:
+        document.getElementById('quicknote-note-title').style.backgroundColor = noteEditor.style.backgroundColor;
+        document.getElementById('quicknote-note-content').style.backgroundColor = noteEditor.style.backgroundColor;
     }
 
     // -------------------------
     // SAVE / UPDATE NOTE
     // -------------------------
     function saveNote() {
+        // Gather trimmed values
+        const title = document.getElementById('quicknote-note-title').value.trim();
+        const content = !isChecklist
+            ? document.getElementById('quicknote-note-content').value.trim()
+            : Array.from(checkboxList.querySelectorAll('li'))
+                .map(li => li.querySelector('input[type="text"]').value.trim())
+                .join('');
+
+        // Check for media or labels as well if needed
+        if (!title && !content && currentMedia.images.length === 0 && currentMedia.audio.length === 0 && currentNoteLabels.length === 0) {
+            // Skip saving an empty note
+            return;
+        }
+
         const note = {
             id: null,
             type: isChecklist ? 'checkbox' : 'text',
@@ -436,14 +605,16 @@ function initializeQuickNotes(container) {
             media: currentMedia,
             labels: currentNoteLabels,
             pinned: isPinned,
-            archived: document.getElementById('quicknote-toggle-archive').classList.contains('archived') || false
+            archived: document.getElementById('quicknote-toggle-archive').classList.contains('archived') || false,
+            bgColor: noteEditor.style.backgroundColor || '',
+            textColor: noteEditor.style.color || '',
         };
 
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;
         let storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
         if (!currentNoteId) {
-            note.id = Date.now().toString() + Math.random().toString(16);
+            note.id = Date.now().toString() + Math.floor(Math.random().toString(16));
             currentNoteId = note.id;
             storedNotes.push(note);
         } else {
@@ -473,7 +644,7 @@ function initializeQuickNotes(container) {
     // -------------------------
     function createCheckboxItem(text) {
         const li = document.createElement('li');
-        li.className = 'flex items-center mb-1 group dark:bg-black';
+        li.className = 'flex items-center mb-1 group';
         li.dataset.itemId = Date.now().toString() + Math.random().toString(16);
 
         const checkbox = document.createElement('input');
@@ -491,7 +662,9 @@ function initializeQuickNotes(container) {
         const input = document.createElement('input');
         input.type = 'text';
         input.value = text;
-        input.className = 'flex-grow border-b border-slate-300 p-1 bg-transparent dark:bg-black focus:outline-none';
+
+        input.style.backgroundColor = document.getElementById('quicknote-note-editor').style.backgroundColor || 'inherit';
+        input.className = 'flex-grow border-b border-slate-300 p-1 bg-transparent dark:bg-slate-900 focus:outline-none';
         input.addEventListener('input', () => {
             if (li === checkboxList.lastElementChild && input.value !== '') {
                 createCheckboxItem('');
@@ -826,34 +999,60 @@ function initializeQuickNotes(container) {
         const textColor = document.getElementById('quicknote-text-color').value;
         noteEditor.style.backgroundColor = bgColor;
         noteEditor.style.color = textColor;
+
+        // Update all SVG icons inside the editor to use the new text color:
+        noteEditor.querySelectorAll('svg').forEach(icon => {
+            icon.style.color = textColor;
+        });
+
+        // Update divider lines: title input bottom border and bottom menu top border.
+        const titleInput = document.getElementById('quicknote-note-title');
+        titleInput.style.borderBottomColor = hexToRgba(textColor, 0.6);
+
+        const bottomMenu = noteEditor.querySelector('div.flex.justify-between.border-t');
+        if (bottomMenu) {
+            bottomMenu.style.borderTopColor = hexToRgba(textColor, 0.6);
+        }
+
         toggleModal('quicknote-modal-color', false);
         saveNote();
     });
+
 
     // -------------------------
     // PINNING, ARCHIVE, DELETE, & DROPDOWN LOGIC
     // -------------------------
     function updatePinUI() {
-        const pinBtn = document.getElementById('quicknote-pin-note');
-        pinBtn.textContent = isPinned ? 'Unpin Note' : 'Pin Note';
-        let pinIcon = document.getElementById('quicknote-pin-icon');
+        let pinIcon = document.getElementById('pin-icon');
+        if (!pinIcon) {
+            pinIcon = document.createElement('div');
+            pinIcon.id = 'pin-icon';
+            pinIcon.className = 'absolute top-2 right-2 cursor-pointer hover:opacity-50';
+            pinIcon.addEventListener('click', () => {
+                isPinned = !isPinned;
+                updatePinUI();
+                saveNote();
+            });
+            // Change icon on hover if pinned
+            pinIcon.addEventListener('mouseenter', () => {
+                if (isPinned) {
+                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Strikethrough icon SVG --></svg>`;
+                }
+            });
+            pinIcon.addEventListener('mouseleave', () => {
+                if (isPinned) {
+                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" ...><!-- Solid pin icon SVG --></svg>`;
+                } else {
+                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Normal (outline) pin icon SVG --></svg>`;
+                }
+            });
+            noteEditor.appendChild(pinIcon);
+        }
+        // Set default icon based on state
         if (isPinned) {
-            if (!pinIcon) {
-                pinIcon = document.createElement('div');
-                pinIcon.id = 'pin-icon';
-                pinIcon.innerHTML = `<span class="text-slate-400 group/qNotePin group-hover/qNotePin"><span class="group-hover/qNotePin:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
-                pinIcon.className = 'absolute top-2 right-2 cursor-pointer';
-                pinIcon.addEventListener('click', () => {
-                    isPinned = false;
-                    updatePinUI();
-                    saveNote();
-                });
-                noteEditor.appendChild(pinIcon);
-            }
+            pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" ...><!-- Solid pin icon SVG --></svg>`;
         } else {
-            if (pinIcon) {
-                pinIcon.remove();
-            }
+            pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Normal pin icon SVG --></svg>`;
         }
     }
 
@@ -915,6 +1114,19 @@ function initializeQuickNotes(container) {
         if (!dropdown.contains(e.target) && !ellipsis.contains(e.target)) {
             dropdown.classList.add('hidden');
         }
+
+        // For "Search by" dropdown:
+        const searchDropdown = document.getElementById('quicknote-search-criteria-dropdown');
+        const searchBtn = document.getElementById('quicknote-search-criteria-btn');
+        if (searchDropdown && !searchDropdown.contains(e.target) && !searchBtn.contains(e.target)) {
+            searchDropdown.classList.add('hidden');
+        }
+        // For "Filter by label" dropdown:
+        const labelFilterDropdown = document.getElementById('quicknote-label-filter-dropdown');
+        const labelFilterBtn = document.getElementById('quicknote-label-filter-btn');
+        if (labelFilterDropdown && !labelFilterDropdown.contains(e.target) && !labelFilterBtn.contains(e.target)) {
+            labelFilterDropdown.classList.add('hidden');
+        }
     });
 
     // ----- NOTE CREATION PILLBOX BEHAVIOR -----
@@ -964,7 +1176,7 @@ function initializeQuickNotes(container) {
         const labels = loadLabels(); // Implement loadLabels() as needed (similar to Project One)
         labels.forEach(label => {
             const div = document.createElement('div');
-            div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-800';
+            div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-slate-100 dark:hover:bg-slate-700';
             div.textContent = label;
             labelFilterList.appendChild(div);
         });
@@ -1004,6 +1216,10 @@ function initializeQuickNotes(container) {
     const checkboxContainer = document.getElementById('quicknote-checkbox-container');
 
     toggleModeBtn.addEventListener('click', () => {
+        toggleChecklist();
+    });
+
+    function toggleChecklist() {
         if (!isChecklist) {
             // Convert textarea to checklist mode (split on newlines)
             const lines = noteContent.value.split('\n');
@@ -1037,7 +1253,20 @@ function initializeQuickNotes(container) {
             isChecklist = false;
         }
         saveNote();
-    });
+    }
+
+    // Helper: Convert hex color to rgba
+    function hexToRgba(hex, opacity) {
+        hex = hex.replace('#', '');
+        if (hex.length === 3) {
+            hex = hex.split('').map(c => c + c).join('');
+        }
+        const bigint = parseInt(hex, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
 
     // Call renderNotes on page load
     renderNotes();

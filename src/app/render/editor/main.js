@@ -40,7 +40,7 @@ async function initializeEditorHtml() {
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <title>appSage Editor</title>
-        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
+        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; media-src 'self' 'unsafe-inline' localhost:8080 blob: data:;  img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         ${htmlInsideRendererJSToBlock}
         <link rel="preconnect" href="https://fonts.googleapis.com">
