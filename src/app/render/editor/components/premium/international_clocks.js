@@ -13,7 +13,7 @@ waitForGlobalsLoaded().then(() => {
         <div class="-rotate-90 w-48 h-48 border-4 border-black rounded-full">
           <div class="hour-hand absolute w-[32%] h-[3px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
           <div class="minute-hand absolute w-[42%] h-[2px] bg-black top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
-          <div class="second-hand absolute w-[46%] hidden h-0 border-t border-rose-500 top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
+          <div class="second-hand absolute w-[46%] hidden h-0 border-t border-russett-500 top-1/2 left-1/2 origin-left transform translate-x-[-50%] translate-y-[-50%]"></div>
           <div class="absolute w-2.5 h-2.5 bg-black rounded-full top-1/2 left-1/2 transform translate-x-[-50%] translate-y-[-50%]"></div>
         </div>
       </div>
@@ -23,20 +23,20 @@ waitForGlobalsLoaded().then(() => {
   appSageComponents['internationalClocks'].form_template = `
     <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
       <div>
-        <label class="block font-medium text-gray-700">Timezone:</label>
+        <label class="block font-medium text-mine-shaft-700">Timezone:</label>
         <select
-          class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-mine-shaft-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           name="timezone" placeholder="e.g., UTC, America/New_York">
         </select>
       </div>
 
       <div>
-        <label class="block font-medium text-gray-700">Display Seconds:</label>
+        <label class="block font-medium text-mine-shaft-700">Display Seconds:</label>
         <input type="checkbox" name="show-seconds" class="show-seconds-checkbox mt-1">
       </div>
 
       <div>
-        <label class="block font-medium text-gray-700">Design:</label>
+        <label class="block font-medium text-mine-shaft-700">Design:</label>
         <div class="flex items-center space-x-4">
           <label>
             <input type="radio" name="design" value="digits" checked class="form-radio design-radio text-indigo-600">

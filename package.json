@@ -47,7 +47,7 @@
     "webdev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npm run serve\"",
     "appdev": "electron-forge start",
     "watch": "webpack --config webpack.webdev.config.cjs --mode development --watch",
-    "serve": "npx http-server dist",
+    "serve": "npx http-server docs",
     "watch:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",
     "build": "webpack --config webpack.web.config.cjs --mode production",
     "rebuild": "electron-rebuild",

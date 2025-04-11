@@ -7,7 +7,7 @@ waitForGlobalsLoaded().then(() => {
           ${appSageComponents['rotatingQuotes'].icon}
         </div>
         <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
-        <span class="rotatingQuotes-source text-slate-400" data-sources=""></span>
+        <span class="rotatingQuotes-source text-fuscous-gray-400" data-sources=""></span>
       </div>
     </div>
   `;
@@ -17,7 +17,7 @@ waitForGlobalsLoaded().then(() => {
       <div class="quotes-container max-h-96 overflow-y-scroll space-y-4">
         <!-- Existing quotes will be populated here -->
       </div>
-      <button type="button" class="add-quote-btn bg-sky-500 text-white px-4 py-2 rounded">Add Quote</button>
+      <button type="button" class="add-quote-btn bg-fruit-salad-500 text-white px-4 py-2 rounded">Add Quote</button>
     </form>
   `;
 });
@@ -58,12 +58,12 @@ function initializeQuoteDataFromForm(container) {
     quoteDiv.innerHTML = `
       <button type="button" class="delete-quote-btn absolute top-0 right-0 mt-1 mr-1 text-red-500">Delete</button>
       <div>
-        <label class="block font-medium text-gray-700">Quote:</label>
-        <input type="text" name="quote" value="${quote.quote || ''}" class="quote-input shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline w-full">
+        <label class="block font-medium text-mine-shaft-700">Quote:</label>
+        <input type="text" name="quote" value="${quote.quote || ''}" class="quote-input shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full">
       </div>
       <div>
-        <label class="block font-medium text-gray-700">Source:</label>
-        <input type="text" name="source" value="${quote.source || ''}" class="source-input shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline w-full">
+        <label class="block font-medium text-mine-shaft-700">Source:</label>
+        <input type="text" name="source" value="${quote.source || ''}" class="source-input shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline w-full">
       </div>
     `;
 

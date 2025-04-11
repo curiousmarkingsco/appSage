@@ -15,13 +15,13 @@ waitForGlobalsLoaded().then(() => {
   appSageComponents['dialogToast'].form_template = `
     <form class="dialogToast-form space-y-2" data-initialized="false" data-component-name="dialogToast" data-component-id="{{dialogToast.id}}">
       <div>
-        <label class="block font-medium text-slate-700">Message:</label>
-        <input type="text" name="message" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+        <label class="block font-medium text-fuscous-gray-700">Message:</label>
+        <input type="text" name="message" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
       </div>
 
       <div>
-        <label class="block font-medium text-slate-700">Notification Type:</label>
-        <select name="type" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+        <label class="block font-medium text-fuscous-gray-700">Notification Type:</label>
+        <select name="type" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
           <option value="success">Success</option>
           <option value="error">Error</option>
           <option value="warning">Warning</option>
@@ -30,8 +30,8 @@ waitForGlobalsLoaded().then(() => {
       </div>
 
       <div>
-        <label class="block font-medium text-slate-700">Timeout (seconds):</label>
-        <input type="number" name="timeout" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline" value="3">
+        <label class="block font-medium text-fuscous-gray-700">Timeout (seconds):</label>
+        <input type="number" name="timeout" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline" value="3">
       </div>
 
       <div class="flex items-center">
@@ -45,8 +45,8 @@ waitForGlobalsLoaded().then(() => {
       </div>
 
       <div id="codeSampleWrapper" style="display: none;">
-        <label class="block font-medium text-slate-700">Code sample:</label>
-  <pre class="bg-gray-100 p-4 rounded text-sm">
+        <label class="block font-medium text-fuscous-gray-700">Code sample:</label>
+  <pre class="bg-mine-shaft-100 p-4 rounded text-sm">
   revealDialogToast({
     message: 'Your changes have been saved successfully!',
     type: 'success',
@@ -58,7 +58,7 @@ waitForGlobalsLoaded().then(() => {
   </pre>
       </div>
 
-      <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Notification</button>
+      <button type="submit" class="bg-fruit-salad-500 text-white px-4 py-2 rounded">Save Notification</button>
     </form>
   `;
 });
@@ -143,13 +143,13 @@ function initializeDialogToastForm(container) {
     toastContainer.querySelector('.dialogToast-message').innerText = message;
     toastContainer.setAttribute('data-auto-dismiss', autoDismiss);
     
-    toastContainer.classList.remove('border-emerald-500', 'border-rose-500', 'border-amber-600', 'border-sky-500');
-    toastContainer.classList.remove('text-emerald-500', 'text-rose-500', 'text-amber-600', 'text-sky-500');
+    toastContainer.classList.remove('border-gray-asparagus-500', 'border-russett-500', 'border-romantic-600', 'border-fruit-salad-500');
+    toastContainer.classList.remove('text-gray-asparagus-500', 'text-russett-500', 'text-romantic-600', 'text-fruit-salad-500');
     switch (type) {
-      case 'success': toastContainer.classList.add('border-emerald-500', 'text-emerald-500'); break;
-      case 'error': toastContainer.classList.add('border-rose-500', 'text-rose-500'); break;
-      case 'warning': toastContainer.classList.add('border-amber-600', 'text-amber-600'); break;
-      case 'info': toastContainer.classList.add('border-sky-500', 'text-sky-500'); break;
+      case 'success': toastContainer.classList.add('border-gray-asparagus-500', 'text-gray-asparagus-500'); break;
+      case 'error': toastContainer.classList.add('border-russett-500', 'text-russett-500'); break;
+      case 'warning': toastContainer.classList.add('border-romantic-600', 'text-romantic-600'); break;
+      case 'info': toastContainer.classList.add('border-fruit-salad-500', 'text-fruit-salad-500'); break;
     }
 
     saveDialogToastData(message, type, timeout, autoDismiss);
@@ -235,21 +235,21 @@ function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
   toastContainer.querySelector('.dialogToast-message').innerText = message;
 
   // Update notification type styles
-  toastContainer.classList.remove('border-emerald-500', 'border-rose-500', 'border-amber-600', 'border-sky-500');
-  toastContainer.classList.remove('text-emerald-500', 'text-rose-500', 'text-amber-600', 'text-sky-500');
+  toastContainer.classList.remove('border-gray-asparagus-500', 'border-russett-500', 'border-romantic-600', 'border-fruit-salad-500');
+  toastContainer.classList.remove('text-gray-asparagus-500', 'text-russett-500', 'text-romantic-600', 'text-fruit-salad-500');
   
   switch (type) {
     case 'success': 
-      toastContainer.classList.add('border-emerald-500', 'text-emerald-500'); 
+      toastContainer.classList.add('border-gray-asparagus-500', 'text-gray-asparagus-500'); 
       break;
     case 'error': 
-      toastContainer.classList.add('border-rose-500', 'text-rose-500'); 
+      toastContainer.classList.add('border-russett-500', 'text-russett-500'); 
       break;
     case 'warning': 
-      toastContainer.classList.add('border-amber-600', 'text-amber-600'); 
+      toastContainer.classList.add('border-romantic-600', 'text-romantic-600'); 
       break;
     case 'info': 
-      toastContainer.classList.add('border-sky-500', 'text-sky-500'); 
+      toastContainer.classList.add('border-fruit-salad-500', 'text-fruit-salad-500'); 
       break;
     default:
       console.warn(`Unknown notification type: ${type}`);

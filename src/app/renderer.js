@@ -542,12 +542,12 @@ function restoreSettings() {
         // Color name input
         colorGroup.innerHTML = `
             <div class="color-name-section">
-              <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
-              <input type="text" class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${colorName}" placeholder="Enter color name (e.g., 'primary')">
+              <label for="customColorName" class="block text-fuscous-gray-600 font-medium">Color Name:</label>
+              <input type="text" class="customColorName shadow border rounded py-2 px-3 text-fuscous-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline" name="customColorName[]" value="${colorName}" placeholder="Enter color name (e.g., 'primary')">
             </div>
             <div class="shades-container space-y-2"></div>
-            <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
-            <button type="button" class="deleteColor mt-2 text-rose-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
+            <button type="button" class="addShade mt-2 py-2 px-4 border border-fruit-salad-500 font-semibold text-fruit-salad-600 rounded shadow">Add Shade</button>
+            <button type="button" class="deleteColor mt-2 text-russett-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
           `;
 
         let shadesContainer = colorGroup.querySelector('.shades-container');
@@ -559,8 +559,8 @@ function restoreSettings() {
 
           shadeEntry.innerHTML = `
               <div>
-                <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
-                <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <label for="colorShade" class="block text-fuscous-gray-600 font-medium">Shade:</label>
+                <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-fuscous-gray-700 w-full">
                   <option value="50" ${shade === '50' ? 'selected' : ''}>50</option>
                   <option value="100" ${shade === '100' ? 'selected' : ''}>100</option>
                   <option value="200" ${shade === '200' ? 'selected' : ''}>200</option>
@@ -575,7 +575,7 @@ function restoreSettings() {
                 </select>
               </div>
               <div>
-                <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+                <label for="customColorValue" class="block text-fuscous-gray-600 font-medium">Color Value:</label>
                 <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]" value="${shades[shade]}">
               </div>
             `;
@@ -593,8 +593,8 @@ function restoreSettings() {
 
           newShadeEntry.innerHTML = `
               <div>
-                <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
-                <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                <label for="colorShade" class="block text-fuscous-gray-600 font-medium">Shade:</label>
+                <select name="colorShade[]" class="colorShade shadow border rounded py-2 px-3 text-fuscous-gray-700 w-full">
                   <option value="50">50</option>
                   <option value="100">100</option>
                   <option value="200">200</option>
@@ -609,7 +609,7 @@ function restoreSettings() {
                 </select>
               </div>
               <div>
-                <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+                <label for="customColorValue" class="block text-fuscous-gray-600 font-medium">Color Value:</label>
                 <input type="color" class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline" name="customColorValue[]">
               </div>
             `;
@@ -650,13 +650,13 @@ window.waitForGlobalsLoaded = waitForGlobalsLoaded;
 // DATA IN: ['String', 'function()']
 function showConfirmationModal(message, onConfirm) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-[60] bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[60] bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
-      <div class="bg-slate-100 p-4 rounded-lg max-w-sm mx-auto">
-          <p class="text-slate-900">${message}</p>
+      <div class="bg-pearl-bush-100 p-4 rounded-lg max-w-sm mx-auto">
+          <p class="text-fuscous-gray-900">${message}</p>
           <div class="flex justify-between mt-4">
-              <button id="confirmDelete" class="bg-rose-500 hover:bg-rose-700 text-slate-50 font-bold p-2 rounded">Delete</button>
-              <button id="cancelDelete" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+              <button id="confirmDelete" class="bg-russett-500 hover:bg-russett-700 text-fuscous-gray-50 font-bold p-2 rounded">Delete</button>
+              <button id="cancelDelete" class="bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;

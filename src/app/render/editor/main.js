@@ -50,15 +50,15 @@ async function initializeEditorHtml() {
 
       // Dynamic body content (initial structure)
       document.body.innerHTML = `
-        <div class="h-screen lg:hidden bg-slate-100 p-4">
+        <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
           <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
-          <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-sky-600 hover:text-sky-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
+          <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
         </div>
         <div class="lg:flex hidden">
           <div id="tooltip"
-            class="tooltip fixed bg-slate-700 text-slate-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300">
+            class="tooltip fixed bg-pearl-bush-700 text-fuscous-gray-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300">
           </div>
-          <div id="sidebar" class="w-72 z-[55] bg-slate-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
+          <div id="sidebar" class="w-72 z-[55] bg-pearl-bush-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
             <!-- Sidebar content for editing elements will be dynamically added here -->
             <div id="sidebar-dynamic" class="p-4">
               <p>No content to edit. Add content by making a grid or column.</p>
@@ -70,10 +70,10 @@ async function initializeEditorHtml() {
           </div>
         </div>
         <div class="hidden lg:block mt-20"><!-- Give the bottom some space for anything that might bleed under the Add Grid element --></div>
-        <div class="lg:block hidden w-[calc(100%-18rem)] ml-72 bg-slate-200 fixed bottom-0 text-center border-t-4 border-l-2 border-slate-50"
+        <div class="lg:block hidden w-[calc(100%-18rem)] ml-72 bg-pearl-bush-200 fixed bottom-0 text-center border-t-4 border-l-2 border-pearl-bush-50"
           id="gridButtonsBottombar">
           <button id="addGrid" data-extra-info="Create a grid"
-            class="pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
+            class="pagebuilder-only mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white"
               class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
               <path
@@ -86,7 +86,7 @@ async function initializeEditorHtml() {
             </svg>
           </button>
           <button id="addContainer" data-extra-info="Create a flexible container"
-            class="hidden pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
+            class="hidden pagebuilder-only mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white"
               class="h-4 w-4 inline"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
               <path
@@ -95,12 +95,12 @@ async function initializeEditorHtml() {
             <svg class="w-5 h-5 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>
           </button>
           <button id="addHtml" data-extra-info="Paste HTML"
-            class="hidden pagebuilder-only mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
+            class="hidden pagebuilder-only mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><path d="M160 0c-23.7 0-44.4 12.9-55.4 32L48 32C21.5 32 0 53.5 0 80L0 400c0 26.5 21.5 48 48 48l144 0 0-272c0-44.2 35.8-80 80-80l48 0 0-16c0-26.5-21.5-48-48-48l-56.6 0C204.4 12.9 183.7 0 160 0zM272 128c-26.5 0-48 21.5-48 48l0 272 0 16c0 26.5 21.5 48 48 48l192 0c26.5 0 48-21.5 48-48l0-220.1c0-12.7-5.1-24.9-14.1-33.9l-67.9-67.9c-9-9-21.2-14.1-33.9-14.1L320 128l-48 0zM160 40a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
           </button>
           <div class="relative group float-right mr-4">
             <button id="editPageSettings"
-              class="pagebuilder-only mt-4 bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 px-4 mb-2 rounded">
+              class="pagebuilder-only mt-4 bg-gray-asparagus-500 hover:bg-gray-asparagus-700 text-fuscous-gray-50 font-bold p-2 px-4 mb-2 rounded">
               <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 512 512">
                 <!-- Font Awesome icon here -->
                 <path
@@ -108,15 +108,15 @@ async function initializeEditorHtml() {
               </svg>
             </button>
             <div id="dropdownMenu"
-              class="bottom-10 right-0 bg-slate-50 w-40 dropdown-menu hidden group-hover:block absolute bg-white text-gray-700 text-sm shadow-lg rounded mt-1">
+              class="bottom-10 right-0 bg-pearl-bush-50 w-40 dropdown-menu hidden group-hover:block absolute bg-white text-mine-shaft-700 text-sm shadow-lg rounded mt-1">
               <button id="pageSettings" data-extra-info="Edit page colors, metadata, & more"
-                class="block w-full text-left rounded-t p-3 hover:bg-slate-200">Page Settings</button>
+                class="block w-full text-left rounded-t p-3 hover:bg-pearl-bush-200">Page Settings</button>
               <button id="appSageSettings"
-                class="block w-full text-left rounded-b p-3 hover:bg-slate-200">appSageSettings</button>
+                class="block w-full text-left rounded-b p-3 hover:bg-pearl-bush-200">appSageSettings</button>
             </div>
           </div>
           <button id="copyPage" onclick="copyPageHTML(this)" data-extra-info="Copy raw HTML to paste into an HTML file"
-            class="pagebuilder-only transition mt-4 bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 px-4 mb-2 rounded float-right mr-4">
+            class="pagebuilder-only transition mt-4 bg-gray-asparagus-500 hover:bg-gray-asparagus-700 text-fuscous-gray-50 font-bold p-2 px-4 mb-2 rounded float-right mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto"
               viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
               <path
@@ -125,7 +125,7 @@ async function initializeEditorHtml() {
           </button>
           <button id="copyMetadata" onclick="copyMetadata(this)"
             data-extra-info="Copy raw metadata to paste into an HTML file's <head> tag"
-            class="hidden pagebuilder-only transition mt-4 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 px-4 mb-2 rounded float-right mr-4">
+            class="hidden pagebuilder-only transition mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 px-4 mb-2 rounded float-right mr-4">
             <svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto"
               viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
               <path
@@ -134,20 +134,20 @@ async function initializeEditorHtml() {
           </button>
         </div>
         <div id="settingsModal"
-          class="fixed py-12 inset-0 bg-slate-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
+          class="fixed py-12 inset-0 bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
           <form id="appSageSettingsForm" 
-            class="bg-slate-100 p-4 rounded-lg max-w-md mx-auto pb-16">
+            class="bg-pearl-bush-100 p-4 rounded-lg max-w-md mx-auto pb-16">
             <div class="relative overflow-y-auto overscroll-contain h-[calc(100vh-(10rem))]">
               <div class="pb-16 pt-10">
-                <h2 class="text-rose-600 text-3xl font-bold">Warning! This settings area is under active development</h2>
+                <h2 class="text-russett-600 text-3xl font-bold">Warning! This settings area is under active development</h2>
                 <div class="space-y-6 px-4">
                   <!-- Fonts Section -->
-                  <fieldset class="border border-slate-300 p-4 rounded">
+                  <fieldset class="border border-pearl-bush-300 p-4 rounded">
                     <legend class="text-lg font-semibold">Custom Fonts</legend>
                     <div id="fontsContainer" class="space-y-2">
-                      <label for="customFont" class="block text-slate-600 font-medium">Choose or Enter Google Fonts:</label>
+                      <label for="customFont" class="block text-fuscous-gray-600 font-medium">Choose or Enter Google Fonts:</label>
                       <select id="fonts" name="customFont" multiple
-                        class="shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline">
+                        class="shadow border rounded py-2 px-3 text-fuscous-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline">
                         <option value="Roboto">Roboto</option>
                         <option value="Open+Sans">Open Sans</option>
                         <option value="Lato">Lato</option>
@@ -167,30 +167,30 @@ async function initializeEditorHtml() {
                       </select>
 
                       <input type="text" id="manual-font" placeholder="Enter a Google Font name"
-                        class="shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline">
+                        class="shadow border rounded py-2 px-3 text-fuscous-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline">
                     </div>
-                    <button type="button" id="addFont" class="mt-2 py-2 px-4 bg-sky-500 font-semibold text-white rounded shadow">Add
+                    <button type="button" id="addFont" class="mt-2 py-2 px-4 bg-fruit-salad-500 font-semibold text-white rounded shadow">Add
                       Font</button>
                   </fieldset>
 
                   <!-- Colors Section -->
-                  <fieldset class="border border-slate-300 p-4 rounded">
+                  <fieldset class="border border-pearl-bush-300 p-4 rounded">
                     <legend class="text-lg font-semibold">Custom Colors</legend>
                     <div id="colorsContainer" class="space-y-4">
-                      <div class="color-group border-b border-slate-300 pb-4">
+                      <div class="color-group border-b border-pearl-bush-300 pb-4">
                         <div class="color-name-section">
-                          <label for="customColorName" class="block text-slate-600 font-medium">Color Name:</label>
+                          <label for="customColorName" class="block text-fuscous-gray-600 font-medium">Color Name:</label>
                           <input type="text"
-                            class="customColorName shadow border rounded py-2 px-3 text-slate-700 leading-tight w-full focus:outline-none focus:shadow-outline"
+                            class="customColorName shadow border rounded py-2 px-3 text-fuscous-gray-700 leading-tight w-full focus:outline-none focus:shadow-outline"
                             name="customColorName[]" placeholder="Enter color name (e.g., 'primary')">
                         </div>
 
                         <div class="shades-container space-y-2">
                           <div class="shade-entry flex space-x-4">
                             <div>
-                              <label for="colorShade" class="block text-slate-600 font-medium">Shade:</label>
+                              <label for="colorShade" class="block text-fuscous-gray-600 font-medium">Shade:</label>
                               <select name="colorShade[]"
-                                class="colorShade shadow border rounded py-2 px-3 text-slate-700 w-full">
+                                class="colorShade shadow border rounded py-2 px-3 text-fuscous-gray-700 w-full">
                                 <option value="50">50</option>
                                 <option value="100">100</option>
                                 <option value="200">200</option>
@@ -205,7 +205,7 @@ async function initializeEditorHtml() {
                               </select>
                             </div>
                             <div>
-                              <label for="customColorValue" class="block text-slate-600 font-medium">Color Value:</label>
+                              <label for="customColorValue" class="block text-fuscous-gray-600 font-medium">Color Value:</label>
                               <input type="color"
                                 class="customColorValue shadow border rounded w-full h-10 focus:outline-none focus:shadow-outline"
                                 name="customColorValue[]">
@@ -213,24 +213,24 @@ async function initializeEditorHtml() {
                           </div>
                         </div>
 
-                        <button type="button" class="addShade mt-2 py-2 px-4 border border-sky-500 font-semibold text-sky-600 rounded shadow">Add Shade</button>
-                        <button type="button" class="deleteColor mt-2 text-rose-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
+                        <button type="button" class="addShade mt-2 py-2 px-4 border border-fruit-salad-500 font-semibold text-fruit-salad-600 rounded shadow">Add Shade</button>
+                        <button type="button" class="deleteColor mt-2 text-russett-600 underline-offset-4 hover:underline ml-2">Delete Shade</button>
                       </div>
                     </div>
 
-                    <button type="button" id="addColorGroup" class="mt-4 py-2 px-4 bg-sky-500 font-semibold text-white rounded shadow">Add Color Group</button>
+                    <button type="button" id="addColorGroup" class="mt-4 py-2 px-4 bg-fruit-salad-500 font-semibold text-white rounded shadow">Add Color Group</button>
                   </fieldset>
 
-                  <fieldset class="border border-slate-300 p-4 rounded">
-                    <a class="${advancedMode ? 'block' : 'hidden'} w-48 mt-4 py-2 px-4 bg-sky-500 font-semibold text-white rounded shadow cursor-pointer" onclick="showColorJsonInputModal()">Paste JSON Object</a>
+                  <fieldset class="border border-pearl-bush-300 p-4 rounded">
+                    <a class="${advancedMode ? 'block' : 'hidden'} w-48 mt-4 py-2 px-4 bg-fruit-salad-500 font-semibold text-white rounded shadow cursor-pointer" onclick="showColorJsonInputModal()">Paste JSON Object</a>
                   </fieldset>
 
                   <!-- Advanced Mode -->
-                  <fieldset class="border border-slate-300 p-4 rounded">
+                  <fieldset class="border border-pearl-bush-300 p-4 rounded">
                     <legend class="text-lg font-semibold">Advanced Mode</legend>
                     <label
                       data-extra-info="Turn this on if you are a coder person or enjoy getting confused and breaking things."
-                      for="advancedMode" class="inline-flex items-center space-x-2 text-slate-600 font-medium">
+                      for="advancedMode" class="inline-flex items-center space-x-2 text-fuscous-gray-600 font-medium">
                       <input type="checkbox" id="advancedMode" name="advancedMode"
                         class="shadow border rounded focus:outline-none focus:shadow-outline">
                       <span>Enable Advanced Mode</span>
@@ -238,11 +238,11 @@ async function initializeEditorHtml() {
                   </fieldset>
                 </div>
               </div>
-              <div class="flex justify-between fixed bottom-10 bg-slate-100 pb-2 w-[26rem]">
+              <div class="flex justify-between fixed bottom-10 bg-pearl-bush-100 pb-2 w-[26rem]">
                 <button type="submit" id="confirmSaveSettings"
-                  class="bg-sky-500 hover:bg-sky-700 border-2 border-transparent text-slate-50 font-bold p-2 rounded">Save</button>
+                  class="bg-fruit-salad-500 hover:bg-fruit-salad-700 border-2 border-transparent text-fuscous-gray-50 font-bold p-2 rounded">Save</button>
                 <a id="cancelSaveSettings"
-                  class="cursor-pointer border-2 border-sky-500 hover:border-sky-700 text-sky-500 hover:text-sky-700 font-bold p-2 rounded">Cancel</a>
+                  class="cursor-pointer border-2 border-fruit-salad-500 hover:border-fruit-salad-700 text-fruit-salad-500 hover:text-fruit-salad-700 font-bold p-2 rounded">Cancel</a>
               </div>
             </div>
           </form>
@@ -611,13 +611,13 @@ window.updateTooltip = updateTooltip;
 // DATA IN: Optional function()
 function showHtmlModal(element, onConfirm = null) {
   const modal = document.createElement('div');
-  modal.className = 'fixed inset-0 z-[60] bg-slate-800 bg-opacity-50 flex justify-center items-center';
+  modal.className = 'fixed inset-0 z-[60] bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center';
   modal.innerHTML = `
-      <div class="bg-slate-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
-          <p class="text-slate-900">Add HTML with TailwindCSS classes:</p>
-          <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-slate-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
+      <div class="bg-pearl-bush-100 p-4 rounded-lg max-w-2xl mx-auto w-full">
+          <p class="text-fuscous-gray-900">Add HTML with TailwindCSS classes:</p>
+          <textarea id="tailwindHtml" rows="20" class="shadow border rounded py-2 px-3 text-fuscous-gray-700 leading-tight my-1.5 w-full focus:outline-none focus:shadow-outline"></textarea>
           <div class="flex justify-between mt-4" id="btnContainer">
-            <button id="cancelHtml" class="bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded">Cancel</button>
+            <button id="cancelHtml" class="bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded">Cancel</button>
           </div>
       </div>
   `;
@@ -626,7 +626,7 @@ function showHtmlModal(element, onConfirm = null) {
 
   const btnContainer = document.getElementById('btnContainer');
   const confButton = document.createElement('button');
-  confButton.className = 'bg-emerald-500 hover:bg-emerald-700 text-slate-50 font-bold p-2 rounded';
+  confButton.className = 'bg-gray-asparagus-500 hover:bg-gray-asparagus-700 text-fuscous-gray-50 font-bold p-2 rounded';
   confButton.textContent = 'Add HTML';
   btnContainer.prepend(confButton);
   confButton.addEventListener('click', function () {
@@ -817,7 +817,7 @@ window.copyHtmlPortion = copyHtmlPortion;
 function createCopyHtmlSectionButton(container) {
   const button = document.createElement('button');
   button.setAttribute('data-extra-info', tooltips['copy-html-section']);
-  button.className = 'copyHtmlSection highlightButton hidden w-16 h-12 absolute -bottom-12 left-[26rem] ugc-discard bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded-b z-50';
+  button.className = 'copyHtmlSection highlightButton hidden w-16 h-12 absolute -bottom-12 left-[26rem] ugc-discard bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded-b z-50';
   button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="white" class="h-5 w-5 mx-auto" viewBox="0 0 448 512"><path d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z" /></svg>`;
   button.addEventListener('click', function(e) {
     e.stopPropagation();
@@ -937,11 +937,11 @@ function addEditablePageTitle(container, placement) {
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
   const titleLabel = document.createElement('label');
-  titleLabel.className = 'text-slate-700 text-xs uppercase mt-2';
+  titleLabel.className = 'text-fuscous-gray-700 text-xs uppercase mt-2';
   titleLabel.setAttribute('for', 'page-title');
   titleLabel.textContent = 'Page Title'
   const titleInput = document.createElement('input');
-  titleInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+  titleInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
   titleInput.setAttribute('name', 'page-title');
   titleInput.type = 'text';
   titleInput.value = currentTitle;
@@ -1022,7 +1022,7 @@ function addEditableMetadata(container, placement) {
   const page_id = params.get('config');
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-slate-200 overflow-y-scroll p-2 max-h-48';
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-pearl-bush-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
@@ -1046,7 +1046,7 @@ function addEditableMetadata(container, placement) {
     pair.className = 'metadata-pair mt-2'
 
     const select = document.createElement('select');
-    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
     const optionName = document.createElement('option');
     optionName.value = 'name';
     optionName.selected = 'name' === meta_type;
@@ -1064,13 +1064,13 @@ function addEditableMetadata(container, placement) {
     select.appendChild(optionLink);
 
     const nameInput = document.createElement('input');
-    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
     nameInput.type = 'text';
     nameInput.value = meta_name || '';
     nameInput.placeholder = 'Name/Property';
 
     const contentInput = document.createElement('input');
-    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline';
+    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
     contentInput.type = 'text';
     contentInput.value = meta_content || '';
     contentInput.placeholder = 'Content';
@@ -1085,7 +1085,7 @@ function addEditableMetadata(container, placement) {
 
   const addButton = document.createElement('button');
   addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline mb-1"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
-  addButton.className = 'col-span-2 bg-sky-500 hover:bg-sky-700 text-slate-50 font-bold p-2 rounded h-12 w-28 mt-2';
+  addButton.className = 'col-span-2 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded h-12 w-28 mt-2';
   addButton.id = 'add-metadata-button';
   metaDataContainer.appendChild(addButton);
 

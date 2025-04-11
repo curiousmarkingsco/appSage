@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Grenze Gotisch';
+  src: url('./assets/fonts/grenze_gotisch.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Raleway Italic';
+  src: url('./assets/fonts/raleway_italic.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Raleway';
+  src: url('./assets/fonts/raleway.ttf') format('truetype');
+}
+
 /*                                                     */
 /* These styles only exist on the builder (edit) page. */
 /*                                                     */

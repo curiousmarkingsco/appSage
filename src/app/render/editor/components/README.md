@@ -19,7 +19,7 @@ Components should be able to:
 * Forms should match existing sidebar styles
   ```html
     <!-- example styling -->
-    <input class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+    <input class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
   ```
 * Ensure your component doesn't already exist. If it is similar to another, consider enhancing the existing component instead.
 
@@ -88,7 +88,7 @@ waitForGlobalsLoaded().then(() => {
     <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div class="rotatingQuotes-quotebox w-full" data-quote-id="">
         <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
-        <span class="rotatingQuotes-source text-slate-400" data-sources=""></span>
+        <span class="rotatingQuotes-source text-fuscous-gray-400" data-sources=""></span>
       </div>
     </div>
   `;
@@ -109,12 +109,12 @@ waitForGlobalsLoaded().then(() => {
   const myFormTemplate = `
     <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div>
-        <label class="block font-medium text-gray-700">Quote:</label>
-        <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+        <label class="block font-medium text-mine-shaft-700">Quote:</label>
+        <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
       </div>
       <div>
-        <label class="block font-medium text-gray-700">Source:</label>
-        <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+        <label class="block font-medium text-mine-shaft-700">Source:</label>
+        <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
       </div>
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Quote</button>
     </form>
@@ -223,7 +223,7 @@ const myHtmlTemplate = `
         ${appSageComponents['rotatingQuotes'].icon}
       </div>
       <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
-      <span class="rotatingQuotes-source text-slate-400" data-sources=""></span>
+      <span class="rotatingQuotes-source text-fuscous-gray-400" data-sources=""></span>
     </div>
   </div>
 `;
@@ -231,14 +231,14 @@ appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 
 const myFormTemplate = `<form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
   <div>
-    <label class="block font-medium text-gray-700">Quote:</label>
-    <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+    <label class="block font-medium text-mine-shaft-700">Quote:</label>
+    <input type="text" name="quote" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
   </div>
   <div>
-    <label class="block font-medium text-gray-700">Source:</label>
-    <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline">
+    <label class="block font-medium text-mine-shaft-700">Source:</label>
+    <input type="text" name="source" class="shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline">
   </div>
-  <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded">Save Quote</button>
+  <button type="submit" class="bg-fruit-salad-500 text-white px-4 py-2 rounded">Save Quote</button>
 </form>`;
 appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
 
