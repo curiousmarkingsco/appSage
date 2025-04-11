@@ -22,16 +22,16 @@ function generateSidebarTabs() {
   };
 
   return `
-  <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-pearl-bush-300">
+  <div id="mobileTabContainer" class="flex fixed w-72 z-50 h-16 left-0 align-items-stretch justify-stretch bottom-0 bg-pearl-bush-400">
     ${Object.entries(icons).map(([size, icon]) => `
-      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-pearl-bush-200' : 'bg-pearl-bush-50 border-pearl-bush-50'} w-12 text-fuscous-gray-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-pearl-bush-200 border-t-4">
+      <div title="${size.toUpperCase()} Screens" data-extra-info="${icon[0]}" class="tab-${size} ${size !== currentBreakpoint ? 'border-pearl-bush-200' : 'bg-pearl-bush-50 border-pearl-bush-50'} w-12 text-fuscous-gray-900 h-full inline-block responsive-tab cursor-pointer flex items-center p-2 hover:bg-pearl-bush-300 border-t-4">
         ${icon[1]}
       </div>
     `).join('')}
   </div>
-  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-10 left-0 align-items-stretch justify-stretch top-0 bg-pearl-bush-300">
+  <div id="interactivityTabContainer" class="flex fixed w-72 z-50 h-10 left-0 align-items-stretch justify-stretch top-0 bg-pearl-bush-400">
   ${Object.entries(interactivityStates).map(([name, prependClass]) => `
-    <div title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-pearl-bush-200' : 'bg-pearl-bush-50 border-pearl-bush-50'} w-full text-center text-fuscous-gray-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-pearl-bush-200 border-b-4">
+    <div title="${name}" data-extra-info="${prependClass[1]}" class="tab-${name} ${prependClass[0] !== interactivityState ? 'border-pearl-bush-200' : 'bg-pearl-bush-50 border-pearl-bush-50'} w-full text-center text-fuscous-gray-900 h-full inline-block interactivity-tab cursor-pointer p-2 hover:bg-pearl-bush-300 border-b-4">
       ${name}
     </div>
   `).join('')}

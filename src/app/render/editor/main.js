@@ -56,7 +56,7 @@ async function initializeEditorHtml() {
         </div>
         <div class="lg:flex hidden">
           <div id="tooltip"
-            class="tooltip fixed bg-pearl-bush-700 text-fuscous-gray-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300">
+            class="tooltip fixed bg-pearl-bush-900 text-fuscous-gray-50 p-2 rounded text-xs z-[1001] opacity-0 transition-opacity duration-300">
           </div>
           <div id="sidebar" class="w-72 z-[55] bg-pearl-bush-50 fixed h-screen overflow-y-auto overscroll-contain pb-16 pt-10">
             <!-- Sidebar content for editing elements will be dynamically added here -->
@@ -110,9 +110,9 @@ async function initializeEditorHtml() {
             <div id="dropdownMenu"
               class="bottom-10 right-0 bg-pearl-bush-50 w-40 dropdown-menu hidden group-hover:block absolute bg-white text-mine-shaft-700 text-sm shadow-lg rounded mt-1">
               <button id="pageSettings" data-extra-info="Edit page colors, metadata, & more"
-                class="block w-full text-left rounded-t p-3 hover:bg-pearl-bush-200">Page Settings</button>
+                class="block w-full text-left rounded-t p-3 hover:bg-pearl-bush-300">Page Settings</button>
               <button id="appSageSettings"
-                class="block w-full text-left rounded-b p-3 hover:bg-pearl-bush-200">appSageSettings</button>
+                class="block w-full text-left rounded-b p-3 hover:bg-pearl-bush-300">appSageSettings</button>
             </div>
           </div>
           <button id="copyPage" onclick="copyPageHTML(this)" data-extra-info="Copy raw HTML to paste into an HTML file"

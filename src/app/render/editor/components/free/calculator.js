@@ -2,7 +2,7 @@
 
 waitForGlobalsLoaded().then(() => {
   appSageComponents['calculator'].html_template = `
-    <div class="calculator-container bg-pearl-bush-700 w-44 p-4 border border-mine-shaft-300 rounded-lg" data-component-name="calculator" data-component-id="{{calculator.id}}">
+    <div class="calculator-container bg-pearl-bush-900 w-44 p-4 border border-mine-shaft-300 rounded-lg" data-component-name="calculator" data-component-id="{{calculator.id}}">
       <div class="calculator-display bg-mine-shaft-100 text-right text-xl p-2 mb-2 rounded" id="calc-display">0</div>
       <div class="grid grid-cols-4 gap-2">
         <button class="calculator-button bg-fruit-salad-500 text-white p-2 rounded">7</button>

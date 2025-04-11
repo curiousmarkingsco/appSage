@@ -1,6 +1,6 @@
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
-        <div class="quickNotes-container bg-pearl-bush-100 dark:bg-pearl-bush-700" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
+        <div class="quickNotes-container bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
             <div class="container mx-auto p-4">
 
                 <!-- Top Navigation Bar: Note Creation, Search, and Label Filtering -->
@@ -19,7 +19,7 @@ waitForGlobalsLoaded().then(() => {
                     </div>
                     <!-- Search and Criteria -->
                     <div class="flex items-center space-x-2 mt-4 md:mt-0">
-                        <input id="quicknote-search-input" type="text" placeholder="Search notes..." class="px-3 py-1 border rounded-lg bg-white dark:bg-pearl-bush-700 dark:text-fuscous-gray-100" />
+                        <input id="quicknote-search-input" type="text" placeholder="Search notes..." class="px-3 py-1 border rounded-lg bg-white dark:bg-pearl-bush-900 dark:text-fuscous-gray-100" />
                         <div class="relative">
                             <button id="quicknote-search-criteria-btn" class="px-3 py-1 border rounded-lg">Search by</button>
                             <div id="quicknote-search-criteria-dropdown"
@@ -45,7 +45,7 @@ waitForGlobalsLoaded().then(() => {
                             <button id="quicknote-label-filter-btn" class="px-3 py-1 border rounded-lg">Filter by Label</button>
                             <div id="quicknote-label-filter-dropdown"
                                 class="absolute right-0 mt-1 w-48 bg-white dark:bg-pearl-bush-900 dark:text-fuscous-gray-200 border rounded-lg shadow hidden max-h-60 overflow-y-auto">
-                                <input id="quicknote-label-filter-search" type="text" placeholder="Search labels..." class="w-full px-2 py-1 border-b dark:bg-pearl-bush-700 dark:text-fuscous-gray-100 dark:border-pearl-bush-600" />
+                                <input id="quicknote-label-filter-search" type="text" placeholder="Search labels..." class="w-full px-2 py-1 border-b dark:bg-pearl-bush-900 dark:text-fuscous-gray-100 dark:border-pearl-bush-600" />
                                 <div id="quicknote-label-filter-list">
                                     <!-- Labels will be dynamically populated here -->
                                 </div>
@@ -141,9 +141,9 @@ waitForGlobalsLoaded().then(() => {
                                 <!-- Dropdown Menu (hidden by default) -->
                                 <div id="quicknote-dropdown-menu" class="absolute text-fuscous-gray-700 right-0 mt-2 w-48 bg-white dark:bg-pearl-bush-900 dark:text-white border dark:border-pearl-bush-700 overflow-hidden rounded-lg shadow hidden">
                                     <!-- Toggle Button to Switch Modes -->
-                                    <button id="quicknote-toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Switch to Checklist</button>
-                                    <button id="quicknote-pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Pin Note</button>
-                                    <button id="quicknote-delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Delete Note</button>
+                                    <button id="quicknote-toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Switch to Checklist</button>
+                                    <button id="quicknote-pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Pin Note</button>
+                                    <button id="quicknote-delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Delete Note</button>
                                 </div>
                             </div>
                         </div>
@@ -154,7 +154,7 @@ waitForGlobalsLoaded().then(() => {
                 <div id="quicknote-modal-image" class="fixed inset-0 flex items-center justify-center bg-pearl-bush-900 bg-opacity-50 dark:bg-opacity-30 hidden">
                     <div class="bg-white dark:bg-pearl-bush-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-pearl-bush-500">
                         <h2 class="text-lg mb-2">Add Image</h2>
-                        <input id="quicknote-image-url" type="text" placeholder="Image URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-700 dark:border-pearl-bush-600" />
+                        <input id="quicknote-image-url" type="text" placeholder="Image URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-900 dark:border-pearl-bush-600" />
                         <input id="quicknote-image-file" type="file" accept="image/*" class="w-full mb-2" />
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-image" class="text-fuscous-gray-500 hover:text-fruit-salad-500 mr-2">Cancel</button>
@@ -167,7 +167,7 @@ waitForGlobalsLoaded().then(() => {
                 <div id="quicknote-modal-audio" class="fixed inset-0 flex items-center justify-center bg-pearl-bush-900 bg-opacity-50 dark:bg-opacity-30 hidden">
                     <div class="bg-white dark:bg-pearl-bush-900 dark:text-white rounded-lg p-4 w-80 dark:border dark:border-pearl-bush-500">
                         <h2 class="text-lg mb-2">Add Audio</h2>
-                        <input id="quicknote-audio-url" type="text" placeholder="Audio URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-700 dark:border-pearl-bush-600" />
+                        <input id="quicknote-audio-url" type="text" placeholder="Audio URL"  class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-900 dark:border-pearl-bush-600" />
                         <input id="quicknote-audio-file" type="file" accept="audio/*" class="w-full mb-2" />
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-audio" class="text-fuscous-gray-500 hover:text-fruit-salad-500 mr-2">Cancel</button>
@@ -187,7 +187,7 @@ waitForGlobalsLoaded().then(() => {
                         <div id="quicknote-label-list" class="max-h-40 overflow-y-auto mb-2">
                             <!-- Dynamically generated label list will be inserted here -->
                         </div>
-                        <input id="quicknote-new-label" type="text" placeholder="Create new label" class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-700 dark:border-pearl-bush-600" />
+                        <input id="quicknote-new-label" type="text" placeholder="Create new label" class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-900 dark:border-pearl-bush-600" />
 
                         <div class="flex justify-end">
                             <button id="quicknote-close-modal-labels" class="text-fuscous-gray-500 hover:text-fruit-salad-500 mr-2">Cancel</button>
@@ -366,9 +366,9 @@ function initializeQuickNotes(container) {
                             const ddMenu = `
                                 <div id="quicknote-icon-dropdown-menu-${note.id}" class="text-fuscous-gray-700 mt-2 w-40 bg-white dark:bg-pearl-bush-900 dark:text-white border dark:border-pearl-bush-400 overflow-hidden rounded-lg shadow">
                                     <!-- Toggle Button to Switch Modes -->
-                                    <button id="quicknote-icon-toggle-mode-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Switch to Checklist</button>
-                                    <button id="quicknote-icon-pin-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Pin Note</button>
-                                    <button id="quicknote-icon-delete-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-700 hover:bg-pearl-bush-100">Delete Note</button>
+                                    <button id="quicknote-icon-toggle-mode-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Switch to Checklist</button>
+                                    <button id="quicknote-icon-pin-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Pin Note</button>
+                                    <button id="quicknote-icon-delete-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Delete Note</button>
                                 </div>
                             `
                             cardMenu.innerHTML = ddMenu;
@@ -1176,7 +1176,7 @@ function initializeQuickNotes(container) {
         const labels = loadLabels(); // Implement loadLabels() as needed (similar to Project One)
         labels.forEach(label => {
             const div = document.createElement('div');
-            div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-pearl-bush-100 dark:hover:bg-pearl-bush-700';
+            div.className = 'label-item cursor-pointer px-2 py-1 hover:bg-pearl-bush-100 dark:hover:bg-pearl-bush-900';
             div.textContent = label;
             labelFilterList.appendChild(div);
         });

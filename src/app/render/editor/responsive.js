@@ -86,7 +86,7 @@ window.addDeviceTargetedOptions = addDeviceTargetedOptions;
 function handleReset(bp, grid, options, cssClassBase, control) {
   const resetButton = document.createElement('button');
   resetButton.innerHTML = appSageEditorIcons['reset'];
-  resetButton.className = 'iconButton h-12 w-12 p-4 bg-pearl-bush-100 hover:bg-pearl-bush-200 p-2 rounded';
+  resetButton.className = 'iconButton h-12 w-12 p-4 bg-pearl-bush-100 hover:bg-pearl-bush-300 p-2 rounded';
   resetButton.setAttribute('data-extra-info', tooltips['reset']);
   control.appendChild(resetButton);
 
@@ -505,7 +505,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
   }
   options.forEach(option => {
     const iconButton = document.createElement('button');
-    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-pearl-bush-100 hover:bg-pearl-bush-200 ' : (swatchboard ? 'border-2 hover:border-fruit-salad-200 ' : 'bg-pearl-bush-200 hover:bg-pearl-bush-300 ')}${(bgIcon && option !== 'reset') ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
+    iconButton.className = `iconButton ${option === 'reset' ? 'p-4 bg-pearl-bush-100 hover:bg-pearl-bush-300 ' : (swatchboard ? 'border-2 hover:border-fruit-salad-200 ' : 'bg-pearl-bush-200 hover:bg-pearl-bush-400 ')}${(bgIcon && option !== 'reset') ? 'p-0' : 'p-2'} rounded ${labelPrefix === 'Text Color' ? 'backdrop-invert' : ''}`;
     if (getCurrentStyle(bp, options, cssClassBase, grid) === option) {
       iconButton.classList.remove('bg-pearl-bush-200');
       iconButton.classList.add('bg-fruit-salad-200');
