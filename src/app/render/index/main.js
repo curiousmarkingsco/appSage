@@ -35,7 +35,7 @@ async function initializeDashboard() {
             <div class="col-span-1 pagecolumn group"></div>
             <div class="col-span-1 pagecolumn group">
               <div
-                class="content-container text-base text-fuscous-gray-50 rounded-md border-1 border-fruit-salad-600 mr-4 pb-2 min-w-52 max-w-36 text-center bg-pearl-bush-600 pt-2 mt-0">
+                class="content-container text-base text-fuscous-gray-50 rounded-md border-1 border-fruit-salad-600 mr-4 pb-2 min-w-52 max-w-36 text-center bg-fruit-salad-500 pt-2 mt-0">
                 <a class="bg-link text-background hover:bg-background hover:text-link font-bold p-2 rounded" href="${window.location.href}?config=new"
                   id="newPageButton">New Page</a>
               </div>
