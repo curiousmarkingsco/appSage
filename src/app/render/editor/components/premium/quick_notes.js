@@ -190,8 +190,7 @@ waitForGlobalsLoaded().then(() => {
                         <input id="quicknote-new-label" type="text" placeholder="Create new label" class="w-full border rounded-lg p-2 mb-2 bg-white dark:bg-pearl-bush-900 dark:border-pearl-bush-600" />
 
                         <div class="flex justify-end">
-                            <button id="quicknote-close-modal-labels" class="text-fuscous-gray-500 hover:text-fruit-salad-500 mr-2">Cancel</button>
-                            <button id="quicknote-save-labels" class="text-fruit-salad-500">Save</button>
+                            <button id="quicknote-close-modal-labels" class="text-fuscous-gray-500 hover:text-fruit-salad-500 mr-2">Close</button>
                         </div>
                     </div>
                 </div>
@@ -502,7 +501,6 @@ function initializeQuickNotes(container) {
                     archiveToggle.classList.remove('archived');
                 }
 
-
                 if (note.bgColor) {
                     noteEditor.style.backgroundColor = note.bgColor;
                 } else {
@@ -513,6 +511,26 @@ function initializeQuickNotes(container) {
                 } else {
                     noteEditor.style.color = ''; // default (black)
                 }
+
+                // Add the pin icon
+                const pinIcon = document.createElement('span');
+                if (note.pinned) {
+                    pinIcon.innerHTML = `<span class="text-fuscous-gray-400 group/qNotePin${note.id}"><span class="group-hover/qNotePin${note.id}:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin${note.id}:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
+                } else {
+                    pinIcon.innerHTML = '<span class="text-fuscous-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+                }
+                pinIcon.className = 'absolute top-2 right-2';
+                noteEditor.appendChild(pinIcon);
+                pinIcon.addEventListener('click', () => {
+                    isPinned = !isPinned;
+                    updatePinUI();
+                    saveNote();
+                    if (isPinned) {
+                        pinIcon.innerHTML = `<span class="text-fuscous-gray-400 group/qNotePin${note.id}"><span class="group-hover/qNotePin${note.id}:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin${note.id}:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
+                    } else {
+                        pinIcon.innerHTML = '<span class="text-fuscous-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+                    }
+                });
             } else {
                 // New note: reset all fields…
                 currentNoteId = null;
@@ -974,18 +992,6 @@ function initializeQuickNotes(container) {
     });
     document.getElementById('quicknote-close-modal-labels').addEventListener('click', () => {
         toggleModal('quicknote-modal-labels', false);
-    });
-    document.getElementById('quicknote-save-labels').addEventListener('click', () => {
-        const labelCheckboxes = document.querySelectorAll('#label-list input[type="checkbox"]');
-        currentNoteLabels = [];
-        labelCheckboxes.forEach(cb => {
-            if (cb.checked) {
-                currentNoteLabels.push(cb.value);
-            }
-        });
-        updateLabelPills();
-        toggleModal('quicknote-modal-labels', false);
-        saveNote();
     });
 
     // -------------------------
