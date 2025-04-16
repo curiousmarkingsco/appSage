@@ -1,6 +1,6 @@
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
-        <div class="quickNotes-container bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
+        <div class="quickNotes-container w-full bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
             <div class="container mx-auto p-4">
 
                 <!-- Top Navigation Bar: Note Creation, Search, and Label Filtering -->
@@ -85,17 +85,17 @@ waitForGlobalsLoaded().then(() => {
                 <div id="quicknote-note-editor-modal" class="fixed inset-0 flex items-center justify-center hidden">
                     <div id="quicknote-bg-close-editor" class="fixed inset-0 flex h-full w-full bg-pearl-bush-900 bg-opacity-50 dark:bg-opacity-30"></div>
                     <!-- Note Editor Container -->
-                    <div id="quicknote-note-editor" class="w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-pearl-bush-900 rounded-lg shadow dark:border dark:border-pearl-bush-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
+                    <div id="quicknote-note-editor" class="qn-editor-custom-colors w-96 min-h-96 grid grid-cols-1 content-start bg-white dark:bg-pearl-bush-900 rounded-lg shadow dark:border dark:border-pearl-bush-500 dark:shadow-white dark:text-white p-4 pb-0 relative">
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
-                            class="w-full border-b border-[currentColor]/60 focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2 bg-transparent" />
+                            class="qn-editor-custom-colors w-full border-b border-[currentColor]/60 focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2 bg-transparent" />
             
                         <!-- Media Gallery (for images and audio) -->
                         <div id="quicknote-media-gallery" class="flex gap-2 mb-2"></div>
             
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
-                            class="min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900"></textarea>
+                            class="qn-editor-custom-colors min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900"></textarea>
             
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
@@ -108,33 +108,33 @@ waitForGlobalsLoaded().then(() => {
                         <!-- Bottom Menu Icons -->
                         <div class="flex justify-between border-t border-[currentColor]/60 pt-2">
                             <!-- Image Icon -->
-                            <button id="quicknote-add-image" class="text-fuscous-gray-500 hover:text-fruit-salad-500">
+                            <button id="quicknote-add-image" class="hover:opacity-75">
                                 <span class="sr-only">Add Image</span>
                                 <svg fill="currentColor" class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M576 32L96 32l0 352 480 0 0-352zM395.6 139.8l96 136L496 282l0 7.6 0 8 0 24-24 0-120 0-24 0-48 0-24 0-56 0-24 0 0-24 0-8 0-9.1 6.1-6.8 64-72L264 181.5l17.9 20.2L299.1 221l57.3-81.2L376 112l19.6 27.8zM192 128a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM48 120l0-24L0 96l0 24L0 456l0 24 24 0 432 0 24 0 0-48-24 0L48 432l0-312z"/></svg>
                             </button>
                             <!-- Audio Icon -->
-                            <button id="quicknote-add-audio" class="text-fuscous-gray-500 hover:text-fruit-salad-500">
+                            <button id="quicknote-add-audio" class="hover:opacity-75">
                             <span class="sr-only">Add Audio</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M96 0l0 256c0 53 43 96 96 96s96-43 96-96l-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-32-80 0-16 0 0-32 16 0 80 0 0-96L96 0zM320 224l0 32c0 70.7-57.3 128-128 128s-128-57.3-128-128l0-40 0-24-48 0 0 24 0 40c0 89.1 66.2 162.7 152 174.4l0 33.6-48 0-24 0 0 48 24 0 72 0 72 0 24 0 0-48-24 0-48 0 0-33.6c85.8-11.7 152-85.3 152-174.4l0-40 0-24-48 0 0 24 0 8z"/></svg>
                             </button>
                             <!-- Label Icon -->
-                            <button id="quicknote-manage-labels" class="text-fuscous-gray-500 hover:text-fruit-salad-500">
+                            <button id="quicknote-manage-labels" class="hover:opacity-75">
                                 <span class="sr-only">Add Label(s)</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M495.2 189.3l7 7 0 9.9 0 99.5 0 9.9-7 7L337 481 303 447 454.2 295.8l0-79.6L303 65 337 31 495.2 189.3zM0 256L0 32l224 0L416 224l0 64L224 480 0 256zM144 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Color Palette Icon -->
-                            <button id="quicknote-choose-color" class="text-fuscous-gray-500 hover:text-fruit-salad-500">
+                            <button id="quicknote-choose-color" class="hover:opacity-75">
                                 <span class="sr-only">Choose note text and background color</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 0C397.4 0 512 114.6 512 256l0 64-156.1 0c-37.5 0-67.9 30.4-67.9 67.9c0 18 7.2 35.3 19.9 48L320 448l-64 64C114.6 512 0 397.4 0 256S114.6 0 256 0zm0 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-96 32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM416 160a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>
                             </button>
                             <!-- Archive Icon -->
-                            <button id="quicknote-toggle-archive" class="text-fuscous-gray-500 hover:text-fruit-salad-500">
+                            <button id="quicknote-toggle-archive" class="hover:opacity-75">
                                 <span class="sr-only">Archive this note</span>
                                 <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M512 32l0 96L0 128 0 32l512 0zM32 160l448 0 0 320L32 480l0-320zm128 64l0 32 16 0 160 0 16 0 0-32-16 0-160 0-16 0z"/></svg>
                             </button>
                             <!-- Ellipsis Icon (Dropdown for Pin & Delete) -->
                             <div class="relative">
-                                <button id="quicknote-ellipsis-menu" class="text-fuscous-gray-500 dark:text-fuscous-gray-100 hover:text-fruit-salad-500">
+                                <button id="quicknote-ellipsis-menu" class="dark:text-fuscous-gray-100 hover:opacity-75">
                                     <span class="sr-only">More Options</span>
                                     <svg fill="currentColor" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>
                                 </button>
@@ -142,7 +142,6 @@ waitForGlobalsLoaded().then(() => {
                                 <div id="quicknote-dropdown-menu" class="absolute text-fuscous-gray-700 right-0 mt-2 w-48 bg-white dark:bg-pearl-bush-900 dark:text-white border dark:border-pearl-bush-700 overflow-hidden rounded-lg shadow hidden">
                                     <!-- Toggle Button to Switch Modes -->
                                     <button id="quicknote-toggle-mode" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Switch to Checklist</button>
-                                    <button id="quicknote-pin-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Pin Note</button>
                                     <button id="quicknote-delete-note" class="block w-full text-left px-4 py-2 dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Delete Note</button>
                                 </div>
                             </div>
@@ -264,6 +263,7 @@ function initializeQuickNotes(container) {
     function renderNotes() {
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;
+console.log('retrievedData:', retrievedData);
 
         const storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
 
@@ -278,7 +278,7 @@ function initializeQuickNotes(container) {
         storedNotes.forEach(note => {
             const card = document.createElement('div');
             // breadcrumb
-            card.className = `group/qNoteIconGrp${note.id} note-card border rounded p-2 shadow relative cursor-pointer dark:text-fuscous-gray-50 dark:shadow-white dark:bg-pearl-bush-800 pb-8`;
+            card.className = `group/qNoteIconGrp${note.id} qn-card-custom-colors note-card border rounded p-2 shadow relative cursor-pointer dark:text-fuscous-gray-50 dark:shadow-white dark:bg-pearl-bush-800 pb-8`;
             card.dataset.noteId = note.id;
             card.dataset.type = note.type;
             card.dataset.title = note.title || '';
@@ -286,13 +286,14 @@ function initializeQuickNotes(container) {
             card.dataset.checklist = (note.checkboxItems || []).map(item => item.text).join('\n');
             card.dataset.labels = (note.labels || []).join(',');
 
-            if (note.bgColor) card.style.backgroundColor = note.bgColor;
-            if (note.textColor) card.style.color = note.textColor;
-
             // Create a title element
             const titleEl = document.createElement('h3');
             titleEl.textContent = note.title || 'Untitled';
+            titleEl.className = 'w-[calc(100%-2rem)] border-b focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2';
             card.appendChild(titleEl);
+            titleEl.addEventListener('click', () => {
+                openNoteEditor(note.id, note.type);
+            });
 
             // Media preview: if an image exists, show the first one
             if (note.media && note.media.images && note.media.images.length > 0) {
@@ -305,6 +306,9 @@ function initializeQuickNotes(container) {
                     galleryWrapper.appendChild(img);
                 });
                 card.appendChild(galleryWrapper);
+                galleryWrapper.addEventListener('click', () => {
+                    openNoteEditor(note.id, note.type);
+                });
             }
 
             // Content preview (for checklist, render a simple list; for text, a paragraph)
@@ -312,25 +316,75 @@ function initializeQuickNotes(container) {
                 const ul = document.createElement('ul');
                 (note.checkboxItems || []).forEach(item => {
                     const li = document.createElement('li');
+                    li.className = 'flex-grow border-b border-[currentColor]/50 p-1 bg-transparent dark:bg-pearl-bush-900 focus:outline-none';
                     li.textContent = item.text;
-                    ul.appendChild(li);
+                    if (item.text !== '') ul.appendChild(li);
                 });
                 card.appendChild(ul);
+
+                ul.addEventListener('click', () => {
+                    openNoteEditor(note.id, note.type);
+                });
             } else {
                 const p = document.createElement('p');
                 p.textContent = note.content || '';
+                p.className = 'focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900';
                 card.appendChild(p);
+
+                p.addEventListener('click', () => {
+                    openNoteEditor(note.id, note.type);
+                });
             }
 
             // Add the pin icon
             const pinIcon = document.createElement('span');
             if (note.pinned) {
-                pinIcon.innerHTML = `<span class="text-fuscous-gray-400 group/qNotePin${note.id}"><span class="group-hover/qNotePin${note.id}:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin${note.id}:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
+                pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                    <span class="group-hover/qNotePin${note.id}:hidden">
+                        <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                    </span>
+                    <span class="hidden group-hover/qNotePin${note.id}:block">
+                        <svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                    </span>
+                </span>`;
             } else {
-                pinIcon.innerHTML = '<span class="text-fuscous-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+                pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                    <span class="group-hover/qNotePin${note.id}:hidden">
+                        <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>
+                    </span>
+                    <span class="hidden group-hover/qNotePin${note.id}:block">
+                        <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                    </span>
+                </span>`
             }
             pinIcon.className = 'absolute top-2 right-2';
+            pinIcon.id = `pin-${note.id}`;
             card.appendChild(pinIcon);
+
+            pinIcon.addEventListener('click', () => {
+                currentNoteId = pinIcon.id.replace('pin-', '');
+                isPinned = !note.pinned;
+                saveNote(true);
+                if (isPinned) {
+                    pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                        <span class="group-hover/qNotePin${note.id}:hidden">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                        <span class="hidden group-hover/qNotePin${note.id}:block">
+                            <svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                    </span>`;
+                } else {
+                    pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                        <span class="group-hover/qNotePin${note.id}:hidden">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>
+                        </span>
+                        <span class="hidden group-hover/qNotePin${note.id}:block">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                    </span>`
+                }
+            });
 
             const iconsContainer = document.createElement('div');
             iconsContainer.className = `absolute bottom-2 flex justify-between w-full pl-1 pr-4 space-x-1 opacity-0 group-hover/qNoteIconGrp${note.id}:opacity-100 transition-opacity duration-200`;
@@ -341,7 +395,6 @@ function initializeQuickNotes(container) {
                 { id: 'card-icon-labels', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M495.2 189.3l7 7 0 9.9 0 99.5 0 9.9-7 7L337 481 303 447 454.2 295.8l0-79.6L303 65 337 31 495.2 189.3zM0 256L0 32l224 0L416 224l0 64L224 480 0 256zM144 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>` },
                 { id: 'card-icon-color', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 0C397.4 0 512 114.6 512 256l0 64-156.1 0c-37.5 0-67.9 30.4-67.9 67.9c0 18 7.2 35.3 19.9 48L320 448l-64 64C114.6 512 0 397.4 0 256S114.6 0 256 0zm0 128a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm-96 32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM416 160a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"/></svg>` },
                 { id: 'card-icon-archive', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M512 32l0 96L0 128 0 32l512 0zM32 160l448 0 0 320L32 480l0-320zm128 64l0 32 16 0 160 0 16 0 0-32-16 0-160 0-16 0z"/></svg>` },
-                { id: 'card-icon-menu', svg: `<svg fill="currentColor" class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zm32-320l-64 0 0-64 64 0 0 64zm0 192l-64 0 0-64 64 0 0 64zm0-160l0 64-64 0 0-64 64 0z"/></svg>` }
             ];
 
             iconData.forEach(iconInfo => {
@@ -349,9 +402,9 @@ function initializeQuickNotes(container) {
                 btn.id = iconInfo.id + '-' + note.id;
                 const modalType = iconInfo.id.replace('card-icon-', '');
                 btn.innerHTML = iconInfo.svg;
+                btn.classList.add('hover:opacity-75');
                 // For simplicity, clicking any icon opens the note editor:
                 btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
                     if (btn.id === ('card-icon-archive' + '-' + note.id)) {
                         document.getElementById('quicknote-toggle-archive').classList.toggle('archived');
                         saveNote();
@@ -359,28 +412,6 @@ function initializeQuickNotes(container) {
                         if (document.getElementById('active-card-menu')) {
                             document.getElementById('active-card-menu').remove();
                         } else {
-                            const cardMenu = document.createElement('div');
-                            cardMenu.id = 'active-card-menu';
-                            cardMenu.className = `absolute bottom-6 right-4 z-20`;
-                            const ddMenu = `
-                                <div id="quicknote-icon-dropdown-menu-${note.id}" class="text-fuscous-gray-700 mt-2 w-40 bg-white dark:bg-pearl-bush-900 dark:text-white border dark:border-pearl-bush-400 overflow-hidden rounded-lg shadow">
-                                    <!-- Toggle Button to Switch Modes -->
-                                    <button id="quicknote-icon-toggle-mode-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Switch to Checklist</button>
-                                    <button id="quicknote-icon-pin-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Pin Note</button>
-                                    <button id="quicknote-icon-delete-note-${note.id}" class="block w-full text-left px-2 py-1 text-sm dark:hover:bg-pearl-bush-900 hover:bg-pearl-bush-100">Delete Note</button>
-                                </div>
-                            `
-                            cardMenu.innerHTML = ddMenu;
-                            card.appendChild(cardMenu);
-                            function cardMenuRemove() {
-                                cardMenu.remove();
-                            }
-                            cardMenu.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                            });
-                            document.addEventListener('click', () => {
-                                cardMenuRemove();
-                            });
                             card.querySelector(`#quicknote-icon-toggle-mode-${note.id}`).addEventListener('click', () => {
                                 toggleChecklist();
                             });
@@ -388,7 +419,6 @@ function initializeQuickNotes(container) {
                                 e.stopPropagation();
                                 /* ** ** ** * yeah but how do we know which note it is? ** ** ** */
                                 isPinned = !isPinned;
-                                updatePinUI();
                                 noteEditor.classList.toggle('border-fruit-salad-500', isPinned);
                                 saveNote();
                             });
@@ -411,19 +441,14 @@ function initializeQuickNotes(container) {
             card.appendChild(iconsContainer);
 
             // Attach click to open editor (if user clicks outside icons)
-            card.addEventListener('click', () => {
-                openNoteEditor(note.id, note.type);
-            });
+            // card.addEventListener('click', () => {
+            //     openNoteEditor(note.id, note.type);
+            // });
 
             // If archived, add a visual indicator (here, reduced opacity)
             if (note.archived) {
                 card.classList.add('opacity-50');
             }
-
-            // Open the editor modal when clicking a note card
-            card.addEventListener('click', () => {
-                openNoteEditor(note.id, note.type);
-            });
 
             // Append the card to its category container
             if (note.archived && archivedContainer) {
@@ -433,6 +458,9 @@ function initializeQuickNotes(container) {
             } else if (activeContainer) {
                 activeContainer.appendChild(card);
             }
+
+            if (note.bgColor) card.style.backgroundColor = note.bgColor;
+            if (note.textColor) card.style.color = note.textColor;
         });
 
         // After rendering, hide "Archived" header if no notes in that category:
@@ -459,7 +487,6 @@ function initializeQuickNotes(container) {
                 document.getElementById('quicknote-note-title').value = note.title || '';
                 isChecklist = (note.type === 'checkbox');
                 isPinned = note.pinned || false;
-                updatePinUI();
                 // Use note.type to decide which editor to show:
                 if (note.type === 'text') {
                     document.getElementById('quicknote-note-content').value = note.content || '';
@@ -481,7 +508,6 @@ function initializeQuickNotes(container) {
                 }
                 currentMedia = note.media || { images: [], audio: [] };
                 currentNoteLabels = note.labels || [];
-                isPinned = note.pinned || false;
                 // *** Clear and repopulate the media gallery ***
                 const gallery = document.getElementById('quicknote-media-gallery');
                 gallery.innerHTML = '';
@@ -501,35 +527,59 @@ function initializeQuickNotes(container) {
                     archiveToggle.classList.remove('archived');
                 }
 
-                if (note.bgColor) {
-                    noteEditor.style.backgroundColor = note.bgColor;
-                } else {
-                    noteEditor.style.backgroundColor = ''; // default (white)
-                }
-                if (note.textColor) {
-                    noteEditor.style.color = note.textColor;
-                } else {
-                    noteEditor.style.color = ''; // default (black)
-                }
-
                 // Add the pin icon
                 const pinIcon = document.createElement('span');
                 if (note.pinned) {
-                    pinIcon.innerHTML = `<span class="text-fuscous-gray-400 group/qNotePin${note.id}"><span class="group-hover/qNotePin${note.id}:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin${note.id}:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
+                    pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                        <span class="group-hover/qNotePin${note.id}:hidden">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                        <span class="hidden group-hover/qNotePin${note.id}:block">
+                            <svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                    </span>`;
                 } else {
-                    pinIcon.innerHTML = '<span class="text-fuscous-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+                    pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                        <span class="group-hover/qNotePin${note.id}:hidden">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>
+                        </span>
+                        <span class="hidden group-hover/qNotePin${note.id}:block">
+                            <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                        </span>
+                    </span>`
                 }
                 pinIcon.className = 'absolute top-2 right-2';
                 noteEditor.appendChild(pinIcon);
                 pinIcon.addEventListener('click', () => {
                     isPinned = !isPinned;
-                    updatePinUI();
                     saveNote();
                     if (isPinned) {
-                        pinIcon.innerHTML = `<span class="text-fuscous-gray-400 group/qNotePin${note.id}"><span class="group-hover/qNotePin${note.id}:hidden"><svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span><span class="hidden group-hover/qNotePin${note.id}:block"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg></span></span>`;
+                        pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                            <span class="group-hover/qNotePin${note.id}:hidden">
+                                <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                            </span>
+                            <span class="hidden group-hover/qNotePin${note.id}:block">
+                                <svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M482.7 352l29.3 0 0-32c0-22.5-23.7-76.5-82.1-106.7L418.5 64 448 64l32 0 0-64L448 0 192 0 160 0l0 64 32 0 29.5 0-6.2 80.4L48.4 14.8 29.4 .1 0 38 19 52.7 591.5 497.2l19 14.7L639.9 474l-19-14.7L482.7 352zm-157.8 0L175.8 234.5C142.2 263 128 299.1 128 320l0 32 196.9 0zM288 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                            </span>
+                        </span>`;
                     } else {
-                        pinIcon.innerHTML = '<span class="text-fuscous-gray-400"><svg fill="currentColor" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>';
+                        pinIcon.innerHTML = `<span class="group/qNotePin${note.id}">
+                            <span class="group-hover/qNotePin${note.id}:hidden">
+                                <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M264.6 218.2l17.9 13c18.8 13.8 32.7 32.1 41.9 49.6c5.1 9.7 8 17.7 9.7 23.2L216 304l0-88 0-24-48 0 0 24 0 88L49.4 304c.2-1 .5-2.1 .9-3.2c1.9-6.5 4.9-14.4 9.4-22.9c9-17 22.6-34.5 41.2-47.6l18.6-13 1.7-22.6L132.4 48l119.1 0 11.4 148.2 1.7 22zM216 352l120 0 48 0 0-40c0-2.3-.2-4.9-.7-8c-4.1-25.8-26-77.6-72.5-111.5L299.7 48 328 48l24 0 0-48L328 0 296 0 88 0 56 0 32 0l0 48 24 0 28.3 0-11 143C26.1 224.1 4.2 275.6 .6 304c-.4 2.9-.6 5.6-.6 8l0 40 48 0 120 0 0 136 0 24 48 0 0-24 0-136z"/></svg>
+                            </span>
+                            <span class="hidden group-hover/qNotePin${note.id}:block">
+                                <svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M64 0L32 0l0 64 32 0 29.5 0L82.1 212.1C23.7 240.7 0 293 0 320l0 32 384 0 0-32c0-22.5-23.7-76.5-82.1-106.7L290.5 64 320 64l32 0 0-64L320 0 64 0zm96 480l0 32 64 0 0-32 0-96-64 0 0 96z"/></svg>
+                            </span>
+                        </span>`
                     }
+                });
+
+                const customColoredElements = document.querySelectorAll('.qn-editor-custom-colors');
+                customColoredElements.forEach((element) => {
+                    if (note.bgColor) { element.style.backgroundColor = note.bgColor; }
+                    else { element.style.backgroundColor = ''; }
+                    if (note.textColor) { element.style.color = note.textColor; }
+                    else { element.style.color = ''; }
                 });
             } else {
                 // New note: reset all fields…
@@ -580,16 +630,12 @@ function initializeQuickNotes(container) {
             document.getElementById('quicknote-checkbox-container').classList.remove('hidden')
             if (firstInput) firstInput.focus();
         }
-
-        // Also update text fields to inherit this background color:
-        document.getElementById('quicknote-note-title').style.backgroundColor = noteEditor.style.backgroundColor;
-        document.getElementById('quicknote-note-content').style.backgroundColor = noteEditor.style.backgroundColor;
     }
 
     // -------------------------
     // SAVE / UPDATE NOTE
     // -------------------------
-    function saveNote() {
+    function saveNote(pinning = false) {
         // Gather trimmed values
         const title = document.getElementById('quicknote-note-title').value.trim();
         const content = !isChecklist
@@ -599,7 +645,26 @@ function initializeQuickNotes(container) {
                 .join('');
 
         // Check for media or labels as well if needed
-        if (!title && !content && currentMedia.images.length === 0 && currentMedia.audio.length === 0 && currentNoteLabels.length === 0) {
+        if (pinning) {
+            const currentPage = getCurrentPage();
+            const retrievedData = currentPage.quickNotes;
+            let storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
+
+            const noteIndex = storedNotes.findIndex(n => n.id === currentNoteId);
+            let tmpNote = storedNotes[noteIndex];
+
+            // this issue, yet again, is from the page reloading after an edit...
+            tmpNote['pinned'] = isPinned;
+            storedNotes[noteIndex] = tmpNote;
+
+            const parsedData = retrievedData ? JSON.parse(retrievedData) : {};
+            parsedData.notes = storedNotes;
+            const json = JSON.stringify(parsedData);
+console.log('json:', json);
+            saveComponentObjectToPage('quickNotes', json);
+            renderNotes();
+            return;
+        } else if (!title && !content && currentMedia.images.length === 0 && currentMedia.audio.length === 0 && currentNoteLabels.length === 0) {
             // Skip saving an empty note
             return;
         }
@@ -681,8 +746,7 @@ function initializeQuickNotes(container) {
         input.type = 'text';
         input.value = text;
 
-        input.style.backgroundColor = document.getElementById('quicknote-note-editor').style.backgroundColor || 'inherit';
-        input.className = 'flex-grow border-b border-pearl-bush-300 p-1 bg-transparent dark:bg-pearl-bush-900 focus:outline-none';
+        input.className = 'flex-grow qn-editor-custom-colors border-b border-pearl-bush-300 p-1 bg-transparent dark:bg-pearl-bush-900 focus:outline-none';
         input.addEventListener('input', () => {
             if (li === checkboxList.lastElementChild && input.value !== '') {
                 createCheckboxItem('');
@@ -1003,12 +1067,10 @@ function initializeQuickNotes(container) {
     document.getElementById('quicknote-save-color').addEventListener('click', () => {
         const bgColor = document.getElementById('quicknote-bg-color').value;
         const textColor = document.getElementById('quicknote-text-color').value;
-        noteEditor.style.backgroundColor = bgColor;
-        noteEditor.style.color = textColor;
-
-        // Update all SVG icons inside the editor to use the new text color:
-        noteEditor.querySelectorAll('svg').forEach(icon => {
-            icon.style.color = textColor;
+        const customColoredElements = document.querySelectorAll('.qn-editor-custom-colors');
+        customColoredElements.forEach((element) => {
+            if (bgColor) element.style.backgroundColor = bgColor;
+            if (textColor) element.style.color = textColor;
         });
 
         // Update divider lines: title input bottom border and bottom menu top border.
@@ -1024,52 +1086,6 @@ function initializeQuickNotes(container) {
         saveNote();
     });
 
-
-    // -------------------------
-    // PINNING, ARCHIVE, DELETE, & DROPDOWN LOGIC
-    // -------------------------
-    function updatePinUI() {
-        let pinIcon = document.getElementById('pin-icon');
-        if (!pinIcon) {
-            pinIcon = document.createElement('div');
-            pinIcon.id = 'pin-icon';
-            pinIcon.className = 'absolute top-2 right-2 cursor-pointer hover:opacity-50';
-            pinIcon.addEventListener('click', () => {
-                isPinned = !isPinned;
-                updatePinUI();
-                saveNote();
-            });
-            // Change icon on hover if pinned
-            pinIcon.addEventListener('mouseenter', () => {
-                if (isPinned) {
-                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Strikethrough icon SVG --></svg>`;
-                }
-            });
-            pinIcon.addEventListener('mouseleave', () => {
-                if (isPinned) {
-                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" ...><!-- Solid pin icon SVG --></svg>`;
-                } else {
-                    pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Normal (outline) pin icon SVG --></svg>`;
-                }
-            });
-            noteEditor.appendChild(pinIcon);
-        }
-        // Set default icon based on state
-        if (isPinned) {
-            pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5 p-[0.1rem]" ...><!-- Solid pin icon SVG --></svg>`;
-        } else {
-            pinIcon.innerHTML = `<svg fill="currentColor" class="h-5 w-5" ...><!-- Normal pin icon SVG --></svg>`;
-        }
-    }
-
-    const pnNte = document.getElementById('quicknote-pin-note');
-    if (pnNte) pnNte.addEventListener('click', () => {
-        isPinned = !isPinned;
-        updatePinUI();
-        noteEditor.classList.toggle('border-fruit-salad-500', isPinned);
-        document.getElementById('quicknote-dropdown-menu').classList.add('hidden');
-        saveNote();
-    });
     const tglArc = document.getElementById('quicknote-toggle-archive');
     if (tglArc) tglArc.addEventListener('click', () => {
         document.getElementById('quicknote-toggle-archive').classList.toggle('archived');
