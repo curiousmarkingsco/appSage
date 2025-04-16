@@ -131,10 +131,11 @@ function initializeRotatingQuotes(container) {
   function displayNextQuote(container) {
     const quote = quotes[currentIndex];
     const quoteContainer = document.querySelector('.rotatingQuotes-container');
-    quoteContainer.querySelector('.rotatingQuotes-quote').innerText = quote.quote;
-    quoteContainer.querySelector('.rotatingQuotes-source').innerText = quote.source;
-
-    currentIndex = (currentIndex + 1) % quotes.length;
+    if (quoteContainer) {
+      quoteContainer.querySelector('.rotatingQuotes-quote').innerText = quote.quote;
+      quoteContainer.querySelector('.rotatingQuotes-source').innerText = quote.source;
+      currentIndex = (currentIndex + 1) % quotes.length;
+    }
   }
 
   // Display the first quote immediately

@@ -69,6 +69,16 @@ function initializeCalculator(container) {
   let pendingValue = null;
   let currentOperator = null;
 
+  function evaluateExpression(val1, val2, operator) {
+    switch (operator) {
+      case '+': return val1 + val2;
+      case '-': return val1 - val2;
+      case '*': return val1 * val2;
+      case '/': return val1 / val2;
+      default: return val2;
+    }
+  }
+
   buttons.forEach(button => {
     button.addEventListener('click', function () {
       const buttonValue = button.innerText;
@@ -96,14 +106,3 @@ function initializeCalculator(container) {
   });
 }
 window.initializeCalculator = initializeCalculator;
-
-function evaluateExpression(val1, val2, operator) {
-  switch (operator) {
-    case '+': return val1 + val2;
-    case '-': return val1 - val2;
-    case '*': return val1 * val2;
-    case '/': return val1 / val2;
-    default: return val2;
-  }
-}
-window.evaluateExpression = evaluateExpression;

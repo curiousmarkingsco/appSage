@@ -1,3 +1,9 @@
+/*
+
+  editor/premium/components/quick_notes.js
+
+*/
+
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
         <div class="quickNotes-container w-full bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
@@ -1288,5 +1294,4 @@ function initializeQuickNotes(container) {
     // Call renderNotes on page load
     renderNotes();
 }
-
 window.initializeQuickNotes = initializeQuickNotes;
