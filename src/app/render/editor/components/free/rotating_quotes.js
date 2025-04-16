@@ -128,41 +128,42 @@ function initializeRotatingQuotes(container) {
 
   // Rotate quotes every few seconds (e.g., 5 seconds)
   let currentIndex = Math.floor(Math.random() * quotes.length);
-  function displayNextQuote() {
+  function displayNextQuote(container) {
     const quote = quotes[currentIndex];
-    container.querySelector('.rotatingQuotes-quote').innerText = quote.quote;
-    container.querySelector('.rotatingQuotes-source').innerText = quote.source;
+    const quoteContainer = document.querySelector('.rotatingQuotes-container');
+    quoteContainer.querySelector('.rotatingQuotes-quote').innerText = quote.quote;
+    quoteContainer.querySelector('.rotatingQuotes-source').innerText = quote.source;
 
     currentIndex = (currentIndex + 1) % quotes.length;
   }
 
   // Display the first quote immediately
-  displayNextQuote();
+  displayNextQuote(container);
 
   // Set interval for rotating quotes
-  setInterval(displayNextQuote, 5000);
-}
-window.initializeRotatingQuotes = initializeRotatingQuotes;
+  setInterval(function(){
+    displayNextQuote(container);
+  }, 5000);
 
-
-function rotatingQuotes() {
-  return {
-    "built-in-quote-1": {
-      "quote": "Don't worry about me. I've been fired so many times before. The only backlash I've ever received is an enormous RUSH of relief.",
-      "source": "Maria Bamford"
-    },
-    "built-in-quote-2": {
-      "quote": "A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyse a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.",
-      "source": "Robert A. Heinlein"
-    },
-    "built-in-quote-3": {
-      "quote": "Perception precedes comprehension.",
-      "source": "Minh Tran"
-    },
-    "built-in-quote-4": {
-      "quote": "An untamed, brilliant mind often possesses no discernment between nonsense, common sense, and brilliance.",
-      "source": "Ian R. McKenzie, quoting himself as he rips another fart and huffs it in deeply with his nose"
+  function rotatingQuotes() {
+    return {
+      "built-in-quote-1": {
+        "quote": "Don't worry about me. I've been fired so many times before. The only backlash I've ever received is an enormous RUSH of relief.",
+        "source": "Maria Bamford"
+      },
+      "built-in-quote-2": {
+        "quote": "A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyse a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.",
+        "source": "Robert A. Heinlein"
+      },
+      "built-in-quote-3": {
+        "quote": "Perception precedes comprehension.",
+        "source": "Minh Tran"
+      },
+      "built-in-quote-4": {
+        "quote": "An untamed, brilliant mind often possesses no discernment between nonsense, common sense, and brilliance.",
+        "source": "Ian R. McKenzie, quoting himself as he rips another fart and huffs it in deeply with his nose"
+      }
     }
   }
 }
-window.rotatingQuotes = rotatingQuotes;
+window.initializeRotatingQuotes = initializeRotatingQuotes;

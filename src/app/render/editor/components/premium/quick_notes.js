@@ -34,9 +34,6 @@ waitForGlobalsLoaded().then(() => {
                                     <label class="flex items-center">
                                         <input type="checkbox" class="mr-2" checked data-criteria="text" /> Text
                                     </label>
-                                    <label class="flex items-center">
-                                        <input type="checkbox" class="mr-2" data-criteria="labels" /> Labels
-                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -263,7 +260,6 @@ function initializeQuickNotes(container) {
     function renderNotes() {
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;
-console.log('retrievedData:', retrievedData);
 
         const storedNotes = retrievedData ? JSON.parse(retrievedData).notes : [];
 
@@ -660,7 +656,6 @@ console.log('retrievedData:', retrievedData);
             const parsedData = retrievedData ? JSON.parse(retrievedData) : {};
             parsedData.notes = storedNotes;
             const json = JSON.stringify(parsedData);
-console.log('json:', json);
             saveComponentObjectToPage('quickNotes', json);
             renderNotes();
             return;
