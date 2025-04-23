@@ -48,59 +48,77 @@ window.addRevision = addRevision;
 
 // Restore a specific revision
 async function restoreRevision(pageName, pointer) {
+  // 1) Load the requested revision from IndexedDB
   const db = await openDB();
-  const transaction = db.transaction("RevisionHistory", "readwrite");
-  const store = transaction.objectStore("RevisionHistory");
+  const tx = db.transaction("RevisionHistory", "readwrite");
+  const store = tx.objectStore("RevisionHistory");
+  const pageHistory = await new Promise((resolve, reject) => {
+    const req = store.get(pageName);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
 
-  store.get(pageName).onsuccess = (event) => {
-    const pageHistory = event.target.result;
-    if (pageHistory && pageHistory.revisions[pointer]) {
-      if (!electronMode) {
-        // Parse the existing localStorage object
-        const appStorage = JSON.parse(localStorage.appSageStorage);
+  if (!pageHistory || !pageHistory.revisions[pointer]) {
+    console.error(`Revision ${pointer} for page ${pageName} not found`);
+    return;
+  }
+  const revisionContent = pageHistory.revisions[pointer];
 
-        // Update the specific page's page_data with the selected revision
-        if (appStorage.pages && appStorage.pages[pageName]) {
-          appStorage.pages[pageName].page_data = JSON.stringify(pageHistory.revisions[pointer]);
-        } else {
-          console.error(`Page ${pageName} not found in localStorage`);
-          return;
-        }
-
-        // Write the updated appStorage back to localStorage
-        localStorage.appSageStorage = JSON.stringify(appStorage);
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          // Update the page data
-          if (!storeData.pages) {
-            storeData.pages = {};
-          }
-
-          if (!storeData.pages[pageName]) {
-            storeData.pages[pageName] = {};
-          }
-
-          storeData.pages[pageName] = { ...storeData.pages[pageName], page_data: pageHistory.revisions[pointer] };
-          // Save the updated data back to Electron store
-          window.api.updateStoreData(storeData).then(updatedData => {
-            window.appSageStore = updatedData;
-            console.log(updatedData.pages[pageName].page_data[2].content)
-          }).catch((error) => {
-            console.error('Error saving page data in Electron mode:', error);
-          });
-        }).catch((error) => {
-          console.error('Error reading store data in Electron mode:', error);
-        });
-      }
-
-      // Reload the page
-      // TODO: Test if soft reloading works and/or implement soft reloading properly
-      window.location.reload();
+  // 2) ALWAYS do the default restore locally (or in Electron)
+  if (!electronMode) {
+    // Web: localStorage
+    const appStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    if (appStorage.pages?.[pageName]) {
+      appStorage.pages[pageName].page_data = JSON.stringify(revisionContent);
+      localStorage.setItem(appSageStorageString, JSON.stringify(appStorage));
     } else {
-      console.error(`Revision ${pointer} for page ${pageName} not found`);
+      console.error(`Page ${pageName} not found in localStorage`);
+      return;
     }
-  };
+  } else if (electronMode) {
+    // Electron: secure store
+    try {
+      const storeData = await window.api.readStoreData();
+      storeData.pages = storeData.pages || {};
+      storeData.pages[pageName] = {
+        ...storeData.pages[pageName],
+        page_data: revisionContent
+      };
+      window.appSageStore = await window.api.updateStoreData(storeData);
+    } catch (err) {
+      console.error('Error saving page data in Electron mode:', err);
+      return;
+    }
+  }
+
+  // 3) If cloud sync is enabled, also send (or queue) this restore up to the server
+  if (apiEnabled) {
+    const payload = {
+      pageId: pageName,
+      content: revisionContent,
+      timestamp: new Date().toISOString(),
+      revisionId: pointer
+    };
+  
+    if (cloudStorage.isOnline()) {
+      try {
+        await cloudStorage.sendToCloud(payload);
+      } catch (err) {
+        console.error('Error syncing revision to cloud:', err);
+        cloudStorage.queueForLater(payload);
+      }
+    } else {
+      cloudStorage.queueForLater(payload);
+    }
+  
+    return;
+  }  
+
+  // 4) Finally reload to apply it
+  window.location.reload();
 }
+
+window.restoreRevision = restoreRevision;
 
 // Undo/Redo Operations
 async function updatePointer(pageName, direction) {

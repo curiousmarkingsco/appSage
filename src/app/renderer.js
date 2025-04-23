@@ -9,9 +9,22 @@ window.appSageStore;
 window.editorScriptsAlreadyLoaded = false;
 window.electronMode = !(typeof window.api === 'undefined');
 // TODO: Finish adding remote API option for redundant/cloud storage
-// window.apiEnabled = false;
+window.apiEnabled = false;
 
 document.addEventListener('DOMContentLoaded', function () {
+  // if (apiEnabled) {
+  //   // CLOUD: initialize your cloud store (you'll implement this in cloud_storage/main.js)
+  //   // you’ll need some way to get creds or a token here; adjust as needed
+  //   cloudStorage
+  //     .createOrFindStore(cloudStorage.getUsername(), cloudStorage.getPassword(), /* newStore? */ false)
+  //     .then(data => {
+  //       window.appSageStore = data;
+  //       routeRequestedResource();
+  //     })
+  //     .catch(error => {
+  //       console.error('Error initializing cloud store:', error.stack || error);
+  //     });
+  // }
   if (electronMode) {
     // STORAGE // TODO - Create basic authentication
     /* open: THIS AREA FOR DEV PURPOSES, DELETE ME! */
@@ -103,8 +116,8 @@ function activateComponents(editor = false) {
 }
 window.activateComponents = activateComponents;
 
-function initializeGlobals() {
-  return new Promise((resolve, reject) => {
+async function initializeGlobals() {
+  return new Promise(async (resolve, reject) => {
     try {
       /*
 
@@ -121,58 +134,87 @@ function initializeGlobals() {
 
       */
 
+      // This allows developers to set a custom storage name so that if people
+      // are using multiple appSage derived products, the object won't get too
+      // bogged down or confused. This was originally made to support dashSage.
       if (typeof customAppSageStorage !== 'undefined') {
-        // This allows developers to set a custom storage name so that if people
-        // are using multiple appSage derived products, the object won't get too
-        // bogged down or confused. This was originally made to support dashSage.
-        window.appSageStorageString = customAppSageStorage;
-        window.appSageSettingsString = `${customAppSageStorage}Settings`;
-        window.appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
-        window.appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
+        window.appSageStorageString        = customAppSageStorage;
+        window.appSageSettingsString       = `${customAppSageStorage}Settings`;
+        window.appSageTitleIdMapString     = `${customAppSageStorage}TitleIdMap`;
+        window.appSageDatabaseString       = `${customAppSageStorage}Database`;
       } else {
-        window.appSageStorageString = 'appSageStorage';
-        window.appSageSettingsString = 'appSageSettings';
-        window.appSageTitleIdMapString = 'appSageTitleIdMap';
-        window.appSageDatabaseString = 'appSageDatabase';
+        window.appSageStorageString        = 'appSageStorage';
+        window.appSageSettingsString       = 'appSageSettings';
+        window.appSageTitleIdMapString     = 'appSageTitleIdMap';
+        window.appSageDatabaseString       = 'appSageDatabase';
       }
 
-      // Requires paid license
-      window.appSagePremium = true;
-
+      // TODO: Paywall premium components?
+      window.appSagePremium    = true;
       window.appSageComponents = combineComponentsLists();
-
-      window.advancedMode = false;
-      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
-        const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
-        if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          if (storeData && storeData.settings && storeData.settings.advancedMode) {
-            window.advancedMode = storeData.settings.advancedMode;
-          }
-        }).catch((error) => {
-          console.error('Error fetching settings from Electron store:', error);
-        });
-      }
-
+      window.advancedMode      = false;
       window.currentBreakpoint = 'xs';
-      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
-        const settingsForBpCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).currentBreakpoint;
-        if (settingsForBpCheck) window.currentBreakpoint = settingsForBpCheck;
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          if (storeData && storeData.settings && storeData.settings.currentBreakpoint) {
-            window.currentBreakpoint = storeData.settings.currentBreakpoint;
+
+      if (apiEnabled) {
+        // CLOUD
+        const storeData = await pullFromCloud();
+        if (storeData?.settings?.advancedMode) {
+          window.advancedMode = storeData.settings.advancedMode;
+        }
+      }
+      if (!electronMode) {
+        // localStorage
+        const raw = localStorage.getItem(appSageSettingsString);
+        if (raw) {
+          const settings = JSON.parse(raw);
+          if (settings.advancedMode) {
+            window.advancedMode = settings.advancedMode;
           }
-        }).catch((error) => {
-          console.error('Error fetching settings from Electron store:', error);
-        });
+        }
+      } else if (electronMode) {
+        // Electron store
+        await window.api.readStoreData()
+          .then(storeData => {
+            if (storeData?.settings?.advancedMode) {
+              window.advancedMode = storeData.settings.advancedMode;
+            }
+          })
+          .catch(err => console.error('Error fetching advancedMode:', err));
       }
 
+      // ─── currentBreakpoint ────────────────────────────────────────────────────
+      if (apiEnabled) {
+        // CLOUD
+        const storeData = await pullFromCloud();
+        if (storeData?.settings?.currentBreakpoint) {
+          window.currentBreakpoint = storeData.settings.currentBreakpoint;
+        }
+      }
+      if (!electronMode) {
+        const raw = localStorage.getItem(appSageSettingsString);
+        if (raw) {
+          const settings = JSON.parse(raw);
+          if (settings.currentBreakpoint) {
+            window.currentBreakpoint = settings.currentBreakpoint;
+          }
+        }
+      } else if (electronMode) {
+        await window.api.readStoreData()
+          .then(storeData => {
+            if (storeData?.settings?.currentBreakpoint) {
+              window.currentBreakpoint = storeData.settings.currentBreakpoint;
+            }
+          })
+          .catch(err => console.error('Error fetching breakpoint:', err));
+      }
+
+      // ─── the rest of your existing initialization ─────────────────────────────
       updateTailwindConfig();
-      window.tailwindColors = mergeTailwindColors(tailwind.config.theme);
-      window.colorArray = extractColorNames(tailwindColors);
-      colorArray.push('reset'); window.interactivityState = ''; window.interactivityStates = {
+      window.tailwindColors   = mergeTailwindColors(tailwind.config.theme);
+      window.colorArray       = extractColorNames(tailwindColors);
+      colorArray.push('reset');
+      window.interactivityState = '';
+      window.interactivityStates = {
         "default": ['', 'Default'],
         "hover": ['hover', 'When the user taps (mobile) or has their cursor on top of the element (desktop)'],
         "focus": ['focus', 'When the user has tapped the element to use it in some way'],
@@ -373,17 +415,17 @@ function initializeGlobals() {
         "opacity": '<svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M448 256c0-106-86-192-192-192l0 384c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/></svg>'
       }
 
-      // Call restoreSettings when the page loads
       window.addEventListener('load', restoreSettings);
       window.addEventListener('load', mergeFontsIntoTailwindConfig);
 
       window.globalsLoaded = true;
       resolve();
     } catch (error) {
-      reject(error); // Reject the promise if there's an error
+      reject(error);
     }
   });
 }
+window.initializeGlobals = initializeGlobals;
 
 function combineComponentsLists() {
   // Templates are loaded in the JS file dedicated to the component.
@@ -680,6 +722,19 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function () {
+    if (apiEnabled) {
+      // CLOUD: delete via cloudStorage API
+      cloudStorage.deletePage(page_id)
+        .then(() => {
+          element.remove();
+          console.log(`Page with ID ${page_id} has been deleted successfully.`);
+        })
+        .catch(error => {
+          console.error('Error deleting page from cloud:', error);
+        });
+      return;
+    }
+
     if (!electronMode) {
       const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
       const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
@@ -714,12 +769,13 @@ function deletePage(page_id, element) {
         // Update the store with the modified data
         window.api.updateStoreData(storeData).then(updatedStore => {
           appSageStore = updatedStore;
-        })
-      })
+        });
+      });
     }
-    element.remove();
 
+    // always remove the element locally
+    element.remove();
     console.log(`Page with ID ${page_id} has been deleted successfully.`);
   });
-} // DATA OUT: null
+}
 window.deletePage = deletePage;

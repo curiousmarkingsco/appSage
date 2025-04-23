@@ -319,6 +319,37 @@ function generateMediaUrl(event, contentContainer, background) {
 window.generateMediaUrl = generateMediaUrl;
 
 async function saveMediaToStorage(mediaBlob, mediaId) {
+  if (apiEnabled) {
+    try {
+      const pageId = getPageId();
+      const timestamp = Date.now();
+      const revisionId = `${mediaId}-${timestamp}`;
+      const arrayBuffer = await mediaBlob.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      // Prepare a payload describing this media attachment change
+      const change = {
+        projectId: pageId,
+        content: {
+          type: 'media',
+          mediaId,
+          data: Array.from(uint8Array)  // or store base64 if preferred
+        },
+        timestamp,
+        revisionId
+      };
+
+      if (isOnline()) {
+        await sendToCloud(change);
+      } else {
+        queueForLater(change);
+      }
+    } catch (err) {
+      console.error('Error syncing media to cloud:', err);
+      // Still fall back to local/Electron storage below if desired
+    }
+    return;
+  }
   if (!electronMode) {
     // Uses IndexedDB
     const db = await openDatabase();
@@ -345,6 +376,18 @@ async function saveMediaToStorage(mediaBlob, mediaId) {
 window.saveMediaToStorage = saveMediaToStorage;
 
 async function getMediaFromStorage(mediaId) {
+  if (apiEnabled) {
+    try {
+      const pageId = getPageId();
+      const cloudData = await pullFromCloud(pageId);
+      // Assuming cloudData.pages[pageId].media_attachments holds URLs or base64 strings
+      return cloudData.pages[pageId].media_attachments?.[mediaId] || null;
+    } catch (err) {
+      console.error('Error fetching media from cloud:', err);
+      return null;
+    }
+  }
+
   if (!electronMode) {
     // Uses IndexedDB
     const db = await openDatabase();

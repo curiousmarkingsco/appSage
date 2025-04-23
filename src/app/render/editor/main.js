@@ -461,6 +461,19 @@ async function initializeConfig() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
   let pageData = await loadPage(config);
+  if (typeof config !== 'undefined' && config !== 'new') {
+    if (apiEnabled) {
+      try {
+        const cloudData = await cloudStorage.pullFromCloud(config);
+        if (cloudData && cloudData.page_data) {
+          pageData = cloudData.page_data;
+        }
+      } catch (error) {
+        console.error('Error loading page from cloud:', error);
+      }
+    }
+  }
+
   return new Promise((resolve, reject) => {
     try {
       if (typeof config !== 'undefined' && config !== 'new') {
@@ -478,20 +491,21 @@ async function initializeConfig() {
           // Using Electron storage
           if (pageData) {
             document.querySelector('title').textContent = `Editing: ${pageData.title} | appSage`;
-            if ((typeof pageData.page_data !== 'undefined')) {
+            if (typeof pageData.page_data !== 'undefined') {
               loadChanges(pageData.page_data);
               loadPageSettings(config);
               loadPageMetadata(config);
             }
           }
         }
+
         setupAutoSave(config);
       } else {
         createNewConfigurationFile();
       }
       resolve();
     } catch (error) {
-      reject(error); // Reject the promise if there's an error
+      reject(error);
     }
   });
 }
@@ -1111,10 +1125,32 @@ function addEditableMetadata(container, placement) {
 } // DATA OUT: null
 window.addEditableMetadata = addEditableMetadata;
 
-function createNewConfigurationFile() {
+async function createNewConfigurationFile() {
   const pageId = generateAlphanumericId();
   let title = 'Untitled';
   let counter = 1;
+
+  // CLOUD SYNC: if apiEnabled, push new page to cloud
+  if (apiEnabled) {
+    const payload = {
+      pageId,                                   // the page we’re syncing
+      content: [],                              // your initial data
+      timestamp: new Date().toISOString(),      // when this change happened
+      revisionId: new Date().toISOString()      // or however you generate revision IDs
+    };
+  
+    // if we’re online, try to send immediately, otherwise queue for later
+    if (cloudStorage.isOnline()) {
+      try {
+        await cloudStorage.sendToCloud(payload);
+      } catch (err) {
+        console.error('Error syncing new page to cloud:', err);
+        cloudStorage.queueForLater(payload);
+      }
+    } else {
+      cloudStorage.queueForLater(payload);
+    }
+  }
 
   if (!electronMode) {
     // Using localStorage for non-Electron mode
@@ -1126,31 +1162,28 @@ function createNewConfigurationFile() {
     // Save the mapping of title to ID
     titleIdMap[title] = pageId;
     localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-    
+
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (!appSageStorage.pages) {
       appSageStorage.pages = {};
     }
     appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    
+
     window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       const titleIdMap = storeData.titles || {};
-      
+
       // Generate a unique title
       while (title in titleIdMap) {
         title = `Untitled_${counter}`;
         counter++;
       }
-
-      // Save the mapping of title to ID
       titleIdMap[title] = pageId;
       storeData.titles = titleIdMap;
 
-      // Initialize the new page data
       if (!storeData.pages) {
         storeData.pages = {};
       }
@@ -1161,10 +1194,10 @@ function createNewConfigurationFile() {
       storeData.titles = titleIdMap;
       storeData.pages[pageId] = { page_data: [], title: title, settings: {} };
 
-      // Save the updated data back to Electron store
       window.api.updateStoreData(storeData).then(updatedData => {
         window.appSageStore = updatedData;
-        window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+
+        window.location.search = `?config=${pageId}`;
       }).catch((error) => {
         console.error('Error updating store data in Electron mode:', error);
       });

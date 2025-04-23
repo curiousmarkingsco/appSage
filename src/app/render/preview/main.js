@@ -88,7 +88,20 @@ window.loadPreviewScripts = loadPreviewScripts;
 // probably be reviewed and updated if anything is ever added to this file.
 // DATA IN: String
 async function loadPreview(pageId) {
-  const json = await loadPage(pageId);  // Uses the already-refactored loadPage
+  let json = await loadPage(pageId);
+
+  // CLOUD SYNC: fetch latest from cloud if enabled
+  if (apiEnabled && cloudStorage.isOnline()) {
+    try {
+      const cloudData = await cloudStorage.pullFromCloud(pageId);
+      if (cloudData.page_data) {
+        json = JSON.stringify(cloudData.page_data);
+      }
+    } catch (error) {
+      console.error('Error loading preview from cloud:', error);
+    }
+  }  
+
   if (!electronMode) {
     // Using localStorage for non-Electron mode
     if (json) {
@@ -109,15 +122,16 @@ async function loadPreview(pageId) {
     }
     activateComponents();
   } else if (electronMode) {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      if (storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].page_data) {
+    try {
+      const storeData = await window.api.readStoreData();
+      let data = storeData.pages?.[pageId]?.page_data;
+
+      if (data) {
         const pageContainer = document.getElementById('page');
         pageContainer.innerHTML = ''; // Clear existing content
 
         document.querySelector('title').textContent = pageId;
 
-        const data = storeData.pages[pageId].page_data;
         data.forEach(item => {
           pageContainer.innerHTML += item.content;
         });
@@ -128,9 +142,9 @@ async function loadPreview(pageId) {
       } else {
         console.error('No saved data found for pageId:', pageId);
       }
-    }).catch((error) => {
+    } catch (error) {
       console.error('Error loading preview from Electron store:', error);
-    });
+    }
   }
-} // DATA OUT: null
+}
 window.loadPreview = loadPreview;

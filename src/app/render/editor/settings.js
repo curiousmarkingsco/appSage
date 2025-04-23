@@ -235,30 +235,46 @@ function showSettingsSavedModal() {
 }
 window.showSettingsSavedModal = showSettingsSavedModal;
 
-function processPastedColorObject(newColorData) {
+async function processPastedColorObject(newColorData) {
+  // First, if cloud sync is enabled, delegate to our cloud storage module
+  if (apiEnabled) {
+    try {
+      // Assume cloudStorage.updateSettings merges the passed object
+      await cloudStorage.updateSettings({
+        colors: newColorData
+      });
+    } catch (error) {
+      console.error('Error syncing color settings to cloud:', error);
+    }
+  }
+  // Fallback to localStorage in the browser
   if (!electronMode) {
     let colorObject = JSON.parse(localStorage.getItem('appSageSettings')) || { fonts: {}, colors: {}, advancedMode: true };
 
-    // Merging the new color data with the existing colors
+    // Merge the new color data with the existing colors
     colorObject.colors = {
       ...colorObject.colors,
       ...newColorData
     };
 
     localStorage.setItem('appSageSettings', JSON.stringify(colorObject));
-  } else if (electronMode) {
-    window.api.readStoreData().then((storeData) => {;
-      storeData.settings.colors = {
-        ...storeData.settings.colors,
-        ...newColorData
-      };
-
-      window.api.updateStoreData(storeData).then(updatedStore => {
+  }
+  // Or Electron’s secure store
+  else if (electronMode) {
+    window.api.readStoreData()
+      .then((storeData) => {
+        storeData.settings.colors = {
+          ...storeData.settings.colors,
+          ...newColorData
+        };
+        return window.api.updateStoreData(storeData);
+      })
+      .then(updatedStore => {
         appSageStore = updatedStore;
+      })
+      .catch((error) => {
+        console.error('Error updating color settings in Electron mode:', error);
       });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
   }
 }
 window.processPastedColorObject = processPastedColorObject;

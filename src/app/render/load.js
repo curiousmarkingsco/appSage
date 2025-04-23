@@ -12,6 +12,23 @@
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 async function loadPage(pageId) {
+  if (apiEnabled) {
+    // If we're offline just bail back to our local fallback
+    if (!cloudStorage.isOnline()) {
+      return null;
+    }
+  
+    try {
+      // Fetch the latest from the server
+      const cloudData = await cloudStorage.pullFromCloud(pageId);
+      // We expect the server to return { page_data: [...] }
+      return cloudData.page_data ?? null;
+    } catch (error) {
+      console.error('Error loading page from cloud:', error);
+      return null;
+    }
+  }
+  
   if (!electronMode) {
     // Using localStorage when not in Electron mode
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
@@ -42,8 +59,38 @@ window.loadPage = loadPage;
 // expected '#page' div, metadata is stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
-function loadPageMetadata(pageId) {
+async function loadPageMetadata(pageId) {
   const element = document.querySelector('head');
+
+  if (apiEnabled) {
+    try {
+      const cloudData = await pullFromCloud(pageId);
+      const settings = cloudData.pages?.[pageId]?.settings;
+      if (settings?.metaTags?.length) {
+        settings.metaTags.forEach(tag => {
+          const el = document.createElement(tag.type === 'link' ? 'link' : 'meta');
+          if (tag.type === 'link') {
+            el.setAttribute('href', tag.content);
+            el.setAttribute('rel', tag.name);
+          } else {
+            el.setAttribute(tag.type, tag.content);
+            el.setAttribute('content', tag.name);
+          }
+          head.appendChild(el);
+        });
+      }
+      if (settings?.fonts) {
+        const families = Object.values(settings.fonts).join('&family=');
+        const link = document.createElement('link');
+        link.setAttribute('href', `https://fonts.googleapis.com/css2?family=${families}&display=swap`);
+        link.setAttribute('rel', 'stylesheet');
+        head.appendChild(link);
+      }
+    } catch (error) {
+      console.error('Error loading metadata from cloud:', error);
+    }
+    return;
+  }
 
   if (!electronMode) {
     // Using localStorage for non-Electron mode
@@ -74,7 +121,7 @@ function loadPageMetadata(pageId) {
         console.log('Error loading fonts:', error || error.stack);
       }
     }
-  } else {
+  } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       if (storeData && storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].settings) {
@@ -109,13 +156,41 @@ window.loadPageMetadata = loadPageMetadata;
 // expected '#page' div, page settings are stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
-function loadPageSettings(config, view = false) {
+async function loadPageSettings(config, view = false) {
   let appSageStorage;
   let localStorageExists = false;
+  if (apiEnabled) {
+    try {
+      const cloudData = await pullFromCloud(config);
+      const settings = cloudData.pages?.[config]?.settings;
+      if (!settings) return;
+      const el = document.getElementById(settings.id);
+      if (el && settings.className) {
+        el.className = settings.className;
+      }
+      if (settings.metaTags) {
+        const head = document.getElementsByTagName('head')[0];
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = settings.metaTags;
+        Array.from(wrapper.childNodes).forEach(tag => {
+          if (tag.nodeType === Node.ELEMENT_NODE) {
+            head.appendChild(tag);
+          }
+        });
+      }
+      if (el && view) {
+        el.classList.remove('w-[calc(100%-18rem)]', 'ml-72', 'mb-24');
+        el.classList.add('w-full', 'min-h-screen');
+      }
+    } catch (error) {
+      console.error('Error loading settings from cloud:', error);
+    }
+    return;
+  }
   if (!electronMode){
     appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     localStorageExists = (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings);
-  } else {
+  } else if (electronMode) {
     appSageStorage = appSageStore;
     localStorageExists = true;
   }
@@ -243,9 +318,18 @@ function getAppSageStorage() {
 }
 window.getAppSageStorage = getAppSageStorage;
 
-function getPageObject(pageId) {
+async function getPageObject(pageId) {
   const appSageStorage = getAppSageStorage();
   let pageObject;
+  if (apiEnabled) {
+    try {
+      const cloudData = await pullFromCloud(pageId);
+      return cloudData.pages?.[pageId] ?? null;
+    } catch (error) {
+      console.error('Error fetching page object from cloud:', error);
+      return null;
+    }
+  }
   if (!electronMode) pageObject = appSageStorage.pages[pageId];
   if (electronMode) pageObject = appSageStore.pages[pageId];
   return pageObject;

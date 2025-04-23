@@ -1,13 +1,25 @@
 // index/main.js
 
 async function initializeDashboard() {
+  // Try loading from cloud if enabled
+  let remoteData = null;
+  if (apiEnabled && cloudStorage.isOnline()) {
+    try {
+      remoteData = await cloudStorage.pullFromCloud('pages');
+    } catch (error) {
+      console.error('Error loading dashboard from cloud:', error);
+    }
+  }
+
   return new Promise((resolve, reject) => {
     try {
-      // Inject head content like meta tags and links for favicons and CSS
+      // Inject head content...
       document.head.innerHTML = `
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; media-src 'self' 'unsafe-inline' localhost:8080 blob: data:;  img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : ''}
+        ${window.location.host === 'localhost:8080'
+          ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; media-src 'self' 'unsafe-inline' localhost:8080 blob: data:;  img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">`
+          : ''}
         <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
@@ -19,7 +31,7 @@ async function initializeDashboard() {
         <link rel="stylesheet" href="./tailwind-output.css">
       `;
 
-      // Clear body and inject body content
+      // Inject body content...
       document.body.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
           <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
@@ -54,34 +66,47 @@ async function initializeDashboard() {
         </div>
       `;
 
-      // Load pages from localStorage and populate the page list
       const container = document.getElementById('pageList');
+
       let appSageStorage, pageList, titleIdMap;
+      // If we got remote data, use it and resolve immediately
+      if (remoteData) {
+        const pageList = remoteData.pages || {};
+        const titleIdMap = remoteData.titles || {};
+        displayPages(titleIdMap, pageList, container);
+        return resolve();
+      }
+
       if (!electronMode) {
-        // Using localStorage for non-Electron mode
+        // localStorage mode
         const appSageStoreObject = localStorage['appSageStorage'];
-        appSageStorage = appSageStoreObject ? JSON.parse(appSageStoreObject) : { pages: [], titleIdMap: [], settings: {} };
-        pageList = appSageStorage.pages;
+        appSageStorage = appSageStoreObject
+          ? JSON.parse(appSageStoreObject)
+          : { pages: {}, titles: {}, settings: {} };
+        pageList = appSageStorage.pages || {};
         titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
         displayPages(titleIdMap, pageList, container);
       } else if (electronMode) {
-        // Using Electron storage
-        window.api.readStoreData().then((storeData) => {
-          appSageStorage = storeData;
-          pageList = appSageStorage.pages;
-          titleIdMap = appSageStorage.titles || {};
-          displayPages(titleIdMap, pageList, container);
-        }).catch((error) => {
-          console.error('Error reading store data in Electron mode:', error);
-          appSageStorage = {};
-          pageList = {};
-          titleIdMap = {};
-          displayPages(titleIdMap, pageList, container);
-        });
+        // Electron mode
+        window.api.readStoreData()
+          .then((storeData) => {
+            appSageStorage = storeData;
+            pageList = appSageStorage.pages || {};
+            titleIdMap = appSageStorage.titles || {};
+            displayPages(titleIdMap, pageList, container);
+            resolve();
+          })
+          .catch((error) => {
+            console.error('Error reading store data in Electron mode:', error);
+            displayPages({}, {}, container);
+            resolve();
+          });
+        return; // avoid calling resolve() twice
       }
+
       resolve();
     } catch (error) {
-      reject(error); // Reject the promise if there's an error
+      reject(error);
     }
   });
 }
