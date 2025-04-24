@@ -4,8 +4,6 @@
   No localStorage interactions — persistence is handled by caller.
 */
 
-let apiBaseUrl = '';
-let deviceId = '';
 const inMemoryQueue = [];
 
 /**
@@ -14,7 +12,7 @@ const inMemoryQueue = [];
  * @param {string} currentDeviceId - Unique ID for this device.
  */
 export function initSync(baseUrl, currentDeviceId) {
-  apiBaseUrl = baseUrl;
+  appSageApiBaseUrl = baseUrl;
   deviceId = currentDeviceId;
   window.addEventListener('online', flushQueue);
 }
@@ -60,7 +58,7 @@ export async function flushQueue() {
  * @returns {Promise<object>} Server response JSON
  */
 export async function sendToCloud({ pageId, content, timestamp, revisionId }) {
-  const url = `${apiBaseUrl}/sync/${pageId}`;
+  const url = `${appSageApiBaseUrl}/sync/${pageId}`;
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -78,7 +76,7 @@ export async function sendToCloud({ pageId, content, timestamp, revisionId }) {
  * @returns {Promise<object>} Latest cloud state
  */
 export async function pullFromCloud(pageId) {
-  const url = `${apiBaseUrl}/sync/${pageId}`;
+  const url = `${appSageApiBaseUrl}/sync/${pageId}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Fetch error ${response.status}`);

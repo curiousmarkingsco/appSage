@@ -142,15 +142,23 @@ async function initializeGlobals() {
         window.appSageSettingsString       = `${customAppSageStorage}Settings`;
         window.appSageTitleIdMapString     = `${customAppSageStorage}TitleIdMap`;
         window.appSageDatabaseString       = `${customAppSageStorage}Database`;
+        window.appSageDeviceIdString       = `${customAppSageStorage}DeviceId_`;
       } else {
         window.appSageStorageString        = 'appSageStorage';
         window.appSageSettingsString       = 'appSageSettings';
         window.appSageTitleIdMapString     = 'appSageTitleIdMap';
         window.appSageDatabaseString       = 'appSageDatabase';
+        window.appSageDeviceIdString       = 'appSageDeviceId_';
+      }
+
+      if (typeof appSageApiBaseUrl !== 'undefined') {
+        window.appSageApiBaseUrl     = `${customAppSageApiBaseUrl}`;
+      } else {
+        window.appSageApiBaseUrl     = 'https://appsage.io/storage';
       }
 
       // TODO: Paywall premium components?
-      window.appSagePremium    = true;
+      window.appSagePremium    = true; // false if not premium
       window.appSageComponents = combineComponentsLists();
       window.advancedMode      = false;
       window.currentBreakpoint = 'xs';
