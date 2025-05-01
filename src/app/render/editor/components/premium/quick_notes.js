@@ -6,7 +6,7 @@
 
 waitForGlobalsLoaded().then(() => {
     const quickNotesHtmlTemplate = `
-        <div class="quickNotes-container w-full bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}">
+        <div class="quickNotes-container w-full bg-pearl-bush-100 dark:bg-pearl-bush-900" data-component-name="quickNotes" data-component-id="{{quickNotes.id}}" data-editor-state="${window.editorInitialized}">
             <div class="container mx-auto p-4">
 
                 <!-- Top Navigation Bar: Note Creation, Search, and Label Filtering -->
@@ -15,7 +15,7 @@ waitForGlobalsLoaded().then(() => {
                     <div id="quicknote-note-creation-pillbox" class="flex items-center space-x-2">
                         <div class="group/qNoteNewBtn flex relative">
                             <button id="quicknote-create-checkbox-note"
-                                class="absolute group-hover/qNoteNewBtn:pl-6 group-hover/qNoteNewBtn:pr-3 flex items-center ml-0 left-5 py-2 rounded-r-full bg-fruit-salad-500 text-white overflow-hidden w-0 group-hover/qNoteNewBtn:w-[7rem] duration-300 ease-in-out transition-all hover:bg-fruit-salad-600">
+                                class="absolute group-hover/qNoteNewBtn:pl-6 group-hover/qNoteNewBtn:pr-3 flex items-center ml-0 left-5 py-2 rounded-r-full bg-fruit-salad-500 text-white text-base overflow-hidden w-0 group-hover/qNoteNewBtn:w-[7rem] duration-300 ease-in-out transition-all hover:bg-fruit-salad-600">
                                 Checklist
                             </button>
                             <button id="quicknote-create-text-note" class="flex items-center p-2 rounded-full bg-fruit-salad-600 text-white rounded-lg-full relative z-5">
@@ -92,22 +92,22 @@ waitForGlobalsLoaded().then(() => {
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
                             class="qn-editor-custom-colors w-full border-b border-[currentColor]/60 focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2 bg-transparent" />
-            
+
                         <!-- Media Gallery (for images and audio) -->
                         <div id="quicknote-media-gallery" class="flex gap-2 mb-2"></div>
-            
+
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
                             class="qn-editor-custom-colors min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900"></textarea>
-            
+
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
                             <ul id="quicknote-checkbox-list"></ul>
                         </div>
-            
+
                         <!-- Label Pills Container -->
                         <div id="quicknote-label-pills" class="flex flex-wrap gap-1 mb-2"></div>
-            
+
                         <!-- Bottom Menu Icons -->
                         <div class="flex justify-between border-t border-[currentColor]/60 pt-2">
                             <!-- Image Icon -->
@@ -234,14 +234,81 @@ waitForGlobalsLoaded().then(() => {
     appSageComponents['quickNotes'].html_template = quickNotesHtmlTemplate;
 
     const quickNotesFormTemplate = `
-        <div class="quickNotes-form"></div>
+      <template id="quicknotes-template">
+        <div class="note-card border rounded p-2 shadow relative cursor-pointer dark:text-fuscous-gray-50 dark:shadow-white dark:bg-pearl-bush-800 pb-8"
+          data-note-id="" data-type="" data-title="" data-text="" data-checklist="" data-labels="">
+          <h3 class="note-title w-[calc(100%-2rem)] border-b focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2">Untitled</h3>
+          <div class="note-media flex space-x-1 mt-2"></div>
+          <ul class="note-checklist hidden"></ul>
+          <p class="note-text focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900"></p>
+          <span class="pin-icon absolute top-2 right-2"></span>
+          <div class="icons-container absolute bottom-2 flex justify-between w-full pl-1 pr-4 space-x-1 opacity-0 transition-opacity duration-200"></div>
+        </div>
+      </template>
+      <div class="quickNotes-form">
+        <div id="template-editor-modal" class="fixed z-20 inset-0 flex items-center justify-center hidden bg-black bg-opacity-50 ml-72">
+          <div class="bg-white dark:bg-pearl-bush-900 p-4 rounded-lg w-3/4 h-3/4 flex flex-col">
+              <h2 class="text-lg font-bold mb-2 text-gray-800 dark:text-white">Edit Note Template</h2>
+              <textarea id="template-editor-area" class="flex-1 w-full h-full p-2 border rounded-lg font-mono text-sm dark:bg-pearl-bush-800 dark:text-white"></textarea>
+              <div class="mt-2 flex justify-end space-x-2">
+              <button id="template-editor-cancel" class="px-4 py-2 bg-gray-300 rounded-lg">Cancel</button>
+              <button id="template-editor-save" class="px-4 py-2 bg-fruit-salad-500 text-white rounded-lg">Save</button>
+              </div>
+          </div>
+        </div>
+      </div>
     `;
     appSageComponents['quickNotes'].form_template = quickNotesFormTemplate;
 });
 
+/*
+
+PICKIN UP WHERE YA LEFT OFF:
+I think maybe if I temporarily give the modal the #page id, I could retain all the sidebar editor stuff.
+
+But, that may completely override the whole page which would be bad news.
+
+Also, how would the component where that got saved?
+
+We need to somehow retain the sidebar functionality but shift modes into only applying to the open editor modal.
+
+Right now, this editor modal is built-in to the component.
+But, for repeatability of other components, I think we need to make it a built-in feature for component devs to utilize.
+
+This may also be a way for AI to better understand the difference between end-user interaction and designer interaction when boilerplating components.
+
+
+
+*/
 function initializeNoteDataFromForm(container) {
     const sidebar = document.getElementById('sidebar');
     const form = sidebar.querySelector('.quickNotes-form');
+    if (window.editorInitialized) {
+        const btn = document.createElement('button');
+        btn.textContent = 'Edit Note Structure';
+        btn.className = 'px-4 py-2 bg-fruit-salad-600 text-white my-4 rounded';
+        btn.addEventListener('click', openTemplateEditor);
+        form.appendChild(btn);
+    }
+
+    function openTemplateEditor() {
+        const modal = document.getElementById('template-editor-modal');
+        const area = document.getElementById('template-editor-area');
+        area.value = document.getElementById('quicknotes-template').innerHTML.trim();
+        modal.classList.remove('hidden');
+    }
+
+    document.getElementById('template-editor-cancel').addEventListener('click', () => {
+        document.getElementById('template-editor-modal').classList.add('hidden');
+    });
+
+    document.getElementById('template-editor-save').addEventListener('click', () => {
+        const modal = document.getElementById('template-editor-modal');
+        const newHTML = document.getElementById('template-editor-area').value;
+        document.getElementById('quicknotes-template').innerHTML = newHTML;
+        modal.classList.add('hidden');
+        renderNotes();  // re-render all cards with the new structure
+    });
 }
 window.initializeNoteDataFromForm = initializeNoteDataFromForm;
 
@@ -264,6 +331,7 @@ function initializeQuickNotes(container) {
     // -------------------------
     // This function reads from localStorage and creates note cards
     function renderNotes() {
+        const tpl = document.getElementById('quicknotes-template');
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;
 
@@ -278,7 +346,8 @@ function initializeQuickNotes(container) {
         if (archivedContainer) archivedContainer.innerHTML = '';
 
         storedNotes.forEach(note => {
-            const card = document.createElement('div');
+            const clone = document.importNode(tpl.content, true);
+            const card = clone.querySelector('.note-card');
             // breadcrumb
             card.className = `group/qNoteIconGrp${note.id} qn-card-custom-colors note-card border rounded p-2 shadow relative cursor-pointer dark:text-fuscous-gray-50 dark:shadow-white dark:bg-pearl-bush-800 pb-8`;
             card.dataset.noteId = note.id;
@@ -289,53 +358,43 @@ function initializeQuickNotes(container) {
             card.dataset.labels = (note.labels || []).join(',');
 
             // Create a title element
-            const titleEl = document.createElement('h3');
+            const titleEl = card.querySelector('.note-title');
             titleEl.textContent = note.title || 'Untitled';
             titleEl.className = 'w-[calc(100%-2rem)] border-b focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2';
+            titleEl.addEventListener('click', () => openNoteEditor(note.id, note.type));
             card.appendChild(titleEl);
-            titleEl.addEventListener('click', () => {
-                openNoteEditor(note.id, note.type);
-            });
 
-            // Media preview: if an image exists, show the first one
+            const mediaWrap = card.querySelector('.note-media');
             if (note.media && note.media.images && note.media.images.length > 0) {
-                const galleryWrapper = document.createElement('div');
-                galleryWrapper.className = 'flex space-x-1 mt-2';
-                note.media.images.forEach(imgData => {
-                    const img = document.createElement('img');
-                    img.src = imgData.data;
-                    img.className = 'w-16 h-16 object-cover rounded';
-                    galleryWrapper.appendChild(img);
+                note.media.images.forEach(img => {
+                    const imgEl = document.createElement('img');
+                    imgEl.src = img.data;
+                    imgEl.className = 'w-16 h-16 object-cover rounded';
+                    mediaWrap.appendChild(imgEl);
                 });
-                card.appendChild(galleryWrapper);
-                galleryWrapper.addEventListener('click', () => {
-                    openNoteEditor(note.id, note.type);
-                });
+
+                // maybe still need this
+                // mediaWrap.addEventListener('click', () => {
+                //     openNoteEditor(note.id, note.type);
+                // });
             }
 
             // Content preview (for checklist, render a simple list; for text, a paragraph)
             if (note.type === 'checkbox') {
-                const ul = document.createElement('ul');
+                const ul = card.querySelector('.note-checklist');
+                ul.classList.remove('hidden');
                 (note.checkboxItems || []).forEach(item => {
                     const li = document.createElement('li');
-                    li.className = 'flex-grow border-b border-[currentColor]/50 p-1 bg-transparent dark:bg-pearl-bush-900 focus:outline-none';
                     li.textContent = item.text;
-                    if (item.text !== '') ul.appendChild(li);
+                    li.className = 'border-b p-1 bg-transparent dark:bg-pearl-bush-900';
+                    ul.appendChild(li);
                 });
-                card.appendChild(ul);
-
-                ul.addEventListener('click', () => {
-                    openNoteEditor(note.id, note.type);
-                });
+                ul.addEventListener('click', () => openNoteEditor(note.id, note.type));
             } else {
-                const p = document.createElement('p');
+                const p = card.querySelector('.note-text');
+                p.classList.remove('hidden');
                 p.textContent = note.content || '';
-                p.className = 'focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900';
-                card.appendChild(p);
-
-                p.addEventListener('click', () => {
-                    openNoteEditor(note.id, note.type);
-                });
+                p.addEventListener('click', () => openNoteEditor(note.id, note.type));
             }
 
             // Add the pin icon
@@ -453,13 +512,9 @@ function initializeQuickNotes(container) {
             }
 
             // Append the card to its category container
-            if (note.archived && archivedContainer) {
-                archivedContainer.appendChild(card);
-            } else if (note.pinned && pinnedContainer) {
-                pinnedContainer.appendChild(card);
-            } else if (activeContainer) {
-                activeContainer.appendChild(card);
-            }
+            if (note.archived && archivedContainer) archivedContainer.appendChild(clone);
+            else if (note.pinned && pinnedContainer) pinnedContainer.appendChild(clone);
+            else if (activeContainer) activeContainer.appendChild(clone);
 
             if (note.bgColor) card.style.backgroundColor = note.bgColor;
             if (note.textColor) card.style.color = note.textColor;

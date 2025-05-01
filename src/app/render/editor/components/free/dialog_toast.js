@@ -2,7 +2,7 @@
 waitForGlobalsLoaded().then(() => {
   appSageComponents['dialogToast'].html_template = `
     <div class="dialogToast-container fixed z-20 top-4 right-4 max-w-xs bg-white border border-white-500 shadow-lg rounded-lg p-4 transition-transform transform translate-y-full"
-        data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false">
+        data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false" data-editor-state="${window.editorInitialized}">
       <div class="flex justify-between items-center">
         <p class="dialogToast-message text-sm pr-4">This sample text.</p>
         <button class="dialogToast-close-button hover:opacity-50" aria-label="Close">
@@ -132,6 +132,7 @@ function initializeDialogToastForm(container) {
 
   form.addEventListener('submit', function (e) {
     e.preventDefault();
+    e.stopPropagation();
 
     // Handle form data
     const message = form.querySelector('input[name="message"]').value;
@@ -158,6 +159,7 @@ function initializeDialogToastForm(container) {
 window.initializeDialogToastForm = initializeDialogToastForm;
 
 function initializeDialogToast(container) {
+  if (!container) return;
   const closeButton = container.querySelector('.dialogToast-close-button');
   
   // Check if editorMode is true and show the toast if so

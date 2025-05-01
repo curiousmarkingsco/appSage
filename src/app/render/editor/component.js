@@ -99,7 +99,7 @@ function addComponentOptions(container, componentName = null) {
   const componentTitle = document.createElement('div');
   componentTitle.innerHTML = `<strong>Edit ${appSageComponents[componentName].name}</strong></div>`;
 
-  const componentContainer = container.querySelector(`.${componentName}-container`)
+  const componentContainer = container.querySelector(`.${componentName}-container`);
   const componentId = componentContainer.getAttribute('data-component-id');
   const componentFormTemplate = appSageComponents[componentName].form_template;
   const formContainer = document.createElement('div');
