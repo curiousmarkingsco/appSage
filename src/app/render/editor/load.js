@@ -21,6 +21,7 @@ function loadChanges(json, pasted = false) {
     data.forEach(item => {
       if (!item.className.includes('innergrid')) pasteContainer.innerHTML += item.content;
     });
+    rebindEditingButtons();
   }
 
   pasteContainer.querySelectorAll('.pagegrid').forEach(grid => {
@@ -157,4 +158,22 @@ function restoreContainerCapabilities(container) {
 } // DATA OUT: null
 window.restoreContainerCapabilities = restoreContainerCapabilities;
 
+function rebindEditingButtons() {
+  const page = document.getElementById('page');
 
+  page.querySelectorAll('.pagegrid').forEach(grid => {
+    restoreGridCapabilities(grid);
+  });
+
+  page.querySelectorAll('.maincontainer').forEach(container => {
+    restoreContainerCapabilities(container);
+  });
+
+  page.querySelectorAll('.pagecontent').forEach(container => {
+    const addCopy = createCopyHtmlSectionButton(container);
+    container.appendChild(addCopy);
+    enableEditContentOnClick(container);
+    observeClassManipulation(container);
+  });
+}
+window.rebindEditingButtons = rebindEditingButtons;
