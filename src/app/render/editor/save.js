@@ -69,15 +69,14 @@ window.saveChanges = saveChanges;
 async function savePageData(pageId, json) {
   addRevision(pageId, json);
   if (!electronMode) {
-  const appSageStorage = getAppSageStorage();
-  appSageStorage.pages[pageId] = {
-    ...appSageStorage.pages[pageId],
-    page_data: null // remove big payload from localStorage
-  };
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    const appSageStorage = getAppSageStorage();
+    appSageStorage.pages[pageId] = {
+      ...appSageStorage.pages[pageId],
+      page_data: null // clears big payload
+    };
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-  // Save large page content to IndexedDB instead
-  await saveBlobToIndexedDB(pageId, json);
+    await saveBlobToIndexedDB(pageId, json);
   } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {

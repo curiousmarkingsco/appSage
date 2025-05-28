@@ -1,11 +1,12 @@
 export function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('AppSageUploads', 1);
+    const request = indexedDB.open('AppSageUploads', 2); // ← was 1 before
     request.onupgradeneeded = function (event) {
       const db = event.target.result;
       if (!db.objectStoreNames.contains('blobs')) {
         db.createObjectStore('blobs');
       }
+      console.log('[IndexedDB] Creating `blobs` store');
     };
     request.onsuccess = e => resolve(e.target.result);
     request.onerror = e => reject(e.target.error);

@@ -15,7 +15,9 @@ function loadChanges(json, pasted = false) {
   if (!pasted) {
     pasteContainer.innerHTML = '';
     let data = json;
-    if (!electronMode) data = JSON.parse(data);
+    if (!electronMode && typeof data === 'string') {
+      data = JSON.parse(data);
+    }
     data.forEach(item => {
       if (!item.className.includes('innergrid')) pasteContainer.innerHTML += item.content;
     });
