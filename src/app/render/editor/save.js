@@ -6,7 +6,7 @@
   content from active/previous edits. This saving happens on the editor page.
 
 */
-
+import { saveBlobToIndexedDB } from '../../indexeddb.js';
 // Remove editor elements so that localStorage is not cluttered with unneeded
 // elements making them production-ready for app/js/load.js
 // DATA IN: HTML Element, <div>
@@ -69,11 +69,15 @@ window.saveChanges = saveChanges;
 async function savePageData(pageId, json) {
   addRevision(pageId, json);
   if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    const data = JSON.stringify(json);
-    const appSageStorage = getAppSageStorage();
-    appSageStorage.pages[pageId] = { ...appSageStorage.pages[pageId], page_data: data };
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  const appSageStorage = getAppSageStorage();
+  appSageStorage.pages[pageId] = {
+    ...appSageStorage.pages[pageId],
+    page_data: null // remove big payload from localStorage
+  };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+
+  // Save large page content to IndexedDB instead
+  await saveBlobToIndexedDB(pageId, json);
   } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
@@ -100,17 +104,24 @@ async function savePageData(pageId, json) {
 } // DATA OUT: null
 window.savePageData = savePageData;
 
-function saveComponentObjectToPage(componentName, object) {
+async function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
     // First, we store to the local machine for redundancy
     if (!electronMode) {
-      // Using localStorage for non-Electron mode
-      const appSageStorage = getAppSageStorage();
-      const currentPage = appSageStorage.pages[pageId];
-      currentPage[componentName] = object;
-      localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    } else {
+    const appSageStorage = getAppSageStorage();
+
+    if (!appSageStorage.pages[pageId]) {
+      appSageStorage.pages[pageId] = {};
+    }
+
+    // Just store a lightweight reference — actual object goes in IndexedDB
+    appSageStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+
+    // Store the heavy object in IndexedDB under a namespaced key
+    await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
+  } else {
       // Using Electron storage
       window.api.readStoreData().then((storeData) => {
         // Ensure pages exist in storeData
