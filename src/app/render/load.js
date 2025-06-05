@@ -8,16 +8,24 @@
   preview, should present as production-ready.
 
 */
-
+import { loadBlobFromIndexedDB } from '../indexeddb.js';
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 async function loadPage(pageId) {
   if (!electronMode) {
     // Using localStorage when not in Electron mode
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    if (appSageStorage.pages && appSageStorage.pages[pageId] && appSageStorage.pages[pageId].page_data) {
-      return appSageStorage.pages[pageId].page_data;
-    } else {
+    if (appSageStorage.pages && appSageStorage.pages[pageId]) {
+      const fallback = appSageStorage.pages[pageId].page_data;
+      try {
+        const indexedDBData = await loadBlobFromIndexedDB(pageId);
+        return indexedDBData || fallback;
+      } catch (err) {
+        console.warn('Failed to load from IndexedDB, using fallback:', err);
+        return fallback;
+      }
+    }
+    else {
       return null;
     }
   } else if (electronMode) {
@@ -210,10 +218,23 @@ window.openDatabase = openDatabase;
 
 document.addEventListener('DOMContentLoaded', addMetasToHead);
 
-document.querySelectorAll('.pagecomponent').forEach(container => {
-  const componentContainer = container.querySelector('[data-component-name]');
-  const componentName = componentContainer.getAttribute('data-component-name');
-  initializeExistingComponents(componentContainer, componentName);
+document.addEventListener('DOMContentLoaded', async () => {
+  const pageId = getPageId();
+  const appSageStorage = getAppSageStorage();
+
+  const componentContainers = document.querySelectorAll('.pagecomponent');
+  for (const container of componentContainers) {
+    const componentContainer = container.querySelector('[data-component-name]');
+    const componentName = componentContainer.getAttribute('data-component-name');
+
+    let componentData = appSageStorage.pages?.[pageId]?.[componentName];
+
+    if (componentData === '__stored_in_indexeddb__') {
+      componentData = await loadComponentFromStorage(pageId, componentName);
+    }
+
+    initializeExistingComponents(componentContainer, componentData);
+  }
 });
 
 function getCurrentPage() {
@@ -251,3 +272,15 @@ function getPageObject(pageId) {
   return pageObject;
 }
 window.getPageObject = getPageObject;
+
+async function loadComponentFromStorage(pageId, componentName) {
+  const key = `${pageId}:${componentName}`;
+  try {
+    const object = await loadBlobFromIndexedDB(key);
+    return object;
+  } catch (err) {
+    console.error(`Failed to load ${componentName} from IndexedDB:`, err);
+    return null;
+  }
+}
+window.loadComponentFromStorage = loadComponentFromStorage;
