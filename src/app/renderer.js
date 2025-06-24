@@ -5,6 +5,8 @@ if (typeof global === 'undefined') {
   var global = window;  // In the browser, `global` is mapped to `window`
 }
 
+const apex = document.getElementById('apex');
+
 window.appSageStore;
 window.editorScriptsAlreadyLoaded = false;
 window.electronMode = !(typeof window.api === 'undefined');
@@ -55,7 +57,7 @@ function loadScript(scriptSrc, async = true) {
       script.async = async;
       script.onload = resolve;  // Resolve when loaded
       script.onerror = reject;  // Reject on error
-      document.body.appendChild(script);
+      apex.appendChild(script);
     });
   } else {
     // Skip loading as the script is already bundled
@@ -661,15 +663,15 @@ function showConfirmationModal(message, onConfirm) {
       </div>
   `;
 
-  document.body.appendChild(modal);
+  apex.appendChild(modal);
 
   document.getElementById('confirmDelete').addEventListener('click', function () {
     onConfirm();
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 
   document.getElementById('cancelDelete').addEventListener('click', function () {
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 } // DATA OUT: null
 window.showConfirmationModal = showConfirmationModal;
