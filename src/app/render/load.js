@@ -8,7 +8,7 @@
   preview, should present as production-ready.
 
 */
-import { loadBlobFromIndexedDB } from '../indexeddb.js';
+const loadBlobFromIndexedDB = window.loadBlobFromIndexedDB;
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 async function loadPage(pageId) {

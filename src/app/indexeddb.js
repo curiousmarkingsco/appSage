@@ -1,6 +1,6 @@
-export function openDatabase() {
+function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('AppSageUploads', 2); // ← was 1 before
+    const request = indexedDB.open('AppSageUploads', 2);
     request.onupgradeneeded = function (event) {
       const db = event.target.result;
       if (!db.objectStoreNames.contains('blobs')) {
@@ -13,14 +13,14 @@ export function openDatabase() {
   });
 }
 
-export async function saveBlobToIndexedDB(pageId, blobData) {
+async function saveBlobToIndexedDB(pageId, blobData) {
   const db = await openDatabase();
   const tx = db.transaction('blobs', 'readwrite');
   tx.objectStore('blobs').put(blobData, pageId);
   return tx.complete;
 }
 
-export async function loadBlobFromIndexedDB(pageId) {
+async function loadBlobFromIndexedDB(pageId) {
   const db = await openDatabase();
   const tx = db.transaction('blobs', 'readonly');
   const request = tx.objectStore('blobs').get(pageId);
@@ -29,3 +29,7 @@ export async function loadBlobFromIndexedDB(pageId) {
     request.onerror = () => reject(request.error);
   });
 }
+
+window.openDatabase = openDatabase;
+window.saveBlobToIndexedDB = saveBlobToIndexedDB;
+window.loadBlobFromIndexedDB = loadBlobFromIndexedDB;
