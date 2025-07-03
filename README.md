@@ -2,7 +2,7 @@
 app**Sage** is in preview stages and should not be used in projects where you want to avoid pain.
 
 ## Getting started: Non-coders
-Go to [app**Sage**.io](https://appSage.io/) and start building!
+Go to [app**Sage**.io](https://app.appSage.io/) and start building!
 
 ## Getting started: Coders
 ### 1. Download app**Sage**
