@@ -219,7 +219,8 @@ function showSettingsSavedModal() {
               </div>
           </div>
       `;
-      document.body.appendChild(modal);
+      const apex = document.getElementById('apex');
+      apex.appendChild(modal);
 
       // Add event listener to close the modal
       document.getElementById('closeModal').addEventListener('click', () => {
@@ -277,8 +278,8 @@ function showColorJsonInputModal() {
           </div>
       </div>
   `;
-
-  document.body.appendChild(modal);
+  const apex = document.getElementById('apex');
+  apex.appendChild(modal);
 
   // Updated event listener in the modal function to use the new validation logic
   document.getElementById('saveJson').addEventListener('click', function () {
@@ -290,7 +291,7 @@ function showColorJsonInputModal() {
       if (typeof parsedInput === 'object' && !Array.isArray(parsedInput)) {
         processPastedColorObject(parsedInput);
         alert('Colors updated successfully!');
-        document.body.removeChild(modal);
+        apex.removeChild(modal);
       } else {
         alert('Invalid JSON input. Please provide a valid JSON object.');
       }
@@ -300,7 +301,7 @@ function showColorJsonInputModal() {
   });
 
   document.getElementById('cancelJson').addEventListener('click', function () {
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 }
 window.showColorJsonInputModal = showColorJsonInputModal;

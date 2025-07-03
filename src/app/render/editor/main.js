@@ -49,7 +49,8 @@ async function initializeEditorHtml() {
       `;
 
       // Dynamic body content (initial structure)
-      document.body.innerHTML = `
+      const apex = document.getElementById('apex');
+      apex.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
           <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
           <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
@@ -329,6 +330,8 @@ function setupPageEvents() {
   const pageSettingsButton = document.getElementById('pageSettings');
   const appSageSettingsButton = document.getElementById('appSageSettings');
 
+  const apex = document.getElementById('apex');
+
   // Show/hide the drop-up menu
   editPageButton.addEventListener('click', function (event) {
     dropdownMenu.classList.toggle('hidden');
@@ -422,14 +425,14 @@ function setupPageEvents() {
   });
 
   // Mouse enter event
-  document.body.addEventListener('mouseenter', function (e) {
+  apex.addEventListener('mouseenter', function (e) {
     if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
       updateTooltip(e, true);
     }
   }, true); // Use capture phase to ensure tooltip updates immediately
 
   // Mouse leave event
-  document.body.addEventListener('mouseleave', function (e) {
+  apex.addEventListener('mouseleave', function (e) {
     if (e.target.matches('[data-extra-info]')) {
       updateTooltip(e, false);
     }
@@ -452,7 +455,8 @@ function loadScripts(scriptUrls) {
     const script = document.createElement('script');
     script.src = src;
     script.async = true;
-    document.body.appendChild(script);
+    const apex = document.getElementById('apex');
+    apex.appendChild(script);
   });
 }
 window.loadScripts = loadScripts;
@@ -570,7 +574,8 @@ function updateTooltip(e, show) {
     let tooltipY = targetRect.top - tooltip.offsetHeight - 5;
 
     // Ensure the tooltip does not overflow horizontally
-    const rightOverflow = tooltipX + tooltip.offsetWidth - document.body.clientWidth;
+    const apex = document.getElementById('apex');
+    const rightOverflow = tooltipX + tooltip.offsetWidth - apex.clientWidth;
     if (rightOverflow > 0) {
       tooltipX -= rightOverflow;  // Adjust to the left if overflowing on the right
     }
@@ -622,7 +627,9 @@ function showHtmlModal(element, onConfirm = null) {
       </div>
   `;
 
-  document.body.appendChild(modal);
+  const apex = document.getElementById('apex');
+
+  apex.appendChild(modal);
 
   const btnContainer = document.getElementById('btnContainer');
   const confButton = document.createElement('button');
@@ -633,11 +640,11 @@ function showHtmlModal(element, onConfirm = null) {
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
     convertTailwindHtml(content, element);
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 } // DATA OUT: null
 window.showHtmlModal = showHtmlModal;
