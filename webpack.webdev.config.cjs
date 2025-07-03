@@ -11,6 +11,7 @@ module.exports = {
         './src/app/renderer.js',
         './src/app/render/tailwind.js',
         './src/app/render/tailwind.config.js',
+        './src/app/render/indexeddb.js',
         './src/app/render/load.js',
         './src/app/render/editor/components/main.js',
         './src/app/render/editor/grid.js',

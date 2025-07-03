@@ -136,7 +136,7 @@ async function initializeEditorHtml() {
         </div>
         <div id="settingsModal"
           class="fixed py-12 inset-0 bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
-          <form id="appSageSettingsForm" 
+          <form id="appSageSettingsForm"
             class="bg-pearl-bush-100 p-4 rounded-lg max-w-md mx-auto pb-16">
             <div class="relative overflow-y-auto overscroll-contain h-[calc(100vh-(10rem))]">
               <div class="pb-16 pt-10">
@@ -274,6 +274,7 @@ async function loadEditorScripts() {
   if (editorScriptsAlreadyLoaded === true) {
     return new Promise((resolve, reject) => { resolve(); });
   } else {
+    await loadScript('./render/indexeddb.js');
     await loadScript('./render/load.js');
     await loadScript('./render/editor/revision.js');
     await loadScript('./render/editor/save.js');
@@ -665,10 +666,10 @@ function wrapElements(container) {
 
   const structureTags = ['ARTICLE', 'SECTION', 'DIV', 'NAV', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'];
 
-  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE', 
+  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE',
     'IMG', 'VIDEO', 'AUDIO', 'FIGURE', 'IFRAME',
-    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
-    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS', 
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS',
     'PROGRESS', 'METER', 'DL', 'DT', 'DD'];
 
   const tableTags = ['TH', 'TD', 'COL', 'COLGROUP'];
@@ -679,7 +680,7 @@ function wrapElements(container) {
       const isInGrid = container.classList.contains('grid');
 
       // Check if the element is holding content children
-      const hasContentChildren = Array.from(child.children).some(el => 
+      const hasContentChildren = Array.from(child.children).some(el =>
         contentTags.includes(el.tagName) || tableTags.includes(el.tagName)
       );
 
@@ -940,7 +941,7 @@ function addEditablePageTitle(container, placement) {
       titleIdMap = {}; // Fallback to an empty object if there's an error
     });
   }
-  
+
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
   const titleLabel = document.createElement('label');
@@ -1009,7 +1010,7 @@ window.changeLocalStoragePageTitle = changeLocalStoragePageTitle;
 // the designer deems necessary.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditableMetadata(container, placement) {
-  /* 
+  /*
   defaults:
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -1133,20 +1134,20 @@ function createNewConfigurationFile() {
     // Save the mapping of title to ID
     titleIdMap[title] = pageId;
     localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-    
+
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (!appSageStorage.pages) {
       appSageStorage.pages = {};
     }
     appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    
+
     window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       const titleIdMap = storeData.titles || {};
-      
+
       // Generate a unique title
       while (title in titleIdMap) {
         title = `Untitled_${counter}`;
