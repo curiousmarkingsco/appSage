@@ -28,11 +28,11 @@ function initializePreview() {
       pageElement.id = 'page';
       bodyElement.appendChild(pageElement);
 
-      
+
       // Dynamically load scripts necessary for preview functionality
       const urlParams = new URLSearchParams(window.location.search);
       const previewPageId = urlParams.get('page');
-    
+
       if (electronMode) {
         loadPreviewScripts().then(() => {
           if (previewPageId) loadPreview(previewPageId);
@@ -97,7 +97,7 @@ async function loadPreview(pageId) {
 
       document.querySelector('title').textContent = pageId;
 
-      const data = JSON.parse(json);
+      const data = json;
       data.forEach(item => {
         pageContainer.innerHTML += item.content;
       });

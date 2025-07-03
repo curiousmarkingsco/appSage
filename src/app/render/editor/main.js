@@ -95,10 +95,12 @@ async function initializeEditorHtml() {
             </svg>
             <svg class="w-5 h-5 inline" fill="white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M48 32C21.5 32 0 53.5 0 80L0 240c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48L48 32zM304 224c-26.5 0-48 21.5-48 48l0 160c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-160c0-26.5-21.5-48-48-48l-96 0zM0 400l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0c-26.5 0-48 21.5-48 48zM304 32c-26.5 0-48 21.5-48 48l0 32c0 26.5 21.5 48 48 48l96 0c26.5 0 48-21.5 48-48l0-32c0-26.5-21.5-48-48-48l-96 0z"/></svg>
           </button>
+          <!-- Disabled for now, pasting into containers is more reliable.
           <button id="addHtml" data-extra-info="Paste HTML"
             class="hidden pagebuilder-only mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold pt-1 pb-1.5 px-4 mb-2 rounded inline mx-auto">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="white" class="h-5 w-5 inline"><path d="M160 0c-23.7 0-44.4 12.9-55.4 32L48 32C21.5 32 0 53.5 0 80L0 400c0 26.5 21.5 48 48 48l144 0 0-272c0-44.2 35.8-80 80-80l48 0 0-16c0-26.5-21.5-48-48-48l-56.6 0C204.4 12.9 183.7 0 160 0zM272 128c-26.5 0-48 21.5-48 48l0 272 0 16c0 26.5 21.5 48 48 48l192 0c26.5 0 48-21.5 48-48l0-220.1c0-12.7-5.1-24.9-14.1-33.9l-67.9-67.9c-9-9-21.2-14.1-33.9-14.1L320 128l-48 0zM160 40a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/></svg>
           </button>
+          -->
           <div class="relative group float-right mr-4">
             <button id="editPageSettings"
               class="pagebuilder-only mt-4 bg-gray-asparagus-500 hover:bg-gray-asparagus-700 text-fuscous-gray-50 font-bold p-2 px-4 mb-2 rounded">
@@ -133,6 +135,11 @@ async function initializeEditorHtml() {
                 d="M208 0L332.1 0c12.7 0 24.9 5.1 33.9 14.1l67.9 67.9c9 9 14.1 21.2 14.1 33.9L448 336c0 26.5-21.5 48-48 48l-192 0c-26.5 0-48-21.5-48-48l0-288c0-26.5 21.5-48 48-48zM48 128l80 0 0 64-64 0 0 256 192 0 0-32 64 0 0 48c0 26.5-21.5 48-48 48L48 512c-26.5 0-48-21.5-48-48L0 176c0-26.5 21.5-48 48-48z" />
             </svg>
           </button>
+          <a href="/?page=${getPageId()}" target="_blank"
+            data-extra-info="Preview this page as an end user."
+            class="pagebuilder-only transition mt-4 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold py-1.5 px-4 mb-2 rounded float-right mr-4">
+            Preview
+          </a>
         </div>
         <div id="settingsModal"
           class="fixed py-12 inset-0 bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
