@@ -19,8 +19,9 @@ async function initializeDashboard() {
         <link rel="stylesheet" href="./tailwind-output.css">
       `;
 
+      const apex = document.getElementById('apex');
       // Clear body and inject body content
-      document.body.innerHTML = `
+      apex.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
           <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
           <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>

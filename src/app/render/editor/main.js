@@ -49,7 +49,8 @@ async function initializeEditorHtml() {
       `;
 
       // Dynamic body content (initial structure)
-      document.body.innerHTML = `
+      const apex = document.getElementById('apex');
+      apex.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
           <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
           <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
@@ -135,7 +136,7 @@ async function initializeEditorHtml() {
         </div>
         <div id="settingsModal"
           class="fixed py-12 inset-0 bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
-          <form id="appSageSettingsForm" 
+          <form id="appSageSettingsForm"
             class="bg-pearl-bush-100 p-4 rounded-lg max-w-md mx-auto pb-16">
             <div class="relative overflow-y-auto overscroll-contain h-[calc(100vh-(10rem))]">
               <div class="pb-16 pt-10">
@@ -273,6 +274,7 @@ async function loadEditorScripts() {
   if (editorScriptsAlreadyLoaded === true) {
     return new Promise((resolve, reject) => { resolve(); });
   } else {
+    await loadScript('./render/indexeddb.js');
     await loadScript('./render/load.js');
     await loadScript('./render/editor/revision.js');
     await loadScript('./render/editor/save.js');
@@ -328,6 +330,8 @@ function setupPageEvents() {
   const addHtmlButton = document.getElementById('addHtml');
   const pageSettingsButton = document.getElementById('pageSettings');
   const appSageSettingsButton = document.getElementById('appSageSettings');
+
+  const apex = document.getElementById('apex');
 
   // Show/hide the drop-up menu
   editPageButton.addEventListener('click', function (event) {
@@ -422,14 +426,14 @@ function setupPageEvents() {
   });
 
   // Mouse enter event
-  document.body.addEventListener('mouseenter', function (e) {
+  apex.addEventListener('mouseenter', function (e) {
     if (e.target.matches('[data-extra-info]') && e.target.getAttribute('data-extra-info')) {
       updateTooltip(e, true);
     }
   }, true); // Use capture phase to ensure tooltip updates immediately
 
   // Mouse leave event
-  document.body.addEventListener('mouseleave', function (e) {
+  apex.addEventListener('mouseleave', function (e) {
     if (e.target.matches('[data-extra-info]')) {
       updateTooltip(e, false);
     }
@@ -452,7 +456,8 @@ function loadScripts(scriptUrls) {
     const script = document.createElement('script');
     script.src = src;
     script.async = true;
-    document.body.appendChild(script);
+    const apex = document.getElementById('apex');
+    apex.appendChild(script);
   });
 }
 window.loadScripts = loadScripts;
@@ -570,7 +575,8 @@ function updateTooltip(e, show) {
     let tooltipY = targetRect.top - tooltip.offsetHeight - 5;
 
     // Ensure the tooltip does not overflow horizontally
-    const rightOverflow = tooltipX + tooltip.offsetWidth - document.body.clientWidth;
+    const apex = document.getElementById('apex');
+    const rightOverflow = tooltipX + tooltip.offsetWidth - apex.clientWidth;
     if (rightOverflow > 0) {
       tooltipX -= rightOverflow;  // Adjust to the left if overflowing on the right
     }
@@ -622,7 +628,9 @@ function showHtmlModal(element, onConfirm = null) {
       </div>
   `;
 
-  document.body.appendChild(modal);
+  const apex = document.getElementById('apex');
+
+  apex.appendChild(modal);
 
   const btnContainer = document.getElementById('btnContainer');
   const confButton = document.createElement('button');
@@ -633,11 +641,11 @@ function showHtmlModal(element, onConfirm = null) {
     if (onConfirm) onConfirm();
     const content = document.getElementById('tailwindHtml').value;
     convertTailwindHtml(content, element);
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 
   document.getElementById('cancelHtml').addEventListener('click', function () {
-    document.body.removeChild(modal);
+    apex.removeChild(modal);
   });
 } // DATA OUT: null
 window.showHtmlModal = showHtmlModal;
@@ -658,10 +666,10 @@ function wrapElements(container) {
 
   const structureTags = ['ARTICLE', 'SECTION', 'DIV', 'NAV', 'ASIDE', 'HEADER', 'FOOTER', 'MAIN', 'TABLE', 'THEAD', 'TBODY', 'TFOOT', 'TR'];
 
-  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE', 
+  const contentTags = ['P', 'BUTTON', 'A', 'SPAN', 'BLOCKQUOTE',
     'IMG', 'VIDEO', 'AUDIO', 'FIGURE', 'IFRAME',
-    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 
-    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS', 
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
+    'FIGCAPTION', 'CAPTION', 'TIME', 'MARK', 'SUMMARY', 'DETAILS',
     'PROGRESS', 'METER', 'DL', 'DT', 'DD'];
 
   const tableTags = ['TH', 'TD', 'COL', 'COLGROUP'];
@@ -672,7 +680,7 @@ function wrapElements(container) {
       const isInGrid = container.classList.contains('grid');
 
       // Check if the element is holding content children
-      const hasContentChildren = Array.from(child.children).some(el => 
+      const hasContentChildren = Array.from(child.children).some(el =>
         contentTags.includes(el.tagName) || tableTags.includes(el.tagName)
       );
 
@@ -933,7 +941,7 @@ function addEditablePageTitle(container, placement) {
       titleIdMap = {}; // Fallback to an empty object if there's an error
     });
   }
-  
+
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
   const titleLabel = document.createElement('label');
@@ -1002,7 +1010,7 @@ window.changeLocalStoragePageTitle = changeLocalStoragePageTitle;
 // the designer deems necessary.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 function addEditableMetadata(container, placement) {
-  /* 
+  /*
   defaults:
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -1126,20 +1134,20 @@ function createNewConfigurationFile() {
     // Save the mapping of title to ID
     titleIdMap[title] = pageId;
     localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-    
+
     const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
     if (!appSageStorage.pages) {
       appSageStorage.pages = {};
     }
     appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
     localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    
+
     window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
   } else if (electronMode) {
     // Using Electron storage
     window.api.readStoreData().then((storeData) => {
       const titleIdMap = storeData.titles || {};
-      
+
       // Generate a unique title
       while (title in titleIdMap) {
         title = `Untitled_${counter}`;
