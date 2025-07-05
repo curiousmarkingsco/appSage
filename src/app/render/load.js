@@ -50,13 +50,30 @@ async function loadPageMetadata(pageId) {
   }
 
   if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
-    const metaTags = storedData.pages[pageId].settings.metaTags;
+    let settings;
+    try {
+      settings = typeof storedData.pages[pageId].settings === 'string'
+        ? JSON.parse(storedData.pages[pageId].settings)
+        : storedData.pages[pageId].settings;
+    } catch (error) {
+      console.error('Error parsing page settings for metadata:', error);
+      settings = {};
+    }
 
-    if (metaTags && metaTags.length > 0) {
+    const metaTags = settings.metaTags;
+
+    if (metaTags && Array.isArray(metaTags) && metaTags.length > 0) {
       metaTags.forEach(tag => {
         const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
-        metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
-        metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
+
+        if (tag.type === 'link') {
+          metaTag.setAttribute('href', tag.content);
+          metaTag.setAttribute('rel', tag.name);
+        } else {
+          metaTag.setAttribute(tag.type, tag.name);
+          metaTag.setAttribute('content', tag.content);
+        }
+
         element.appendChild(metaTag);
       });
     }
@@ -87,7 +104,16 @@ async function loadPageSettings(config, view = false) {
   localStorageExists = (AppstartStorage.pages && AppstartStorage.pages[config] && AppstartStorage.pages[config].settings);
 
   if (localStorageExists) {
-    const settings = AppstartStorage.pages[config].settings;
+    let settings;
+    try {
+      settings = typeof AppstartStorage.pages[config].settings === 'string'
+        ? JSON.parse(AppstartStorage.pages[config].settings)
+        : AppstartStorage.pages[config].settings;
+    } catch (error) {
+      console.error('Error parsing page settings in loadPageSettings:', error);
+      settings = {};
+    }
+
     const element = document.getElementById(settings.id);
 
     if (element && settings.className) {
@@ -121,13 +147,22 @@ async function addMetasToHead() {
   let settings;
 
   if (storedData && storedData.pages && storedData.pages[config]){
-    settings = storedData.pages[config].settings;
-    if (typeof settings !== 'undefined') {
+    let settings;
+    try {
+      settings = typeof storedData.pages[config].settings === 'string'
+        ? JSON.parse(storedData.pages[config].settings)
+        : storedData.pages[config].settings;
+    } catch (error) {
+      console.error('Error parsing page settings in addMetasToHead:', error);
+      settings = {};
+    }
+
+    if (settings && typeof settings === 'object') {
       const metaTags = settings.metaTags;
-      if (typeof metaTags !== 'undefined') {
+      if (Array.isArray(metaTags) && metaTags.length > 0) {
         const headTag = document.getElementsByTagName('head')[0];
 
-        if (metaTags !== '') metaTags.forEach(tag => {
+        metaTags.forEach(tag => {
           if (tag.type === 'link') {
             const metatag = document.createElement('link');
             metatag.setAttribute('rel', tag.name);

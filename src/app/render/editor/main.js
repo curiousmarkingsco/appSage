@@ -442,29 +442,19 @@ async function saveMetadataToIndexedDB(page_id, newMetaTags) {
     return;
   }
 
+  // Initialize metaTags array if it doesn't exist (for backward compatibility)
   if (!settings.metaTags) {
     settings.metaTags = [];
   }
 
-  // Helper function to check if the meta tag already exists
-  function tagExists(newTag) {
-    return settings.metaTags.some(tag => tag.type === newTag.type && tag.name === newTag.name);
-  }
-
-  // Iterate over the newMetaTags and add them if they don't already exist
-  newMetaTags.forEach(newTag => {
-    if (!tagExists(newTag)) {
-      settings.metaTags.push(newTag); // Add new meta tag only if it doesn't exist
-    } else {
-      console.warn(`Meta tag with type: "${newTag.type}" and name: "${newTag.name}" already exists.`);
-    }
-  });
+  // Replace the entire metaTags array with the current state from the UI
+  settings.metaTags = newMetaTags;
 
   // Save updated settings back to IndexedDB
   storedData.pages[page_id].settings = JSON.stringify(settings);
   await idbSet(AppstartStorageString, storedData);
 
-  console.log('Metadata saved successfully!');
+  console.log('Metadata saved successfully!', newMetaTags);
 }
 window.saveMetadataToIndexedDB = saveMetadataToIndexedDB;
 
@@ -734,7 +724,17 @@ async function copyPageHTML(button) {
   }
 
   const html_content = AppstartStorage.pages[page_id].page_data;
-  const container_settings = AppstartStorage.pages[page_id].settings;
+
+  // Parse container_settings properly
+  let container_settings;
+  try {
+    container_settings = typeof AppstartStorage.pages[page_id].settings === 'string'
+      ? JSON.parse(AppstartStorage.pages[page_id].settings)
+      : AppstartStorage.pages[page_id].settings;
+  } catch (error) {
+    console.error('Error parsing container settings:', error);
+    container_settings = {};
+  }
 
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
@@ -828,10 +828,23 @@ async function copyMetadata(element) {
     return;
   }
 
-  const settings = AppstartStorage.pages[config].settings;
-  const metaTags = settings.metaTags;
-  let metaTagsString = '';
+  let settings;
+  try {
+    settings = typeof AppstartStorage.pages[config].settings === 'string'
+      ? JSON.parse(AppstartStorage.pages[config].settings)
+      : AppstartStorage.pages[config].settings;
+  } catch (error) {
+    console.error('Error parsing page settings in copyMetadata:', error);
+    return;
+  }
 
+  const metaTags = settings.metaTags;
+  if (!metaTags || !Array.isArray(metaTags)) {
+    console.warn('No metadata found to copy');
+    return;
+  }
+
+  let metaTagsString = '';
   metaTags.forEach(tag => {
     if (tag.type === 'link') {
       metaTagsString += `<link rel="${tag.name}" href="${tag.content}">`;
@@ -923,22 +936,29 @@ async function addEditableMetadata(sidebar, placement) {
 
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
+
   const metaDataPairsContainer = document.createElement('div');
   metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-pearl-bush-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
   const storedData = await idbGet(AppstartStorageString);
-  if (storedData) {
-    const settings = storedData.pages[page_id].settings;
-    if (typeof settings.length !== 'undefined') {
-      const metaTags = JSON.parse(settings).metaTags;
 
-      if (metaTags) {
-        metaTags.forEach(tag => {
-          addMetadataPair(tag.type, tag.name, tag.content);
-        });
-      }
+  if (storedData && storedData.pages && storedData.pages[page_id] && storedData.pages[page_id].settings) {
+    let settings;
+    try {
+      settings = typeof storedData.pages[page_id].settings === 'string'
+        ? JSON.parse(storedData.pages[page_id].settings)
+        : storedData.pages[page_id].settings;
+    } catch (error) {
+      console.error('Error parsing page settings:', error);
+      settings = {};
+    }
+
+    if (settings.metaTags && Array.isArray(settings.metaTags)) {
+      settings.metaTags.forEach(tag => {
+        addMetadataPair(tag.type, tag.name, tag.content);
+      });
     }
   }
 
@@ -952,19 +972,21 @@ async function addEditableMetadata(sidebar, placement) {
     select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
     const optionName = document.createElement('option');
     optionName.value = 'name';
-    optionName.selected = 'name' === meta_type;
     optionName.text = 'Name';
     const optionProperty = document.createElement('option');
     optionProperty.value = 'property';
-    optionName.selected = 'property' === meta_type;
     optionProperty.text = 'Property';
     const optionLink = document.createElement('option');
     optionLink.value = 'link';
-    optionLink.selected = 'link' === meta_type;
     optionLink.text = 'Link';
     select.appendChild(optionName);
     select.appendChild(optionProperty);
     select.appendChild(optionLink);
+
+    // Set the selected value after adding all options
+    if (meta_type) {
+      select.value = meta_type;
+    }
 
     const nameInput = document.createElement('input');
     nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -978,10 +1000,41 @@ async function addEditableMetadata(sidebar, placement) {
     contentInput.value = meta_content || '';
     contentInput.placeholder = 'Content';
 
+    // Add delete button for each metadata pair
+    const deleteButton = document.createElement('button');
+    deleteButton.innerHTML = '×';
+    deleteButton.className = 'ml-2 bg-red-500 hover:bg-red-700 text-white font-bold px-2 py-1 rounded text-sm';
+    deleteButton.title = 'Delete this metadata';
+
+    deleteButton.addEventListener('click', function() {
+      pair.remove();
+      saveCurrentMetadata();
+    });
+
     pair.appendChild(select);
     pair.appendChild(nameInput);
     pair.appendChild(contentInput);
+    pair.appendChild(deleteButton);
     metaDataPairsContainer.appendChild(pair);
+
+    // Add event listeners to the new inputs
+    [select, nameInput, contentInput].forEach(input => {
+      input.addEventListener('change', saveCurrentMetadata);
+      input.addEventListener('input', saveCurrentMetadata);
+    });
+  }
+
+  function saveCurrentMetadata() {
+    const metaTags = [];
+    document.querySelectorAll('.metadata-pair').forEach(pair => {
+      const type = pair.querySelector('.meta-type').value;
+      const name = pair.querySelector('.meta-name').value;
+      const content = pair.querySelector('.meta-content').value;
+      if (name && content) {
+        metaTags.push({ type, name, content });
+      }
+    });
+    saveMetadataToIndexedDB(page_id, metaTags);
   }
 
   addMetadataPair();
@@ -994,22 +1047,6 @@ async function addEditableMetadata(sidebar, placement) {
 
   addButton.addEventListener('click', function () {
     addMetadataPair();
-  });
-
-  document.querySelectorAll('.metadata').forEach(input => {
-    input.addEventListener('change', function () {
-      const metaTags = [];
-      document.querySelectorAll('.metadata-pair').forEach(pair => {
-        const type = pair.querySelector('.meta-type').value;
-        const name = pair.querySelector('.meta-name').value;
-        const content = pair.querySelector('.meta-content').value;
-        if (name && content) {
-          metaTags.push({ type, name, content });
-        }
-      });
-
-      saveMetadataToIndexedDB(page_id, metaTags);
-    });
   });
 } // DATA OUT: null
 window.addEditableMetadata = addEditableMetadata;
@@ -1056,7 +1093,7 @@ async function createNewConfigurationFile() {
   if (!AppstartStorage.pages) {
     AppstartStorage.pages = {};
   }
-  AppstartStorage.pages[newId] = { page_data: '[]', settings: '{}' };
+  AppstartStorage.pages[newId] = { page_data: '[]', settings: JSON.stringify({ metaTags: [] }) };
   await idbSet(AppstartStorageString, AppstartStorage);
 
   const params = new URLSearchParams(window.location.search);
@@ -1116,7 +1153,18 @@ async function generateHTMLString() {
   const page_id = params.get('config');
   const appData = await idbGet(AppstartStorageString);
   const html_content = appData.pages[page_id].page_data;
-  const container_settings = appData.pages[page_id].settings;
+
+  // Parse container_settings properly
+  let container_settings;
+  try {
+    container_settings = typeof appData.pages[page_id].settings === 'string'
+      ? JSON.parse(appData.pages[page_id].settings)
+      : appData.pages[page_id].settings;
+  } catch (error) {
+    console.error('Error parsing container settings:', error);
+    container_settings = {};
+  }
+
   const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
   return finalHtml;
 }

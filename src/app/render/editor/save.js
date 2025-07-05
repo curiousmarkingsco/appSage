@@ -129,7 +129,8 @@ async function savePageSettings(pageId, settings) {
     AppstartStorage.pages[pageId] = {};
   }
 
-  AppstartStorage.pages[pageId].settings = settings;
+  // Ensure settings are stored as a string
+  AppstartStorage.pages[pageId].settings = typeof settings === 'string' ? settings : JSON.stringify(settings);
   await idbSet(AppstartStorageString, AppstartStorage);
 } // DATA OUT: null
 
@@ -139,27 +140,44 @@ async function savePageSettingsChanges(pageId) {
   const pageElement = document.getElementById('page');
   if (!pageElement) return;
 
-  const settings = {
+  // Load existing settings first to preserve them
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
+  let existingSettings = {};
+
+  if (AppstartStorage.pages && AppstartStorage.pages[pageId] && AppstartStorage.pages[pageId].settings) {
+    try {
+      existingSettings = typeof AppstartStorage.pages[pageId].settings === 'string'
+        ? JSON.parse(AppstartStorage.pages[pageId].settings)
+        : AppstartStorage.pages[pageId].settings;
+    } catch (error) {
+      console.error('Error parsing existing page settings:', error);
+      existingSettings = {};
+    }
+  }
+
+  // Update only the specific settings we want to change
+  const updatedSettings = {
+    ...existingSettings, // Preserve all existing settings
     id: 'page',
     className: pageElement.className
   };
 
-  // Collect metadata from the head
-  const metaTags = [];
+  // Only update metaTags from DOM if there are any in the head with data-appstart attribute
   const headMetaTags = document.querySelectorAll('head meta[data-appstart], head link[data-appstart]');
-  headMetaTags.forEach(tag => {
-    const tagData = {
-      type: tag.tagName.toLowerCase(),
-      name: tag.getAttribute('name') || tag.getAttribute('property') || tag.getAttribute('rel'),
-      content: tag.getAttribute('content') || tag.getAttribute('href')
-    };
-    metaTags.push(tagData);
-  });
-
-  if (metaTags.length > 0) {
-    settings.metaTags = metaTags;
+  if (headMetaTags.length > 0) {
+    const metaTags = [];
+    headMetaTags.forEach(tag => {
+      const tagData = {
+        type: tag.tagName.toLowerCase(),
+        name: tag.getAttribute('name') || tag.getAttribute('property') || tag.getAttribute('rel'),
+        content: tag.getAttribute('content') || tag.getAttribute('href')
+      };
+      metaTags.push(tagData);
+    });
+    updatedSettings.metaTags = metaTags;
   }
+  // If there are no head meta tags with data-appstart, preserve existing metaTags
 
-  await savePageSettings(pageId, settings);
+  await savePageSettings(pageId, JSON.stringify(updatedSettings));
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;

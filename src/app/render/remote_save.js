@@ -37,9 +37,20 @@ async function generateHTMLString() {
   const page_id = params.get('config');
   const appData = await idbGet(AppstartStorageString);
   const html_content = appData.pages[page_id].page_data;
-  const container_settings = appData.pages[page_id].settings;
+
+  // Parse container_settings properly
+  let container_settings;
+  try {
+    container_settings = typeof appData.pages[page_id].settings === 'string'
+      ? JSON.parse(appData.pages[page_id].settings)
+      : appData.pages[page_id].settings;
+  } catch (error) {
+    console.error('Error parsing container settings:', error);
+    container_settings = {};
+  }
+
   const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
-  return finalHtml
+  return finalHtml;
 }
 window.generateHTMLString = generateHTMLString;
 
