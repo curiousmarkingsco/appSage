@@ -204,12 +204,13 @@ window.addEditableOpacity = addEditableOpacity;
 // This funciton is dedicated to adding the editing elements relevant to the
 // suite of expected editing options for stylizing text and its placement.
 // DATA IN: ['HTML Element, <div id="sidebar-dynamic">', 'HTML Element, <div>']
-function addTextOptions(sidebar, element) {
+async function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   let fontOptions = ['sans-serif', 'serif']
-  if (localStorage.getItem(AppstartSettingsString)) {
-    fontOptions = Object.values(JSON.parse(localStorage.getItem(AppstartSettingsString)).fonts).map(font => font);
+  const settings = await idbGet(AppstartSettingsString);
+  if (settings) {
+    fontOptions = Object.values(JSON.parse(settings).fonts).map(font => font);
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
@@ -226,8 +227,9 @@ function addTextOptions(sidebar, element) {
 } // DATA OUT: null
 window.addTextOptions = addTextOptions;
 
-function addManualHtmlElement(sidebar, element) {
-  if (localStorage.getItem(AppstartSettingsString)) {
+async function addManualHtmlElement(sidebar, element) {
+  const settings = await idbGet(AppstartSettingsString);
+  if (settings) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
@@ -235,8 +237,9 @@ function addManualHtmlElement(sidebar, element) {
 } // DATA OUT: null
 window.addManualHtmlElement = addManualHtmlElement;
 
-function addManualClassEditor(sidebar, element) {
-  if (localStorage.getItem(AppstartSettingsString)) {
+async function addManualClassEditor(sidebar, element) {
+  const settings = await idbGet(AppstartSettingsString);
+  if (settings) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
@@ -244,8 +247,9 @@ function addManualClassEditor(sidebar, element) {
 } // DATA OUT: null
 window.addManualClassEditor = addManualClassEditor;
 
-function addManualCssEditor(sidebar, element) {
-  if (localStorage.getItem(AppstartSettingsString)) {
+async function addManualCssEditor(sidebar, element) {
+  const settings = await idbGet(AppstartSettingsString);
+  if (settings) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'inline css', '', [], 'textarea');
     }
@@ -253,8 +257,9 @@ function addManualCssEditor(sidebar, element) {
 } // DATA OUT: null
 window.addManualCssEditor = addManualCssEditor;
 
-function addManualJsEditor(sidebar, element) {
-  if (localStorage.getItem(AppstartSettingsString)) {
+async function addManualJsEditor(sidebar, element) {
+  const settings = await idbGet(AppstartSettingsString);
+  if (settings) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'inline js', '', [], 'textarea');
     }

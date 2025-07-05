@@ -845,14 +845,15 @@ window.resetCopyPageButton = resetCopyPageButton;
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
-function addEditablePageTitle(container, placement) {
+async function addEditablePageTitle(sidebar, element) {
+  // Using IndexedDB for non-Electron mode
+  let titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
   const params = new URLSearchParams(window.location.search);
-  let titleIdMap;
+  const config = params.get('config');
+  const pageTitle = Object.keys(titleIdMap).find(key => titleIdMap[key] === config) || 'Untitled';
 
-  // Using localStorage for non-Electron mode
-  titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
-
-  let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
+  const titleContainer = document.createElement('div');
+  titleContainer.className = 'mb-4';
 
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-fuscous-gray-700 text-xs uppercase mt-2';
@@ -869,189 +870,64 @@ function addEditablePageTitle(container, placement) {
     const newTitle = titleInput.value;
     changeLocalStoragePageTitle(newTitle);
   });
-  if (placement === 'prepend') {
-    container.prepend(titleInput);
-    container.prepend(titleLabel);
-  } else {
-    container.appendChild(titleLabel);
-    container.appendChild(titleInput);
-  }
+  titleInput.addEventListener('input', (e) => {
+    const newTitle = e.target.value;
+    document.querySelector('title').textContent = `Editing: ${newTitle} | Appstart`;
+    changeIndexedDBPageTitle(newTitle);
+  });
+
+  sidebar.prepend(titleContainer);
 } // DATA OUT: null
 window.addEditablePageTitle = addEditablePageTitle;
 
-// This function changes the page's title. Because localStorage data for the
-// page is identified by the page's title, we have to copy the data over to a
-// new object, then delete the old one.
-// DATA IN: String
-function changeLocalStoragePageTitle(newTitle) {
+// This function changes the page's title. Because IndexedDB data for the
+// page is stored in a separate object from the page's title, we need to
+// update both when the title changes.
+// DATA IN: ['String']
+async function changeIndexedDBPageTitle(newTitle) {
   const params = new URLSearchParams(window.location.search);
-  const currentPageId = params.get('config');
+  const config = params.get('config');
 
-  // Retrieve the title-ID mapping from localStorage
-  const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
+  // Retrieve the title-ID mapping from IndexedDB
+  const titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
 
-  // Find the current title using the page ID
-  let currentTitle = null;
-  for (let [title, id] of Object.entries(titleIdMap)) {
-    if (id === currentPageId) {
-      currentTitle = title;
-      break;
-    }
+  // Find the old title associated with the current page ID
+  const oldTitle = Object.keys(titleIdMap).find(key => titleIdMap[key] === config);
+
+  // If an old title is found, remove it from the mapping
+  if (oldTitle) {
+    delete titleIdMap[oldTitle];
   }
 
-  if (currentTitle) {
-    // Update the mapping with the new title
-    delete titleIdMap[currentTitle];
-    titleIdMap[newTitle] = currentPageId;
+  // Add the new title to the mapping
+  titleIdMap[newTitle] = config;
 
-    // Save the updated mapping back to localStorage
-    localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
-
-    // Update the URL parameters (the page ID remains the same)
-    params.set('config', currentPageId);
-    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
-  } else {
-    console.error(`Page with ID "${currentPageId}" does not exist.`);
-  }
+  // Save the updated mapping back to IndexedDB
+  await idbSet(AppstartTitleIdMapString, titleIdMap);
 } // DATA OUT: null
-window.changeLocalStoragePageTitle = changeLocalStoragePageTitle;
+window.changeIndexedDBPageTitle = changeIndexedDBPageTitle;
 
-// This function generates the area for creating as many items of metadata as
-// the designer deems necessary.
-// DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
-function addEditableMetadata(container, placement) {
-  /*
-  defaults:
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  automatically generate?:
-    <meta name="description" content="This page was built using Appstart">
-    <meta property="og:title" content="Untitled | Built w/ Appstart">
-  */
-  const metaDataContainer = document.createElement('div');
-  if (placement === 'prepend') {
-    container.prepend(metaDataContainer);
-  } else {
-    container.appendChild(metaDataContainer);
-  }
+// This function is for adding a new page to the application. It is called
+// when the user clicks the "New Page" button.
+// DATA IN: null
+async function createNewConfigurationFile() {
+  // Using IndexedDB for non-Electron mode
+  const titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
+  const newId = generateRandomId(12);
+  const newTitle = `page-${newId}`;
+  titleIdMap[newTitle] = newId;
+  await idbSet(AppstartTitleIdMapString, titleIdMap);
 
-  const params = new URLSearchParams(window.location.search);
-  const page_id = params.get('config');
-  const metaDataPairsContainer = document.createElement('div');
-  metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
-  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-pearl-bush-200 overflow-y-scroll p-2 max-h-48';
-  metaDataContainer.appendChild(metaDataPairsContainer);
-
-  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
-  if (storedData) {
-    const settings = storedData.pages[page_id].settings;
-    if (typeof settings.length !== 'undefined') {
-      const metaTags = JSON.parse(settings).metaTags;
-
-      if (metaTags) {
-        metaTags.forEach(tag => {
-          addMetadataPair(tag.type, tag.name, tag.content);
-        });
-      }
-    }
-  }
-
-
-  // Add initial empty metadata pair
-  function addMetadataPair(meta_type, meta_name, meta_content) {
-    const pair = document.createElement('div');
-    pair.className = 'metadata-pair mt-2'
-
-    const select = document.createElement('select');
-    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-    const optionName = document.createElement('option');
-    optionName.value = 'name';
-    optionName.selected = 'name' === meta_type;
-    optionName.text = 'Name';
-    const optionProperty = document.createElement('option');
-    optionProperty.value = 'property';
-    optionName.selected = 'property' === meta_type;
-    optionProperty.text = 'Property';
-    const optionLink = document.createElement('option');
-    optionLink.value = 'link';
-    optionLink.selected = 'link' === meta_type;
-    optionLink.text = 'Link';
-    select.appendChild(optionName);
-    select.appendChild(optionProperty);
-    select.appendChild(optionLink);
-
-    const nameInput = document.createElement('input');
-    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-    nameInput.type = 'text';
-    nameInput.value = meta_name || '';
-    nameInput.placeholder = 'Name/Property';
-
-    const contentInput = document.createElement('input');
-    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
-    contentInput.type = 'text';
-    contentInput.value = meta_content || '';
-    contentInput.placeholder = 'Content';
-
-    pair.appendChild(select);
-    pair.appendChild(nameInput);
-    pair.appendChild(contentInput);
-    metaDataPairsContainer.appendChild(pair);
-  }
-
-  addMetadataPair();
-
-  const addButton = document.createElement('button');
-  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline mb-1"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
-  addButton.className = 'col-span-2 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded h-12 w-28 mt-2';
-  addButton.id = 'add-metadata-button';
-  metaDataContainer.appendChild(addButton);
-
-  addButton.addEventListener('click', function () {
-    addMetadataPair();
-  });
-
-  document.querySelectorAll('.metadata').forEach(input => {
-    input.addEventListener('change', function () {
-      const metaTags = [];
-      document.querySelectorAll('.metadata-pair').forEach(pair => {
-        const type = pair.querySelector('.meta-type').value;
-        const name = pair.querySelector('.meta-name').value;
-        const content = pair.querySelector('.meta-content').value;
-        if (name && content) {
-          metaTags.push({ type, name, content });
-        }
-      });
-
-      saveMetadataToIndexedDB(page_id, metaTags);
-    });
-  });
-} // DATA OUT: null
-window.addEditableMetadata = addEditableMetadata;
-
-function createNewConfigurationFile() {
-  const pageId = generateAlphanumericId();
-  let title = 'Untitled';
-  let counter = 1;
-
-  // Using localStorage for non-Electron mode
-  const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
-  while (title in titleIdMap) {
-    title = `Untitled_${counter}`;
-    counter++;
-  }
-  // Save the mapping of title to ID
-  titleIdMap[title] = pageId;
-  localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
-
-  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
   if (!AppstartStorage.pages) {
     AppstartStorage.pages = {};
   }
-  AppstartStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
-  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
+  AppstartStorage.pages[newId] = { page_data: '[]', settings: '{}' };
+  await idbSet(AppstartStorageString, AppstartStorage);
 
-  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
+  const params = new URLSearchParams(window.location.search);
+  params.set('config', newId);
+  window.location.search = params.toString();
 }
 window.createNewConfigurationFile = createNewConfigurationFile;
 
@@ -1099,3 +975,53 @@ function generateRandomId(length = 8) {
   return result;
 }
 window.generateRandomId = generateRandomId;
+
+// DATA IN: null
+async function generateHTMLString() {
+  const params = new URLSearchParams(window.location.search);
+  const page_id = params.get('config');
+  const appData = await idbGet(AppstartStorageString);
+  const html_content = appData.pages[page_id].page_data;
+  const container_settings = appData.pages[page_id].settings;
+  const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
+  return finalHtml;
+}
+window.generateHTMLString = generateHTMLString;
+
+// This function is to support the copyPageHTML function.
+// DATA IN: ['String', 'HTML Element, <div>']
+function flattenJSONToHTML(jsonString, parentInfo) {
+  try {
+    const jsonArray = JSON.parse(jsonString);
+    let parentClassName = JSON.parse(parentInfo).className || '';
+
+    // Wrap in a div with the parent's className for styling
+    const wrapper = `<div class="${parentClassName}">` + jsonArray.map(item => {
+      if (typeof item === 'string') {
+        return item; // Return the string as is
+      } else if (typeof item === 'object' && item !== null) {
+        // For objects, recursively flatten
+        const childHtml = flattenJSONToHTML(JSON.stringify(item), JSON.stringify(item));
+        return childHtml;
+      }
+      return '';
+    }).join('') + '</div>';
+
+    return wrapper;
+  } catch (error) {
+    console.error('Error parsing JSON:', error);
+    return '';
+  }
+} // DATA OUT: null
+window.flattenJSONToHTML = flattenJSONToHTML;
+
+// DATA IN: ['String', 'HTML Element, <div>']
+async function deletePage(page_id, element) {
+  const storedData = await idbGet(AppstartStorageString);
+  if (storedData && storedData.pages && storedData.pages[page_id]) {
+    delete storedData.pages[page_id];
+    await idbSet(AppstartStorageString, storedData);
+    element.remove(); // Remove the element from the DOM
+  }
+}
+window.deletePage = deletePage;

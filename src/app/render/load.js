@@ -12,8 +12,8 @@ const loadBlobFromIndexedDB = window.loadBlobFromIndexedDB;
 // Utility functions for managing localStorage with a 'AppstartStorage' object
 // DATA IN: String
 async function loadPage(pageId) {
-  // Using localStorage when not in Electron mode
-  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  // Using IndexedDB when not in Electron mode
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
   if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
     const fallback = AppstartStorage.pages[pageId].page_data;
     try {
@@ -34,12 +34,13 @@ window.loadPage = loadPage;
 // expected '#page' div, metadata is stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'HTML Element, <div>']
-function loadPageMetadata(pageId) {
+async function loadPageMetadata(pageId) {
   const element = document.querySelector('head');
 
-  // Using localStorage for non-Electron mode
-  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
-  const fontSettings = JSON.parse(localStorage.getItem(AppstartSettingsString));
+  // Using IndexedDB for non-Electron mode
+  const storedData = await idbGet(AppstartStorageString);
+  const fontSettingsJSON = await idbGet(AppstartSettingsString);
+  const fontSettings = JSON.parse(fontSettingsJSON);
 
   if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
     const metaTags = storedData.pages[pageId].settings.metaTags;
@@ -72,10 +73,10 @@ window.loadPageMetadata = loadPageMetadata;
 // expected '#page' div, page settings are stored in a separate object and,
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
-function loadPageSettings(config, view = false) {
+async function loadPageSettings(config, view = false) {
   let AppstartStorage;
   let localStorageExists = false;
-  AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  AppstartStorage = await idbGet(AppstartStorageString) || {};
   localStorageExists = (AppstartStorage.pages && AppstartStorage.pages[config] && AppstartStorage.pages[config].settings);
 
   if (localStorageExists) {
@@ -105,37 +106,36 @@ function loadPageSettings(config, view = false) {
 } // DATA OUT: null
 window.loadPageSettings = loadPageSettings;
 
-function addMetasToHead() {
-  waitForGlobalsLoaded().then(() => {
-    const params = new URLSearchParams(window.location.search);
-    const config = params.get('config') || params.get('page');
-    const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
-    let settings;
+async function addMetasToHead() {
+  await waitForGlobalsLoaded();
+  const params = new URLSearchParams(window.location.search);
+  const config = params.get('config') || params.get('page');
+  const storedData = await idbGet(AppstartStorageString);
+  let settings;
 
-    if (storedData && storedData.pages && storedData.pages[config]){
-      settings = storedData.pages[config].settings;
-      if (typeof settings !== 'undefined') {
-        const metaTags = settings.metaTags;
-        if (typeof metaTags !== 'undefined') {
-          const headTag = document.getElementsByTagName('head')[0];
+  if (storedData && storedData.pages && storedData.pages[config]){
+    settings = storedData.pages[config].settings;
+    if (typeof settings !== 'undefined') {
+      const metaTags = settings.metaTags;
+      if (typeof metaTags !== 'undefined') {
+        const headTag = document.getElementsByTagName('head')[0];
 
-          if (metaTags !== '') metaTags.forEach(tag => {
-            if (tag.type === 'link') {
-              const metatag = document.createElement('link');
-              metatag.setAttribute('rel', tag.name);
-              metatag.setAttribute('href', tag.content);
-              headTag.appendChild(metatag);
-            } else {
-              const metatag = document.createElement('meta');
-              metatag.setAttribute(tag.type, tag.name);
-              metatag.setAttribute('content', tag.content);
-              headTag.appendChild(metatag);
-            }
-          });
-        }
+        if (metaTags !== '') metaTags.forEach(tag => {
+          if (tag.type === 'link') {
+            const metatag = document.createElement('link');
+            metatag.setAttribute('rel', tag.name);
+            metatag.setAttribute('href', tag.content);
+            headTag.appendChild(metatag);
+          } else {
+            const metatag = document.createElement('meta');
+            metatag.setAttribute(tag.type, tag.name);
+            metatag.setAttribute('content', tag.content);
+            headTag.appendChild(metatag);
+          }
+        });
       }
     }
-  });
+  }
 }
 window.addMetasToHead = addMetasToHead;
 
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', addMetasToHead);
 
 document.addEventListener('DOMContentLoaded', async () => {
   const pageId = getPageId();
-  const AppstartStorage = getAppstartStorage();
+  const AppstartStorage = await getAppstartStorage();
 
   const componentContainers = document.querySelectorAll('.pagecomponent');
   for (const container of componentContainers) {
@@ -201,8 +201,8 @@ function getPageId() {
 }
 window.getPageId = getPageId;
 
-function getAppstartStorage() {
-  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+async function getAppstartStorage() {
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
   if (!AppstartStorage.pages) {
     AppstartStorage.pages = {};
   }
@@ -210,8 +210,8 @@ function getAppstartStorage() {
 }
 window.getAppstartStorage = getAppstartStorage;
 
-function getPageObject(pageId) {
-  const AppstartStorage = getAppstartStorage();
+async function getPageObject(pageId) {
+  const AppstartStorage = await getAppstartStorage();
   let pageObject;
   pageObject = AppstartStorage.pages[pageId];
   return pageObject;

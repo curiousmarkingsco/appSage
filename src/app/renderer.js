@@ -51,8 +51,8 @@ function activateComponents(editor = false) {
 }
 window.activateComponents = activateComponents;
 
-function initializeGlobals() {
-  return new Promise((resolve, reject) => {
+async function initializeGlobals() {
+  return new Promise(async (resolve, reject) => {
     try {
       /*
 
@@ -90,16 +90,12 @@ function initializeGlobals() {
       window.AppstartComponents = combineComponentsLists();
 
       window.advancedMode = false;
-      if (localStorage.getItem(AppstartSettingsString)) {
-        const settingsForAdvCheck = JSON.parse(localStorage.getItem(AppstartSettingsString)).advancedMode;
-        if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
-      }
-
       window.currentBreakpoint = 'xs';
-      if (localStorage.getItem(AppstartSettingsString)) {
-        const settingsForBpCheck = JSON.parse(localStorage.getItem(AppstartSettingsString)).currentBreakpoint;
-        if (settingsForBpCheck) window.currentBreakpoint = settingsForBpCheck;
+      const settings = await idbGet(AppstartSettingsString);
+      if (settings.advancedMode) {
+        window.advancedMode = settings.advancedMode;
       }
+      if (settings.currentBreakpoint)
 
       updateTailwindConfig();
       window.tailwindColors = mergeTailwindColors(tailwind.config.theme);
@@ -110,7 +106,6 @@ function initializeGlobals() {
         "focus": ['focus', 'When the user has tapped the element to use it in some way'],
         "active": ['active', 'When the element has been activated by the user from interacting in some way']
       }
-
       window.plainEnglishBreakpointNames = {
         "xs": 'Extra Small',
         "sm": 'Small-Sized',
@@ -193,7 +188,6 @@ function initializeGlobals() {
         'justify-evenly': "Move all items to be evenly spaced from the edge of the box and each other.",
         'justify-reset': "Reset justification rules."
       }
-
       window.AppstartEditorIcons = {
         "responsive": {
           "xs": '<svg data-extra-info="For smartwatch screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>',
@@ -354,10 +348,10 @@ function extractColorNames(colorObject) {
 } // DATA OUT: Array
 window.extractColorNames = extractColorNames;
 
-function mergeFontsIntoTailwindConfig() {
-  // Retrieve the fonts from localStorage
-  let AppstartSettings = JSON.parse(localStorage.getItem('AppstartSettings'));
-  let storedFonts = AppstartSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
+async function mergeFontsIntoTailwindConfig() {
+  // Retrieve the fonts from IndexedDB
+  const AppstartSettings = await idbGet('AppstartSettings');
+  const storedFonts = AppstartSettings?.fonts || {}; // Fallback to an empty object if fonts
 
   // Ensure tailwind.config exists and has the theme and fontFamily objects
   if (!tailwind.config) {
@@ -399,8 +393,8 @@ function mergeTailwindColors(theme) {
 window.mergeTailwindColors = mergeTailwindColors;
 
 // Function to dynamically update Tailwind config with multiple fonts/colors
-function updateTailwindConfig() {
-  const settings = JSON.parse(localStorage.getItem(AppstartSettingsString));
+async function updateTailwindConfig() {
+  const settings = await idbGet(AppstartSettingsString);
   if (settings !== null) {
     // Handle custom fonts
     if (settings.fonts.length > 0) {
@@ -427,9 +421,9 @@ function updateTailwindConfig() {
 }
 window.updateTailwindConfig = updateTailwindConfig;
 
-// Restore settings from localStorage
-function restoreSettings() {
-  let storedData = localStorage.getItem(AppstartSettingsString);
+// Restore settings from IndexedDB
+async function restoreSettings() {
+  let storedData = await idbGet(AppstartSettingsString);
   if (storedData) {
     let settings = JSON.parse(storedData);
 
@@ -559,10 +553,8 @@ function restoreSettings() {
 }
 window.restoreSettings = restoreSettings;
 
-function AppstartLocalNuke() {
-  localStorage.removeItem(AppstartStorageString);
-  localStorage.removeItem(AppstartSettingsString);
-  localStorage.removeItem(AppstartTitleIdMapString);
+async function AppstartLocalNuke() {
+  await idbClear();
 }
 window.AppstartLocalNuke = AppstartLocalNuke;
 
@@ -606,14 +598,14 @@ function showConfirmationModal(message, onConfirm) {
 } // DATA OUT: null
 window.showConfirmationModal = showConfirmationModal;
 
-// This function is for permanently deleting a page from localStorage.
+// This function is for permanently deleting a page from IndexedDB.
 // DATA IN: ['String', 'HTML Element, <div>']
-function deletePage(page_id, element) {
+async function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
-  showConfirmationModal(message, function () {
-    const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
-    const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString) || '{}');
+  showConfirmationModal(message, async function () {
+    const AppstartStorage = await idbGet(AppstartStorageString) || {};
+    const titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
 
     if (AppstartStorage.pages && AppstartStorage.pages[page_id]) {
       delete AppstartStorage.pages[page_id];
@@ -626,8 +618,8 @@ function deletePage(page_id, element) {
       }
     }
 
-    localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
-    localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
+    await idbSet(AppstartStorageString, AppstartStorage);
+    await idbSet(AppstartTitleIdMapString, titleIdMap);
     element.remove();
 
     console.log(`Page with ID ${page_id} has been deleted successfully.`);

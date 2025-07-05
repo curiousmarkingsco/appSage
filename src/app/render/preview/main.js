@@ -4,7 +4,7 @@
 
   This file is intended to clean up any residual content that could pop up from
   the designer editing the page. And, of course, load the necessary data from
-  localStorage to show the final page design without the sidebar cluttering up
+  storage to show the final page design without the sidebar cluttering up
   their eyes, giving an unadultered view of the page.
 
 */
@@ -48,7 +48,6 @@ window.initializePreview = initializePreview;
 // DATA IN: String
 async function loadPreview(pageId) {
   const json = await loadPage(pageId);  // Uses the already-refactored loadPage
-  // Using localStorage for non-Electron mode
   if (json) {
     const pageContainer = document.getElementById('page');
     pageContainer.innerHTML = ''; // Clear existing content

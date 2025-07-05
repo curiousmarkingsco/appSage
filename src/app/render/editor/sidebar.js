@@ -57,7 +57,7 @@ window.generateSidebarTabs = generateSidebarTabs;
 function activateTabs() {
   // Add event listeners to toggle visibility
   document.querySelectorAll('#mobileTabContainer div').forEach(tab => {
-    tab.addEventListener('click', function () {
+    tab.addEventListener('click', async function () {
       // Toggle display of associated content or styles when a tab is clicked
       const allTabs = document.querySelectorAll('.responsive-tab');
       allTabs.forEach(t => {
@@ -74,9 +74,10 @@ function activateTabs() {
       window.currentBreakpoint = bp;
 
       try {
-        const settings = JSON.parse(localStorage.getItem(AppstartSettingsString));
+        const settingsJSON = await idbGet(AppstartSettingsString);
+        const settings = settingsJSON ? JSON.parse(settingsJSON) : {};
         settings.currentBreakpoint = bp;
-        localStorage.setItem(AppstartSettingsString, JSON.stringify(settings));
+        await idbSet(AppstartSettingsString, JSON.stringify(settings));
       } catch (error) {
         console.error('Something went wrong saving breakpoint settings data.', error);
       }

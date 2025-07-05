@@ -7,9 +7,9 @@
 
 */
 const saveBlobToIndexedDB = window.saveBlobToIndexedDB;
-// Remove editor elements so that localStorage is not cluttered with unneeded
-// elements making them production-ready for app/js/load.js
-// DATA IN: HTML Element, <div>
+// Remove editor elements so that IndexedDB is not cluttered with unneeded
+// HTML during the save process.
+// DATA IN: String
 function getCleanInnerHTML(element) {
   const clone = element.cloneNode(true);
   const discardElements = clone.querySelectorAll('.ugc-discard');
@@ -20,34 +20,9 @@ function getCleanInnerHTML(element) {
 } // DATA OUT: HTML Element, <div>
 window.getCleanInnerHTML = getCleanInnerHTML;
 // This mutation observer ensures that the majority, if not all, changes
-// occuring in #page will be saved to localStorage.
+// occuring in #page will be saved to IndexedDB.
 // DATA IN: String
-function setupAutoSave(page) {
-  const targetNode = document.getElementById('page');
-  const config = {
-    childList: true,
-    attributes: true,
-    subtree: true,
-    characterData: true
-  };
-  const callback = function (mutationsList, observer) {
-    for (const mutation of mutationsList) {
-      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
-        saveChanges(page);
-        break;
-      }
-    }
-  };
-  const observer = new MutationObserver(callback);
-  observer.observe(targetNode, config);
-  console.log('Auto-save setup complete.');
-} // DATA OUT: null
-window.setupAutoSave = setupAutoSave;
-
-// This function saves all active element and style additions/changes/removals
-// during the designer's traditional editor workflow.
-// DATA IN: String
-async function saveChanges(page) {
+async function saveChanges(pageId) {
   const pageContainer = document.getElementById('page');
   // Query only elements with 'ugc-keep' that are meant to be saved
   const elements = pageContainer.querySelectorAll('.ugc-keep:not([data-editor-temp])');
@@ -56,87 +31,82 @@ async function saveChanges(page) {
     className: element.className, // deprecated
     content: getCleanInnerHTML(element)
   }));
-  await savePageData(page, data);
-  savePageSettingsChanges(page);
+  await saveContent(pageId, data);
+  savePageSettingsChanges(pageId);
   console.log('Changes saved successfully!');
 } // DATA OUT: null
 window.saveChanges = saveChanges;
 
-// This function creates or prepares the necessary localStorage object in order
-// for subsequent content to be stored. If this objects already exists, it
-// proceeds by properly setting existing content to these objects.
-// DATA IN: ['String', 'JSON Object']
-async function savePageData(pageId, json) {
-  addRevision(pageId, json);
-  const AppstartStorage = getAppstartStorage();
-  AppstartStorage.pages[pageId] = {
-    ...AppstartStorage.pages[pageId],
-    page_data: null // clears big payload
-  };
-  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
+// This function creates or prepares the necessary IndexedDB object in order
+// for the page's contents to be saved.
+// DATA IN: ['String', 'String']
+async function saveContent(pageId, json) {
+  // Using IndexedDB for non-Electron mode
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
 
-  await saveBlobToIndexedDB(pageId, json);
-} // DATA OUT: null
-window.savePageData = savePageData;
-
-async function saveComponentObjectToPage(componentName, object) {
-  try {
-    const pageId = getPageId();
-    // First, we store to the local machine for redundancy
-    const AppstartStorage = getAppstartStorage();
-
-    if (!AppstartStorage.pages[pageId]) {
-      AppstartStorage.pages[pageId] = {};
-    }
-
-    // Just store a lightweight reference — actual object goes in IndexedDB
-    AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
-    localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
-
-    // Store the heavy object in IndexedDB under a namespaced key
-    await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
-    // TODO: Then, send to an API if enabled
-    // if (apiEnabled) {}
-  } catch (error) {
-    console.error('Something went wrong saving component data.', error);
-  }
-}
-window.saveComponentObjectToPage = saveComponentObjectToPage;
-
-// This function saves all page's settings from the designer's additions,
-// changes, and removals during the designer's traditional editor workflow
-// from the dedicated Page Settings sidebar.
-// DATA IN: ['String', 'JSON Object']
-// Save page settings (renamed to savePageDataSettings)
-function savePageDataSettings(pageId, data) {
-  // Using localStorage for non-Electron mode
-  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
   if (!AppstartStorage.pages) {
     AppstartStorage.pages = {};
   }
   if (!AppstartStorage.pages[pageId]) {
-    AppstartStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+    AppstartStorage.pages[pageId] = {};
   }
-  AppstartStorage.pages[pageId].settings = data;
-  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
-} // DATA OUT: null
-window.savePageDataSettings = savePageDataSettings;
 
-// This function creates or prepares the necessary localStorage object in order
-// for subsequent settings to be stored. If this objects already exists, it
-// proceeds by properly setting existing settings to these objects.
+  AppstartStorage.pages[pageId].page_data = json;
+  await idbSet(AppstartStorageString, AppstartStorage);
+
+  await saveBlobToIndexedDB(pageId, json);
+} // DATA OUT: null
+window.savePageData = saveContent;
+
+async function saveComponent(pageId, componentName, object) {
+  // Using IndexedDB for non-Electron mode
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
+
+  if (!AppstartStorage.pages) {
+    AppstartStorage.pages = {};
+  }
+  if (!AppstartStorage.pages[pageId]) {
+    AppstartStorage.pages[pageId] = {};
+  }
+
+  // Just store a lightweight reference — actual object goes in IndexedDB
+  AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
+  await idbSet(AppstartStorageString, AppstartStorage);
+
+  // Store the heavy object in IndexedDB under a namespaced key
+  await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
+}
+
+// This function is for automatically saving the page every 15 seconds.
 // DATA IN: String
-function savePageSettingsChanges(pageId) {
-  const page = document.getElementById('page');
-  const settings = {
-    id: page.id,
-    className: page.className,
-    metaTags: ''
-  };
+function setupAutoSave(pageId) {
+  setInterval(async () => {
+    // Using IndexedDB for non-Electron mode
+    const AppstartStorage = await idbGet(AppstartStorageString) || {};
 
-  // Using localStorage for non-Electron mode
-  const AppstartStorage = getAppstartStorage();
-  AppstartStorage.pages[pageId].settings = JSON.stringify(settings);
-  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
+    if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
+      const json = scrapePage();
+      AppstartStorage.pages[pageId].page_data = json;
+      await idbSet(AppstartStorageString, AppstartStorage);
+      console.log('Auto-saved page data.');
+    }
+  }, 15000);
 } // DATA OUT: null
-window.savePageSettingsChanges = savePageSettingsChanges;
+
+// This function creates or prepares the necessary IndexedDB object in order
+// for the page's settings to be saved.
+// DATA IN: ['String', 'String']
+async function savePageSettings(pageId, settings) {
+  // Using IndexedDB for non-Electron mode
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
+
+  if (!AppstartStorage.pages) {
+    AppstartStorage.pages = {};
+  }
+  if (!AppstartStorage.pages[pageId]) {
+    AppstartStorage.pages[pageId] = {};
+  }
+
+  AppstartStorage.pages[pageId].settings = settings;
+  await idbSet(AppstartStorageString, AppstartStorage);
+} // DATA OUT: null

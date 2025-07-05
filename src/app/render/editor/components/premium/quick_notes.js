@@ -262,7 +262,7 @@ function initializeQuickNotes(container) {
     // -------------------------
     // RENDER NOTES FUNCTION
     // -------------------------
-    // This function reads from localStorage and creates note cards
+    // This function reads from storage and creates note cards
     function renderNotes() {
         const currentPage = getCurrentPage();
         const retrievedData = currentPage.quickNotes;

@@ -63,7 +63,21 @@ async function loadBlobFromIndexedDB(pageId) {
   });
 }
 
+async function idbClear() {
+  const db = await openDB();
+  const transaction = db.transaction(['keyval', 'blobs'], 'readwrite');
+  const keyvalStore = transaction.objectStore('keyval');
+  const blobsStore = transaction.objectStore('blobs');
+  keyvalStore.clear();
+  blobsStore.clear();
+  return new Promise((resolve, reject) => {
+    transaction.oncomplete = () => resolve();
+    transaction.onerror = () => reject(transaction.error);
+  });
+}
+
 window.idbGet = idbGet;
 window.idbSet = idbSet;
+window.idbClear = idbClear; // expose clear function
 window.saveBlobToIndexedDB = saveBlobToIndexedDB;
 window.loadBlobFromIndexedDB = loadBlobFromIndexedDB;

@@ -75,16 +75,10 @@ Appstart is built by [Curious Markings Co.](https://curiousmarkings.com) with ou
 
 ## Daily Setup
 
-If you find  yourself in a situation where you want to easily clear your localStorage, here's a quick and easy thing to copy/paste to your JS console:
-
-```js
-AppstartLocalNuke();
-```
-
 ## Using Appstart as an integration
 
 ### Make your storage unique
-By default, pages created get added to `localStorage` under the name "AppstartStorage". To ensure your objects don't get mixed up with Appstart or other applications that use Appstart, create a global variable called `customAppstartStorage`.
+By default, pages created get added to `IndexedDB` under the name "AppstartStorage". To ensure your objects don't get mixed up with Appstart or other applications that use Appstart, create a global variable called `customAppstartStorage`.
 
 See [`function initializeGlobals()`](https://github.com/curiousmarkingsco/Appstart/blob/main/src/app/renderer.js) to see how this works in the code.
 

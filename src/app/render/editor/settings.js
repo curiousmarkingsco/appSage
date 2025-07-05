@@ -151,7 +151,7 @@ function generateGfontsEmbedCode(fonts) {
     }
     const params = new URLSearchParams(window.location.search);
     const page_id = params.get('config') || params.get('page');
-    saveMetadataToLocalStorage(page_id, [embedTag])
+    saveMetadataToIndexedDB(page_id, [embedTag])
   }
   console.log('Fonts saved to metadata.')
 }
