@@ -210,7 +210,14 @@ async function addTextOptions(sidebar, element) {
   let fontOptions = ['sans-serif', 'serif']
   const settings = await idbGet(AppstartSettingsString);
   if (settings) {
-    fontOptions = Object.values(JSON.parse(settings).fonts).map(font => font);
+    try {
+      const settingsObj = typeof settings === 'string' ? JSON.parse(settings) : settings;
+      if (settingsObj.fonts) {
+        fontOptions = Object.values(settingsObj.fonts).map(font => font);
+      }
+    } catch (error) {
+      console.error('Error parsing settings for fonts:', error);
+    }
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];

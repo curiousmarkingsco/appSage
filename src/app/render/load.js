@@ -40,7 +40,14 @@ async function loadPageMetadata(pageId) {
   // Using IndexedDB for non-Electron mode
   const storedData = await idbGet(AppstartStorageString);
   const fontSettingsJSON = await idbGet(AppstartSettingsString);
-  const fontSettings = JSON.parse(fontSettingsJSON);
+  let fontSettings = null;
+  if (fontSettingsJSON) {
+    try {
+      fontSettings = typeof fontSettingsJSON === 'string' ? JSON.parse(fontSettingsJSON) : fontSettingsJSON;
+    } catch (error) {
+      console.error('Error parsing font settings:', error);
+    }
+  }
 
   if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
     const metaTags = storedData.pages[pageId].settings.metaTags;

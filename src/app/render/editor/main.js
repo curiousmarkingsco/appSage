@@ -427,7 +427,20 @@ window.editorMode = true;
 // Function to save metadata to IndexedDB, ensuring no duplicate tags
 async function saveMetadataToIndexedDB(page_id, newMetaTags) {
   const storedData = await idbGet(AppstartStorageString);
-  const settings = JSON.parse(storedData.pages[page_id].settings);
+  if (!storedData || !storedData.pages || !storedData.pages[page_id] || !storedData.pages[page_id].settings) {
+    console.error('No settings found for page:', page_id);
+    return;
+  }
+
+  let settings;
+  try {
+    settings = typeof storedData.pages[page_id].settings === 'string'
+      ? JSON.parse(storedData.pages[page_id].settings)
+      : storedData.pages[page_id].settings;
+  } catch (error) {
+    console.error('Error parsing page settings:', error);
+    return;
+  }
 
   if (!settings.metaTags) {
     settings.metaTags = [];
@@ -710,11 +723,19 @@ window.getNextValidSibling = getNextValidSibling;
 // This is a way for people who don't know how to integrate a back-end to
 // simply copy/paste page contents into their own document or back-end repo.
 // DATA IN: HTML Element
-function copyPageHTML(button) {
+async function copyPageHTML(button) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].settings;
+
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
+  if (!AppstartStorage.pages || !AppstartStorage.pages[page_id]) {
+    console.error('No page data found for', page_id);
+    return;
+  }
+
+  const html_content = AppstartStorage.pages[page_id].page_data;
+  const container_settings = AppstartStorage.pages[page_id].settings;
+
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, button);
@@ -797,11 +818,17 @@ window.pasteHtmlPortion = pasteHtmlPortion;
 // This is a way for people who don't know how to integrate a back-end to
 // simply copy/paste page metadata into their own document or back-end repo.
 // DATA IN: HTML Element
-function copyMetadata(element) {
+async function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
-  const settings = JSON.parse(storedData.pages[config].settings);
+
+  const AppstartStorage = await idbGet(AppstartStorageString) || {};
+  if (!AppstartStorage.pages || !AppstartStorage.pages[config] || !AppstartStorage.pages[config].settings) {
+    console.error('No settings found for', config);
+    return;
+  }
+
+  const settings = AppstartStorage.pages[config].settings;
   const metaTags = settings.metaTags;
   let metaTagsString = '';
 
@@ -992,8 +1019,28 @@ window.generateHTMLString = generateHTMLString;
 // DATA IN: ['String', 'HTML Element, <div>']
 function flattenJSONToHTML(jsonString, parentInfo) {
   try {
-    const jsonArray = JSON.parse(jsonString);
-    let parentClassName = JSON.parse(parentInfo).className || '';
+    // Handle case where jsonString might already be an object or undefined
+    let jsonArray;
+    if (typeof jsonString === 'string' && jsonString.trim()) {
+      jsonArray = JSON.parse(jsonString);
+    } else if (Array.isArray(jsonString)) {
+      jsonArray = jsonString;
+    } else {
+      console.warn('Invalid JSON data provided to flattenJSONToHTML');
+      return '';
+    }
+
+    // Handle parentInfo safely
+    let parentClassName = '';
+    if (typeof parentInfo === 'string' && parentInfo.trim()) {
+      try {
+        parentClassName = JSON.parse(parentInfo).className || '';
+      } catch (e) {
+        console.warn('Invalid parent info JSON:', e);
+      }
+    } else if (typeof parentInfo === 'object' && parentInfo) {
+      parentClassName = parentInfo.className || '';
+    }
 
     // Wrap in a div with the parent's className for styling
     const wrapper = `<div class="${parentClassName}">` + jsonArray.map(item => {

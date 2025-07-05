@@ -19,6 +19,7 @@ function getCleanInnerHTML(element) {
   return cloneBox.innerHTML;
 } // DATA OUT: HTML Element, <div>
 window.getCleanInnerHTML = getCleanInnerHTML;
+
 // This mutation observer ensures that the majority, if not all, changes
 // occuring in #page will be saved to IndexedDB.
 // DATA IN: String
@@ -79,19 +80,40 @@ async function saveComponent(pageId, componentName, object) {
 
 // This function is for automatically saving the page every 15 seconds.
 // DATA IN: String
-function setupAutoSave(pageId) {
-  setInterval(async () => {
-    // Using IndexedDB for non-Electron mode
-    const AppstartStorage = await idbGet(AppstartStorageString) || {};
-
-    if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
-      const json = scrapePage();
-      AppstartStorage.pages[pageId].page_data = json;
-      await idbSet(AppstartStorageString, AppstartStorage);
-      console.log('Auto-saved page data.');
+function setupAutoSave(page) {
+  const targetNode = document.getElementById('page');
+  const config = {
+    childList: true,
+    attributes: true,
+    subtree: true,
+    characterData: true
+  };
+  const callback = function (mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
+        saveChanges(page);
+        break;
+      }
     }
-  }, 15000);
+  };
+  const observer = new MutationObserver(callback);
+  observer.observe(targetNode, config);
+  console.log('Auto-save setup complete.');
 } // DATA OUT: null
+
+// function setupAutoSave(pageId) {
+//   setInterval(async () => {
+//     // Using IndexedDB for non-Electron mode
+//     const AppstartStorage = await idbGet(AppstartStorageString) || {};
+
+//     if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
+//       AppstartStorage.pages[pageId].page_data = json;
+//       await idbSet(AppstartStorageString, AppstartStorage);
+//       console.log('Auto-saved page data.');
+//     }
+//   }, 15000);
+// } // DATA OUT: null
+window.setupAutoSave = setupAutoSave;
 
 // This function creates or prepares the necessary IndexedDB object in order
 // for the page's settings to be saved.
@@ -110,3 +132,34 @@ async function savePageSettings(pageId, settings) {
   AppstartStorage.pages[pageId].settings = settings;
   await idbSet(AppstartStorageString, AppstartStorage);
 } // DATA OUT: null
+
+// This function collects the current page settings and saves them to IndexedDB.
+// DATA IN: String
+async function savePageSettingsChanges(pageId) {
+  const pageElement = document.getElementById('page');
+  if (!pageElement) return;
+
+  const settings = {
+    id: 'page',
+    className: pageElement.className
+  };
+
+  // Collect metadata from the head
+  const metaTags = [];
+  const headMetaTags = document.querySelectorAll('head meta[data-appstart], head link[data-appstart]');
+  headMetaTags.forEach(tag => {
+    const tagData = {
+      type: tag.tagName.toLowerCase(),
+      name: tag.getAttribute('name') || tag.getAttribute('property') || tag.getAttribute('rel'),
+      content: tag.getAttribute('content') || tag.getAttribute('href')
+    };
+    metaTags.push(tagData);
+  });
+
+  if (metaTags.length > 0) {
+    settings.metaTags = metaTags;
+  }
+
+  await savePageSettings(pageId, settings);
+} // DATA OUT: null
+window.savePageSettingsChanges = savePageSettingsChanges;

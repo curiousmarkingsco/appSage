@@ -92,10 +92,12 @@ async function initializeGlobals() {
       window.advancedMode = false;
       window.currentBreakpoint = 'xs';
       const settings = await idbGet(AppstartSettingsString);
-      if (settings.advancedMode) {
+      if (settings && settings.advancedMode) {
         window.advancedMode = settings.advancedMode;
       }
-      if (settings.currentBreakpoint)
+      if (settings && settings.currentBreakpoint) {
+        window.currentBreakpoint = settings.currentBreakpoint;
+      }
 
       updateTailwindConfig();
       window.tailwindColors = mergeTailwindColors(tailwind.config.theme);
@@ -395,9 +397,9 @@ window.mergeTailwindColors = mergeTailwindColors;
 // Function to dynamically update Tailwind config with multiple fonts/colors
 async function updateTailwindConfig() {
   const settings = await idbGet(AppstartSettingsString);
-  if (settings !== null) {
+  if (settings) {
     // Handle custom fonts
-    if (settings.fonts.length > 0) {
+    if (settings.fonts && settings.fonts.length > 0) {
       if (!tailwind.config.theme.fontFamily) {
         tailwind.config.theme.fontFamily = {};
       }
@@ -405,7 +407,7 @@ async function updateTailwindConfig() {
     }
 
     // Handle custom colors
-    if (Object.keys(settings.colors).length > 0) {
+    if (settings.colors && Object.keys(settings.colors).length > 0) {
       if (!tailwind.config.theme.extend) {
         tailwind.config.theme.extend = {};
       }
@@ -425,7 +427,14 @@ window.updateTailwindConfig = updateTailwindConfig;
 async function restoreSettings() {
   let storedData = await idbGet(AppstartSettingsString);
   if (storedData) {
-    let settings = JSON.parse(storedData);
+    let settings;
+    try {
+      // Handle both string and object cases
+      settings = typeof storedData === 'string' ? JSON.parse(storedData) : storedData;
+    } catch (error) {
+      console.error('Error parsing settings data:', error);
+      return;
+    }
 
     // Restore fonts: dynamically add any manually entered fonts to the <select> options
     let fonts = document.getElementById('fonts');
