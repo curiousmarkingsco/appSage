@@ -80,3 +80,53 @@
 #editor #sidebar.active {
   background-color: rgba(0, 0, 155, 0.1);
 }
+
+/* Component editing mode styles */
+#componentSteps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+}
+
+#componentSteps .component-editing-active {
+  border: 3px solid #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: visible; /* Changed from auto to visible to allow buttons to break out */
+  position: relative;
+  z-index: 10;
+}
+
+/* Center the component within the componentSteps container */
+#componentSteps .pagecomponent {
+  margin: 2rem;
+  padding: 2rem;
+  overflow: visible; /* Ensure child elements can overflow */
+}
+
+/* Hide hover effects when in component editing mode */
+#componentSteps .pagecomponent:hover {
+  border: 3px solid #00ffff;
+}
+
+/* Ensure highlight buttons in component editing mode have higher z-index and can break out */
+#componentSteps .highlightButton {
+  z-index: 100 !important;
+  position: absolute !important;
+}
+
+/* Ensure the component editing container doesn't clip child elements */
+#componentSteps * {
+  overflow: visible;
+}
+
+/* Exception for elements that should scroll */
+#componentSteps .component-editing-active {
+  overflow-y: auto;
+  overflow-x: visible;
+}

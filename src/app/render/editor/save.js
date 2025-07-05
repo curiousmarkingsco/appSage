@@ -91,8 +91,16 @@ function setupAutoSave(page) {
   const callback = function (mutationsList, observer) {
     for (const mutation of mutationsList) {
       if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
-        saveChanges(page);
-        break;
+        // Check if the mutation occurred within a component element
+        const isWithinComponent = mutation.target.closest('#componentSteps') ||
+                                 (mutation.target.id === 'componentSteps') ||
+                                 (mutation.target.querySelector && mutation.target.querySelector('#componentSteps'));
+
+        // Only save changes if the mutation is not within a component
+        if (!isWithinComponent) {
+          saveChanges(page);
+          break;
+        }
       }
     }
   };
@@ -181,3 +189,73 @@ async function savePageSettingsChanges(pageId) {
   await savePageSettings(pageId, JSON.stringify(updatedSettings));
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;
+
+// This function saves component changes by finding the specific component within #componentSteps
+// DATA IN: String
+async function saveComponentChanges(pageId) {
+  const componentStepsContainer = document.getElementById('componentSteps');
+  if (!componentStepsContainer) {
+    console.warn('componentSteps element not found');
+    return;
+  }
+
+  // Find the component within componentSteps - there should only be one
+  const componentContainer = componentStepsContainer.querySelector('[data-component-name]');
+  if (!componentContainer) {
+    console.warn('No component found within componentSteps');
+    return;
+  }
+
+  const componentName = componentContainer.getAttribute('data-component-name');
+  if (!componentName) {
+    console.warn('Component name not found');
+    return;
+  }
+
+  // Get the clean HTML of the component
+  const componentData = getCleanInnerHTML(componentContainer);
+
+  // Save using the existing saveComponent function
+  await saveComponent(pageId, componentName, componentData);
+
+  console.log(`Component '${componentName}' changes saved successfully!`);
+} // DATA OUT: null
+window.saveComponentChanges = saveComponentChanges;
+
+// This function sets up an observer specifically for components in #componentSteps
+// DATA IN: String
+function setupComponentAutoSave(pageId) {
+  // Check periodically for #componentSteps since it may not exist initially
+  const checkForComponentSteps = () => {
+    const targetNode = document.getElementById('componentSteps');
+    if (!targetNode) {
+      // Check again in 1 second if element doesn't exist yet
+      setTimeout(checkForComponentSteps, 1000);
+      return;
+    }
+
+    const config = {
+      childList: true,
+      attributes: true,
+      subtree: true,
+      characterData: true
+    };
+
+    const callback = function (mutationsList, observer) {
+      for (const mutation of mutationsList) {
+        if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
+          saveComponentChanges(pageId);
+          break;
+        }
+      }
+    };
+
+    const observer = new MutationObserver(callback);
+    observer.observe(targetNode, config);
+    console.log('Component auto-save setup complete.');
+  };
+
+  // Start checking for the element
+  checkForComponentSteps();
+} // DATA OUT: null
+window.setupComponentAutoSave = setupComponentAutoSave;

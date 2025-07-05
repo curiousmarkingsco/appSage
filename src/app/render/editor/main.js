@@ -413,6 +413,7 @@ async function initializeConfig() {
         loadPageMetadata(config);
       }
       setupAutoSave(config);
+      setupComponentAutoSave(config); // Set up component-specific auto-save
     } else {
       createNewConfigurationFile();
     }

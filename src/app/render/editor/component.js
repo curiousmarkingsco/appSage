@@ -8,14 +8,136 @@
 // will be revealed in the sidebar to the left of the screen. It does this by
 // first making the label and supporting elements for moving and removing the
 // component, and then adding the editor buttons, dropdowns, etc.
+// Additionally, it now creates an isolated editing environment using #componentSteps
 // DATA IN: HTML Element, <div>
 function enableEditComponentOnClick(component) {
   component.addEventListener('click', function (event) {
     event.stopPropagation();
-    addComponentOptions(component);
+    enterComponentEditingMode(component);
   });
 } // DATA OUT: null
 window.enableEditComponentOnClick = enableEditComponentOnClick;
+
+// Creates and manages the isolated component editing environment
+function enterComponentEditingMode(component) {
+  createComponentStepsOverlay();
+  const componentSteps = document.getElementById('componentSteps');
+
+  // Clone the component for isolated editing
+  const componentClone = component.cloneNode(true);
+  componentClone.classList.add('component-editing-active');
+
+  // Clear and prepare the componentSteps container
+  componentSteps.innerHTML = '';
+  componentSteps.appendChild(componentClone);
+
+  // Show the overlay and hide the main page
+  showComponentStepsOverlay();
+
+  // Set up editing options in the sidebar
+  addComponentOptions(componentClone);
+
+  // Store reference to original component for syncing
+  componentSteps.setAttribute('data-original-component-id', component.getAttribute('data-component-id') || '');
+  componentClone.setAttribute('data-is-editing-clone', 'true');
+
+  // Add exit button to return to page editing
+  addExitComponentEditingButton();
+}
+window.enterComponentEditingMode = enterComponentEditingMode;
+
+// Creates the #componentSteps overlay if it doesn't exist
+function createComponentStepsOverlay() {
+  let componentSteps = document.getElementById('componentSteps');
+  if (!componentSteps) {
+    const page = document.getElementById('page');
+    componentSteps = document.createElement('div');
+    componentSteps.id = 'componentSteps';
+    componentSteps.className = 'fixed inset-0 z-40 bg-pearl-bush-100 p-8 hidden overflow-auto';
+    componentSteps.style.marginLeft = '18rem'; // Match the page margin
+    componentSteps.style.width = 'calc(100% - 18rem)'; // Match the page width
+
+    // Insert after the page element
+    page.parentNode.append(componentSteps, page.nextSibling);
+  }
+}
+window.createComponentStepsOverlay = createComponentStepsOverlay;
+
+// Shows the componentSteps overlay and hides the main page
+function showComponentStepsOverlay() {
+  const componentSteps = document.getElementById('componentSteps');
+  const page = document.getElementById('page');
+
+  if (componentSteps && page) {
+    createComponentStepsOverlay();
+    page.classList.add('hidden');
+  }
+}
+window.showComponentStepsOverlay = showComponentStepsOverlay;
+
+// Hides the componentSteps overlay and shows the main page
+function hideComponentStepsOverlay() {
+  const componentSteps = document.getElementById('componentSteps');
+  const page = document.getElementById('page');
+
+  if (componentSteps && page) {
+    componentSteps.remove();
+    page.classList.remove('hidden');
+
+    // Clear the componentSteps content
+    componentSteps.innerHTML = '';
+    componentSteps.removeAttribute('data-original-component-id');
+  }
+}
+window.hideComponentStepsOverlay = hideComponentStepsOverlay;
+
+// Adds an exit button to return to page editing mode
+function addExitComponentEditingButton() {
+  const sidebar = document.getElementById('sidebar-dynamic');
+  const exitButton = document.createElement('button');
+  exitButton.className = 'w-full mb-4 bg-russett-500 hover:bg-russett-700 text-fuscous-gray-50 font-bold py-2 px-4 rounded';
+  exitButton.innerHTML = '← Exit Component Editing';
+  exitButton.addEventListener('click', exitComponentEditingMode);
+
+  // Insert at the top of the sidebar
+  sidebar.insertBefore(exitButton, sidebar.firstChild);
+}
+window.addExitComponentEditingButton = addExitComponentEditingButton;
+
+// Exits component editing mode and returns to page editing
+function exitComponentEditingMode() {
+  syncComponentChangesToPage();
+  hideComponentStepsOverlay();
+
+  // Clear sidebar
+  const sidebar = document.getElementById('sidebar-dynamic');
+  sidebar.innerHTML = '<p>No content to edit. Add content by making a grid or column.</p>';
+
+  // Remove any editing highlights
+  removeEditingHighlights();
+}
+window.exitComponentEditingMode = exitComponentEditingMode;
+
+// Syncs changes from the editing clone back to the original component
+function syncComponentChangesToPage() {
+  const componentSteps = document.getElementById('componentSteps');
+  const originalComponentId = componentSteps.getAttribute('data-original-component-id');
+
+  if (originalComponentId) {
+    const editingClone = componentSteps.querySelector('[data-is-editing-clone="true"]');
+    const originalComponent = document.querySelector(`[data-component-id="${originalComponentId}"]`);
+
+    if (editingClone && originalComponent) {
+      // Remove editing-specific attributes
+      editingClone.removeAttribute('data-is-editing-clone');
+      editingClone.classList.remove('component-editing-active');
+
+      // Replace the original component with the edited version
+      originalComponent.parentNode.replaceChild(editingClone.cloneNode(true), originalComponent);
+    }
+  }
+}
+window.syncComponentChangesToPage = syncComponentChangesToPage;
 
 function createRemoveComponentButton(component, gridContainer) {
   const button = document.createElement('button');
@@ -65,8 +187,10 @@ function addComponentLibraryOptions(container) {
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
       componentContainer.className = 'pagecomponent pagecontainer p-4 group';
+      componentContainer.setAttribute('data-component-name', component);
+      componentContainer.setAttribute('data-component-id', generateUniqueId());
       const componentTemplate = AppstartComponents[component].html_template;
-      convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
+      convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, componentContainer.getAttribute('data-component-id')), componentContainer);
       container.appendChild(componentContainer);
       enableEditComponentOnClick(componentContainer);
       addComponentOptions(componentContainer, component);
@@ -77,8 +201,17 @@ window.addComponentLibraryOptions = addComponentLibraryOptions;
 
 function addComponentOptions(container, componentName = null) {
   if (!componentName) {
-    componentName = container.querySelector('[data-component-name]').getAttribute('data-component-name');
+    // Try to get component name from the container or its children
+    componentName = container.getAttribute('data-component-name') ||
+                   (container.querySelector('[data-component-name]') &&
+                    container.querySelector('[data-component-name]').getAttribute('data-component-name'));
   }
+
+  if (!componentName) {
+    console.warn('Could not determine component name for container:', container);
+    return;
+  }
+
   const sidebar = document.getElementById('sidebar-dynamic');
   sidebar.innerHTML = `${generateSidebarTabs()}`;
   activateTabs();
