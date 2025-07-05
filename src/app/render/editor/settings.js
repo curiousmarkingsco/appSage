@@ -16,7 +16,7 @@ function initializeSettings() {
 
 
   // Function to save settings
-  document.getElementById('AppstartSettingsForm').addEventListener('submit', function (event) {
+  document.getElementById('AppstartSettingsForm').addEventListener('submit', async function (event) {
     event.preventDefault();
 
     // Collect selected fonts and manually added fonts
@@ -69,8 +69,8 @@ function initializeSettings() {
       advancedMode: document.getElementById('advancedMode').checked
     };
 
-    // Using localStorage for non-Electron mode
-    localStorage.setItem(AppstartSettingsString, JSON.stringify(formData));
+    // Using IndexedDB
+    await idbSet(AppstartSettingsString, JSON.stringify(formData));
     generateGfontsEmbedCode();
 
     const params = new URLSearchParams(window.location.search);
@@ -218,8 +218,8 @@ function showSettingsSavedModal() {
 }
 window.showSettingsSavedModal = showSettingsSavedModal;
 
-function processPastedColorObject(newColorData) {
-  let colorObject = JSON.parse(localStorage.getItem('AppstartSettings')) || { fonts: {}, colors: {}, advancedMode: true };
+async function processPastedColorObject(newColorData) {
+  let colorObject = await idbGet('AppstartSettings') || { fonts: {}, colors: {}, advancedMode: true };
 
   // Merging the new color data with the existing colors
   colorObject.colors = {
@@ -227,7 +227,7 @@ function processPastedColorObject(newColorData) {
     ...newColorData
   };
 
-  localStorage.setItem('AppstartSettings', JSON.stringify(colorObject));
+  await idbSet('AppstartSettings', colorObject);
 }
 window.processPastedColorObject = processPastedColorObject;
 

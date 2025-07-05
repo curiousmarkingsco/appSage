@@ -402,35 +402,31 @@ async function initializeConfig() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
   let pageData = await loadPage(config);
-  return new Promise((resolve, reject) => {
-    try {
-      if (typeof config !== 'undefined' && config !== 'new') {
-        // Using localStorage for non-Electron mode
-        const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
-        let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-        document.querySelector('title').textContent = `Editing: ${pageTitle} | Appstart`;
-        if (pageData && pageData.length > 0) {
-          loadChanges(pageData);
-          loadPageSettings(config);
-          loadPageMetadata(config);
-        }
-        setupAutoSave(config);
-      } else {
-        createNewConfigurationFile();
+  try {
+    if (typeof config !== 'undefined' && config !== 'new') {
+      const titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
+      let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+      document.querySelector('title').textContent = `Editing: ${pageTitle} | Appstart`;
+      if (pageData && pageData.length > 0) {
+        loadChanges(pageData);
+        loadPageSettings(config);
+        loadPageMetadata(config);
       }
-      resolve();
-    } catch (error) {
-      reject(error); // Reject the promise if there's an error
+      setupAutoSave(config);
+    } else {
+      createNewConfigurationFile();
     }
-  });
+  } catch (error) {
+    console.error("Error initializing config:", error);
+  }
 }
 window.initializeConfig = initializeConfig;
 
 window.editorMode = true;
 
-// Function to save metadata to localStorage, ensuring no duplicate tags
-function saveMetadataToLocalStorage(page_id, newMetaTags) {
-  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
+// Function to save metadata to IndexedDB, ensuring no duplicate tags
+async function saveMetadataToIndexedDB(page_id, newMetaTags) {
+  const storedData = await idbGet(AppstartStorageString);
   const settings = JSON.parse(storedData.pages[page_id].settings);
 
   if (!settings.metaTags) {
@@ -451,13 +447,13 @@ function saveMetadataToLocalStorage(page_id, newMetaTags) {
     }
   });
 
-  // Save updated settings back to localStorage
+  // Save updated settings back to IndexedDB
   storedData.pages[page_id].settings = JSON.stringify(settings);
-  localStorage.setItem(AppstartStorageString, JSON.stringify(storedData));
+  await idbSet(AppstartStorageString, storedData);
 
   console.log('Metadata saved successfully!');
 }
-window.saveMetadataToLocalStorage = saveMetadataToLocalStorage;
+window.saveMetadataToIndexedDB = saveMetadataToIndexedDB;
 
 // This function is for adding to the sidebar all the options available for
 // styles that impact the entire page, or metadata like page titles, og:image
@@ -1027,7 +1023,7 @@ function addEditableMetadata(container, placement) {
         }
       });
 
-      saveMetadataToLocalStorage(page_id, metaTags);
+      saveMetadataToIndexedDB(page_id, metaTags);
     });
   });
 } // DATA OUT: null

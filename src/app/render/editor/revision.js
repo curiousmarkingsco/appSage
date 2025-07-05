@@ -52,22 +52,22 @@ async function restoreRevision(pageName, pointer) {
   const transaction = db.transaction("RevisionHistory", "readwrite");
   const store = transaction.objectStore("RevisionHistory");
 
-  store.get(pageName).onsuccess = (event) => {
+  store.get(pageName).onsuccess = async (event) => {
     const pageHistory = event.target.result;
     if (pageHistory && pageHistory.revisions[pointer]) {
-      // Parse the existing localStorage object
-      const appStorage = JSON.parse(localStorage.AppstartStorage);
+      // Get the existing app storage object from IndexedDB
+      const appStorage = await idbGet('AppstartStorage');
 
       // Update the specific page's page_data with the selected revision
       if (appStorage.pages && appStorage.pages[pageName]) {
         appStorage.pages[pageName].page_data = JSON.stringify(pageHistory.revisions[pointer]);
       } else {
-        console.error(`Page ${pageName} not found in localStorage`);
+        console.error(`Page ${pageName} not found in IndexedDB`);
         return;
       }
 
-      // Write the updated appStorage back to localStorage
-      localStorage.AppstartStorage = JSON.stringify(appStorage);
+      // Write the updated appStorage back to IndexedDB
+      await idbSet('AppstartStorage', appStorage);
 
       // Reload the page
       // TODO: Test if soft reloading works and/or implement soft reloading properly
