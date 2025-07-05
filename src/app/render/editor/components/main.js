@@ -17,10 +17,6 @@ function initializeComponentForm(container, componentName, form) {
     initializeQuoteDataFromForm(container);
     form.setAttribute('data-initialized', true);
   }
-  if (componentName === 'dialogToast') {
-    initializeDialogToastForm(container);
-    form.setAttribute('data-initialized', true);
-  }
 }
 window.initializeComponentForm = initializeComponentForm;
 
@@ -33,9 +29,6 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'rotatingQuotes') {
     initializeRotatingQuotes(container.querySelector('.rotatingQuotes-container'));
-  }
-  if (componentName === 'dialogToast') {
-    initializeDialogToast(container.querySelector('.dialogToast-container'));
   }
 }
 window.initializeExistingComponents = initializeExistingComponents;

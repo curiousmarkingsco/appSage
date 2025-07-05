@@ -77,6 +77,42 @@ async function saveComponent(pageId, componentName, object) {
   // Store the heavy object in IndexedDB under a namespaced key
   await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
 }
+window.saveComponent = saveComponent;
+
+async function saveComponentObjectToPage(componentName, object) {
+  try {
+    const pageId = getPageId();
+    // Using IndexedDB for non-Electron mode
+    const AppstartStorage = await idbGet(AppstartStorageString) || {};
+
+    if (!AppstartStorage.pages) {
+      AppstartStorage.pages = {};
+    }
+    if (!AppstartStorage.pages[pageId]) {
+      AppstartStorage.pages[pageId] = {};
+    }
+
+    // Just store a lightweight reference — actual object goes in IndexedDB
+    AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
+    await idbSet(AppstartStorageString, AppstartStorage);
+
+    // Store the heavy object in IndexedDB under a namespaced key
+    await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
+
+    // Update the component data cache for immediate access
+    if (!window._componentDataCache) window._componentDataCache = {};
+    if (!window._componentDataCache[pageId]) window._componentDataCache[pageId] = {};
+    window._componentDataCache[pageId][componentName] = object;
+
+    console.log(`Saved and cached component data for ${componentName}`);
+
+    // TODO: Then, send to an API if enabled
+    // if (apiEnabled) {}
+  } catch (error) {
+    console.error('Something went wrong saving component data.', error);
+  }
+}
+window.saveComponentObjectToPage = saveComponentObjectToPage;
 
 // This function is for automatically saving the page every 15 seconds.
 // DATA IN: String
@@ -108,19 +144,6 @@ function setupAutoSave(page) {
   observer.observe(targetNode, config);
   console.log('Auto-save setup complete.');
 } // DATA OUT: null
-
-// function setupAutoSave(pageId) {
-//   setInterval(async () => {
-//     // Using IndexedDB for non-Electron mode
-//     const AppstartStorage = await idbGet(AppstartStorageString) || {};
-
-//     if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
-//       AppstartStorage.pages[pageId].page_data = json;
-//       await idbSet(AppstartStorageString, AppstartStorage);
-//       console.log('Auto-saved page data.');
-//     }
-//   }, 15000);
-// } // DATA OUT: null
 window.setupAutoSave = setupAutoSave;
 
 // This function creates or prepares the necessary IndexedDB object in order
@@ -215,47 +238,83 @@ async function saveComponentChanges(pageId) {
   // Get the clean HTML of the component
   const componentData = getCleanInnerHTML(componentContainer);
 
+  // Create a complete component object with all attributes and content
+  const componentObject = {
+    html: componentData,
+    attributes: {},
+    className: componentContainer.className,
+    id: componentContainer.id
+  };
+
+  // Capture all attributes
+  Array.from(componentContainer.attributes).forEach(attr => {
+    componentObject.attributes[attr.name] = attr.value;
+  });
+
   // Save using the existing saveComponent function
-  await saveComponent(pageId, componentName, componentData);
+  await saveComponent(pageId, componentName, componentObject);
 
   console.log(`Component '${componentName}' changes saved successfully!`);
-} // DATA OUT: null
+}
 window.saveComponentChanges = saveComponentChanges;
 
 // This function sets up an observer specifically for components in #componentSteps
 // DATA IN: String
 function setupComponentAutoSave(pageId) {
   // Check periodically for #componentSteps since it may not exist initially
-  const checkForComponentSteps = () => {
+  const checkForComponentSteps = setInterval(() => {
     const targetNode = document.getElementById('componentSteps');
-    if (!targetNode) {
-      // Check again in 1 second if element doesn't exist yet
-      setTimeout(checkForComponentSteps, 1000);
-      return;
-    }
 
-    const config = {
-      childList: true,
-      attributes: true,
-      subtree: true,
-      characterData: true
-    };
+    if (targetNode && !targetNode.classList.contains('hidden')) {
+      clearInterval(checkForComponentSteps);
 
-    const callback = function (mutationsList, observer) {
-      for (const mutation of mutationsList) {
-        if (['childList', 'attributes', 'characterData'].includes(mutation.type)) {
-          saveComponentChanges(pageId);
-          break;
+      const config = {
+        childList: true,
+        attributes: true,
+        subtree: true,
+        characterData: true,
+        attributeOldValue: true,
+        characterDataOldValue: true
+      };
+
+      const callback = function (mutationsList, observer) {
+        let shouldSave = false;
+
+        for (const mutation of mutationsList) {
+          // Check if this is a meaningful change
+          if (mutation.type === 'attributes') {
+            // Save on class or style changes
+            if (mutation.attributeName === 'class' || mutation.attributeName === 'style') {
+              shouldSave = true;
+              break;
+            }
+          } else if (mutation.type === 'childList' || mutation.type === 'characterData') {
+            shouldSave = true;
+            break;
+          }
         }
-      }
-    };
 
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
-    console.log('Component auto-save setup complete.');
-  };
+        if (shouldSave) {
+          // Debounce the save operation
+          clearTimeout(window.componentSaveTimeout);
+          window.componentSaveTimeout = setTimeout(() => {
+            saveComponentChanges(pageId);
+          }, 500);
+        }
+      };
 
-  // Start checking for the element
-  checkForComponentSteps();
-} // DATA OUT: null
+      const observer = new MutationObserver(callback);
+      observer.observe(targetNode, config);
+      console.log('Component auto-save setup complete.');
+
+      // Store observer reference for cleanup
+      window.componentObserver = observer;
+    }
+  }, 100);
+
+  // Clean up after 10 seconds if componentSteps never appears
+  setTimeout(() => {
+    clearInterval(checkForComponentSteps);
+  }, 10000);
+}
 window.setupComponentAutoSave = setupComponentAutoSave;

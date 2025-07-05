@@ -43,6 +43,9 @@ function enterComponentEditingMode(component) {
 
   // Add exit button to return to page editing
   addExitComponentEditingButton();
+
+  // Enable style editing for the component and its children
+  enableStyleEditingForComponent(componentClone);
 }
 window.enterComponentEditingMode = enterComponentEditingMode;
 
@@ -63,13 +66,40 @@ function createComponentStepsOverlay() {
 }
 window.createComponentStepsOverlay = createComponentStepsOverlay;
 
+function enableStyleEditingForComponent(component) {
+  // Make sure the component and its children can be styled
+  component.setAttribute('data-component-editing', 'true');
+
+  // Enable click-to-edit for all elements within the component
+  const allElements = component.querySelectorAll('*');
+  allElements.forEach(element => {
+    element.addEventListener('click', function(e) {
+      e.stopPropagation();
+
+      // Clear previous selections
+      document.querySelectorAll('.editor-selected').forEach(el => {
+        el.classList.remove('editor-selected');
+      });
+
+      // Select this element
+      element.classList.add('editor-selected');
+
+      // Show styling options in sidebar
+      if (window.addComponentOptions) {
+        addComponentOptions(element);
+      }
+    });
+  });
+}
+window.enableStyleEditingForComponent = enableStyleEditingForComponent;
+
 // Shows the componentSteps overlay and hides the main page
 function showComponentStepsOverlay() {
   const componentSteps = document.getElementById('componentSteps');
   const page = document.getElementById('page');
 
   if (componentSteps && page) {
-    createComponentStepsOverlay();
+    componentSteps.classList.remove('hidden');
     page.classList.add('hidden');
   }
 }
@@ -81,7 +111,7 @@ function hideComponentStepsOverlay() {
   const page = document.getElementById('page');
 
   if (componentSteps && page) {
-    componentSteps.remove();
+    componentSteps.classList.add('hidden');
     page.classList.remove('hidden');
 
     // Clear the componentSteps content
@@ -121,6 +151,8 @@ window.exitComponentEditingMode = exitComponentEditingMode;
 // Syncs changes from the editing clone back to the original component
 function syncComponentChangesToPage() {
   const componentSteps = document.getElementById('componentSteps');
+  if (!componentSteps) return;
+
   const originalComponentId = componentSteps.getAttribute('data-original-component-id');
 
   if (originalComponentId) {
@@ -128,12 +160,27 @@ function syncComponentChangesToPage() {
     const originalComponent = document.querySelector(`[data-component-id="${originalComponentId}"]`);
 
     if (editingClone && originalComponent) {
-      // Remove editing-specific attributes
-      editingClone.removeAttribute('data-is-editing-clone');
-      editingClone.classList.remove('component-editing-active');
+      // Get the clean HTML of the edited component
+      const cleanHTML = getCleanInnerHTML(editingClone);
 
-      // Replace the original component with the edited version
-      originalComponent.parentNode.replaceChild(editingClone.cloneNode(true), originalComponent);
+      // Replace the original component's content
+      originalComponent.innerHTML = editingClone.innerHTML;
+
+      // Copy all attributes from the edited clone to the original
+      Array.from(editingClone.attributes).forEach(attr => {
+        if (attr.name !== 'data-is-editing-clone') {
+          originalComponent.setAttribute(attr.name, attr.value);
+        }
+      });
+
+      // Save the component changes
+      const componentName = originalComponent.getAttribute('data-component-name');
+      if (componentName) {
+        const pageId = getPageId();
+        saveComponent(pageId, componentName, cleanHTML);
+      }
+
+      console.log('Component synced successfully to page');
     }
   }
 }

@@ -32,7 +32,6 @@ function initializeQuoteDataFromForm(container) {
   let quotes = [];
 
   if (quotesData) {
-    quotesData = JSON.parse(quotesData);
     quotes = Object.keys(quotesData).map(key => ({ id: key, ...quotesData[key] }));
   }
 
@@ -116,7 +115,6 @@ function initializeRotatingQuotes(container) {
   let quotesData = getCurrentPage().rotatingQuotes || rotatingQuotes();
 
   if (quotesData) {
-    if (!(typeof quotesData === 'object')) quotesData = JSON.parse(quotesData);
     quotes = Object.keys(quotesData).map(key => quotesData[key]);
   }
 
@@ -151,18 +149,6 @@ function initializeRotatingQuotes(container) {
       "built-in-quote-1": {
         "quote": "Don't worry about me. I've been fired so many times before. The only backlash I've ever received is an enormous RUSH of relief.",
         "source": "Maria Bamford"
-      },
-      "built-in-quote-2": {
-        "quote": "A human being should be able to change a diaper, plan an invasion, butcher a hog, conn a ship, design a building, write a sonnet, balance accounts, build a wall, set a bone, comfort the dying, take orders, give orders, cooperate, act alone, solve equations, analyse a new problem, pitch manure, program a computer, cook a tasty meal, fight efficiently, die gallantly. Specialization is for insects.",
-        "source": "Robert A. Heinlein"
-      },
-      "built-in-quote-3": {
-        "quote": "Perception precedes comprehension.",
-        "source": "Minh Tran"
-      },
-      "built-in-quote-4": {
-        "quote": "An untamed, brilliant mind often possesses no discernment between nonsense, common sense, and brilliance.",
-        "source": "Ian R. McKenzie, quoting himself as he rips another fart and huffs it in deeply with his nose"
       }
     }
   }
