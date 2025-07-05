@@ -17,10 +17,6 @@ function initializeComponentForm(container, componentName, form) {
     initializeQuoteDataFromForm(container);
     form.setAttribute('data-initialized', true);
   }
-  if (componentName === 'calculator') {
-    initializeCalculatorForm(container);
-    form.setAttribute('data-initialized', true);
-  }
   if (componentName === 'dialogToast') {
     initializeDialogToastForm(container);
     form.setAttribute('data-initialized', true);
@@ -37,9 +33,6 @@ function initializeExistingComponents(container, componentName) {
   }
   if (componentName === 'rotatingQuotes') {
     initializeRotatingQuotes(container.querySelector('.rotatingQuotes-container'));
-  }
-  if (componentName === 'calculator') {
-    initializeCalculator(container.querySelector('.calculator-container'));
   }
   if (componentName === 'dialogToast') {
     initializeDialogToast(container.querySelector('.dialogToast-container'));
