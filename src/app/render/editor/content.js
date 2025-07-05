@@ -520,7 +520,8 @@ function updateSidebarForTextElements(sidebar, container) {
       const linkOpts = document.getElementById('linkOpts');
       if (linkOpts) linkOpts.remove();
     }
-    addContentOptions(tempContentContainer);
+    // Don't call addContentOptions here to prevent multiple rendering of text options
+    // addContentOptions(tempContentContainer);
     // if (element.tagName === 'FORM') updateSidebarForTextElements(sidebar, tempContentContainer, true);
   });
 
@@ -590,7 +591,6 @@ function updateSidebarForTextElements(sidebar, container) {
     formContainer.prepend(srOnly);
     formContainer.prepend(textInput);
     formContainer.prepend(titleElement);
-    addTextOptions(sidebar, targetElement);
   } else {
     const linkOpts = document.getElementById('linkOpts');
     if (linkOpts) linkOpts.remove();
@@ -602,7 +602,16 @@ function updateSidebarForTextElements(sidebar, container) {
     formContainer.prepend(mediaUrlInput);
     formContainer.prepend(fileInput);
     formContainer.prepend(titleElement);
-    addTextOptions(sidebar, contentContainer);
+  }
+
+  // Add text editing options at the top for text-based elements (after content form, before standard styling)
+  const isTextBasedElement = targetElement ?
+    ['A', 'BUTTON'].includes(targetElement.tagName) :
+    (contentContainer.firstElementChild && !['IMG', 'VIDEO', 'AUDIO'].includes(contentContainer.firstElementChild.tagName));
+
+  if (isTextBasedElement) {
+    const elementToApplyTo = targetElement && ['A', 'BUTTON'].includes(targetElement.tagName) ? targetElement : contentContainer;
+    addTextOptions(sidebar, elementToApplyTo);
   }
 
   // Standard editing options

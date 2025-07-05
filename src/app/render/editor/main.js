@@ -872,15 +872,12 @@ window.resetCopyPageButton = resetCopyPageButton;
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
 // This function creates the form input for changing the page's title.
 // DATA IN: ['HTML Element, <div>', 'null || String:append/prepend']
-async function addEditablePageTitle(sidebar, element) {
+async function addEditablePageTitle(sidebar, placement) {
   // Using IndexedDB for non-Electron mode
   let titleIdMap = await idbGet(AppstartTitleIdMapString) || {};
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const pageTitle = Object.keys(titleIdMap).find(key => titleIdMap[key] === config) || 'Untitled';
-
-  const titleContainer = document.createElement('div');
-  titleContainer.className = 'mb-4';
+  const currentTitle = Object.keys(titleIdMap).find(key => titleIdMap[key] === config) || 'Untitled';
 
   const titleLabel = document.createElement('label');
   titleLabel.className = 'text-fuscous-gray-700 text-xs uppercase mt-2';
@@ -895,17 +892,127 @@ async function addEditablePageTitle(sidebar, element) {
 
   titleInput.addEventListener('change', function () {
     const newTitle = titleInput.value;
-    changeLocalStoragePageTitle(newTitle);
-  });
-  titleInput.addEventListener('input', (e) => {
-    const newTitle = e.target.value;
-    document.querySelector('title').textContent = `Editing: ${newTitle} | Appstart`;
     changeIndexedDBPageTitle(newTitle);
   });
-
-  sidebar.prepend(titleContainer);
+  if (placement === 'prepend') {
+    sidebar.prepend(titleInput);
+    sidebar.prepend(titleLabel);
+  } else {
+    sidebar.appendChild(titleLabel);
+    sidebar.appendChild(titleInput);
+  }
 } // DATA OUT: null
 window.addEditablePageTitle = addEditablePageTitle;
+
+async function addEditableMetadata(sidebar, placement) {
+  /*
+  defaults:
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  automatically generate?:
+    <meta name="description" content="This page was built using Appstart">
+    <meta property="og:title" content="Untitled | Built w/ Appstart">
+  */
+  const metaDataContainer = document.createElement('div');
+  if (placement === 'prepend') {
+    sidebar.prepend(metaDataContainer);
+  } else {
+    sidebar.appendChild(metaDataContainer);
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const page_id = params.get('config');
+  const metaDataPairsContainer = document.createElement('div');
+  metaDataPairsContainer.innerHTML = '<h3 class="font-semibold text-lg mb-2">Metadata</h3>';
+  metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-pearl-bush-200 overflow-y-scroll p-2 max-h-48';
+  metaDataContainer.appendChild(metaDataPairsContainer);
+
+  const storedData = await idbGet(AppstartStorageString);
+  if (storedData) {
+    const settings = storedData.pages[page_id].settings;
+    if (typeof settings.length !== 'undefined') {
+      const metaTags = JSON.parse(settings).metaTags;
+
+      if (metaTags) {
+        metaTags.forEach(tag => {
+          addMetadataPair(tag.type, tag.name, tag.content);
+        });
+      }
+    }
+  }
+
+
+  // Add initial empty metadata pair
+  function addMetadataPair(meta_type, meta_name, meta_content) {
+    const pair = document.createElement('div');
+    pair.className = 'metadata-pair mt-2'
+
+    const select = document.createElement('select');
+    select.className = 'metadata meta-type my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+    const optionName = document.createElement('option');
+    optionName.value = 'name';
+    optionName.selected = 'name' === meta_type;
+    optionName.text = 'Name';
+    const optionProperty = document.createElement('option');
+    optionProperty.value = 'property';
+    optionName.selected = 'property' === meta_type;
+    optionProperty.text = 'Property';
+    const optionLink = document.createElement('option');
+    optionLink.value = 'link';
+    optionLink.selected = 'link' === meta_type;
+    optionLink.text = 'Link';
+    select.appendChild(optionName);
+    select.appendChild(optionProperty);
+    select.appendChild(optionLink);
+
+    const nameInput = document.createElement('input');
+    nameInput.className = 'metadata meta-name my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+    nameInput.type = 'text';
+    nameInput.value = meta_name || '';
+    nameInput.placeholder = 'Name/Property';
+
+    const contentInput = document.createElement('input');
+    contentInput.className = 'metadata meta-content my-1 shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
+    contentInput.type = 'text';
+    contentInput.value = meta_content || '';
+    contentInput.placeholder = 'Content';
+
+    pair.appendChild(select);
+    pair.appendChild(nameInput);
+    pair.appendChild(contentInput);
+    metaDataPairsContainer.appendChild(pair);
+  }
+
+  addMetadataPair();
+
+  const addButton = document.createElement('button');
+  addButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white" class="h-4 w-4 inline mb-1"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" /></svg> Metadata';
+  addButton.className = 'col-span-2 bg-fruit-salad-500 hover:bg-fruit-salad-700 text-fuscous-gray-50 font-bold p-2 rounded h-12 w-28 mt-2';
+  addButton.id = 'add-metadata-button';
+  metaDataContainer.appendChild(addButton);
+
+  addButton.addEventListener('click', function () {
+    addMetadataPair();
+  });
+
+  document.querySelectorAll('.metadata').forEach(input => {
+    input.addEventListener('change', function () {
+      const metaTags = [];
+      document.querySelectorAll('.metadata-pair').forEach(pair => {
+        const type = pair.querySelector('.meta-type').value;
+        const name = pair.querySelector('.meta-name').value;
+        const content = pair.querySelector('.meta-content').value;
+        if (name && content) {
+          metaTags.push({ type, name, content });
+        }
+      });
+
+      saveMetadataToIndexedDB(page_id, metaTags);
+    });
+  });
+} // DATA OUT: null
+window.addEditableMetadata = addEditableMetadata;
 
 // This function changes the page's title. Because IndexedDB data for the
 // page is stored in a separate object from the page's title, we need to
