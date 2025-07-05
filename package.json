@@ -1,8 +1,8 @@
 {
-  "name": "appsage",
+  "name": "appstart",
   "type": "module",
   "version": "1.0.0",
-  "description": "appSage is a no-code web document builder.",
+  "description": "Appstart is a no-code web document builder.",
   "main": "src/main.js",
   "devDependencies": {
     "@babel/core": "^7.26.0",

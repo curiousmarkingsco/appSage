@@ -15,7 +15,7 @@ async function initializeDashboard() {
         <link rel="mask-icon" href="./assets/favicons/safari-pinned-tab.svg" color="#4b5d48">
         <meta name="msapplication-TileColor" content="#f2f0e9">
         <meta name="theme-color" content="#f2f0e9">
-        <title>Dashboard | appSage</title>
+        <title>Dashboard | Appstart</title>
         <link rel="stylesheet" href="./tailwind-output.css">
       `;
 
@@ -23,7 +23,7 @@ async function initializeDashboard() {
       // Clear body and inject body content
       apex.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
-          <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
+          <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access Appstart.</h2>
           <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
         </div>
         <div class="min-h-screen w-full min-h-screen bg-pearl-bush-100 hidden lg:block">
@@ -57,13 +57,13 @@ async function initializeDashboard() {
 
       // Load pages from localStorage and populate the page list
       const container = document.getElementById('pageList');
-      let appSageStorage, pageList, titleIdMap;
+      let AppstartStorage, pageList, titleIdMap;
 
       // Using localStorage for non-Electron mode
-      const appSageStoreObject = localStorage['appSageStorage'];
-      appSageStorage = appSageStoreObject ? JSON.parse(appSageStoreObject) : { pages: [], titleIdMap: [], settings: {} };
-      pageList = appSageStorage.pages;
-      titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+      const AppstartStoreObject = localStorage['AppstartStorage'];
+      AppstartStorage = AppstartStoreObject ? JSON.parse(AppstartStoreObject) : { pages: [], titleIdMap: [], settings: {} };
+      pageList = AppstartStorage.pages;
+      titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
       displayPages(titleIdMap, pageList, container);
 
       resolve();

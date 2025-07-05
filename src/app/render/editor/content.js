@@ -275,7 +275,7 @@ function createLabelAllDevices() {
   breakpoints.forEach(bp => {
     const responsiveIcon = document.createElement('span');
     responsiveIcon.className = 'h-3 w-3 mr-2 inline-block';
-    responsiveIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
+    responsiveIcon.innerHTML = `${AppstartEditorIcons['responsive'][bp]}`;
     label.prepend(responsiveIcon);
   });
   return label;

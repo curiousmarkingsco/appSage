@@ -7,7 +7,7 @@ if (typeof global === 'undefined') {
 
 const apex = document.getElementById('apex');
 
-window.appSageStore;
+window.AppstartStore;
 // TODO: Finish adding remote API option for redundant/cloud storage
 // window.apiEnabled = false;
 
@@ -60,7 +60,7 @@ function initializeGlobals() {
 
         These house all the icons needed for the editor. Many icons are from
         FontAwesome, added to this repository in July 2024 under a paid license
-        under the ownership of Ian McKenzie (https://psychosage.io/contact/)
+        under the ownership of Ian McKenzie (https://relentlesscurious.com/contact/)
 
         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
         Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License -
@@ -69,35 +69,35 @@ function initializeGlobals() {
 
       */
 
-      if (typeof customAppSageStorage !== 'undefined') {
+      if (typeof customAppstartStorage !== 'undefined') {
         // This allows developers to set a custom storage name so that if people
-        // are using multiple appSage derived products, the object won't get too
-        // bogged down or confused. This was originally made to support dashSage.
-        window.appSageStorageString = customAppSageStorage;
-        window.appSageSettingsString = `${customAppSageStorage}Settings`;
-        window.appSageTitleIdMapString = `${customAppSageStorage}TitleIdMap`;
-        window.appSageDatabaseString = `${customAppSageStorage}Database`; // See: `function openDatabase() {...}` in content.js
+        // are using multiple Appstart derived products, the object won't get too
+        // bogged down or confused. This was originally made to support Kenzie Dashboard.
+        window.AppstartStorageString = customAppstartStorage;
+        window.AppstartSettingsString = `${customAppstartStorage}Settings`;
+        window.AppstartTitleIdMapString = `${customAppstartStorage}TitleIdMap`;
+        window.AppstartDatabaseString = `${customAppstartStorage}Database`; // See: `function openDatabase() {...}` in content.js
       } else {
-        window.appSageStorageString = 'appSageStorage';
-        window.appSageSettingsString = 'appSageSettings';
-        window.appSageTitleIdMapString = 'appSageTitleIdMap';
-        window.appSageDatabaseString = 'appSageDatabase';
+        window.AppstartStorageString = 'AppstartStorage';
+        window.AppstartSettingsString = 'AppstartSettings';
+        window.AppstartTitleIdMapString = 'AppstartTitleIdMap';
+        window.AppstartDatabaseString = 'AppstartDatabase';
       }
 
       // Requires paid license
-      window.appSagePremium = true;
+      window.AppstartPremium = true;
 
-      window.appSageComponents = combineComponentsLists();
+      window.AppstartComponents = combineComponentsLists();
 
       window.advancedMode = false;
-      if (localStorage.getItem(appSageSettingsString)) {
-        const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
+      if (localStorage.getItem(AppstartSettingsString)) {
+        const settingsForAdvCheck = JSON.parse(localStorage.getItem(AppstartSettingsString)).advancedMode;
         if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
       }
 
       window.currentBreakpoint = 'xs';
-      if (localStorage.getItem(appSageSettingsString)) {
-        const settingsForBpCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).currentBreakpoint;
+      if (localStorage.getItem(AppstartSettingsString)) {
+        const settingsForBpCheck = JSON.parse(localStorage.getItem(AppstartSettingsString)).currentBreakpoint;
         if (settingsForBpCheck) window.currentBreakpoint = settingsForBpCheck;
       }
 
@@ -120,7 +120,7 @@ function initializeGlobals() {
         "2xl": 'Extra, Extra Large'
       }
       window.tooltips = {
-        'add-component': "Add a new component (appSage premium only)",
+        'add-component': "Add a new component (Appstart premium only)",
         'copy-html-section': 'Copy this highlighted section of the document onto your clipboard (HTML format)',
         'justify-items-start': "Put columns in columns in the grid to the left-most side of the column's maximum span",
         'justify-items-end': "Put columns in columns in the grid to the right-most side of the column's maximum span",
@@ -194,7 +194,7 @@ function initializeGlobals() {
         'justify-reset': "Reset justification rules."
       }
 
-      window.appSageEditorIcons = {
+      window.AppstartEditorIcons = {
         "responsive": {
           "xs": '<svg data-extra-info="For smartwatch screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M64 48l256 0c0-26.5-21.5-48-48-48L112 0C85.5 0 64 21.5 64 48zM80 80C35.8 80 0 115.8 0 160L0 352c0 44.2 35.8 80 80 80l224 0c44.2 0 80-35.8 80-80l0-192c0-44.2-35.8-80-80-80L80 80zM192 213.3a42.7 42.7 0 1 1 0 85.3 42.7 42.7 0 1 1 0-85.3zM213.3 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm74.7-160a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm-74.7-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM64 256a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zm224-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64zM112 512l160 0c26.5 0 48-21.5 48-48L64 464c0 26.5 21.5 48 48 48z"/></svg>',
           "sm": '<svg data-extra-info="For mobile phone screens & larger" fill="currentColor" class="h-full w-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M16 64C16 28.7 44.7 0 80 0L304 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L80 512c-35.3 0-64-28.7-64-64L16 64zM144 448c0 8.8 7.2 16 16 16l64 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-64 0c-8.8 0-16 7.2-16 16zM304 64L80 64l0 320 224 0 0-320z"/></svg>',
@@ -319,18 +319,18 @@ function initializeGlobals() {
 
 function combineComponentsLists() {
   // Templates are loaded in the JS file dedicated to the component.
-  const appSagePremiumComponents = {
+  const AppstartPremiumComponents = {
     "internationalClocks": { name: 'International Clocks', license: 'premium', file: 'international_clocks.js', description: 'Display a clock on your page in any timezone you like.', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path class="fa-secondary" opacity=".4" d="M0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120c.1-13.4 10.8-24 24-24c6.6 0 12.6 2.7 17 7c2.2 2.2 3.9 4.8 5.1 7.6c.6 1.4 1.1 2.9 1.4 4.5c.2 .8 .3 1.6 .4 2.4s.1 1.6 .1 2.5c0 41 0 82.1 0 123.2L365.3 300c6.9 4.6 10.7 12.2 10.7 20c0 4.6-1.3 9.2-4 13.3c-4.6 6.9-12.2 10.7-20 10.7c-4.6 0-9.2-1.3-13.3-4c-32-21.3-64-42.7-96-64C236 271.5 232 264 232 256c0-45.3 0-90.7 0-136z"/><path class="fa-primary" d="M256 96c-13.3 0-24 10.7-24 24l0 136c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2 280 120c0-13.3-10.7-24-24-24z"/></svg>' },
     "quickNotes": { name: 'Quick Notes', license: 'premium', file: 'quick_notes.js', description: 'A small system for creating and organizing text, image, and audio notes.', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Pro 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2025 Fonticons, Inc.--><path d="M0 96C0 60.7 28.7 32 64 32l320 0c35.3 0 64 28.7 64 64l0 224-112 0c-26.5 0-48 21.5-48 48l0 112L64 480c-35.3 0-64-28.7-64-64L0 96zM402.7 352l45.3 0-32 32-64 64-32 32 0-45.3 0-66.7c0-8.8 7.2-16 16-16l66.7 0zM112 376a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM88 112a24 24 0 1 0 0 48 24 24 0 1 0 0-48zm24 144a24 24 0 1 0 -48 0 24 24 0 1 0 48 0z"/></svg>' }
   }
 
-  const appSageFreeComponents = {
+  const AppstartFreeComponents = {
     "rotatingQuotes": { name: 'Rotating Quotes', license: 'free', file: 'rotating_quotes.js', description: 'A box with a quote that displays a new quote on each page load!', html_template: '', form_template: '', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L185.6 508.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-80-96 0c-35.3 0-64-28.7-64-64L0 64zm160 48c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3 0-24 0-24c0-17.7-14.3-32-32-32l-48 0zm224 80l0-24 0-24c0-17.7-14.3-32-32-32l-48 0c-17.7 0-32 14.3-32 32l0 48c0 17.7 14.3 32 32 32l32 0 0 7.3c0 11.7-8.5 21.7-20.1 23.7l-7.9 1.3c-13.1 2.2-21.9 14.5-19.7 27.6s14.5 21.9 27.6 19.7l7.9-1.3c34.7-5.8 60.2-35.8 60.2-71l0-39.3z"/></svg>' },
     // "calculator": { name: 'Simple Calculator', license: 'free', file: 'calculator.js', description: 'A basic calculator with simple arithmetic functionality', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-384c0-35.3-28.7-64-64-64L64 0zM96 64l192 0c17.7 0 32 14.3 32 32l0 32c0 17.7-14.3 32-32 32L96 160c-17.7 0-32-14.3-32-32l0-32c0-17.7 14.3-32 32-32zm32 160a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM96 352a32 32 0 1 1 0-64 32 32 0 1 1 0 64zM64 416c0-17.7 14.3-32 32-32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32zM192 256a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zm64-64a32 32 0 1 1 0-64 32 32 0 1 1 0 64zm32 64a32 32 0 1 1 -64 0 32 32 0 1 1 64 0zM288 448a32 32 0 1 1 0-64 32 32 0 1 1 0 64z"/></svg>', html_template: '', form_template: '' },
     "dialogToast": { name: 'Dialog/Toast Notification', license: 'free', file: 'dialog_toast.js', description: 'A sliding dialog/toast notification with optional auto-dismiss and manual close options.', icon: '<svg class="h-full w-full" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L185.6 508.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-80-96 0c-35.3 0-64-28.7-64-64L0 64zm175 63c-9.4 9.4-9.4 24.6 0 33.9l47 47-47 47c-9.4 9.4-9.4 24.6 0 33.9s24.6 9.4 33.9 0l47-47 47 47c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-47-47 47-47c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-47 47-47-47c-9.4-9.4-24.6-9.4-33.9 0z"/></svg>', html_template: '', form_template: '' }
   }
 
-  const combinedComponents = { ...appSagePremiumComponents, ...appSageFreeComponents };
+  const combinedComponents = { ...AppstartPremiumComponents, ...AppstartFreeComponents };
   return combinedComponents;
 }
 window.combineComponentsLists = combineComponentsLists;
@@ -356,8 +356,8 @@ window.extractColorNames = extractColorNames;
 
 function mergeFontsIntoTailwindConfig() {
   // Retrieve the fonts from localStorage
-  let appSageSettings = JSON.parse(localStorage.getItem('appSageSettings'));
-  let storedFonts = appSageSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
+  let AppstartSettings = JSON.parse(localStorage.getItem('AppstartSettings'));
+  let storedFonts = AppstartSettings?.fonts || {}; // Fallback to an empty object if fonts do not exist
 
   // Ensure tailwind.config exists and has the theme and fontFamily objects
   if (!tailwind.config) {
@@ -400,7 +400,7 @@ window.mergeTailwindColors = mergeTailwindColors;
 
 // Function to dynamically update Tailwind config with multiple fonts/colors
 function updateTailwindConfig() {
-  const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  const settings = JSON.parse(localStorage.getItem(AppstartSettingsString));
   if (settings !== null) {
     // Handle custom fonts
     if (settings.fonts.length > 0) {
@@ -429,7 +429,7 @@ window.updateTailwindConfig = updateTailwindConfig;
 
 // Restore settings from localStorage
 function restoreSettings() {
-  let storedData = localStorage.getItem(appSageSettingsString);
+  let storedData = localStorage.getItem(AppstartSettingsString);
   if (storedData) {
     let settings = JSON.parse(storedData);
 
@@ -559,12 +559,12 @@ function restoreSettings() {
 }
 window.restoreSettings = restoreSettings;
 
-function appSageLocalNuke() {
-  localStorage.removeItem(appSageStorageString);
-  localStorage.removeItem(appSageSettingsString);
-  localStorage.removeItem(appSageTitleIdMapString);
+function AppstartLocalNuke() {
+  localStorage.removeItem(AppstartStorageString);
+  localStorage.removeItem(AppstartSettingsString);
+  localStorage.removeItem(AppstartTitleIdMapString);
 }
-window.appSageLocalNuke = appSageLocalNuke;
+window.AppstartLocalNuke = AppstartLocalNuke;
 
 function waitForGlobalsLoaded() {
   return new Promise((resolve) => {
@@ -612,11 +612,11 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function () {
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
+    const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+    const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString) || '{}');
 
-    if (appSageStorage.pages && appSageStorage.pages[page_id]) {
-      delete appSageStorage.pages[page_id];
+    if (AppstartStorage.pages && AppstartStorage.pages[page_id]) {
+      delete AppstartStorage.pages[page_id];
     }
 
     for (let title in titleIdMap) {
@@ -626,8 +626,8 @@ function deletePage(page_id, element) {
       }
     }
 
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+    localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
+    localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
     element.remove();
 
     console.log(`Page with ID ${page_id} has been deleted successfully.`);

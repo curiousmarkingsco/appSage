@@ -85,7 +85,7 @@ window.addDeviceTargetedOptions = addDeviceTargetedOptions;
 // DATA IN: See `addDeviceTargetedOptions`
 function handleReset(bp, grid, options, cssClassBase, control) {
   const resetButton = document.createElement('button');
-  resetButton.innerHTML = appSageEditorIcons['reset'];
+  resetButton.innerHTML = AppstartEditorIcons['reset'];
   resetButton.className = 'iconButton h-12 w-12 p-4 bg-pearl-bush-100 hover:bg-pearl-bush-300 p-2 rounded';
   resetButton.setAttribute('data-extra-info', tooltips['reset']);
   control.appendChild(resetButton);
@@ -302,7 +302,7 @@ function createLabel(bp, labelPrefix, forAttr) {
     const label = document.createElement('label');
     const mobileIcon = document.createElement('span')
     mobileIcon.className = 'h-3 w-3 mr-2 inline-block';
-    mobileIcon.innerHTML = `${appSageEditorIcons['responsive'][bp]}`;
+    mobileIcon.innerHTML = `${AppstartEditorIcons['responsive'][bp]}`;
     label.innerHTML = `<span class="inline-block">${keepLabel}${advanced === true ? ' (Advanced Option)' : ''}</span>`;
     label.className = 'block col-span-5 text-fuscous-gray-700 text-xs uppercase mt-2';
     label.setAttribute('for', forAttr);
@@ -323,7 +323,7 @@ function handleInput(bp, labelPrefix, options, cssClassBase, grid, control) {
   if (isUrl) {
     const url = String(grid.classList).match(/bg-\[url\('([^']*)'\)\]/);
     if (url) control.value = url[1] || '';
-  } else if (!isFile) { 
+  } else if (!isFile) {
     control.value = getCurrentStyle(bp, options, cssClassBase, grid);
   }
   control.className = 'shadow border bg-[#ffffff] rounded py-2 px-3 text-fuscous-gray-700 leading-tight focus:outline-none focus:shadow-outline';
@@ -387,7 +387,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
 
   control.className = `flex relative h-12 ${borderOption ? 'w-24 col-span-2 ' : ''}${fontSize ? 'w-48 col-span-4 ' : ''}${(smallSelect && !borderOption) ? (labelPrefix + ' w-20 ') : ''}`;
 
-  const iconTarget = appSageEditorIcons[iconTargetName];
+  const iconTarget = AppstartEditorIcons[iconTargetName];
   const iconButton = document.createElement('span');
   iconButton.innerHTML = iconTarget;
   iconButton.className = `absolute ${(smallSelect && !borderOption) ? 'right-4 top-1 bg-none h-10 w-10' : 'right-0.5 top-0.5 bg-pearl-bush-50 h-11 w-11'} px-2 py-1 rounded-sm border-none pointer-events-none`;
@@ -440,7 +440,7 @@ function handleSingleIconSelect(bp, labelPrefix, options, cssClassBase, grid, co
 }// DATA OUT: null
 window.handleSingleIconSelect = handleSingleIconSelect;
 
-// This function messily handles all the nuance thus far encountered from 
+// This function messily handles all the nuance thus far encountered from
 // supporting icon styled select dropdowns for sidebar editor controls.
 // DATA IN: See `addDeviceTargetedOptions`
 function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control) {
@@ -512,7 +512,7 @@ function handleIconSelect(bp, grid, options, labelPrefix, cssClassBase, control)
     }
     let iconTextCandidate1 = `${cssClassBase}-${option}`;
     let iconTextCandidate2 = labelPrefix.toLowerCase().replace(' ', '-');
-    const iconTarget = appSageEditorIcons[iconTextCandidate1] || appSageEditorIcons[iconTextCandidate2] || appSageEditorIcons[option];
+    const iconTarget = AppstartEditorIcons[iconTextCandidate1] || AppstartEditorIcons[iconTextCandidate2] || AppstartEditorIcons[option];
     iconButton.innerHTML = iconTarget;
     if (labelPrefix === 'Text Alignment') {
       iconButton.setAttribute('data-extra-info', `${option === 'justify' ? tooltips['text-alignment-justify'] : tooltips['text-alignment-other'] + option}`);
@@ -602,7 +602,7 @@ function handleToggle(bp, options, grid, cssClassBase, control) {
     control.setAttribute('data-extra-info-class', 'underline');
   }
   const iconButton = document.createElement('span');
-  iconButton.innerHTML = appSageEditorIcons[cssClassBase];
+  iconButton.innerHTML = AppstartEditorIcons[cssClassBase];
   iconButton.className = `absolute top-0.5 right-0 h-11 w-11 px-2 py-1 rounded-sm border-none pointer-events-none`;
 
   const checkbox = document.createElement('input')
@@ -664,8 +664,8 @@ window.handleTooltips = handleTooltips;
 
 function handlePlaceholderMedia(bp, grid, control, options, cssClassBase, isBackgroundImage = false) {
   // Populate the dropdown with placeholder media options
-  for (const key in appSagePlaceholderMedia) {
-    const selectedMedia = appSagePlaceholderMedia[key];
+  for (const key in AppstartPlaceholderMedia) {
+    const selectedMedia = AppstartPlaceholderMedia[key];
     if (isBackgroundImage && selectedMedia.endsWith('.mp3')) {
       continue; // Skip audio files
     }
@@ -716,12 +716,12 @@ function addPlaceholderDropdown(fileInput, grid) {
 
   fileInput.parentElement.appendChild(placeholderDropdown);
 
-  const imageOnlyMedia = Object.keys(appSagePlaceholderMedia).filter(key => {
-    return appSagePlaceholderMedia[key].endsWith('.jpg') ||
-      appSagePlaceholderMedia[key].endsWith('.png') ||
-      appSagePlaceholderMedia[key].endsWith('.svg');
+  const imageOnlyMedia = Object.keys(AppstartPlaceholderMedia).filter(key => {
+    return AppstartPlaceholderMedia[key].endsWith('.jpg') ||
+      AppstartPlaceholderMedia[key].endsWith('.png') ||
+      AppstartPlaceholderMedia[key].endsWith('.svg');
   }).reduce((obj, key) => {
-    obj[key] = appSagePlaceholderMedia[key];
+    obj[key] = AppstartPlaceholderMedia[key];
     return obj;
   }, {});
 

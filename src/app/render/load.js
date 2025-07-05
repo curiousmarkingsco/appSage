@@ -9,13 +9,13 @@
 
 */
 const loadBlobFromIndexedDB = window.loadBlobFromIndexedDB;
-// Utility functions for managing localStorage with a 'appSageStorage' object
+// Utility functions for managing localStorage with a 'AppstartStorage' object
 // DATA IN: String
 async function loadPage(pageId) {
   // Using localStorage when not in Electron mode
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (appSageStorage.pages && appSageStorage.pages[pageId]) {
-    const fallback = appSageStorage.pages[pageId].page_data;
+  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  if (AppstartStorage.pages && AppstartStorage.pages[pageId]) {
+    const fallback = AppstartStorage.pages[pageId].page_data;
     try {
       const indexedDBData = await loadBlobFromIndexedDB(pageId);
       return indexedDBData || fallback;
@@ -38,8 +38,8 @@ function loadPageMetadata(pageId) {
   const element = document.querySelector('head');
 
   // Using localStorage for non-Electron mode
-  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-  const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
+  const fontSettings = JSON.parse(localStorage.getItem(AppstartSettingsString));
 
   if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
     const metaTags = storedData.pages[pageId].settings.metaTags;
@@ -73,13 +73,13 @@ window.loadPageMetadata = loadPageMetadata;
 // consequently, this separate function.
 // DATA IN: ['String', 'Boolean']
 function loadPageSettings(config, view = false) {
-  let appSageStorage;
+  let AppstartStorage;
   let localStorageExists = false;
-  appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  localStorageExists = (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings);
+  AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  localStorageExists = (AppstartStorage.pages && AppstartStorage.pages[config] && AppstartStorage.pages[config].settings);
 
   if (localStorageExists) {
-    const settings = appSageStorage.pages[config].settings;
+    const settings = AppstartStorage.pages[config].settings;
     const element = document.getElementById(settings.id);
 
     if (element && settings.className) {
@@ -109,7 +109,7 @@ function addMetasToHead() {
   waitForGlobalsLoaded().then(() => {
     const params = new URLSearchParams(window.location.search);
     const config = params.get('config') || params.get('page');
-    const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+    const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
     let settings;
 
     if (storedData && storedData.pages && storedData.pages[config]){
@@ -142,7 +142,7 @@ window.addMetasToHead = addMetasToHead;
 // Helper functions for IndexedDB storage
 function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(appSageDatabaseString, 1);
+    const request = indexedDB.open(AppstartDatabaseString, 1);
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
@@ -170,14 +170,14 @@ document.addEventListener('DOMContentLoaded', addMetasToHead);
 
 document.addEventListener('DOMContentLoaded', async () => {
   const pageId = getPageId();
-  const appSageStorage = getAppSageStorage();
+  const AppstartStorage = getAppstartStorage();
 
   const componentContainers = document.querySelectorAll('.pagecomponent');
   for (const container of componentContainers) {
     const componentContainer = container.querySelector('[data-component-name]');
     const componentName = componentContainer.getAttribute('data-component-name');
 
-    let componentData = appSageStorage.pages?.[pageId]?.[componentName];
+    let componentData = AppstartStorage.pages?.[pageId]?.[componentName];
 
     if (componentData === '__stored_in_indexeddb__') {
       componentData = await loadComponentFromStorage(pageId, componentName);
@@ -201,19 +201,19 @@ function getPageId() {
 }
 window.getPageId = getPageId;
 
-function getAppSageStorage() {
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
+function getAppstartStorage() {
+  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  if (!AppstartStorage.pages) {
+    AppstartStorage.pages = {};
   }
-  return appSageStorage;
+  return AppstartStorage;
 }
-window.getAppSageStorage = getAppSageStorage;
+window.getAppstartStorage = getAppstartStorage;
 
 function getPageObject(pageId) {
-  const appSageStorage = getAppSageStorage();
+  const AppstartStorage = getAppstartStorage();
   let pageObject;
-  pageObject = appSageStorage.pages[pageId];
+  pageObject = AppstartStorage.pages[pageId];
   return pageObject;
 }
 window.getPageObject = getPageObject;

@@ -68,12 +68,12 @@ window.saveChanges = saveChanges;
 // DATA IN: ['String', 'JSON Object']
 async function savePageData(pageId, json) {
   addRevision(pageId, json);
-  const appSageStorage = getAppSageStorage();
-  appSageStorage.pages[pageId] = {
-    ...appSageStorage.pages[pageId],
+  const AppstartStorage = getAppstartStorage();
+  AppstartStorage.pages[pageId] = {
+    ...AppstartStorage.pages[pageId],
     page_data: null // clears big payload
   };
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
 
   await saveBlobToIndexedDB(pageId, json);
 } // DATA OUT: null
@@ -83,15 +83,15 @@ async function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
     // First, we store to the local machine for redundancy
-    const appSageStorage = getAppSageStorage();
+    const AppstartStorage = getAppstartStorage();
 
-    if (!appSageStorage.pages[pageId]) {
-      appSageStorage.pages[pageId] = {};
+    if (!AppstartStorage.pages[pageId]) {
+      AppstartStorage.pages[pageId] = {};
     }
 
     // Just store a lightweight reference — actual object goes in IndexedDB
-    appSageStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
+    localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
 
     // Store the heavy object in IndexedDB under a namespaced key
     await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
@@ -110,15 +110,15 @@ window.saveComponentObjectToPage = saveComponentObjectToPage;
 // Save page settings (renamed to savePageDataSettings)
 function savePageDataSettings(pageId, data) {
   // Using localStorage for non-Electron mode
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
+  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  if (!AppstartStorage.pages) {
+    AppstartStorage.pages = {};
   }
-  if (!appSageStorage.pages[pageId]) {
-    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+  if (!AppstartStorage.pages[pageId]) {
+    AppstartStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
   }
-  appSageStorage.pages[pageId].settings = data;
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  AppstartStorage.pages[pageId].settings = data;
+  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
 } // DATA OUT: null
 window.savePageDataSettings = savePageDataSettings;
 
@@ -135,8 +135,8 @@ function savePageSettingsChanges(pageId) {
   };
 
   // Using localStorage for non-Electron mode
-  const appSageStorage = getAppSageStorage();
-  appSageStorage.pages[pageId].settings = JSON.stringify(settings);
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  const AppstartStorage = getAppstartStorage();
+  AppstartStorage.pages[pageId].settings = JSON.stringify(settings);
+  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;

@@ -1,6 +1,6 @@
 
 waitForGlobalsLoaded().then(() => {
-  appSageComponents['dialogToast'].html_template = `
+  AppstartComponents['dialogToast'].html_template = `
     <div class="dialogToast-container fixed z-20 top-4 right-4 max-w-xs bg-white border border-white-500 shadow-lg rounded-lg p-4 transition-transform transform translate-y-full"
         data-component-name="dialogToast" data-component-id="{{dialogToast.id}}" data-auto-dismiss="false" data-shown="false">
       <div class="flex justify-between items-center">
@@ -12,7 +12,7 @@ waitForGlobalsLoaded().then(() => {
     </div>
   `;
 
-  appSageComponents['dialogToast'].form_template = `
+  AppstartComponents['dialogToast'].form_template = `
     <form class="dialogToast-form space-y-2" data-initialized="false" data-component-name="dialogToast" data-component-id="{{dialogToast.id}}">
       <div>
         <label class="block font-medium text-fuscous-gray-700">Message:</label>
@@ -67,10 +67,10 @@ function initializeDialogToastForm(container) {
   const sidebar = document.getElementById('sidebar');
   const form = sidebar.querySelector('.dialogToast-form');
   const toastContainer = document.querySelector('.dialogToast-container');
-  
+
   // Check if the form has been initialized
   const isFormInitialized = form.getAttribute('data-initialized') === 'true';
-  
+
   // If the form has not been initialized, populate with existing data
   if (!isFormInitialized) {
     const existingData = getDialogToastData();
@@ -113,7 +113,7 @@ function initializeDialogToastForm(container) {
   // Handle "Use programmatically" checkbox behavior
   const useProgrammaticallyCheckbox = form.querySelector('input[name="useProgrammatically"]');
   const codeSampleWrapper = form.querySelector('#codeSampleWrapper');
-  
+
   useProgrammaticallyCheckbox.addEventListener('change', function () {
     if (this.checked) {
       // Hide the rest of the form and show the code sample
@@ -142,7 +142,7 @@ function initializeDialogToastForm(container) {
     // Update the toast with the form values
     toastContainer.querySelector('.dialogToast-message').innerText = message;
     toastContainer.setAttribute('data-auto-dismiss', autoDismiss);
-    
+
     toastContainer.classList.remove('border-gray-asparagus-500', 'border-russett-500', 'border-romantic-600', 'border-fruit-salad-500');
     toastContainer.classList.remove('text-gray-asparagus-500', 'text-russett-500', 'text-romantic-600', 'text-fruit-salad-500');
     switch (type) {
@@ -159,7 +159,7 @@ window.initializeDialogToastForm = initializeDialogToastForm;
 
 function initializeDialogToast(container) {
   const closeButton = container.querySelector('.dialogToast-close-button');
-  
+
   // Check if editorMode is true and show the toast if so
   if (typeof editorMode !== 'undefined' && editorMode === true) {
     container.classList.remove('translate-y-full', 'hidden');
@@ -181,7 +181,7 @@ function initializeDialogToast(container) {
   closeButton.addEventListener('click', () => {
     // Animate slide out
     container.classList.add('translate-y-full');
-    
+
     // Delay adding hidden until after the sliding animation finishes
     setTimeout(() => {
       container.classList.add('hidden');
@@ -196,7 +196,7 @@ function initializeDialogToast(container) {
     setTimeout(() => {
       // Animate slide out
       container.classList.add('translate-y-full');
-      
+
       // Delay hiding until the slide-out is finished
       setTimeout(() => {
         container.classList.add('hidden');
@@ -225,7 +225,7 @@ window.getDialogToastData = getDialogToastData;
 
 function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
   const toastContainer = document.querySelector('.dialogToast-container');
-  
+
   if (!toastContainer) {
     console.error('Dialog toast container not found.');
     return;
@@ -237,19 +237,19 @@ function revealDialogToast({ message, type, autoDismiss, timeout }, callback) {
   // Update notification type styles
   toastContainer.classList.remove('border-gray-asparagus-500', 'border-russett-500', 'border-romantic-600', 'border-fruit-salad-500');
   toastContainer.classList.remove('text-gray-asparagus-500', 'text-russett-500', 'text-romantic-600', 'text-fruit-salad-500');
-  
+
   switch (type) {
-    case 'success': 
-      toastContainer.classList.add('border-gray-asparagus-500', 'text-gray-asparagus-500'); 
+    case 'success':
+      toastContainer.classList.add('border-gray-asparagus-500', 'text-gray-asparagus-500');
       break;
-    case 'error': 
-      toastContainer.classList.add('border-russett-500', 'text-russett-500'); 
+    case 'error':
+      toastContainer.classList.add('border-russett-500', 'text-russett-500');
       break;
-    case 'warning': 
-      toastContainer.classList.add('border-romantic-600', 'text-romantic-600'); 
+    case 'warning':
+      toastContainer.classList.add('border-romantic-600', 'text-romantic-600');
       break;
-    case 'info': 
-      toastContainer.classList.add('border-fruit-salad-500', 'text-fruit-salad-500'); 
+    case 'info':
+      toastContainer.classList.add('border-fruit-salad-500', 'text-fruit-salad-500');
       break;
     default:
       console.warn(`Unknown notification type: ${type}`);

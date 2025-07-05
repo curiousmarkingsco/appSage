@@ -208,8 +208,8 @@ function addTextOptions(sidebar, element) {
   const textColorOptions = colorArray;
   const textSizeOptions = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl'];
   let fontOptions = ['sans-serif', 'serif']
-  if (localStorage.getItem(appSageSettingsString)) {
-    fontOptions = Object.values(JSON.parse(localStorage.getItem(appSageSettingsString)).fonts).map(font => font);
+  if (localStorage.getItem(AppstartSettingsString)) {
+    fontOptions = Object.values(JSON.parse(localStorage.getItem(AppstartSettingsString)).fonts).map(font => font);
   }
   const textAlignOptions = ['left', 'center', 'right', 'justify'];
   const fontWeightOptions = ['thin', 'extralight', 'light', 'normal', 'medium', 'semibold', 'bold', 'extrabold', 'black'];
@@ -227,7 +227,7 @@ function addTextOptions(sidebar, element) {
 window.addTextOptions = addTextOptions;
 
 function addManualHtmlElement(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)) {
+  if (localStorage.getItem(AppstartSettingsString)) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'html', '', [], 'textarea');
     }
@@ -236,7 +236,7 @@ function addManualHtmlElement(sidebar, element) {
 window.addManualHtmlElement = addManualHtmlElement;
 
 function addManualClassEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)) {
+  if (localStorage.getItem(AppstartSettingsString)) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'class', '', [], 'textarea');
     }
@@ -245,7 +245,7 @@ function addManualClassEditor(sidebar, element) {
 window.addManualClassEditor = addManualClassEditor;
 
 function addManualCssEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)) {
+  if (localStorage.getItem(AppstartSettingsString)) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'inline css', '', [], 'textarea');
     }
@@ -254,7 +254,7 @@ function addManualCssEditor(sidebar, element) {
 window.addManualCssEditor = addManualCssEditor;
 
 function addManualJsEditor(sidebar, element) {
-  if (localStorage.getItem(appSageSettingsString)) {
+  if (localStorage.getItem(AppstartSettingsString)) {
     if (advancedMode) {
       addDeviceTargetedOptions(sidebar, element, 'inline js', '', [], 'textarea');
     }

@@ -56,7 +56,7 @@ async function restoreRevision(pageName, pointer) {
     const pageHistory = event.target.result;
     if (pageHistory && pageHistory.revisions[pointer]) {
       // Parse the existing localStorage object
-      const appStorage = JSON.parse(localStorage.appSageStorage);
+      const appStorage = JSON.parse(localStorage.AppstartStorage);
 
       // Update the specific page's page_data with the selected revision
       if (appStorage.pages && appStorage.pages[pageName]) {
@@ -67,7 +67,7 @@ async function restoreRevision(pageName, pointer) {
       }
 
       // Write the updated appStorage back to localStorage
-      localStorage.appSageStorage = JSON.stringify(appStorage);
+      localStorage.AppstartStorage = JSON.stringify(appStorage);
 
       // Reload the page
       // TODO: Test if soft reloading works and/or implement soft reloading properly

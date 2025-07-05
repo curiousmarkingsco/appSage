@@ -11,10 +11,10 @@
 
 Examples:
 
-   appSagePlaceholderMedia['photo_square']
+   AppstartPlaceholderMedia['photo_square']
 => './placeholder_media/square.jpg'
 
-   appSagePlaceholderMedia['video']
+   AppstartPlaceholderMedia['video']
 => './placeholder_media/video.mp4'
 
    randomImage()
@@ -26,7 +26,7 @@ Examples:
 */
 
 // Global variable — These paths are relative to the HTML page loading them, not this file.
-window.appSagePlaceholderMedia = {
+window.AppstartPlaceholderMedia = {
   "audio": './placeholder_media/audio.mp3',
   "video": './placeholder_media/video.mp4',
   "photo_avatar_darkmode_jpg": './placeholder_media/darkmode_jpg/avatar_placeholder.jpg',
@@ -76,7 +76,7 @@ function randomImage() {
 
   const options = darkmodeOptions.concat(lightmodeOptions);
   const result = options[Math.floor(Math.random() * options.length)];
-  return appSagePlaceholderMedia[result];
+  return AppstartPlaceholderMedia[result];
 } // DATA OUT: String
 window.randomImage = randomImage;
 
@@ -96,7 +96,7 @@ function randomMedia() {
   ];
 
   const result = options[Math.floor(Math.random() * options.length)];
-  return appSagePlaceholderMedia[result];
+  return AppstartPlaceholderMedia[result];
 } // DATA OUT: String
 window.randomMedia = randomMedia;
 

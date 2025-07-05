@@ -1,6 +1,6 @@
 function openDatabase() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open('AppSageUploads', 2);
+    const request = indexedDB.open('AppstartUploads', 2);
     request.onupgradeneeded = function (event) {
       const db = event.target.result;
       if (!db.objectStoreNames.contains('blobs')) {

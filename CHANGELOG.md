@@ -3,7 +3,7 @@ This is here to keep a papertrail of the things I'm doing/have been doing. Hopef
 
 ## August 9th
 * Finished adding descriptive comments for the code
-* Renamed to appSage
+* Renamed to Appstart
 * Made publicly available on GitHub and added LICENSE and community docs
 
 ## August 2nd

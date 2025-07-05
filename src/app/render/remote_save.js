@@ -15,7 +15,7 @@
 // to the user's selected remote server. It may or may not be operational.
 // DATA IN: ['String', 'String', 'String:Optional']
 function saveDataToServer(url, page_id, css_content = null) {
-  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id];
+  const html_content = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id];
   const fullPath = url + (page_id ? ('/' + page_id) : '');
   fetch(fullPath, {
     method: 'POST',
@@ -34,8 +34,8 @@ window.saveDataToServer = saveDataToServer;
 function generateHTMLString() {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].settings;
   const finalHtml = `${flattenJSONToHTML(html_content, container_settings)}`;
   return finalHtml
 }

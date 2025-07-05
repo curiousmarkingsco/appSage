@@ -6,7 +6,7 @@
 
 Components should be able to:
 * Stand alone and not rely on other components
-* All elements should be editable by the built-in appSage editing capabilities
+* All elements should be editable by the built-in Appstart editing capabilities
 * HTML for the components should use TailwindCSS
 * Styling for the components should, whenever possible, use TailwindCSS:
   ```js
@@ -35,11 +35,11 @@ touch src/app/render/editor/components/free/rotating_quotes.js
 
 #### 2.1 Free Components (Open Source Contributors)
 
-Add your component object to `appSageFreeComponents` in `app/renderer.js`
+Add your component object to `AppstartFreeComponents` in `app/renderer.js`
 
 ```js
 // Templates are loaded in the JS file dedicated to the component.
-var appSageFreeComponents = {
+var AppstartFreeComponents = {
   // Unqiue, camelCased key
   "rotatingQuotes": {
     // Plain English name
@@ -58,11 +58,11 @@ var appSageFreeComponents = {
 
 #### 2.2 Premium Components (Curious Markings, Co. Employees)
 
-Add your component object to `appSagePremiumComponents` in `app/render/editor/_globals.js`
+Add your component object to `AppstartPremiumComponents` in `app/render/editor/_globals.js`
 
 ```js
 // Templates are loaded in the JS file dedicated to the component.
-var appSagePremiumComponents = {
+var AppstartPremiumComponents = {
   // Unqiue, camelCased key
   "rotatingQuotes": {
     // Plain English name
@@ -93,8 +93,8 @@ waitForGlobalsLoaded().then(() => {
     </div>
   `;
 
-  // Free and premium components are flattened into the `appSageComponents` object
-  appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
+  // Free and premium components are flattened into the `AppstartComponents` object
+  AppstartComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 });
 ```
 
@@ -120,7 +120,7 @@ waitForGlobalsLoaded().then(() => {
     </form>
   `;
 
-  appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
+  AppstartComponents['rotatingQuotes'].form_template = myFormTemplate;
 });
 ```
 
@@ -220,14 +220,14 @@ const myHtmlTemplate = `
   <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
     <div class="rotatingQuotes-quotebox relative w-full pl-16" data-quote-id="">
       <div class="absolute left-0 top-0 w-12 h-12 opacity-30 text-black">
-        ${appSageComponents['rotatingQuotes'].icon}
+        ${AppstartComponents['rotatingQuotes'].icon}
       </div>
       <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
       <span class="rotatingQuotes-source text-fuscous-gray-400" data-sources=""></span>
     </div>
   </div>
 `;
-appSageComponents['rotatingQuotes'].html_template = myHtmlTemplate;
+AppstartComponents['rotatingQuotes'].html_template = myHtmlTemplate;
 
 const myFormTemplate = `<form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
   <div>
@@ -240,7 +240,7 @@ const myFormTemplate = `<form class="rotatingQuotes-form space-y-2" data-initial
   </div>
   <button type="submit" class="bg-fruit-salad-500 text-white px-4 py-2 rounded">Save Quote</button>
 </form>`;
-appSageComponents['rotatingQuotes'].form_template = myFormTemplate;
+AppstartComponents['rotatingQuotes'].form_template = myFormTemplate;
 
 function initializeQuoteDataFromForm(container) {
   const sidebar = document.getElementById('sidebar');

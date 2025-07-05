@@ -39,7 +39,7 @@ async function initializeEditorHtml() {
 
       document.head.innerHTML = `
         <meta charset="UTF-8">
-        <title>appSage Editor</title>
+        <title>Appstart Editor</title>
         ${window.location.host === 'localhost:8080' ? `<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; media-src 'self' 'unsafe-inline' localhost:8080 blob: data:;  img-src 'self' 'unsafe-inline' localhost:8080 blob: data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' 'unsafe-inline' fonts.gstatic.com;">` : '' }
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         ${htmlInsideRendererJSToBlock}
@@ -52,7 +52,7 @@ async function initializeEditorHtml() {
       const apex = document.getElementById('apex');
       apex.innerHTML = `
         <div class="h-screen lg:hidden bg-pearl-bush-100 p-4">
-          <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access appSage.</h2>
+          <h2 class="text-4xl max-w-96 font-bold mx-auto mt-20">Please use a desktop computer to access Appstart.</h2>
           <p class="mx-auto max-w-96 mt-4">If you feel like it, <a class="text-fruit-salad-600 hover:text-fruit-salad-800 hover:underline" href="mailto:contact@curiousmarkings.com">email us today</a> if you are hellbent on designing apps on your mobile phone. You will email us knowing your designs will most likely look terrible on larger devices.</p>
         </div>
         <div class="lg:flex hidden">
@@ -114,8 +114,8 @@ async function initializeEditorHtml() {
               class="bottom-10 right-0 bg-pearl-bush-50 w-40 dropdown-menu hidden group-hover:block absolute bg-white text-mine-shaft-700 text-sm shadow-lg rounded mt-1">
               <button id="pageSettings" data-extra-info="Edit page colors, metadata, & more"
                 class="block w-full text-left rounded-t p-3 hover:bg-pearl-bush-300">Page Settings</button>
-              <button id="appSageSettings"
-                class="block w-full text-left rounded-b p-3 hover:bg-pearl-bush-300">appSageSettings</button>
+              <button id="AppstartSettings"
+                class="block w-full text-left rounded-b p-3 hover:bg-pearl-bush-300">AppstartSettings</button>
             </div>
           </div>
           <button id="copyPage" onclick="copyPageHTML(this)" data-extra-info="Copy raw HTML to paste into an HTML file"
@@ -143,7 +143,7 @@ async function initializeEditorHtml() {
         </div>
         <div id="settingsModal"
           class="fixed py-12 inset-0 bg-pearl-bush-800 bg-opacity-50 flex justify-center items-center z-[60] hidden">
-          <form id="appSageSettingsForm"
+          <form id="AppstartSettingsForm"
             class="bg-pearl-bush-100 p-4 rounded-lg max-w-md mx-auto pb-16">
             <div class="relative overflow-y-auto overscroll-contain h-[calc(100vh-(10rem))]">
               <div class="pb-16 pt-10">
@@ -276,7 +276,7 @@ function setupPageEvents() {
   const dropdownMenu = document.getElementById('dropdownMenu');
   const addHtmlButton = document.getElementById('addHtml');
   const pageSettingsButton = document.getElementById('pageSettings');
-  const appSageSettingsButton = document.getElementById('appSageSettings');
+  const AppstartSettingsButton = document.getElementById('AppstartSettings');
 
   const apex = document.getElementById('apex');
 
@@ -308,8 +308,8 @@ function setupPageEvents() {
     dropdownMenu.classList.add('hidden'); // Hide the menu after click
   });
 
-  // Handle appSage Settings button click
-  appSageSettingsButton.addEventListener('click', function () {
+  // Handle Appstart Settings button click
+  AppstartSettingsButton.addEventListener('click', function () {
     showSettingsModal();
   });
 
@@ -406,9 +406,9 @@ async function initializeConfig() {
     try {
       if (typeof config !== 'undefined' && config !== 'new') {
         // Using localStorage for non-Electron mode
-        const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
         let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-        document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+        document.querySelector('title').textContent = `Editing: ${pageTitle} | Appstart`;
         if (pageData && pageData.length > 0) {
           loadChanges(pageData);
           loadPageSettings(config);
@@ -430,7 +430,7 @@ window.editorMode = true;
 
 // Function to save metadata to localStorage, ensuring no duplicate tags
 function saveMetadataToLocalStorage(page_id, newMetaTags) {
-  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
   const settings = JSON.parse(storedData.pages[page_id].settings);
 
   if (!settings.metaTags) {
@@ -453,7 +453,7 @@ function saveMetadataToLocalStorage(page_id, newMetaTags) {
 
   // Save updated settings back to localStorage
   storedData.pages[page_id].settings = JSON.stringify(settings);
-  localStorage.setItem(appSageStorageString, JSON.stringify(storedData));
+  localStorage.setItem(AppstartStorageString, JSON.stringify(storedData));
 
   console.log('Metadata saved successfully!');
 }
@@ -717,8 +717,8 @@ window.getNextValidSibling = getNextValidSibling;
 function copyPageHTML(button) {
   const params = new URLSearchParams(window.location.search);
   const page_id = params.get('config');
-  const html_content = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].page_data;
-  const container_settings = JSON.parse(localStorage.getItem(appSageStorageString)).pages[page_id].settings;
+  const html_content = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].page_data;
+  const container_settings = JSON.parse(localStorage.getItem(AppstartStorageString)).pages[page_id].settings;
   const textToCopy = `<style>${getCompiledCSS()}</style>
                       ${flattenJSONToHTML(html_content, container_settings)}`;
   copyText(textToCopy, button);
@@ -804,7 +804,7 @@ window.pasteHtmlPortion = pasteHtmlPortion;
 function copyMetadata(element) {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
-  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
   const settings = JSON.parse(storedData.pages[config].settings);
   const metaTags = settings.metaTags;
   let metaTagsString = '';
@@ -854,7 +854,7 @@ function addEditablePageTitle(container, placement) {
   let titleIdMap;
 
   // Using localStorage for non-Electron mode
-  titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
 
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
@@ -892,7 +892,7 @@ function changeLocalStoragePageTitle(newTitle) {
   const currentPageId = params.get('config');
 
   // Retrieve the title-ID mapping from localStorage
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
 
   // Find the current title using the page ID
   let currentTitle = null;
@@ -909,7 +909,7 @@ function changeLocalStoragePageTitle(newTitle) {
     titleIdMap[newTitle] = currentPageId;
 
     // Save the updated mapping back to localStorage
-    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+    localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
 
     // Update the URL parameters (the page ID remains the same)
     params.set('config', currentPageId);
@@ -930,8 +930,8 @@ function addEditableMetadata(container, placement) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   automatically generate?:
-    <meta name="description" content="This page was built using appSage">
-    <meta property="og:title" content="Untitled | Built w/ appSage">
+    <meta name="description" content="This page was built using Appstart">
+    <meta property="og:title" content="Untitled | Built w/ Appstart">
   */
   const metaDataContainer = document.createElement('div');
   if (placement === 'prepend') {
@@ -947,7 +947,7 @@ function addEditableMetadata(container, placement) {
   metaDataPairsContainer.className = 'my-2 col-span-5 border rounded-md border-pearl-bush-200 overflow-y-scroll p-2 max-h-48';
   metaDataContainer.appendChild(metaDataPairsContainer);
 
-  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const storedData = JSON.parse(localStorage.getItem(AppstartStorageString));
   if (storedData) {
     const settings = storedData.pages[page_id].settings;
     if (typeof settings.length !== 'undefined') {
@@ -1039,21 +1039,21 @@ function createNewConfigurationFile() {
   let counter = 1;
 
   // Using localStorage for non-Electron mode
-  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  const titleIdMap = JSON.parse(localStorage.getItem(AppstartTitleIdMapString)) || {};
   while (title in titleIdMap) {
     title = `Untitled_${counter}`;
     counter++;
   }
   // Save the mapping of title to ID
   titleIdMap[title] = pageId;
-  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+  localStorage.setItem(AppstartTitleIdMapString, JSON.stringify(titleIdMap));
 
-  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-  if (!appSageStorage.pages) {
-    appSageStorage.pages = {};
+  const AppstartStorage = JSON.parse(localStorage.getItem(AppstartStorageString) || '{}');
+  if (!AppstartStorage.pages) {
+    AppstartStorage.pages = {};
   }
-  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
-  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  AppstartStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
+  localStorage.setItem(AppstartStorageString, JSON.stringify(AppstartStorage));
 
   window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
 }

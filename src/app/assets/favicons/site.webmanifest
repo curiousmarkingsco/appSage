@@ -1,6 +1,6 @@
 {
-    "name": "appSage",
-    "short_name": "appSage",
+    "name": "Appstart",
+    "short_name": "Appstart",
     "icons": [
         {
             "src": "./android-chrome-192x192.png",

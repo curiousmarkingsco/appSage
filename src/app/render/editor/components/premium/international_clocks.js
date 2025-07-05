@@ -5,7 +5,7 @@
 */
 
 waitForGlobalsLoaded().then(() => {
-  appSageComponents['internationalClocks'].html_template = `
+  AppstartComponents['internationalClocks'].html_template = `
     <div class="internationalClocks-container" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}" data-timezone="UTC" data-show-seconds="true" data-design="circle">
       <div class="clock-display text-3xl font-bold text-center"></div>
 
@@ -20,12 +20,12 @@ waitForGlobalsLoaded().then(() => {
     </div>
   `;
 
-  appSageComponents['internationalClocks'].form_template = `
+  AppstartComponents['internationalClocks'].form_template = `
     <form class="internationalClocks-form space-y-2" data-initialized="false" data-component-name="internationalClocks" data-component-id="{{internationalClocks.id}}">
       <div>
         <label class="block font-medium text-mine-shaft-700">Timezone:</label>
         <select
-          class="appSage-timezone-select timezone-select block w-full p-2 mt-1 border-mine-shaft-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          class="Appstart-timezone-select timezone-select block w-full p-2 mt-1 border-mine-shaft-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           name="timezone" placeholder="e.g., UTC, America/New_York">
         </select>
       </div>
@@ -144,15 +144,15 @@ function initializeClockDataFromForm(clockContainer) {
       { "label": "(GMT+12:00) Fiji, Kamchatka, Marshall Is.", "value": "Pacific/Fiji" },
       { "label": "(GMT+13:00) Nuku'alofa", "value": "Pacific/Tongatapu" }
     ]
-  
+
     // Select all elements with the class 'timezone-select'
     const timezoneSelectElements = document.querySelectorAll('.timezone-select');
-  
+
     // Iterate over each timezone-select element and populate the options
     timezoneSelectElements.forEach(selectElement => {
       // Clear the select before populating (optional)
       selectElement.innerHTML = '';
-  
+
       // Create an option for each timezone
       timezones.forEach(timezone => {
         const option = document.createElement('option');
@@ -230,14 +230,14 @@ function initializeInternationalClocks(componentContainer) {
     const hourHand = clockContainer.querySelector('.hour-hand');
     const minuteHand = clockContainer.querySelector('.minute-hand');
     const secondHand = clockContainer.querySelector('.second-hand');
-  
+
     const hoursRotation = (hours % 12) * 30;
     const minutesRotation = minutes * 6;
     const secondsRotation = seconds * 6;
-  
+
     hourHand.style.transform = `rotate(${hoursRotation}deg)`;
     minuteHand.style.transform = `rotate(${minutesRotation}deg)`;
-  
+
     if (seconds !== null) {
       secondHand.style.transform = `rotate(${secondsRotation}deg)`;
       secondHand.classList.add('block');

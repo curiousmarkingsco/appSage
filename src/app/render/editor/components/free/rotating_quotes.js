@@ -1,10 +1,10 @@
 /* rotating_quotes.js */
 waitForGlobalsLoaded().then(() => {
-  appSageComponents['rotatingQuotes'].html_template = `
+  AppstartComponents['rotatingQuotes'].html_template = `
     <div class="rotatingQuotes-container w-full" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div class="rotatingQuotes-quotebox relative w-full pl-16" data-quote-id="">
         <div class="absolute left-0 top-0 w-12 h-12 opacity-30 text-black">
-          ${appSageComponents['rotatingQuotes'].icon}
+          ${AppstartComponents['rotatingQuotes'].icon}
         </div>
         <p class="rotatingQuotes-quote text-black" data-quotes=""></p>
         <span class="rotatingQuotes-source text-fuscous-gray-400" data-sources=""></span>
@@ -12,7 +12,7 @@ waitForGlobalsLoaded().then(() => {
     </div>
   `;
 
-  appSageComponents['rotatingQuotes'].form_template = `
+  AppstartComponents['rotatingQuotes'].form_template = `
     <form class="rotatingQuotes-form space-y-2" data-initialized="false" data-component-name="rotatingQuotes" data-component-id="{{rotatingQuotes.id}}">
       <div class="quotes-container max-h-96 overflow-y-scroll space-y-4">
         <!-- Existing quotes will be populated here -->

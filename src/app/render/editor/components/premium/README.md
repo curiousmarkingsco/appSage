@@ -1,9 +1,9 @@
-# appSage Premium Components
+# Appstart Premium Components
 
 ## This folder is contains proprietary software.
 
 You can buy a license at:
-https://curiousmarkings.com/premium/appSage
+https://curiousmarkings.com/premium/Appstart
 
 TL;DR: Please pay for our software so that we may continue to eat, stay warm, and make more cool stuff.
 

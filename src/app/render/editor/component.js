@@ -52,20 +52,20 @@ window.createAddComponentButton = createAddComponentButton;
 
 function addComponentLibraryOptions(container) {
   const sidebar = document.getElementById('sidebar-dynamic');
-  sidebar.innerHTML = `<div class="-mt-12 py-4 w-full"><strong>Components Library</strong></div><div id="appSageComponentsLibrary" class="grid gap-y-8 grid-cols-2"></div>`;
-  const components = Object.keys(appSageComponents);
+  sidebar.innerHTML = `<div class="-mt-12 py-4 w-full"><strong>Components Library</strong></div><div id="AppstartComponentsLibrary" class="grid gap-y-8 grid-cols-2"></div>`;
+  const components = Object.keys(AppstartComponents);
   components.forEach(component => {
     const menuItem = document.createElement('div');
     menuItem.className = 'w-24 h-24 cursor-pointer bg-fruit-salad-500 hover:bg-fruit-salad-700 rounded-lg p-8 text-white';
-    menuItem.setAttribute('data-extra-info', appSageComponents[component].name)
-    menuItem.innerHTML = `${appSageComponents[component].icon}`;
-    menuItem.setAttribute('data-extra-info', appSageComponents[component].description.slice(0, 72));
-    const componentsList = document.getElementById('appSageComponentsLibrary');
+    menuItem.setAttribute('data-extra-info', AppstartComponents[component].name)
+    menuItem.innerHTML = `${AppstartComponents[component].icon}`;
+    menuItem.setAttribute('data-extra-info', AppstartComponents[component].description.slice(0, 72));
+    const componentsList = document.getElementById('AppstartComponentsLibrary');
     componentsList.appendChild(menuItem);
     menuItem.addEventListener('click', function () {
       const componentContainer = document.createElement('div');
       componentContainer.className = 'pagecomponent pagecontainer p-4 group';
-      const componentTemplate = appSageComponents[component].html_template;
+      const componentTemplate = AppstartComponents[component].html_template;
       convertTailwindHtml(componentTemplate.replace(`{{${component}.id}}`, generateUniqueId()), componentContainer);
       container.appendChild(componentContainer);
       enableEditComponentOnClick(componentContainer);
@@ -97,11 +97,11 @@ function addComponentOptions(container, componentName = null) {
   if (containerCount > 1) moveButtons.appendChild(createVerticalMoveContainerButton(container, 'down'));
 
   const componentTitle = document.createElement('div');
-  componentTitle.innerHTML = `<strong>Edit ${appSageComponents[componentName].name}</strong></div>`;
+  componentTitle.innerHTML = `<strong>Edit ${AppstartComponents[componentName].name}</strong></div>`;
 
   const componentContainer = container.querySelector(`.${componentName}-container`)
   const componentId = componentContainer.getAttribute('data-component-id');
-  const componentFormTemplate = appSageComponents[componentName].form_template;
+  const componentFormTemplate = AppstartComponents[componentName].form_template;
   const formContainer = document.createElement('div');
   formContainer.innerHTML = componentFormTemplate;
   const htmlComponentForm = formContainer.querySelector(`.${componentName}-form`)

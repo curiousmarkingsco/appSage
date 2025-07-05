@@ -39,7 +39,7 @@ function generateSidebarTabs() {
   <div id="mobileTabContent">
     ${Object.entries(icons).map(([size]) => `
       <div class="${size !== currentBreakpoint ? 'hidden ' : ''}tab-content tab-content-${size} grid grid-cols-5 gap-x-1 gap-y-2">
-        <h3 class="relative text-lg font-bold text-fuscous-gray-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-fuscous-gray-700 text-xs w-7 h-7 p-1 rounded-md border border-pearl-bush-500">${appSageEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglishBreakpointNames[size]} Styles</span></h3>
+        <h3 class="relative text-lg font-bold text-fuscous-gray-900 mt-4 -mb-3 col-span-5"><span class="inline-block text-fuscous-gray-700 text-xs w-7 h-7 p-1 rounded-md border border-pearl-bush-500">${AppstartEditorIcons["responsive"][size]}</span> <span class="inline-block absolute left-10 top-0">${plainEnglishBreakpointNames[size]} Styles</span></h3>
       </div>
     `).join('')}
   </div>
@@ -74,9 +74,9 @@ function activateTabs() {
       window.currentBreakpoint = bp;
 
       try {
-        const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+        const settings = JSON.parse(localStorage.getItem(AppstartSettingsString));
         settings.currentBreakpoint = bp;
-        localStorage.setItem(appSageSettingsString, JSON.stringify(settings));
+        localStorage.setItem(AppstartSettingsString, JSON.stringify(settings));
       } catch (error) {
         console.error('Something went wrong saving breakpoint settings data.', error);
       }

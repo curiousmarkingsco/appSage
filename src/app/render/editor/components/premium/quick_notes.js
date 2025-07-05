@@ -92,22 +92,22 @@ waitForGlobalsLoaded().then(() => {
                         <!-- Title Input -->
                         <input id="quicknote-note-title" type="text" placeholder="Title"
                             class="qn-editor-custom-colors w-full border-b border-[currentColor]/60 focus:outline-none text-lg dark:bg-pearl-bush-900 font-bold mb-2 bg-transparent" />
-            
+
                         <!-- Media Gallery (for images and audio) -->
                         <div id="quicknote-media-gallery" class="flex gap-2 mb-2"></div>
-            
+
                         <!-- Content Textarea (Text mode) -->
                         <textarea id="quicknote-note-content" placeholder="Take a note..."
                             class="qn-editor-custom-colors min-h-64 focus-visible:outline-none mb-2 bg-transparent dark:bg-pearl-bush-900"></textarea>
-            
+
                         <!-- Checkbox Mode Container (hidden by default) -->
                         <div id="quicknote-checkbox-container" class="hidden min-h-64 mb-2">
                             <ul id="quicknote-checkbox-list"></ul>
                         </div>
-            
+
                         <!-- Label Pills Container -->
                         <div id="quicknote-label-pills" class="flex flex-wrap gap-1 mb-2"></div>
-            
+
                         <!-- Bottom Menu Icons -->
                         <div class="flex justify-between border-t border-[currentColor]/60 pt-2">
                             <!-- Image Icon -->
@@ -231,12 +231,12 @@ waitForGlobalsLoaded().then(() => {
         </div>
     `;
 
-    appSageComponents['quickNotes'].html_template = quickNotesHtmlTemplate;
+    AppstartComponents['quickNotes'].html_template = quickNotesHtmlTemplate;
 
     const quickNotesFormTemplate = `
         <div class="quickNotes-form"></div>
     `;
-    appSageComponents['quickNotes'].form_template = quickNotesFormTemplate;
+    AppstartComponents['quickNotes'].form_template = quickNotesFormTemplate;
 });
 
 function initializeNoteDataFromForm(container) {

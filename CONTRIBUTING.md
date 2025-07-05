@@ -2,8 +2,8 @@
 
 Everyone is encouraged to help improve this project. Here are a few ways you can help:
 
-- [Report bugs](https://github.com/curiousmarkingsco/appSage/issues)
-- Fix bugs and [submit pull requests](https://github.com/curiousmarkingsco/appSage/pulls)
+- [Report bugs](https://github.com/curiousmarkingsco/Appstart/issues)
+- Fix bugs and [submit pull requests](https://github.com/curiousmarkingsco/Appstart/pulls)
 - Write, clarify, or fix documentation
 - Suggest or add new features
 
@@ -11,8 +11,8 @@ Everyone is encouraged to help improve this project. Here are a few ways you can
 To get started with development:
 
 ```sh
-git clone https://github.com/curiousmarkingsco/appSage.git
-cd appSage
+git clone https://github.com/curiousmarkingsco/Appstart.git
+cd Appstart
 ```
 
 ## JavaScript Styles
