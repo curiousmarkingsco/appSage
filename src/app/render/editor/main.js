@@ -257,76 +257,16 @@ async function initializeEditorHtml() {
         </div>
       `;
 
-      if (electronMode) {
-        loadEditorScripts().then(() => {
-          initializeConfig().then(()=>{
-            activateComponents(true);
-            resolve();
-          });
-        });
-      } else {
-        initializeConfig().then(()=>{
-          activateComponents(true);
-          resolve();
-        });
-      }
+      initializeConfig().then(()=>{
+        activateComponents(true);
+        resolve();
+      });
     } catch (error) {
       reject(error); // Reject the promise if there's an error
     }
   });
 }
 window.initializeEditorHtml = initializeEditorHtml;
-
-async function loadEditorScripts() {
-  if (editorScriptsAlreadyLoaded === true) {
-    return new Promise((resolve, reject) => { resolve(); });
-  } else {
-    await loadScript('./render/indexeddb.js');
-    await loadScript('./render/load.js');
-    await loadScript('./render/editor/revision.js');
-    await loadScript('./render/editor/save.js');
-    await loadScript('./render/editor/grid.js');
-    await loadScript('./render/editor/style/grid.js');
-    await loadScript('./render/editor/container.js');
-    await loadScript('./render/editor/style/container.js');
-    await loadScript('./render/editor/component.js');
-    await loadScript('./render/editor/column.js');
-    await loadScript('./render/editor/style/column.js');
-    await loadScript('./render/editor/content.js');
-    await loadScript('./render/editor/sidebar.js');
-    await loadScript('./render/editor/style.js');
-    await loadScript('./render/editor/load.js');
-    await loadScript('./render/editor/components/main.js');
-    await loadScript('./render/editor/responsive.js');
-    await loadScript('./render/remote_save.js');
-    await loadScript('./render/editor/media.js');
-    await loadScript('./render/main.js');
-    return new Promise((resolve, reject) => {
-      try {
-        // TODO
-        // loadScripts([ all the waits above used to be in here, some should be added back for efficiency sake ]);
-
-        const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
-        components.map(component => {
-          if (component.html_template !== '') return;
-          if (component.license === 'premium' && appSagePremium === false) return;
-
-          const path = component.license === 'premium'
-            ? `./render/editor/components/premium/${component.file}`
-            : `./render/editor/components/free/${component.file}`;
-
-          loadScript(path);
-        });
-        editorScriptsAlreadyLoaded = true;
-        resolve();
-      } catch(error) {
-        reject(error);
-        console.error('Error loading scripts:', error.stack || error);
-      }
-    });
-  }
-}
-window.loadEditorScripts = loadEditorScripts;
 
 function setupPageEvents() {
   // This big chunk does everything necessary for initial page setup which is
@@ -458,17 +398,6 @@ function setupPageEvents() {
 }
 window.setupPageEvents = setupPageEvents;
 
-function loadScripts(scriptUrls) {
-  scriptUrls.forEach(src => {
-    const script = document.createElement('script');
-    script.src = src;
-    script.async = true;
-    const apex = document.getElementById('apex');
-    apex.appendChild(script);
-  });
-}
-window.loadScripts = loadScripts;
-
 async function initializeConfig() {
   const params = new URLSearchParams(window.location.search);
   const config = params.get('config');
@@ -476,26 +405,14 @@ async function initializeConfig() {
   return new Promise((resolve, reject) => {
     try {
       if (typeof config !== 'undefined' && config !== 'new') {
-        if (!electronMode) {
-          // Using localStorage for non-Electron mode
-          const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-          let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
-          document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
-          if (pageData && pageData.length > 0) {
-            loadChanges(pageData);
-            loadPageSettings(config);
-            loadPageMetadata(config);
-          }
-        } else if (electronMode) {
-          // Using Electron storage
-          if (pageData) {
-            document.querySelector('title').textContent = `Editing: ${pageData.title} | appSage`;
-            if ((typeof pageData.page_data !== 'undefined')) {
-              loadChanges(pageData.page_data);
-              loadPageSettings(config);
-              loadPageMetadata(config);
-            }
-          }
+        // Using localStorage for non-Electron mode
+        const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+        let pageTitle = Object.entries(titleIdMap).find(([title, id]) => id === config)?.[0] || 'Untitled';
+        document.querySelector('title').textContent = `Editing: ${pageTitle} | appSage`;
+        if (pageData && pageData.length > 0) {
+          loadChanges(pageData);
+          loadPageSettings(config);
+          loadPageMetadata(config);
         }
         setupAutoSave(config);
       } else {
@@ -936,18 +853,8 @@ function addEditablePageTitle(container, placement) {
   const params = new URLSearchParams(window.location.search);
   let titleIdMap;
 
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-  } else {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      titleIdMap = storeData.titles || {};
-    }).catch((error) => {
-      console.error('Error reading title ID map in Electron mode:', error);
-      titleIdMap = {}; // Fallback to an empty object if there's an error
-    });
-  }
+  // Using localStorage for non-Electron mode
+  titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
 
   let currentTitle = Object.entries(titleIdMap).find(([title, id]) => id === params.get('config'))?.[0];
 
@@ -1131,62 +1038,24 @@ function createNewConfigurationFile() {
   let title = 'Untitled';
   let counter = 1;
 
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-    while (title in titleIdMap) {
-      title = `Untitled_${counter}`;
-      counter++;
-    }
-    // Save the mapping of title to ID
-    titleIdMap[title] = pageId;
-    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    if (!appSageStorage.pages) {
-      appSageStorage.pages = {};
-    }
-    appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-
-    window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
-  } else if (electronMode) {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      const titleIdMap = storeData.titles || {};
-
-      // Generate a unique title
-      while (title in titleIdMap) {
-        title = `Untitled_${counter}`;
-        counter++;
-      }
-
-      // Save the mapping of title to ID
-      titleIdMap[title] = pageId;
-      storeData.titles = titleIdMap;
-
-      // Initialize the new page data
-      if (!storeData.pages) {
-        storeData.pages = {};
-      }
-
-      if (!storeData.pages[pageId]) {
-        storeData.pages[pageId] = {};
-      }
-      storeData.titles = titleIdMap;
-      storeData.pages[pageId] = { page_data: [], title: title, settings: {} };
-
-      // Save the updated data back to Electron store
-      window.api.updateStoreData(storeData).then(updatedData => {
-        window.appSageStore = updatedData;
-        window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
-      }).catch((error) => {
-        console.error('Error updating store data in Electron mode:', error);
-      });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
+  // Using localStorage for non-Electron mode
+  const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+  while (title in titleIdMap) {
+    title = `Untitled_${counter}`;
+    counter++;
   }
+  // Save the mapping of title to ID
+  titleIdMap[title] = pageId;
+  localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
+
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
+  }
+  appSageStorage.pages[pageId] = { page_data: [], title: title, settings: {} };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+
+  window.location.search = `?config=${pageId}`; // Redirect with the new file as a parameter
 }
 window.createNewConfigurationFile = createNewConfigurationFile;
 

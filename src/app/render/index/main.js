@@ -58,28 +58,14 @@ async function initializeDashboard() {
       // Load pages from localStorage and populate the page list
       const container = document.getElementById('pageList');
       let appSageStorage, pageList, titleIdMap;
-      if (!electronMode) {
-        // Using localStorage for non-Electron mode
-        const appSageStoreObject = localStorage['appSageStorage'];
-        appSageStorage = appSageStoreObject ? JSON.parse(appSageStoreObject) : { pages: [], titleIdMap: [], settings: {} };
-        pageList = appSageStorage.pages;
-        titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
-        displayPages(titleIdMap, pageList, container);
-      } else if (electronMode) {
-        // Using Electron storage
-        window.api.readStoreData().then((storeData) => {
-          appSageStorage = storeData;
-          pageList = appSageStorage.pages;
-          titleIdMap = appSageStorage.titles || {};
-          displayPages(titleIdMap, pageList, container);
-        }).catch((error) => {
-          console.error('Error reading store data in Electron mode:', error);
-          appSageStorage = {};
-          pageList = {};
-          titleIdMap = {};
-          displayPages(titleIdMap, pageList, container);
-        });
-      }
+
+      // Using localStorage for non-Electron mode
+      const appSageStoreObject = localStorage['appSageStorage'];
+      appSageStorage = appSageStoreObject ? JSON.parse(appSageStoreObject) : { pages: [], titleIdMap: [], settings: {} };
+      pageList = appSageStorage.pages;
+      titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString)) || {};
+      displayPages(titleIdMap, pageList, container);
+
       resolve();
     } catch (error) {
       reject(error); // Reject the promise if there's an error
@@ -101,8 +87,8 @@ function displayPages(titleIdMap, pageList, container) {
           <h2>${pageTitle}</h2>
         </div>
         <div class="flex justify-around mb-4 mt-2">
-          <a class="bg-fruit-salad-500 text-fuscous-gray-50 hover:bg-fruit-salad-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?config=${pageId}', '_blank');if(electronMode)window.api.createEditorWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening editor:', error.stack || error)});">Edit</a>
-          <a class="bg-gray-asparagus-500 text-fuscous-gray-50 hover:bg-gray-asparagus-700 font-bold p-2 rounded cursor-pointer" onclick="if(!electronMode)window.open('${window.location.href}?page=${pageId}', '_blank');if(electronMode)window.api.createPreviewWindow('${pageId}').then(()=>{}).catch(error=>{console.error('Error opening preview:', error.stack || error)});">Preview</a>
+          <a class="bg-fruit-salad-500 text-fuscous-gray-50 hover:bg-fruit-salad-700 font-bold p-2 rounded cursor-pointer" onclick="window.open('${window.location.href}?config=${pageId}', '_blank');">Edit</a>
+          <a class="bg-gray-asparagus-500 text-fuscous-gray-50 hover:bg-gray-asparagus-700 font-bold p-2 rounded cursor-pointer" onclick="window.open('${window.location.href}?page=${pageId}', '_blank');">Preview</a>
           <button class="bg-link text-fuscous-gray-50 bg-russett-500 border-1 border-russett-500 hover:bg-russett-700 hover:text-link font-bold p-2 rounded cursor-pointer" onclick="deletePage('${pageId}', this.parentElement.parentElement)">Delete</button>
         </div>
       `;
@@ -124,17 +110,12 @@ function loadEditor(pageId = null) {
     const params = new URLSearchParams(window.location.search);
     params.set('config', pageId);
   }
-  if (typeof window.api !== 'undefined') {
-    loadScript('./render/editor/main.js');
-  } else {
-    initializeEditor();
-  }
+  initializeEditor();
 }
 window.loadEditor = loadEditor;
 
 function loadPreview(pageId) {
   const params = new URLSearchParams(window.location.search);
   params.set('page', pageId);
-  loadScript('./render/preview/main.js');
 }
 window.loadPreview = loadPreview;

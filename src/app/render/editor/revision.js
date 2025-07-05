@@ -55,43 +55,19 @@ async function restoreRevision(pageName, pointer) {
   store.get(pageName).onsuccess = (event) => {
     const pageHistory = event.target.result;
     if (pageHistory && pageHistory.revisions[pointer]) {
-      if (!electronMode) {
-        // Parse the existing localStorage object
-        const appStorage = JSON.parse(localStorage.appSageStorage);
+      // Parse the existing localStorage object
+      const appStorage = JSON.parse(localStorage.appSageStorage);
 
-        // Update the specific page's page_data with the selected revision
-        if (appStorage.pages && appStorage.pages[pageName]) {
-          appStorage.pages[pageName].page_data = JSON.stringify(pageHistory.revisions[pointer]);
-        } else {
-          console.error(`Page ${pageName} not found in localStorage`);
-          return;
-        }
-
-        // Write the updated appStorage back to localStorage
-        localStorage.appSageStorage = JSON.stringify(appStorage);
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          // Update the page data
-          if (!storeData.pages) {
-            storeData.pages = {};
-          }
-
-          if (!storeData.pages[pageName]) {
-            storeData.pages[pageName] = {};
-          }
-
-          storeData.pages[pageName] = { ...storeData.pages[pageName], page_data: pageHistory.revisions[pointer] };
-          // Save the updated data back to Electron store
-          window.api.updateStoreData(storeData).then(updatedData => {
-            window.appSageStore = updatedData;
-            console.log(updatedData.pages[pageName].page_data[2].content)
-          }).catch((error) => {
-            console.error('Error saving page data in Electron mode:', error);
-          });
-        }).catch((error) => {
-          console.error('Error reading store data in Electron mode:', error);
-        });
+      // Update the specific page's page_data with the selected revision
+      if (appStorage.pages && appStorage.pages[pageName]) {
+        appStorage.pages[pageName].page_data = JSON.stringify(pageHistory.revisions[pointer]);
+      } else {
+        console.error(`Page ${pageName} not found in localStorage`);
+        return;
       }
+
+      // Write the updated appStorage back to localStorage
+      localStorage.appSageStorage = JSON.stringify(appStorage);
 
       // Reload the page
       // TODO: Test if soft reloading works and/or implement soft reloading properly
@@ -128,7 +104,7 @@ async function updatePointer(pageName, direction) {
     const isMac = navigator.userAgentData
       ? navigator.userAgentData.platform.toUpperCase().includes("MAC")
       : navigator.userAgent.toUpperCase().includes("MAC");
-      
+
     const ctrlKey = isMac ? event.metaKey : event.ctrlKey;
 
     if (ctrlKey && event.key === "z" && !event.shiftKey) {

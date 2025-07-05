@@ -68,38 +68,14 @@ window.saveChanges = saveChanges;
 // DATA IN: ['String', 'JSON Object']
 async function savePageData(pageId, json) {
   addRevision(pageId, json);
-  if (!electronMode) {
-    const appSageStorage = getAppSageStorage();
-    appSageStorage.pages[pageId] = {
-      ...appSageStorage.pages[pageId],
-      page_data: null // clears big payload
-    };
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+  const appSageStorage = getAppSageStorage();
+  appSageStorage.pages[pageId] = {
+    ...appSageStorage.pages[pageId],
+    page_data: null // clears big payload
+  };
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 
-    await saveBlobToIndexedDB(pageId, json);
-  } else if (electronMode) {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      // Update the page data
-      if (!storeData.pages) {
-        storeData.pages = {};
-      }
-
-      if (!storeData.pages[pageId]) {
-        storeData.pages[pageId] = {};
-      }
-
-      storeData.pages[pageId] = { ...storeData.pages[pageId], page_data: json };
-      // Save the updated data back to Electron store
-      window.api.updateStoreData(storeData).then(updatedData => {
-        window.appSageStore = updatedData;
-      }).catch((error) => {
-        console.error('Error saving page data in Electron mode:', error);
-      });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
-  }
+  await saveBlobToIndexedDB(pageId, json);
 } // DATA OUT: null
 window.savePageData = savePageData;
 
@@ -107,7 +83,6 @@ async function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
     // First, we store to the local machine for redundancy
-    if (!electronMode) {
     const appSageStorage = getAppSageStorage();
 
     if (!appSageStorage.pages[pageId]) {
@@ -120,30 +95,6 @@ async function saveComponentObjectToPage(componentName, object) {
 
     // Store the heavy object in IndexedDB under a namespaced key
     await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
-  } else {
-      // Using Electron storage
-      window.api.readStoreData().then((storeData) => {
-        // Ensure pages exist in storeData
-        if (!storeData.pages) {
-          storeData.pages = {};
-        }
-        // Ensure the pageId exists in storeData
-        if (!storeData.pages[pageId]) {
-          storeData.pages[pageId] = {};
-        }
-        // Save the component object to the current page
-        storeData.pages[pageId][componentName] = object;
-
-        // Save the updated data back to Electron store
-        window.api.updateStoreData(storeData).then(updatedData => {
-          window.appSageStore = updatedData;
-        }).catch((error) => {
-          console.error('Error saving component object to page in Electron mode:', error);
-        });
-      }).catch((error) => {
-        console.error('Error reading store data in Electron mode:', error);
-      });
-    }
     // TODO: Then, send to an API if enabled
     // if (apiEnabled) {}
   } catch (error) {
@@ -158,41 +109,16 @@ window.saveComponentObjectToPage = saveComponentObjectToPage;
 // DATA IN: ['String', 'JSON Object']
 // Save page settings (renamed to savePageDataSettings)
 function savePageDataSettings(pageId, data) {
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    if (!appSageStorage.pages) {
-      appSageStorage.pages = {};
-    }
-    if (!appSageStorage.pages[pageId]) {
-      appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
-    }
-    appSageStorage.pages[pageId].settings = data;
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-  } else {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      // Ensure pages exist in storeData
-      if (!storeData.pages) {
-        storeData.pages = {};
-      }
-      // Ensure the pageId exists in storeData
-      if (!storeData.pages[pageId]) {
-        storeData.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
-      }
-      // Update the settings for the specified pageId
-      storeData.pages[pageId].settings = data;
-
-      // Save the updated data back to Electron store
-      window.api.updateStoreData(storeData).then(updatedData => {
-        window.appSageStore = updatedData;
-      }).catch((error) => {
-        console.error('Error saving page data settings in Electron mode:', error);
-      });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
+  // Using localStorage for non-Electron mode
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
   }
+  if (!appSageStorage.pages[pageId]) {
+    appSageStorage.pages[pageId] = { page_data: {}, settings: {}, blobs: {} };
+  }
+  appSageStorage.pages[pageId].settings = data;
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 window.savePageDataSettings = savePageDataSettings;
 
@@ -208,38 +134,9 @@ function savePageSettingsChanges(pageId) {
     metaTags: ''
   };
 
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    const appSageStorage = getAppSageStorage();
-    appSageStorage.pages[pageId].settings = JSON.stringify(settings);
-    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-  } else {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      // Ensure pages exist in storeData
-      if (!storeData.pages) {
-        storeData.pages = {};
-      }
-
-      if (!storeData.pages[pageId]){
-        storeData.pages[pageId] = {}
-      }
-
-      if (!storeData.pages[pageId]) {
-        storeData.pages[pageId] = {};
-      }
-      // Update the settings for the specified pageId
-      storeData.pages[pageId].settings = JSON.stringify(settings);
-
-      // Save the updated data back to Electron store
-      window.api.updateStoreData(storeData).then(updatedData => {
-        window.appSageStore = updatedData;
-      }).catch((error) => {
-        console.error('Error saving page settings in Electron mode:', error);
-      });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
-  }
+  // Using localStorage for non-Electron mode
+  const appSageStorage = getAppSageStorage();
+  appSageStorage.pages[pageId].settings = JSON.stringify(settings);
+  localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
 } // DATA OUT: null
 window.savePageSettingsChanges = savePageSettingsChanges;

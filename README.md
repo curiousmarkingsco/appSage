@@ -31,22 +31,9 @@ npm install
 ```
 
 #### 3. Run the localhost servers
-Then, get it started up:
-```sh
-npm run dev
-```
-This runs both web and Electron services so that you may develop and test both simultaneously.
 
-##### Running individual services
-
-###### Web
 ```sh
 npm run webdev
-```
-
-###### Electron (native apps)
-```sh
-npm run appdev
 ```
 
 ## Package up a release

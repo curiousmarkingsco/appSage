@@ -7,26 +7,12 @@
   "devDependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@electron-forge/cli": "^7.5.0",
-    "@electron-forge/maker-deb": "^7.5.0",
-    "@electron-forge/maker-rpm": "^7.5.0",
-    "@electron-forge/maker-squirrel": "^7.5.0",
-    "@electron-forge/maker-zip": "^7.5.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
-    "@electron-forge/plugin-fuses": "^7.5.0",
-    "@electron-forge/plugin-webpack": "^7.5.0",
-    "@electron/fuses": "^1.8.0",
     "autoprefixer": "^10.4.20",
     "babel-loader": "^9.2.1",
     "concurrently": "^9.0.1",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
-    "electron": "^32.2.5",
-    "electron-builder": "^25.1.8",
-    "electron-packager": "^17.1.2",
-    "electron-reloader": "^1.2.3",
     "eslint": "^9.13.0",
-    "eslint-plugin-electron": "^7.0.0",
     "html-webpack-plugin": "^5.6.3",
     "http-server": "^14.1.1",
     "lighthouse": "^12.2.1",
@@ -43,28 +29,15 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npm run serve\" \"electron-forge start\"",
-    "webdev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npm run serve\"",
-    "appdev": "electron-forge start",
+    "webdev": "concurrently \"npm run watch\" \"npm run watch:css\" \"npx http-server docs\"",
     "watch": "webpack --config webpack.webdev.config.cjs --mode development --watch",
-    "serve": "npx http-server docs",
     "watch:css": "npx tailwindcss -i ./src/app/styles.css -o ./src/app/tailwind-output.css --watch",
-    "build": "webpack --config webpack.web.config.cjs --mode production",
-    "rebuild": "electron-rebuild",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "postinstall": "electron-rebuild"
-  },
-  "config": {
-    "forge": "./forge.config.js"
+    "build": "webpack --config webpack.web.config.cjs --mode production"
   },
   "keywords": [],
-  "author": "Curious Markings, Co.",
+  "author": "Kenzie Technologies",
   "license": "ISC",
   "dependencies": {
-    "electron-is-dev": "^3.0.1",
-    "electron-squirrel-startup": "^1.0.1",
-    "electron-store": "^10.0.0",
     "glob": "^11.0.0",
     "postcss-loader": "^8.1.1",
     "tailwindsjs": "^1.0.0"
@@ -74,8 +47,7 @@
       "plugin:prettier/recommended"
     ],
     "plugins": [
-      "tailwindcss",
-      "electron"
+      "tailwindcss"
     ],
     "rules": {
       "tailwindcss/classnames-order": "warn",

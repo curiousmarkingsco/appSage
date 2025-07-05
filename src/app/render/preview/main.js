@@ -33,13 +33,7 @@ function initializePreview() {
       const urlParams = new URLSearchParams(window.location.search);
       const previewPageId = urlParams.get('page');
 
-      if (electronMode) {
-        loadPreviewScripts().then(() => {
-          if (previewPageId) loadPreview(previewPageId);
-        });
-      } else {
-        if (previewPageId) loadPreview(previewPageId);
-      }
+      if (previewPageId) loadPreview(previewPageId);
 
       resolve();
     } catch (error) {
@@ -49,88 +43,28 @@ function initializePreview() {
 };
 window.initializePreview = initializePreview;
 
-
-async function loadPreviewScripts() {
-  if (editorScriptsAlreadyLoaded === true) {
-    return new Promise((resolve, reject) => { resolve(); });
-  } else {
-    await loadScript('./render/editor/components/main.js');
-    await loadScript('./render/editor/save.js');
-    await loadScript('./render/load.js');
-    return new Promise((resolve, reject) => {
-      try {
-        // TODO
-        // loadScripts([ all the waits above used to be in here, some should be added back for efficiency sake ]);
-
-        const components = Object.keys(appSageComponents).map(key => appSageComponents[key]);
-        components.map(component => {
-          if (component.html_template !== '') return;
-          if (component.license === 'premium' && appSagePremium === false) return;
-
-          const path = component.license === 'premium'
-            ? `./render/editor/components/premium/${component.file}`
-            : `./render/editor/components/free/${component.file}`;
-
-          loadScript(path);
-        });
-        editorScriptsAlreadyLoaded = true;
-        resolve();
-      } catch(error) {
-        reject(error);
-        console.error('Error loading scripts:', error.stack || error);
-      }
-    });
-  }
-}
-window.loadPreviewScripts = loadPreviewScripts;
-
 // This function does everything described above, though this comment should
 // probably be reviewed and updated if anything is ever added to this file.
 // DATA IN: String
 async function loadPreview(pageId) {
   const json = await loadPage(pageId);  // Uses the already-refactored loadPage
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    if (json) {
-      const pageContainer = document.getElementById('page');
-      pageContainer.innerHTML = ''; // Clear existing content
+  // Using localStorage for non-Electron mode
+  if (json) {
+    const pageContainer = document.getElementById('page');
+    pageContainer.innerHTML = ''; // Clear existing content
 
-      document.querySelector('title').textContent = pageId;
+    document.querySelector('title').textContent = pageId;
 
-      const data = json;
-      data.forEach(item => {
-        pageContainer.innerHTML += item.content;
-      });
-
-      loadPageSettings(pageId, true);
-      loadPageMetadata(pageId);
-    } else {
-      console.error('No saved data found for pageId:', pageId);
-    }
-    activateComponents();
-  } else if (electronMode) {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      if (storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].page_data) {
-        const pageContainer = document.getElementById('page');
-        pageContainer.innerHTML = ''; // Clear existing content
-
-        document.querySelector('title').textContent = pageId;
-
-        const data = storeData.pages[pageId].page_data;
-        data.forEach(item => {
-          pageContainer.innerHTML += item.content;
-        });
-
-        loadPageSettings(pageId, true);
-        loadPageMetadata(pageId);
-        activateComponents();
-      } else {
-        console.error('No saved data found for pageId:', pageId);
-      }
-    }).catch((error) => {
-      console.error('Error loading preview from Electron store:', error);
+    const data = json;
+    data.forEach(item => {
+      pageContainer.innerHTML += item.content;
     });
+
+    loadPageSettings(pageId, true);
+    loadPageMetadata(pageId);
+  } else {
+    console.error('No saved data found for pageId:', pageId);
   }
+  activateComponents();
 } // DATA OUT: null
 window.loadPreview = loadPreview;

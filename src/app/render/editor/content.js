@@ -299,11 +299,7 @@ function generateMediaUrl(event, contentContainer, background) {
         contentContainer.setAttribute('data-media-id', mediaId);
         let result = e.target.result;
         getMediaFromStorage(mediaId).then(fileUrl => {
-          if (electronMode && fileUrl) {
-            result = fileUrl;
-          } else {
-            result = e.target.result;
-          }
+          result = e.target.result;
           if (background) {
             contentContainer.style.backgroundImage = `url(${result})`;
           } else {
@@ -319,64 +315,27 @@ function generateMediaUrl(event, contentContainer, background) {
 window.generateMediaUrl = generateMediaUrl;
 
 async function saveMediaToStorage(mediaBlob, mediaId) {
-  if (!electronMode) {
-    // Uses IndexedDB
-    const db = await openDatabase();
-    const transaction = db.transaction(['mediaStore'], 'readwrite');
-    const store = transaction.objectStore('mediaStore');
-    const mediaEntry = { id: mediaId, blob: mediaBlob, url: './placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
-    mediaEntry.url = URL.createObjectURL(mediaEntry.blob);
-    store.put(mediaEntry);
-  } else if (electronMode) {
-    try {
-      // Convert the mediaBlob to an ArrayBuffer
-      const arrayBuffer = await mediaBlob.arrayBuffer();
-
-      // Call the exposed API function to save the media
-      const uint8Array = new Uint8Array(arrayBuffer);
-      await window.api.saveMediaFileToPage(getPageId(), uint8Array, mediaId).then(updatedData => {
-        window.appSageStore = updatedData;
-      });
-    } catch (error) {
-      console.error('Error saving media in Electron mode:', error);
-    }
-  }
+  // Uses IndexedDB
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readwrite');
+  const store = transaction.objectStore('mediaStore');
+  const mediaEntry = { id: mediaId, blob: mediaBlob, url: './placeholder_media/lightmode_jpg/landscape_placeholder.jpg' };
+  mediaEntry.url = URL.createObjectURL(mediaEntry.blob);
+  store.put(mediaEntry);
 }
 window.saveMediaToStorage = saveMediaToStorage;
 
 async function getMediaFromStorage(mediaId) {
-  if (!electronMode) {
-    // Uses IndexedDB
-    const db = await openDatabase();
-    const transaction = db.transaction(['mediaStore'], 'readonly');
-    const store = transaction.objectStore('mediaStore');
+  // Uses IndexedDB
+  const db = await openDatabase();
+  const transaction = db.transaction(['mediaStore'], 'readonly');
+  const store = transaction.objectStore('mediaStore');
 
-    return new Promise((resolve, reject) => {
-      const request = store.get(mediaId);
-      request.onsuccess = (event) => {resolve(event.target.url); console.log(event.target.url);}
-      request.onerror = (event) => reject('Error fetching media:', event);
-    });
-  } else if (electronMode) {
-    // Uses the API exposed in preload.js for Electron
-    try {
-      appSageStore.pages ??= {};
-      appSageStore.pages[getPageId()] ??= {};
-      appSageStore.pages[getPageId()].media_attachments ??= {};
-
-      return new Promise((resolve, reject) => {
-        try {
-          window.api.readStoreData().then(storeData => {
-            resolve(storeData.pages[getPageId()].media_attachments[mediaId])
-          });
-        } catch (error) {
-          reject('Error fetching media:', error);
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching media in Electron mode:', error);
-      return null;
-    }
-  }
+  return new Promise((resolve, reject) => {
+    const request = store.get(mediaId);
+    request.onsuccess = (event) => {resolve(event.target.url); console.log(event.target.url);}
+    request.onerror = (event) => reject('Error fetching media:', event);
+  });
 }
 window.getMediaFromStorage = getMediaFromStorage;
 
@@ -404,7 +363,7 @@ async function displayMediaFromStorage(targetElement) {
         }
       }
     }).catch((error) => {
-      console.error(`Error displaying media from ${ electronMode ? 'Electron Store' : 'IndexedDB'}:`, error);
+      console.error('Error displaying media from IndexedDB', error);
     });
   }
 }

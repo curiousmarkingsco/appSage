@@ -74,36 +74,9 @@ function activateTabs() {
       window.currentBreakpoint = bp;
 
       try {
-        const pageId = getPageId();
-        if (!electronMode) {
-          // Using localStorage for non-Electron mode
-          const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
-          settings.currentBreakpoint = bp;
-          localStorage.setItem(appSageSettingsString, JSON.stringify(settings));
-        } else {
-          // Using Electron storage
-          window.api.readStoreData().then((storeData) => {
-            // Ensure pages exist in storeData
-            if (!storeData.settings) {
-              storeData.settings = {};
-            }
-            // Ensure the pageId exists in storeData
-            if (!storeData.settings.currentBreakpoint) {
-              storeData.settings.currentBreakpoint = 'xs';
-            }
-            // Save the component object to the current page
-            storeData.settings.currentBreakpoint = bp;
-    
-            // Save the updated data back to Electron store
-            window.api.updateStoreData(storeData).then(updatedData => {
-              window.appSageStore = updatedData;
-            }).catch((error) => {
-              console.error('Error saving breakpoint settings in Electron mode:', error);
-            });
-          }).catch((error) => {
-            console.error('Error reading store data in Electron mode:', error);
-          });
-        }
+        const settings = JSON.parse(localStorage.getItem(appSageSettingsString));
+        settings.currentBreakpoint = bp;
+        localStorage.setItem(appSageSettingsString, JSON.stringify(settings));
       } catch (error) {
         console.error('Something went wrong saving breakpoint settings data.', error);
       }

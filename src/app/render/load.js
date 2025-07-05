@@ -1,7 +1,7 @@
 /*
 
   load.js
-  
+
   This file is intended to be the primary location for functions that load
   saved content from previous edits. This loading is not just for the editor,
   but the preview page as well. As such, final outputs, particularly for
@@ -12,36 +12,20 @@ const loadBlobFromIndexedDB = window.loadBlobFromIndexedDB;
 // Utility functions for managing localStorage with a 'appSageStorage' object
 // DATA IN: String
 async function loadPage(pageId) {
-  if (!electronMode) {
-    // Using localStorage when not in Electron mode
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    if (appSageStorage.pages && appSageStorage.pages[pageId]) {
-      const fallback = appSageStorage.pages[pageId].page_data;
-      try {
-        const indexedDBData = await loadBlobFromIndexedDB(pageId);
-        return indexedDBData || fallback;
-      } catch (err) {
-        console.warn('Failed to load from IndexedDB, using fallback:', err);
-        return fallback;
-      }
+  // Using localStorage when not in Electron mode
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (appSageStorage.pages && appSageStorage.pages[pageId]) {
+    const fallback = appSageStorage.pages[pageId].page_data;
+    try {
+      const indexedDBData = await loadBlobFromIndexedDB(pageId);
+      return indexedDBData || fallback;
+    } catch (err) {
+      console.warn('Failed to load from IndexedDB, using fallback:', err);
+      return fallback;
     }
-    else {
-      return null;
-    }
-  } else if (electronMode) {
-    // Using Electron storage
-    return window.api.readStoreData().then((storeData) => {
-      if (storeData.pages) {
-        if (!storeData.pages[pageId]) storeData.pages[pageId] = {};
-        if (!storeData.pages[pageId].page_data) storeData.pages[pageId].page_data = {};
-        return storeData.pages[pageId];
-      } else {
-        return null;
-      }
-    }).catch((error) => {
-      console.error('Error loading page data from Electron store:', error);
-      return null;
-    });
+  }
+  else {
+    return null;
   }
 } // DATA OUT: String || null
 window.loadPage = loadPage;
@@ -53,62 +37,33 @@ window.loadPage = loadPage;
 function loadPageMetadata(pageId) {
   const element = document.querySelector('head');
 
-  if (!electronMode) {
-    // Using localStorage for non-Electron mode
-    const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
-    const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
+  // Using localStorage for non-Electron mode
+  const storedData = JSON.parse(localStorage.getItem(appSageStorageString));
+  const fontSettings = JSON.parse(localStorage.getItem(appSageSettingsString));
 
-    if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
-      const metaTags = storedData.pages[pageId].settings.metaTags;
+  if (storedData && storedData.pages && storedData.pages[pageId] && storedData.pages[pageId].settings) {
+    const metaTags = storedData.pages[pageId].settings.metaTags;
 
-      if (metaTags && metaTags.length > 0) {
-        metaTags.forEach(tag => {
-          const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
-          metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
-          metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
-          element.appendChild(metaTag);
-        });
-      }
-    }
-
-    if (fontSettings) {
-      try {
-        const fonts = Object.values(fontSettings.fonts).join('&family=');
-        const metaTag = document.createElement('link');
-        metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
-        metaTag.setAttribute('rel', 'stylesheet');
+    if (metaTags && metaTags.length > 0) {
+      metaTags.forEach(tag => {
+        const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
+        metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
+        metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
         element.appendChild(metaTag);
-      } catch (error) {
-        console.log('Error loading fonts:', error || error.stack);
-      }
+      });
     }
-  } else {
-    // Using Electron storage
-    window.api.readStoreData().then((storeData) => {
-      if (storeData && storeData.pages && storeData.pages[pageId] && storeData.pages[pageId].settings) {
-        const metaTags = storeData.pages[pageId].settings.metaTags;
+  }
 
-        if (metaTags && metaTags.length > 0) {
-          metaTags.forEach(tag => {
-            const metaTag = document.createElement(tag.type === 'link' ? 'link' : 'meta');
-            metaTag.setAttribute(tag.type === 'link' ? 'href' : tag.type, tag.content);
-            metaTag.setAttribute(tag.type === 'link' ? 'rel' : 'content', tag.name);
-            element.appendChild(metaTag);
-          });
-        }
-      }
-
-      const fontSettings = storeData.settings;
-      if (fontSettings && fontSettings.fonts) {
-        const fontsList = Object.values(fontSettings.fonts).join('&family=');
-        const metaTag = document.createElement('link');
-        metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fontsList}&display=swap`);
-        metaTag.setAttribute('rel', 'stylesheet');
-        element.appendChild(metaTag);
-      }
-    }).catch((error) => {
-      console.error('Error loading page metadata from Electron store:', error);
-    });
+  if (fontSettings) {
+    try {
+      const fonts = Object.values(fontSettings.fonts).join('&family=');
+      const metaTag = document.createElement('link');
+      metaTag.setAttribute('href', `https://fonts.googleapis.com/css2?family=${fonts}&display=swap`);
+      metaTag.setAttribute('rel', 'stylesheet');
+      element.appendChild(metaTag);
+    } catch (error) {
+      console.log('Error loading fonts:', error || error.stack);
+    }
   }
 } // DATA OUT: String || null
 window.loadPageMetadata = loadPageMetadata;
@@ -120,14 +75,9 @@ window.loadPageMetadata = loadPageMetadata;
 function loadPageSettings(config, view = false) {
   let appSageStorage;
   let localStorageExists = false;
-  if (!electronMode){
-    appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    localStorageExists = (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings);
-  } else {
-    appSageStorage = appSageStore;
-    localStorageExists = true;
-  }
-    
+  appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  localStorageExists = (appSageStorage.pages && appSageStorage.pages[config] && appSageStorage.pages[config].settings);
+
   if (localStorageExists) {
     const settings = appSageStorage.pages[config].settings;
     const element = document.getElementById(settings.id);
@@ -168,7 +118,7 @@ function addMetasToHead() {
         const metaTags = settings.metaTags;
         if (typeof metaTags !== 'undefined') {
           const headTag = document.getElementsByTagName('head')[0];
-        
+
           if (metaTags !== '') metaTags.forEach(tag => {
             if (tag.type === 'link') {
               const metatag = document.createElement('link');
@@ -252,23 +202,18 @@ function getPageId() {
 window.getPageId = getPageId;
 
 function getAppSageStorage() {
-  if (!electronMode) {
-    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-    if (!appSageStorage.pages) {
-      appSageStorage.pages = {};
-    }
-    return appSageStorage;
-  } else {
-    return appSageStore;
+  const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+  if (!appSageStorage.pages) {
+    appSageStorage.pages = {};
   }
+  return appSageStorage;
 }
 window.getAppSageStorage = getAppSageStorage;
 
 function getPageObject(pageId) {
   const appSageStorage = getAppSageStorage();
   let pageObject;
-  if (!electronMode) pageObject = appSageStorage.pages[pageId];
-  if (electronMode) pageObject = appSageStore.pages[pageId];
+  pageObject = appSageStorage.pages[pageId];
   return pageObject;
 }
 window.getPageObject = getPageObject;

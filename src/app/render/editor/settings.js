@@ -18,30 +18,30 @@ function initializeSettings() {
   // Function to save settings
   document.getElementById('appSageSettingsForm').addEventListener('submit', function (event) {
     event.preventDefault();
-  
+
     // Collect selected fonts and manually added fonts
     let selectedFonts = Array.from(document.getElementById('fonts').selectedOptions).map(option => option.value);
     let manualFonts = Array.from(document.querySelectorAll('#fontsContainer input[type="text"]'))
       .map(input => input.value)
       .filter(Boolean); // Remove empty entries
-  
+
     // Combine selected and manually entered fonts
     let allFonts = [...new Set([...selectedFonts, ...manualFonts])]; // Avoid duplicates
-  
+
     // Convert font names to object with kebab-case keys
     let fontsObject = allFonts.reduce((acc, font) => {
       const fontKey = font.toLowerCase().replace(/\+/g, '').replace(/\ /g, ''); // Convert to kebab-case
       acc[fontKey] = font.replace(/\ /g, '+');
       return acc;
     }, {});
-  
+
     // Create a structure for colors where each color has multiple shades
     let colors = Array.from(document.querySelectorAll('.color-group')).reduce((acc, group) => {
       let colorName = group.querySelector('.customColorName').value;
 
       // Sanitize color name: replace non-alphanumeric characters with hyphens
       colorName = colorName.replace(/[^a-zA-Z0-9]/g, '-');
-      
+
       // Replace multiple consecutive hyphens with a single hyphen
       colorName = colorName.replace(/-+/g, '-');
 
@@ -62,44 +62,26 @@ function initializeSettings() {
       return acc;
     }, {});
 
-  
+
     let formData = {
       fonts: fontsObject, // Save the fonts object
       colors: colors,     // Save the grouped colors
       advancedMode: document.getElementById('advancedMode').checked
     };
-  
-    
-    if (!electronMode) {
-      // Using localStorage for non-Electron mode
-      localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
-    } else {
-      // Using Electron storage
-      window.api.readStoreData().then((storeData) => {
-        // Update the settings with formData
-        storeData.settings = formData;
-        
-        // Save the updated data back to Electron store
-        window.api.updateStoreData(storeData).then(updatedData => {
-          window.appSageStore = updatedData;
-        }).catch((error) => {
-          console.error('Error updating settings in Electron mode:', error);
-        });
-      }).catch((error) => {
-        console.error('Error reading store data in Electron mode:', error);
-      });
-    }    
+
+    // Using localStorage for non-Electron mode
+    localStorage.setItem(appSageSettingsString, JSON.stringify(formData));
     generateGfontsEmbedCode();
-  
+
     const params = new URLSearchParams(window.location.search);
     params.set('settingsSaved', 'true');
     window.location.href = window.location.pathname + '?' + params.toString();
   });
-  
+
 
 
     const colorsContainer = document.getElementById('colorsContainer');
-  
+
     // Add event listener for dynamically added "Delete Color" buttons
     colorsContainer.addEventListener('click', function (event) {
       if (event.target.classList.contains('deleteColor')) {
@@ -110,7 +92,7 @@ function initializeSettings() {
         }
       }
     });
-  
+
     // Add event listener for "Add Color Group" button (if required)
     const addColorGroupButton = document.getElementById('addColorGroup');
     addColorGroupButton.addEventListener('click', function () {
@@ -155,7 +137,7 @@ function initializeSettings() {
       `;
       colorsContainer.appendChild(newColorGroup);
     });
-  
+
 }
 window.initializeSettings = initializeSettings;
 
@@ -237,30 +219,15 @@ function showSettingsSavedModal() {
 window.showSettingsSavedModal = showSettingsSavedModal;
 
 function processPastedColorObject(newColorData) {
-  if (!electronMode) {
-    let colorObject = JSON.parse(localStorage.getItem('appSageSettings')) || { fonts: {}, colors: {}, advancedMode: true };
+  let colorObject = JSON.parse(localStorage.getItem('appSageSettings')) || { fonts: {}, colors: {}, advancedMode: true };
 
-    // Merging the new color data with the existing colors
-    colorObject.colors = {
-      ...colorObject.colors,
-      ...newColorData
-    };
+  // Merging the new color data with the existing colors
+  colorObject.colors = {
+    ...colorObject.colors,
+    ...newColorData
+  };
 
-    localStorage.setItem('appSageSettings', JSON.stringify(colorObject));
-  } else if (electronMode) {
-    window.api.readStoreData().then((storeData) => {;
-      storeData.settings.colors = {
-        ...storeData.settings.colors,
-        ...newColorData
-      };
-
-      window.api.updateStoreData(storeData).then(updatedStore => {
-        appSageStore = updatedStore;
-      });
-    }).catch((error) => {
-      console.error('Error reading store data in Electron mode:', error);
-    });
-  }
+  localStorage.setItem('appSageSettings', JSON.stringify(colorObject));
 }
 window.processPastedColorObject = processPastedColorObject;
 

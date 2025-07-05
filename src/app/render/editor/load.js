@@ -1,7 +1,7 @@
 /*
 
   editor/load.js
-  
+
   This file is intended to be the primary location for functions that load
   saved content from previous edits. This loading is only for the editor page.
 
@@ -15,7 +15,7 @@ function loadChanges(json, pasted = false) {
   if (!pasted) {
     pasteContainer.innerHTML = '';
     let data = json;
-    if (!electronMode && typeof data === 'string') {
+    if (typeof data === 'string') {
       data = JSON.parse(data);
     }
     data.forEach(item => {

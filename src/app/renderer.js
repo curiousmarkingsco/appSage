@@ -8,63 +8,12 @@ if (typeof global === 'undefined') {
 const apex = document.getElementById('apex');
 
 window.appSageStore;
-window.editorScriptsAlreadyLoaded = false;
-window.electronMode = !(typeof window.api === 'undefined');
 // TODO: Finish adding remote API option for redundant/cloud storage
 // window.apiEnabled = false;
 
 document.addEventListener('DOMContentLoaded', function () {
-  if (electronMode) {
-    // STORAGE // TODO - Create basic authentication
-    /* open: THIS AREA FOR DEV PURPOSES, DELETE ME! */
-    let username = 'PLACEHOLDER_USERNAME';
-    const userPassword = 'PLACEHOLDER_PASSWORD';
-    const newStore = username === 'PLACEHOLDER_USERNAME';
-    if (newStore) username = 'PLACEHOLDER_USERNAME_INITIALIZED'
-    /* shut: THIS AREA FOR DEV PURPOSES, DELETE ME! */
-
-    // Initialize the store and log the result or error
-    window.api.createOrFindStore(username, userPassword, newStore).then(data => {
-      window.appSageStore = data;
-    }).catch(error => {
-      console.error('Error initializing store:', error.stack || error);
-    });
-
-    loadScript('./render/tailwind.js', false).then(() => {
-      loadScript('./render/tailwind.config.js', false).then(() => {
-        loadScript('./render/editor/settings.js');
-        routeRequestedResource();
-      })
-    });
-  } else {
-    routeRequestedResource();
-  }
+  routeRequestedResource();
 });
-
-async function loadScripts(scripts) {
-  const promises = scripts.map(script => loadScript(script));
-
-  // Wait for all remaining scripts to load
-  await Promise.all(promises);
-}
-
-function loadScript(scriptSrc, async = true) {
-  // Check if the script is already part of the bundle
-  if (electronMode) {
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = scriptSrc;
-      script.async = async;
-      script.onload = resolve;  // Resolve when loaded
-      script.onerror = reject;  // Reject on error
-      apex.appendChild(script);
-    });
-  } else {
-    // Skip loading as the script is already bundled
-    // console.log(`${scriptSrc} is already bundled, skipping dynamic loading.`);
-    return Promise.resolve();  // Return a resolved promise to continue the flow
-  }
-}
 
 function routeRequestedResource() {
   initializeGlobals().then(() => {
@@ -72,21 +21,18 @@ function routeRequestedResource() {
 
     const config = params.get('config');
     if (config) {
-      if (!electronMode) initializeEditor()
-      if (electronMode) loadScript('./render/editor/main.js').then(() => { initializeEditor().then(() => { }) });
+      initializeEditor()
       executeCustomJSAfterLoad();
     }
 
     const pageConfig = params.get('page');
     if (pageConfig) {
-      if (!electronMode) initializePreview();
-      if (electronMode) loadScript('./render/preview/main.js').then(() => { initializePreview().then(() => { }) });
+      initializePreview();
       executeCustomJSAfterLoad();
     }
 
     if (!config && !pageConfig) {
-      if (!electronMode) initializeDashboard();
-      if (electronMode) loadScript('./render/index/main.js').then(() => { initializeDashboard(); });
+      initializeDashboard();
     }
   });
 }
@@ -111,13 +57,13 @@ function initializeGlobals() {
       /*
 
         editor/renderer.js#globals
-        
+
         These house all the icons needed for the editor. Many icons are from
         FontAwesome, added to this repository in July 2024 under a paid license
         under the ownership of Ian McKenzie (https://psychosage.io/contact/)
 
         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-        Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License - 
+        Font Awesome Pro 6.6.0 by @fontawesome - https://fontawesome.com License -
         https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.
         * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -144,31 +90,15 @@ function initializeGlobals() {
       window.appSageComponents = combineComponentsLists();
 
       window.advancedMode = false;
-      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
+      if (localStorage.getItem(appSageSettingsString)) {
         const settingsForAdvCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).advancedMode;
         if (settingsForAdvCheck) window.advancedMode = settingsForAdvCheck;
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          if (storeData && storeData.settings && storeData.settings.advancedMode) {
-            window.advancedMode = storeData.settings.advancedMode;
-          }
-        }).catch((error) => {
-          console.error('Error fetching settings from Electron store:', error);
-        });
       }
 
       window.currentBreakpoint = 'xs';
-      if (!electronMode && localStorage.getItem(appSageSettingsString)) {
+      if (localStorage.getItem(appSageSettingsString)) {
         const settingsForBpCheck = JSON.parse(localStorage.getItem(appSageSettingsString)).currentBreakpoint;
         if (settingsForBpCheck) window.currentBreakpoint = settingsForBpCheck;
-      } else if (electronMode) {
-        window.api.readStoreData().then((storeData) => {
-          if (storeData && storeData.settings && storeData.settings.currentBreakpoint) {
-            window.currentBreakpoint = storeData.settings.currentBreakpoint;
-          }
-        }).catch((error) => {
-          console.error('Error fetching settings from Electron store:', error);
-        });
       }
 
       updateTailwindConfig();
@@ -682,43 +612,22 @@ function deletePage(page_id, element) {
   const message = "Are you sure you want to delete this page? This action cannot be undone.";
 
   showConfirmationModal(message, function () {
-    if (!electronMode) {
-      const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
-      const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
+    const appSageStorage = JSON.parse(localStorage.getItem(appSageStorageString) || '{}');
+    const titleIdMap = JSON.parse(localStorage.getItem(appSageTitleIdMapString) || '{}');
 
-      if (appSageStorage.pages && appSageStorage.pages[page_id]) {
-        delete appSageStorage.pages[page_id];
-      }
-
-      for (let title in titleIdMap) {
-        if (titleIdMap[title] === page_id) {
-          delete titleIdMap[title];
-          break;
-        }
-      }
-
-      localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
-      localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
-    } else if (electronMode) {
-      window.api.readStoreData().then(storeData => {
-
-        // Delete the page from the pages object
-        delete storeData.pages[page_id];
-
-        // Remove the page title reference if it exists in the titles object
-        for (const title in storeData.titles) {
-          if (storeData.titles[title] === page_id) {
-            delete storeData.titles[title];
-            break;
-          }
-        }
-
-        // Update the store with the modified data
-        window.api.updateStoreData(storeData).then(updatedStore => {
-          appSageStore = updatedStore;
-        })
-      })
+    if (appSageStorage.pages && appSageStorage.pages[page_id]) {
+      delete appSageStorage.pages[page_id];
     }
+
+    for (let title in titleIdMap) {
+      if (titleIdMap[title] === page_id) {
+        delete titleIdMap[title];
+        break;
+      }
+    }
+
+    localStorage.setItem(appSageStorageString, JSON.stringify(appSageStorage));
+    localStorage.setItem(appSageTitleIdMapString, JSON.stringify(titleIdMap));
     element.remove();
 
     console.log(`Page with ID ${page_id} has been deleted successfully.`);
