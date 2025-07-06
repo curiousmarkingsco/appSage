@@ -4,6 +4,171 @@
 
 */
 
+// Component data management functions
+async function saveComponentData(pageId, componentId, componentName, data) {
+  try {
+    // Store in IndexedDB with component-specific key
+    const key = `${pageId}:${componentName}:${componentId}`;
+    await saveBlobToIndexedDB(key, data);
+
+    // Update cache for immediate access
+    if (!window._componentDataCache) window._componentDataCache = {};
+    if (!window._componentDataCache[pageId]) window._componentDataCache[pageId] = {};
+    if (!window._componentDataCache[pageId][componentName]) window._componentDataCache[pageId][componentName] = {};
+    window._componentDataCache[pageId][componentName][componentId] = data;
+
+    console.log(`Component data saved: ${componentName}:${componentId}`);
+  } catch (error) {
+    console.error(`Failed to save component data for ${componentName}:${componentId}`, error);
+  }
+}
+window.saveComponentData = saveComponentData;
+
+async function loadComponentData(pageId, componentId, componentName) {
+  try {
+    // Try cache first
+    if (window._componentDataCache &&
+        window._componentDataCache[pageId] &&
+        window._componentDataCache[pageId][componentName] &&
+        window._componentDataCache[pageId][componentName][componentId]) {
+      return window._componentDataCache[pageId][componentName][componentId];
+    }
+
+    // Load from IndexedDB
+    const key = `${pageId}:${componentName}:${componentId}`;
+    const data = await loadBlobFromIndexedDB(key);
+
+    // Update cache
+    if (data) {
+      if (!window._componentDataCache) window._componentDataCache = {};
+      if (!window._componentDataCache[pageId]) window._componentDataCache[pageId] = {};
+      if (!window._componentDataCache[pageId][componentName]) window._componentDataCache[pageId][componentName] = {};
+      window._componentDataCache[pageId][componentName][componentId] = data;
+    }
+
+    return data;
+  } catch (error) {
+    console.error(`Failed to load component data for ${componentName}:${componentId}`, error);
+    return null;
+  }
+}
+window.loadComponentData = loadComponentData;
+
+async function deleteComponentData(pageId, componentId, componentName) {
+  try {
+    // Remove from IndexedDB
+    const key = `${pageId}:${componentName}:${componentId}`;
+    const db = await openDB();
+    const transaction = db.transaction('blobs', 'readwrite');
+    const store = transaction.objectStore('blobs');
+    await store.delete(key);
+
+    // Remove from cache
+    if (window._componentDataCache &&
+        window._componentDataCache[pageId] &&
+        window._componentDataCache[pageId][componentName] &&
+        window._componentDataCache[pageId][componentName][componentId]) {
+      delete window._componentDataCache[pageId][componentName][componentId];
+    }
+
+    console.log(`Component data deleted: ${componentName}:${componentId}`);
+  } catch (error) {
+    console.error(`Failed to delete component data for ${componentName}:${componentId}`, error);
+  }
+}
+window.deleteComponentData = deleteComponentData;
+
+// Auto-save component data when form inputs change
+function setupComponentDataAutoSave(componentContainer, formElement) {
+  const componentId = componentContainer.getAttribute('data-component-id');
+  const componentName = componentContainer.getAttribute('data-component-name');
+  const pageId = getPageId();
+
+  if (!componentId || !componentName || !pageId) {
+    console.warn('Missing required attributes for component data auto-save');
+    return;
+  }
+
+  // Listen for changes in the form
+  formElement.addEventListener('input', async function(e) {
+    const formData = new FormData(formElement);
+    const data = {};
+
+    // Convert FormData to regular object
+    for (let [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+
+    // Save the data
+    await saveComponentData(pageId, componentId, componentName, data);
+
+    // Trigger component update if there's an update function
+    const updateFunctionName = `update${componentName.charAt(0).toUpperCase() + componentName.slice(1)}`;
+    if (window[updateFunctionName]) {
+      window[updateFunctionName](componentContainer, data);
+    }
+  });
+
+  // Also listen for change events (for selects, checkboxes, etc.)
+  formElement.addEventListener('change', async function(e) {
+    const formData = new FormData(formElement);
+    const data = {};
+
+    for (let [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+
+    await saveComponentData(pageId, componentId, componentName, data);
+
+    const updateFunctionName = `update${componentName.charAt(0).toUpperCase() + componentName.slice(1)}`;
+    if (window[updateFunctionName]) {
+      window[updateFunctionName](componentContainer, data);
+    }
+  });
+}
+window.setupComponentDataAutoSave = setupComponentDataAutoSave;
+
+// Load and populate component data into the sidebar form
+async function populateComponentForm(componentContainer, formElement) {
+  const componentId = componentContainer.getAttribute('data-component-id');
+  const componentName = componentContainer.getAttribute('data-component-name');
+  const pageId = getPageId();
+
+  if (!componentId || !componentName || !pageId) {
+    console.warn('Missing required attributes for component form population');
+    return;
+  }
+
+  const data = await loadComponentData(pageId, componentId, componentName);
+
+  if (data) {
+    // Populate form fields with saved data
+    Object.keys(data).forEach(key => {
+      const field = formElement.querySelector(`[name="${key}"]`);
+      if (field) {
+        if (field.type === 'checkbox') {
+          field.checked = Boolean(data[key]);
+        } else if (field.type === 'radio') {
+          if (field.value === data[key]) {
+            field.checked = true;
+          }
+        } else {
+          field.value = data[key];
+        }
+      }
+    });
+
+    console.log(`Component form populated with data for ${componentName}:${componentId}`);
+  }
+}
+window.populateComponentForm = populateComponentForm;
+
+/*
+
+  editor/component.js
+
+*/
+
 // This function makes it so that when you click on a component, the editing options
 // will be revealed in the sidebar to the left of the screen. It does this by
 // first making the label and supporting elements for moving and removing the
