@@ -23,7 +23,7 @@ function enterComponentEditingMode(component) {
   createComponentStepsOverlay();
   const componentSteps = document.getElementById('componentSteps');
 
-  // Clone the component for isolated editing
+  // Clone the component for isolated editing (get the most up-to-date version)
   const componentClone = component.cloneNode(true);
   componentClone.classList.add('component-editing-active');
 
@@ -117,7 +117,10 @@ function hideComponentStepsOverlay() {
     componentSteps.classList.add('hidden');
     // Explicitly set display to none to override CSS specificity
     componentSteps.style.display = 'none';
+
+    // Ensure page is visible by removing hidden class and clearing any inline styles
     page.classList.remove('hidden');
+    page.style.display = '';
 
     // Clear the componentSteps content
     componentSteps.innerHTML = '';
@@ -125,6 +128,32 @@ function hideComponentStepsOverlay() {
   }
 }
 window.hideComponentStepsOverlay = hideComponentStepsOverlay;
+
+// Ensures the page element is visible on load (in case of persisted hidden state)
+function ensurePageVisibility() {
+  const page = document.getElementById('page');
+  const componentSteps = document.getElementById('componentSteps');
+
+  if (page) {
+    // Always ensure page is visible on load
+    page.classList.remove('hidden');
+    page.style.display = '';
+  }
+
+  if (componentSteps) {
+    // Ensure componentSteps is properly hidden on load
+    componentSteps.classList.add('hidden');
+    componentSteps.style.display = 'none';
+  }
+}
+window.ensurePageVisibility = ensurePageVisibility;
+
+// Call on DOM content loaded to ensure proper state
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', ensurePageVisibility);
+} else {
+  ensurePageVisibility();
+}
 
 // Adds an exit button to return to page editing mode
 function addExitComponentEditingButton() {
@@ -165,18 +194,30 @@ function syncComponentChangesToPage() {
     const originalComponent = document.querySelector(`[data-component-id="${originalComponentId}"]`);
 
     if (editingClone && originalComponent) {
-      // Get the clean HTML of the edited component
-      const cleanHTML = getCleanInnerHTML(editingClone);
+      // Preserve the original component's outer container attributes
+      const originalAttributes = {};
+      Array.from(originalComponent.attributes).forEach(attr => {
+        originalAttributes[attr.name] = attr.value;
+      });
 
-      // Replace the original component's content
+      // Replace the original component's content while preserving structure
       originalComponent.innerHTML = editingClone.innerHTML;
 
-      // Copy all attributes from the edited clone to the original
+      // Copy classes and attributes from the edited clone, but preserve container attributes
       Array.from(editingClone.attributes).forEach(attr => {
-        if (attr.name !== 'data-is-editing-clone') {
+        if (attr.name !== 'data-is-editing-clone' && attr.name !== 'data-component-id') {
           originalComponent.setAttribute(attr.name, attr.value);
         }
       });
+
+      // Ensure critical container attributes are preserved
+      originalComponent.setAttribute('data-component-id', originalComponentId);
+      if (originalAttributes['data-component-name']) {
+        originalComponent.setAttribute('data-component-name', originalAttributes['data-component-name']);
+      }
+
+      // Get the clean HTML of the edited component for saving
+      const cleanHTML = getCleanInnerHTML(editingClone);
 
       // Save the component changes
       const componentName = originalComponent.getAttribute('data-component-name');
