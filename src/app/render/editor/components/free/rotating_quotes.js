@@ -22,15 +22,46 @@ waitForGlobalsLoaded().then(() => {
   `;
 });
 
-function initializeQuoteDataFromForm(container) {
+async function initializeQuoteDataFromForm(container) {
   const sidebar = document.getElementById('sidebar');
   const form = sidebar.querySelector('.rotatingQuotes-form');
   const quotesContainer = form.querySelector('.quotes-container');
 
-  // Load existing quotes
-  let quotesData = getCurrentPage().rotatingQuotes;
-  let quotes = [];
+  // Load existing quotes directly from IndexedDB
 
+  // Find the actual rotatingQuotes container that has the data attributes
+  const rotatingQuotesContainer = container.querySelector ?
+    container.querySelector('.rotatingQuotes-container') || container :
+    container;
+
+
+  const componentId = rotatingQuotesContainer.getAttribute('data-component-id');
+  const componentName = rotatingQuotesContainer.getAttribute('data-component-name') || 'rotatingQuotes';
+
+
+  let quotesData = null;
+
+  if (componentId) {
+    // Try the new component-specific data first
+    quotesData = await getComponentDataById(componentName, componentId);
+  }
+
+  if (!quotesData) {
+    // Fall back to the component-level data
+    quotesData = await getComponentData(componentName);
+  }
+
+  // Parse if it's a JSON string
+  if (quotesData && typeof quotesData === 'string') {
+    try {
+      quotesData = JSON.parse(quotesData);
+    } catch (e) {
+      console.error('Failed to parse quotes data:', e);
+      quotesData = null;
+    }
+  }
+
+  let quotes = [];
   if (quotesData) {
     quotes = Object.keys(quotesData).map(key => ({ id: key, ...quotesData[key] }));
   }
@@ -87,8 +118,8 @@ function initializeQuoteDataFromForm(container) {
     saveQuotesToPage();
   }
 
-  // Function to save all quotes to the page data
-  function saveQuotesToPage() {
+  // Function to save all quotes to IndexedDB
+  async function saveQuotesToPage() {
     const quoteItems = form.querySelectorAll('.quote-item');
     const quotesToSave = {};
 
@@ -102,7 +133,15 @@ function initializeQuoteDataFromForm(container) {
       }
     });
 
-    saveComponentObjectToPage('rotatingQuotes', JSON.stringify(quotesToSave));
+    // Save to IndexedDB directly
+    const pageId = getPageId();
+    if (componentId) {
+      // Save with component ID for better organization
+      await saveBlobToIndexedDB(`${pageId}:${componentName}:${componentId}`, JSON.stringify(quotesToSave));
+    } else {
+      // Fallback to component-level saving
+      await saveComponentObjectToPage(componentName, JSON.stringify(quotesToSave));
+    }
   }
 
   form.setAttribute('data-initialized', 'true');
@@ -110,9 +149,37 @@ function initializeQuoteDataFromForm(container) {
 window.initializeQuoteDataFromForm = initializeQuoteDataFromForm;
 
 
-function initializeRotatingQuotes(container) {
+async function initializeRotatingQuotes(container) {
   let quotes = [];
-  let quotesData = getCurrentPage().rotatingQuotes || rotatingQuotes();
+  let quotesData = null;
+
+  // Get component info
+  const componentId = container.getAttribute('data-component-id');
+  const componentName = container.getAttribute('data-component-name') || 'rotatingQuotes';
+
+  // Load quotes data from IndexedDB
+  if (componentId) {
+    quotesData = await getComponentDataById(componentName, componentId);
+  }
+
+  if (!quotesData) {
+    quotesData = await getComponentData(componentName);
+  }
+
+  // Parse the data if it's a JSON string
+  if (quotesData && typeof quotesData === 'string') {
+    try {
+      quotesData = JSON.parse(quotesData);
+    } catch (e) {
+      console.error('Failed to parse quotes data:', e);
+      quotesData = null;
+    }
+  }
+
+  // Fall back to built-in quotes if no data found
+  if (!quotesData) {
+    quotesData = rotatingQuotes();
+  }
 
   if (quotesData) {
     quotes = Object.keys(quotesData).map(key => quotesData[key]);

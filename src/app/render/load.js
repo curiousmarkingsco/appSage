@@ -212,27 +212,31 @@ document.addEventListener('DOMContentLoaded', addMetasToHead);
 
 document.addEventListener('DOMContentLoaded', async () => {
   const pageId = getPageId();
-  const AppstartStorage = await getAppstartStorage();
 
   const componentContainers = document.querySelectorAll('.pagecomponent');
   for (const container of componentContainers) {
     const componentContainer = container.querySelector('[data-component-name]');
     const componentName = componentContainer.getAttribute('data-component-name');
 
-    let componentData = AppstartStorage.pages?.[pageId]?.[componentName];
-
-    if (componentData === '__stored_in_indexeddb__') {
-      componentData = await loadComponentFromStorage(pageId, componentName);
-    }
+    // Load component data directly from IndexedDB
+    const componentData = await loadComponentFromStorage(pageId, componentName);
 
     initializeExistingComponents(componentContainer, componentData);
   }
 });
 
-function getCurrentPage() {
+async function getCurrentPage() {
   const pageId = getPageId();
-  const currentPage = getPageObject(pageId);
-  return currentPage;
+  const pageObject = await getPageObject(pageId);
+
+  // Add a property to dynamically load component data
+  if (pageObject) {
+    pageObject.getComponentData = async function(componentName) {
+      return await loadComponentFromStorage(pageId, componentName);
+    };
+  }
+
+  return pageObject;
 }
 window.getCurrentPage = getCurrentPage;
 
@@ -271,3 +275,78 @@ async function loadComponentFromStorage(pageId, componentName) {
   }
 }
 window.loadComponentFromStorage = loadComponentFromStorage;
+
+// Direct component data access function
+async function getComponentData(componentName, pageId = null) {
+  if (!pageId) {
+    pageId = getPageId();
+  }
+
+  // Try cache first for performance
+  if (window._componentDataCache &&
+      window._componentDataCache[pageId] &&
+      window._componentDataCache[pageId][componentName]) {
+    return window._componentDataCache[pageId][componentName];
+  }
+
+  // Load from IndexedDB
+  const data = await loadComponentFromStorage(pageId, componentName);
+
+  // Update cache
+  if (data) {
+    if (!window._componentDataCache) window._componentDataCache = {};
+    if (!window._componentDataCache[pageId]) window._componentDataCache[pageId] = {};
+    window._componentDataCache[pageId][componentName] = data;
+  }
+
+  return data;
+}
+window.getComponentData = getComponentData;
+
+// Enhanced component data access that handles componentId-specific data
+async function getComponentDataById(componentName, componentId, pageId = null) {
+  if (!pageId) {
+    pageId = getPageId();
+  }
+
+  const key = `${pageId}:${componentName}:${componentId}`;
+
+  try {
+    const data = await loadBlobFromIndexedDB(key);
+    return data;
+  } catch (err) {
+    console.error(`Failed to load ${componentName}:${componentId} from IndexedDB:`, err);
+    return null;
+  }
+}
+window.getComponentDataById = getComponentDataById;
+
+// Function to delete all component data (both general and ID-specific)
+async function deleteAllComponentData(pageId, componentName) {
+  try {
+    // Delete general component data
+    const generalKey = `${pageId}:${componentName}`;
+    await deleteFromIndexedDB(generalKey);
+
+    // Delete from cache
+    if (window._componentDataCache &&
+        window._componentDataCache[pageId] &&
+        window._componentDataCache[pageId][componentName]) {
+      delete window._componentDataCache[pageId][componentName];
+    }
+
+    console.log(`All component data deleted for ${componentName}`);
+  } catch (error) {
+    console.error(`Failed to delete all component data for ${componentName}`, error);
+  }
+}
+window.deleteAllComponentData = deleteAllComponentData;
+
+// Helper function to delete from IndexedDB
+async function deleteFromIndexedDB(key) {
+  const db = await openDB();
+  const transaction = db.transaction('blobs', 'readwrite');
+  const store = transaction.objectStore('blobs');
+  await store.delete(key);
+}
+window.deleteFromIndexedDB = deleteFromIndexedDB;

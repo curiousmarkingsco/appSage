@@ -17,7 +17,6 @@ async function saveComponentData(pageId, componentId, componentName, data) {
     if (!window._componentDataCache[pageId][componentName]) window._componentDataCache[pageId][componentName] = {};
     window._componentDataCache[pageId][componentName][componentId] = data;
 
-    console.log(`Component data saved: ${componentName}:${componentId}`);
   } catch (error) {
     console.error(`Failed to save component data for ${componentName}:${componentId}`, error);
   }
@@ -71,7 +70,6 @@ async function deleteComponentData(pageId, componentId, componentName) {
       delete window._componentDataCache[pageId][componentName][componentId];
     }
 
-    console.log(`Component data deleted: ${componentName}:${componentId}`);
   } catch (error) {
     console.error(`Failed to delete component data for ${componentName}:${componentId}`, error);
   }
@@ -158,7 +156,6 @@ async function populateComponentForm(componentContainer, formElement) {
       }
     });
 
-    console.log(`Component form populated with data for ${componentName}:${componentId}`);
   }
 }
 window.populateComponentForm = populateComponentForm;
@@ -391,7 +388,6 @@ function syncComponentChangesToPage() {
         saveComponent(pageId, componentName, cleanHTML);
       }
 
-      console.log('Component synced successfully to page');
     }
   }
 }
@@ -458,6 +454,7 @@ function addComponentLibraryOptions(container) {
 window.addComponentLibraryOptions = addComponentLibraryOptions;
 
 function addComponentOptions(container, componentName = null) {
+
   if (!componentName) {
     // Try to get component name from the container or its children
     componentName = container.getAttribute('data-component-name') ||
@@ -490,7 +487,23 @@ function addComponentOptions(container, componentName = null) {
   const componentTitle = document.createElement('div');
   componentTitle.innerHTML = `<strong>Edit ${AppstartComponents[componentName].name}</strong></div>`;
 
-  const componentContainer = container.querySelector(`.${componentName}-container`)
+  // Find the component container - it might be the container itself or a child
+  let componentContainer = container.querySelector(`.${componentName}-container`);
+  if (!componentContainer) {
+    // If we can't find it as a child, check if the container itself is the component
+    if (container.classList && container.classList.contains(`${componentName}-container`)) {
+      componentContainer = container;
+    } else if (container.getAttribute && container.getAttribute('data-component-name') === componentName) {
+      // The container might have the data-component-name but not the class
+      componentContainer = container;
+    }
+  }
+
+  if (!componentContainer) {
+    console.error(`Could not find component container for ${componentName}`, container);
+    return;
+  }
+
   const componentId = componentContainer.getAttribute('data-component-id');
   const componentFormTemplate = AppstartComponents[componentName].form_template;
   const formContainer = document.createElement('div');

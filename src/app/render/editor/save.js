@@ -60,43 +60,18 @@ async function saveContent(pageId, json) {
 window.savePageData = saveContent;
 
 async function saveComponent(pageId, componentName, object) {
-  // Using IndexedDB for non-Electron mode
-  const AppstartStorage = await idbGet(AppstartStorageString) || {};
-
-  if (!AppstartStorage.pages) {
-    AppstartStorage.pages = {};
-  }
-  if (!AppstartStorage.pages[pageId]) {
-    AppstartStorage.pages[pageId] = {};
-  }
-
-  // Just store a lightweight reference — actual object goes in IndexedDB
-  AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
-  await idbSet(AppstartStorageString, AppstartStorage);
-
-  // Store the heavy object in IndexedDB under a namespaced key
+  // Store the component data directly in IndexedDB under a namespaced key
   await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
+
+  console.log(`Component '${componentName}' saved to IndexedDB`);
 }
 window.saveComponent = saveComponent;
 
 async function saveComponentObjectToPage(componentName, object) {
   try {
     const pageId = getPageId();
-    // Using IndexedDB for non-Electron mode
-    const AppstartStorage = await idbGet(AppstartStorageString) || {};
 
-    if (!AppstartStorage.pages) {
-      AppstartStorage.pages = {};
-    }
-    if (!AppstartStorage.pages[pageId]) {
-      AppstartStorage.pages[pageId] = {};
-    }
-
-    // Just store a lightweight reference — actual object goes in IndexedDB
-    AppstartStorage.pages[pageId][componentName] = '__stored_in_indexeddb__';
-    await idbSet(AppstartStorageString, AppstartStorage);
-
-    // Store the heavy object in IndexedDB under a namespaced key
+    // Store the component data directly in IndexedDB under a namespaced key
     await saveBlobToIndexedDB(`${pageId}:${componentName}`, object);
 
     // Update the component data cache for immediate access

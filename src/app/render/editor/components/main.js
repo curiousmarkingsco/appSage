@@ -4,31 +4,32 @@
 
 */
 
-function initializeComponentForm(container, componentName, form) {
+function initializeComponentForm(component, componentName, form) {
+
   if (componentName === 'internationalClocks') {
-    initializeClockDataFromForm(container);
+    initializeClockDataFromForm(component);
     form.setAttribute('data-initialized', true);
   }
   if (componentName === 'quickNotes') {
-    initializeNoteDataFromForm(container);
+    initializeNoteDataFromForm(component);
     form.setAttribute('data-initialized', true);
   }
   if (componentName === 'rotatingQuotes') {
-    initializeQuoteDataFromForm(container);
+    initializeQuoteDataFromForm(component);
     form.setAttribute('data-initialized', true);
   }
 }
 window.initializeComponentForm = initializeComponentForm;
 
-function initializeExistingComponents(container, componentName) {
+function initializeExistingComponents(component, componentName) {
   if (componentName === 'internationalClocks') {
-    initializeInternationalClocks(container.querySelector('.internationalClocks-container'));
+    initializeInternationalClocks(component);
   }
   if (componentName === 'quickNotes') {
-    initializeQuickNotes(container.querySelector('.quickNotes-container'));
+    initializeQuickNotes(component);
   }
   if (componentName === 'rotatingQuotes') {
-    initializeRotatingQuotes(container.querySelector('.rotatingQuotes-container'));
+    initializeRotatingQuotes(component);
   }
 }
 window.initializeExistingComponents = initializeExistingComponents;
