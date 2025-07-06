@@ -10,20 +10,6 @@ function initializeEditor() {
   initializeEditorHtml().then(() => {
     setupPageEvents();
     window.editorInitialized = true;
-
-    // Ensure the page is visible when editor loads
-    const page = document.getElementById('page');
-    if (page) {
-      page.classList.remove('hidden');
-    }
-
-    // Clean up any leftover component editing state
-    const componentSteps = document.getElementById('componentSteps');
-    if (componentSteps) {
-      componentSteps.classList.add('hidden');
-      componentSteps.innerHTML = '';
-      componentSteps.removeAttribute('data-original-component-id');
-    }
   }).catch(error => {
     console.error('Error during editor initialization:', error);
   });
@@ -272,6 +258,19 @@ async function initializeEditorHtml() {
       `;
 
       initializeConfig().then(()=>{
+        // Ensure the page is visible and clean up component editing state before activating components
+        const page = document.getElementById('page');
+        if (page) {
+          page.classList.remove('hidden');
+        }
+
+        const componentSteps = document.getElementById('componentSteps');
+        if (componentSteps) {
+          componentSteps.style.display = 'none';
+          componentSteps.innerHTML = '';
+          componentSteps.removeAttribute('data-original-component-id');
+        }
+
         activateComponents(true);
         resolve();
       });
