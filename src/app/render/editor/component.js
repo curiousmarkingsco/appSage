@@ -59,6 +59,7 @@ function createComponentStepsOverlay() {
     componentSteps.className = 'fixed inset-0 z-40 bg-pearl-bush-100 p-8 hidden overflow-auto';
     componentSteps.style.marginLeft = '18rem'; // Match the page margin
     componentSteps.style.width = 'calc(100% - 18rem)'; // Match the page width
+    componentSteps.style.display = 'none'; // Explicitly start hidden to override CSS
 
     // Insert after the page element
     page.parentNode.append(componentSteps, page.nextSibling);
@@ -100,6 +101,8 @@ function showComponentStepsOverlay() {
 
   if (componentSteps && page) {
     componentSteps.classList.remove('hidden');
+    // Explicitly set display to flex to ensure it shows properly
+    componentSteps.style.display = 'flex';
     page.classList.add('hidden');
   }
 }
@@ -112,6 +115,8 @@ function hideComponentStepsOverlay() {
 
   if (componentSteps && page) {
     componentSteps.classList.add('hidden');
+    // Explicitly set display to none to override CSS specificity
+    componentSteps.style.display = 'none';
     page.classList.remove('hidden');
 
     // Clear the componentSteps content
